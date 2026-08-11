@@ -1,0 +1,91 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://hydra.chimera.local/schema/hydra-report.schema.json",
+  "title": "HYDRA Platform Report",
+  "description": "Unified report format emitted by every HYDRA agent (Windows, Linux, Android). One suite, one schema, three platforms.",
+  "type": "object",
+  "required": ["hydra_version", "platform", "hostname", "generated_at", "findings", "summary"],
+  "additionalProperties": false,
+  "properties": {
+    "hydra_version": { "type": "string" },
+    "platform": { "type": "string", "enum": ["windows", "linux", "android"] },
+    "hostname": { "type": "string" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "agent_metadata": {
+      "type": "object",
+      "description": "Free-form platform-specific identity info (OS build, device model, etc.) for report context only.",
+      "additionalProperties": { "type": "string" }
+    },
+    "findings": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/finding" }
+    },
+    "summary": { "$ref": "#/definitions/summary" }
+  },
+  "definitions": {
+    "finding": {
+      "type": "object",
+      "required": ["id", "category", "platform", "name", "description", "status", "severity"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Stable, dotted check id, e.g. 'linux.env.dmi_sys_vendor'.",
+          "pattern": "^[a-z0-9]+\\.[a-z_]+\\.[a-z0-9_]+$"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["environment_artifact", "timing", "behavioural_interaction", "design_specific"],
+          "description": "The four detection categories from the CHIMERA theoretical model (Ch.3)."
+        },
+        "platform": { "type": "string", "enum": ["windows", "linux", "android"] },
+        "name": { "type": "string", "description": "Short human title, e.g. 'SMBIOS system vendor string'." },
+        "description": { "type": "string", "description": "What the check does and why it matters." },
+        "status": {
+          "type": "string",
+          "enum": ["clean", "detected", "error", "skipped"],
+          "description": "clean = no tell found; detected = evasion tell found (BAD); error = probe could not run; skipped = not applicable on this host."
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["info", "low", "medium", "high", "critical"],
+          "description": "Real-world significance if detected -- mirrors the KVM hardening report's per-flag justification approach, not just pass/fail."
+        },
+        "evidence": {
+          "description": "Raw observed value(s) supporting the status, for analyst review.",
+          "type": ["string", "object", "array", "null"]
+        },
+        "remediation": {
+          "type": ["string", "null"],
+          "description": "Suggested hardening-profile change to close this gap, so findings feed back into CHIMERA hardening rather than only being reported."
+        },
+        "error_detail": {
+          "type": ["string", "null"],
+          "description": "Populated when status == error."
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["total", "clean", "detected", "errored", "skipped", "raw_score", "weighted_score"],
+      "additionalProperties": false,
+      "properties": {
+        "total": { "type": "integer", "minimum": 0 },
+        "clean": { "type": "integer", "minimum": 0 },
+        "detected": { "type": "integer", "minimum": 0 },
+        "errored": { "type": "integer", "minimum": 0 },
+        "skipped": { "type": "integer", "minimum": 0 },
+        "raw_score": {
+          "type": "string",
+          "description": "VMAware-style 'clean/total' string, e.g. '91/93'."
+        },
+        "weighted_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Severity-weighted cleanliness score 0-100 (100 = nothing detected). See hydra_common.scoring."
+        }
+      }
+    }
+  }
+}

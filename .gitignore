@@ -53,3 +53,27 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
+.pytest_cache/
+.ruff_cache/
+build/
+dist/
+
+# HYDRA scan output (analyst-run, not source)
+reports/*.json
+reports/*.html
+!reports/.gitkeep
+
+# adb
+*.apk
+
+# compiled native helper (extensionless, built on first agent run)
+agents/linux/native/cpuid_rdtsc
+
+# macOS
+.DS_Store
