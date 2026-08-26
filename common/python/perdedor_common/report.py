@@ -1,4 +1,4 @@
-"""Aggregate one or more parsed HYDRA platform reports into a single unified
+"""Aggregate one or more parsed PERDEDOR platform reports into a single unified
 report (JSON) and a self-contained HTML rendering of it.
 
 This is the "one suite, three platforms" half of the design: a Windows
@@ -84,7 +84,7 @@ def _summary_block(aggregate: dict) -> str:
     platforms = ", ".join(p.capitalize() for p in aggregate["platforms"]) or "none"
     return f"""
 <header>
-  <h1>HYDRA Unified Evasion-Probe Report</h1>
+  <h1>PERDEDOR Unified Evasion-Probe Report</h1>
   <p class="meta">Generated {html.escape(aggregate['generated_at'])} &middot; Platforms tested: {html.escape(platforms)}</p>
   <div class="score-row">
     <div class="score-card"><div class="score-num">{html.escape(s['raw_score'])}</div><div class="score-label">clean / applicable</div></div>
@@ -103,7 +103,7 @@ def _platform_block(report: dict) -> str:
     return f"""
 <section>
   <h2>{html.escape(report['platform'].capitalize())} &mdash; {html.escape(report['hostname'])}</h2>
-  <p class="meta">HYDRA {html.escape(report['hydra_version'])} &middot; {html.escape(report['generated_at'])} &middot;
+  <p class="meta">PERDEDOR {html.escape(report['perdedor_version'])} &middot; {html.escape(report['generated_at'])} &middot;
      raw {html.escape(s['raw_score'])} &middot; weighted {s['weighted_score']}</p>
   <table>
     <thead><tr><th>Status</th><th>Severity</th><th>Category</th><th>Check</th><th>Evidence</th><th>Remediation</th></tr></thead>
@@ -149,7 +149,7 @@ def _stringify_evidence(evidence: Any) -> str:
 
 
 _HTML_HEAD = """<!doctype html>
-<html><head><meta charset="utf-8"><title>HYDRA Report</title>
+<html><head><meta charset="utf-8"><title>PERDEDOR Report</title>
 <style>
 :root { color-scheme: light dark; }
 body { font-family: -apple-system, Segoe UI, Helvetica, Arial, sans-serif; margin: 2rem auto; max-width: 1100px; padding: 0 1rem; line-height: 1.4; }

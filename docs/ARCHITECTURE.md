@@ -1,14 +1,14 @@
-# HYDRA Architecture
+# PERDEDOR Architecture
 
-HYDRA is the cross-platform sandbox-evasion self-test suite for the CHIMERA
+PERDEDOR is the cross-platform sandbox-evasion self-test suite for the CHIMERA
 platform. It exists to close one specific gap identified during CHIMERA's
 build: VMAware, Pafish, and al-khaser verify Windows/Linux hardening, but
-none of them cover Android, and none of them share a report format. HYDRA
+none of them cover Android, and none of them share a report format. PERDEDOR
 is one suite, three agents, one schema, one scoring method -- and aims for
 parity with (and, on Android, coverage beyond) that combined technique
 catalog; see [CHECK_COVERAGE.md](CHECK_COVERAGE.md) for the full mapping.
 
-The user-facing shape of that is deliberately narrow: `hydra test <platform>`
+The user-facing shape of that is deliberately narrow: `perdedor test <platform>`
 takes exactly one of `windows`/`linux`/`android`, runs *only* that
 platform's full check suite against the current host (or, for Android, the
 `adb`-attached device), and returns a score. There is no mode that runs
@@ -18,7 +18,7 @@ sandbox it's running on.
 ## Design principles (from CHIMERA Ch.8)
 
 1. **One suite, three platforms.** Every agent emits the same JSON shape
-   (`schema/hydra-report.schema.json`) so results are directly comparable
+   (`schema/perdedor-report.schema.json`) so results are directly comparable
    across Windows, Linux, and Android sandboxes.
 2. **Check categories, not just individual techniques.** Every finding is
    tagged with one of the four detection categories from CHIMERA Ch.3:
@@ -29,30 +29,30 @@ sandbox it's running on.
 3. **Feed hardening, don't just report on it.** Every finding that can be
    detected carries a `remediation` string describing the hardening-profile
    change that would close it, so CHIMERA's hardening profiles can consume
-   HYDRA output directly instead of routing through manual analyst judgement.
+   PERDEDOR output directly instead of routing through manual analyst judgement.
 
 ## Components
 
 ```
-hydra/
+perdedor/
 ├── schema/                     unified report JSON Schema
-├── common/python/hydra_common/ shared models, scoring engine, report renderer
+├── common/python/perdedor_common/ shared models, scoring engine, report renderer
 ├── agents/
 │   ├── linux/                  Python3 agent + small C helper for CPUID/RDTSC
 │   ├── windows/                PowerShell 7 agent (WMI/CIM, registry, PnP, raw SMBIOS, native CPUID intrinsics)
 │   └── android/                Python3 agent driving the target over adb
-└── cli/hydra_cli/              `hydra test <platform>`: run one agent locally and score it
-                                 `hydra report`: aggregate JSON already collected from remote guests
+└── cli/perdedor_cli/              `perdedor test <platform>`: run one agent locally and score it
+                                 `perdedor report`: aggregate JSON already collected from remote guests
 ```
 
 ## Why agents run *inside* the guest, unlike CHIMERA's detonation model
 
 CHIMERA's malware detonation sandboxes are deliberately agentless — no
 tooling exists inside the guest, because modern malware refuses to run in
-the presence of analysis tools. HYDRA is different: it is an *analyst-run
+the presence of analysis tools. PERDEDOR is different: it is an *analyst-run
 self-test*, executed deliberately against a golden image before it is ever
 used for detonation, in the same way Pafish and al-khaser are literally run
-as executables inside the guest. There is no conflict — HYDRA never runs
+as executables inside the guest. There is no conflict — PERDEDOR never runs
 during a real detonation, only during sandbox verification.
 
 ## Aggregation workflow
@@ -61,7 +61,7 @@ during a real detonation, only during sandbox verification.
    Android) and execute it. Each agent writes one JSON file conforming to
    the schema.
 2. Pull the JSON files back to the analyst host.
-3. Run `hydra report <file1.json> <file2.json> ...` to render a single
+3. Run `perdedor report <file1.json> <file2.json> ...` to render a single
    unified HTML/JSON report scored consistently across all platforms
    tested.
 

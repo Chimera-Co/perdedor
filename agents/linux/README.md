@@ -1,4 +1,4 @@
-# HYDRA Linux Agent
+# PERDEDOR Linux Agent
 
 Pure-stdlib Python 3.10+ agent, plus a tiny native helper for CPUID/RDTSC
 (the two primitives Python cannot reach on its own).
@@ -6,8 +6,8 @@ Pure-stdlib Python 3.10+ agent, plus a tiny native helper for CPUID/RDTSC
 ## Run
 
 ```bash
-python3 -m hydra_linux                      # prints JSON report to stdout
-python3 -m hydra_linux -o linux-report.json  # writes to a file
+python3 -m perdedor_linux                      # prints JSON report to stdout
+python3 -m perdedor_linux -o linux-report.json  # writes to a file
 ```
 
 The native helper (`native/cpuid_rdtsc`) is built automatically on first run

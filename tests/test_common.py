@@ -3,11 +3,12 @@ from __future__ import annotations
 import json
 
 import pytest
-from hydra_common.finding_factory import FindingFactory
-from hydra_common.models import Category, Finding, Platform, PlatformReport, Severity, Status
-from hydra_common.report import aggregate_reports, render_html
-from hydra_common.scoring import score_report
-from hydra_common.validation import ValidationError, validate_report
+from perdedor_common.finding_factory import FindingFactory
+from perdedor_common.models import Category, Finding, Platform, PlatformReport, Severity, Status
+from perdedor_common.report import aggregate_reports, render_html
+from perdedor_common.scoring import score_report
+from perdedor_common.text_format import render_banner
+from perdedor_common.validation import ValidationError, validate_report
 
 
 def _finding(status: Status, severity: Severity = Severity.MEDIUM, n: int = 0) -> Finding:
@@ -107,7 +108,7 @@ def test_aggregate_reports_combines_platforms() -> None:
     assert aggregate["overall_summary"]["detected"] == 1
 
     html_out = render_html(aggregate)
-    assert "HYDRA Unified Evasion-Probe Report" in html_out
+    assert "PERDEDOR Unified Evasion-Probe Report" in html_out
     assert "Linux" in html_out and "Windows" in html_out
 
 
@@ -142,3 +143,19 @@ def test_finding_factory_bool_check_switches_between_detected_and_clean() -> Non
     assert detected.status == Status.DETECTED
     assert detected.evidence == "hit"
     assert clean.status == Status.CLEAN
+
+
+def test_render_banner_contains_wordmark_and_version() -> None:
+    banner = render_banner(use_color=False, version="9.9.9")
+    assert "v9.9.9" in banner
+    assert "Sandbox-Evasion Self-Test Suite" in banner
+
+
+def test_render_banner_no_color_emits_no_escape_codes() -> None:
+    banner = render_banner(use_color=False)
+    assert "\033[" not in banner
+
+
+def test_render_banner_color_emits_escape_codes() -> None:
+    banner = render_banner(use_color=True)
+    assert "\033[" in banner

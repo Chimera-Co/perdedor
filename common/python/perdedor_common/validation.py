@@ -1,7 +1,7 @@
-"""Minimal, dependency-free validation of a parsed HYDRA report dict against
-schema/hydra-report.schema.json.
+"""Minimal, dependency-free validation of a parsed PERDEDOR report dict against
+schema/perdedor-report.schema.json.
 
-Deliberately does not depend on the `jsonschema` PyPI package: HYDRA agents
+Deliberately does not depend on the `jsonschema` PyPI package: PERDEDOR agents
 are meant to run inside isolated, disposable sandbox overlays with no
 guaranteed internet/package-index access (see CHIMERA Ch.4, network
 isolation architecture), so the common package stays stdlib-only.
@@ -9,7 +9,7 @@ isolation architecture), so the common package stays stdlib-only.
 
 from __future__ import annotations
 
-_REQUIRED_TOP = {"hydra_version", "platform", "hostname", "generated_at", "findings", "summary"}
+_REQUIRED_TOP = {"perdedor_version", "platform", "hostname", "generated_at", "findings", "summary"}
 _PLATFORMS = {"windows", "linux", "android"}
 _CATEGORIES = {"environment_artifact", "timing", "behavioural_interaction", "design_specific"}
 _STATUSES = {"clean", "detected", "error", "skipped"}

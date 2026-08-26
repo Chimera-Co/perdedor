@@ -1,15 +1,15 @@
 # Check Coverage vs. Pafish / al-khaser / VMAware
 
-HYDRA's goal is to be "a tool like them" (Pafish, al-khaser, VMAware) but
+PERDEDOR's goal is to be "a tool like them" (Pafish, al-khaser, VMAware) but
 usable from one CLI across Windows, Linux, and Android. This document maps
-HYDRA's check catalog back to those three tools' technique classes, and
+PERDEDOR's check catalog back to those three tools' technique classes, and
 states plainly which parts of their catalogs are **not** implemented and why
 -- in the same spirit as the CHIMERA KVM hardening report's own per-flag
 justification sections, so no claim here is taken on faith.
 
 ## Coverage by technique class
 
-| Technique class | Pafish | al-khaser | VMAware | HYDRA |
+| Technique class | Pafish | al-khaser | VMAware | PERDEDOR |
 |---|---|---|---|---|
 | CPUID hypervisor-present bit | Yes | Yes | Yes | `{linux,win}.env.cpuid_hypervisor_bit` |
 | CPUID hypervisor vendor string | Yes | Yes | Yes | `{linux,win}.env.cpuid_hypervisor_vendor` |
@@ -32,14 +32,14 @@ justification sections, so no claim here is taken on faith.
 | `IsDebuggerPresent` / `CheckRemoteDebuggerPresent` | -- | Yes | -- | `win.design.debugger_present`, `remote_debugger_present`, `managed_debugger_attached` |
 | Mouse cursor movement / human-interface check | -- | Yes | -- | `win.behavioural.mouse_movement` |
 | Font count | -- | Yes | -- | `{linux,win}.behavioural.font_count` |
-| Shell/browser history, aged files, installed package count ("wear and tear") | -- | -- | -- | `{linux,win}.behavioural.*` (HYDRA-original, modelled on Miramirkhani et al., not any of the three tools) |
-| Android build fingerprint / goldfish-ranchu / libhoudini / telephony / sensors | -- | -- | -- | `android.*` (HYDRA-original -- **this is the actual gap HYDRA exists to close**; none of the three tools support Android at all) |
-| `systemd-detect-virt` cross-check | -- | -- | -- | `linux.env.systemd_detect_virt` (HYDRA-original) |
-| Container/WSL/cloud-metadata detection | -- | -- | partial (some cloud checks) | `{linux,win}.env.container_or_wsl`, `cloud_metadata_reachable` (HYDRA-original) |
+| Shell/browser history, aged files, installed package count ("wear and tear") | -- | -- | -- | `{linux,win}.behavioural.*` (PERDEDOR-original, modelled on Miramirkhani et al., not any of the three tools) |
+| Android build fingerprint / goldfish-ranchu / libhoudini / telephony / sensors | -- | -- | -- | `android.*` (PERDEDOR-original -- **this is the actual gap PERDEDOR exists to close**; none of the three tools support Android at all) |
+| `systemd-detect-virt` cross-check | -- | -- | -- | `linux.env.systemd_detect_virt` (PERDEDOR-original) |
+| Container/WSL/cloud-metadata detection | -- | -- | partial (some cloud checks) | `{linux,win}.env.container_or_wsl`, `cloud_metadata_reachable` (PERDEDOR-original) |
 
 ## Explicitly out of scope (and why)
 
-These are real al-khaser/VMAware technique classes that HYDRA does **not**
+These are real al-khaser/VMAware technique classes that PERDEDOR does **not**
 implement. Listed here so no reader assumes silent coverage -- the same
 transparency principle as CHIMERA KVM report Section 5 ("Remaining
 Detections -- Per-Flag Justification").
@@ -48,7 +48,7 @@ Detections -- Per-Flag Justification").
   flag, `NtGlobalFlag` heap-flag inspection, trap-flag single-stepping,
   `NtSetInformationThread(ThreadHideFromDebugger)` self-debugging tricks.**
   These are genuine anti-debug techniques (al-khaser's "Debugger Detection"
-  section has ~39 checks; HYDRA implements 3 of the highest-signal, lowest-
+  section has ~39 checks; PERDEDOR implements 3 of the highest-signal, lowest-
   complexity ones). The rest require either unmanaged/unsafe native code
   well beyond a P/Invoke declaration, or direct `ntdll.dll` internals that
   are not part of any documented, stable API. Out of scope for a
@@ -59,7 +59,7 @@ Detections -- Per-Flag Justification").
   sections test whether the *analysis platform itself* can detect injection
   techniques used against the running process -- this is a different
   problem class from "does this environment look like a sandbox" and is
-  arguably out of HYDRA's stated scope (a sandbox-evasion probe, not an
+  arguably out of PERDEDOR's stated scope (a sandbox-evasion probe, not an
   injection-technique test suite).
 - **Self-deletion / execution-artifact checks, generic "file dropped and
   re-executed" tricks.** These test sandbox *behavioural capture*
@@ -91,8 +91,8 @@ Detections -- Per-Flag Justification").
 
 Unlike Windows/Linux, there is no Pafish/al-khaser/VMAware equivalent for
 Android to diff against -- this is the specific, named gap the CHIMERA
-synopsis identifies HYDRA as being built to close. The Android check list in
-this document's coverage table is therefore HYDRA-original, built from the
+synopsis identifies PERDEDOR as being built to close. The Android check list in
+this document's coverage table is therefore PERDEDOR-original, built from the
 technique classes documented in the academic literature cited in the CHIMERA
 synopsis (Gajrani et al., Vidas & Christin, Alzaylaee et al.) rather than
 ported from an existing tool's source.
