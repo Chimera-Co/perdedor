@@ -1,7 +1,7 @@
-"""Shared data model for every HYDRA agent.
+"""Shared data model for every PERDEDOR agent.
 
 This module is the single source of truth for the report shape described in
-schema/hydra-report.schema.json. Windows, Linux, and Android agents that are
+schema/perdedor-report.schema.json. Windows, Linux, and Android agents that are
 written in Python import this directly; the PowerShell agent emits matching
 JSON by hand (see agents/windows/README.md) since it cannot import Python.
 """
@@ -84,7 +84,7 @@ class PlatformReport:
     platform: Platform
     findings: tuple[Finding, ...]
     hostname: str = field(default_factory=socket.gethostname)
-    hydra_version: str = "0.1.0"
+    perdedor_version: str = "0.1.0"
     generated_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     agent_metadata: dict[str, str] = field(default_factory=dict)
 
@@ -92,7 +92,7 @@ class PlatformReport:
         from .scoring import score_report  # local import avoids a cycle
 
         return {
-            "hydra_version": self.hydra_version,
+            "perdedor_version": self.perdedor_version,
             "platform": self.platform.value,
             "hostname": self.hostname,
             "generated_at": self.generated_at.isoformat(),

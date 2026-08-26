@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from hydra_linux import signatures
-from hydra_linux.checks import design, environment
-from hydra_linux.cpu import CpuidResult
-from hydra_linux.utils import any_signature_in
+from perdedor_linux import signatures
+from perdedor_linux.checks import design, environment
+from perdedor_linux.cpu import CpuidResult
+from perdedor_linux.utils import any_signature_in
 
 
 def test_cpuid_vendor_string_decode_order_is_ebx_ecx_edx() -> None:

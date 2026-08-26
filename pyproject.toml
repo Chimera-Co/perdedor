@@ -1,7 +1,7 @@
 [project]
-name = "hydra"
+name = "perdedor"
 version = "0.1.0"
-description = "HYDRA: cross-platform sandbox-evasion self-test suite for CHIMERA (Windows, Linux, Android)"
+description = "PERDEDOR: cross-platform sandbox-evasion self-test suite for CHIMERA (Windows, Linux, Android)"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
@@ -11,15 +11,15 @@ dependencies = []
 dev = ["pytest>=7", "black", "isort", "ruff"]
 
 [project.scripts]
-hydra = "hydra_cli.__main__:main"
+perdedor = "perdedor_cli.__main__:main"
 
 [build-system]
 requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-package-dir = { "hydra_common" = "common/python/hydra_common", "hydra_linux" = "agents/linux/hydra_linux", "hydra_android" = "agents/android/hydra_android", "hydra_cli" = "cli/hydra_cli" }
-packages = ["hydra_common", "hydra_linux", "hydra_android", "hydra_cli"]
+package-dir = { "perdedor_common" = "common/python/perdedor_common", "perdedor_linux" = "agents/linux/perdedor_linux", "perdedor_android" = "agents/android/perdedor_android", "perdedor_cli" = "cli/perdedor_cli" }
+packages = ["perdedor_common", "perdedor_linux", "perdedor_android", "perdedor_cli"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

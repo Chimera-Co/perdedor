@@ -1,9 +1,9 @@
 <#
 .SYNOPSIS
-    Shared helpers for the HYDRA Windows agent: finding construction,
+    Shared helpers for the PERDEDOR Windows agent: finding construction,
     severity-weighted scoring, and report assembly.
 
-    Mirrors common/python/hydra_common exactly (same fields, same severity
+    Mirrors common/python/perdedor_common exactly (same fields, same severity
     weights, same scoring formula) so a Windows-produced report and a
     Linux/Android-produced report are byte-for-byte comparable once
     aggregated -- see docs/ARCHITECTURE.md, "one suite, three platforms".
@@ -17,7 +17,7 @@ $Script:SeverityWeight = @{
     critical = 1.0
 }
 
-function New-HydraFinding {
+function New-PerdedorFinding {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)][string]$Id,
@@ -35,7 +35,7 @@ function New-HydraFinding {
         $ErrorDetail = $null
     )
     if ($Status -eq 'error' -and [string]::IsNullOrEmpty($ErrorDetail)) {
-        throw "New-HydraFinding: status 'error' requires -ErrorDetail (check id: $Id)"
+        throw "New-PerdedorFinding: status 'error' requires -ErrorDetail (check id: $Id)"
     }
     [PSCustomObject]@{
         id            = $Id
@@ -51,7 +51,7 @@ function New-HydraFinding {
     }
 }
 
-function Get-HydraSummary {
+function Get-PerdedorSummary {
     [CmdletBinding()]
     param([Parameter(Mandatory)][AllowEmptyCollection()][array]$Findings)
 
@@ -88,17 +88,17 @@ function Get-HydraSummary {
     }
 }
 
-function New-HydraReport {
+function New-PerdedorReport {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)][AllowEmptyCollection()][array]$Findings,
-        [string]$HydraVersion = '0.1.0'
+        [string]$PerdedorVersion = '0.1.0'
     )
 
     $osVersion = try { (Get-CimInstance -ClassName Win32_OperatingSystem -ErrorAction Stop).Caption } catch { [System.Environment]::OSVersion.VersionString }
 
     [PSCustomObject]@{
-        hydra_version  = $HydraVersion
+        perdedor_version  = $PerdedorVersion
         platform       = 'windows'
         hostname       = [System.Environment]::MachineName
         generated_at   = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ss.fffZ')
@@ -108,15 +108,15 @@ function New-HydraReport {
             machine = [System.Environment]::MachineName
         }
         findings       = @($Findings)
-        summary        = Get-HydraSummary -Findings $Findings
+        summary        = Get-PerdedorSummary -Findings $Findings
     }
 }
 
-function New-HydraBoolFinding {
+function New-PerdedorBoolFinding {
     <#
     .SYNOPSIS
         Convenience for the common "detected if condition else clean" shape
-        -- mirrors hydra_common.FindingFactory.bool_check on the Python side.
+        -- mirrors perdedor_common.FindingFactory.bool_check on the Python side.
     #>
     [CmdletBinding()]
     param(
@@ -131,15 +131,15 @@ function New-HydraBoolFinding {
     )
     $status = if ($IsDetected) { 'detected' } else { 'clean' }
     $effectiveRemediation = if ($IsDetected) { $Remediation } else { $null }
-    New-HydraFinding -Id $Id -Category $Category -Name $Name -Description $Description `
+    New-PerdedorFinding -Id $Id -Category $Category -Name $Name -Description $Description `
         -Status $status -Severity $Severity -Evidence $Evidence -Remediation $effectiveRemediation
 }
 
-function Find-HydraSignature {
+function Find-PerdedorSignature {
     <#
     .SYNOPSIS
         Case-insensitive substring search; returns the matched signature or
-        $null. Mirrors hydra_linux.utils.any_signature_in.
+        $null. Mirrors perdedor_linux.utils.any_signature_in.
     #>
     [CmdletBinding()]
     param([string]$Text, [Parameter(Mandatory)][array]$Signatures)
@@ -152,4 +152,4 @@ function Find-HydraSignature {
     return $null
 }
 
-Export-ModuleMember -Function New-HydraFinding, New-HydraBoolFinding, Get-HydraSummary, New-HydraReport, Find-HydraSignature
+Export-ModuleMember -Function New-PerdedorFinding, New-PerdedorBoolFinding, Get-PerdedorSummary, New-PerdedorReport, Find-PerdedorSignature

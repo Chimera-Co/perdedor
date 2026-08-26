@@ -1,11 +1,11 @@
-# HYDRA Android Agent
+# PERDEDOR Android Agent
 
 Python3 agent that drives the target device over `adb` from the analyst
 host, rather than shipping an on-device APK.
 
 ## Why adb instead of an on-device app
 
-CHIMERA's own HYDRA design doc (Ch.8) describes on-device agents for every
+CHIMERA's own PERDEDOR design doc (Ch.8) describes on-device agents for every
 platform. For Android specifically, most of the checks that matter here --
 build-fingerprint properties, device nodes, installed packages, sensor
 lists, telephony properties -- are readable over `adb shell` /
@@ -19,8 +19,8 @@ needed that adb genuinely cannot reach.
 
 ```bash
 adb devices                                          # find the serial
-python3 -m hydra_android -s emulator-5554             # prints JSON to stdout
-python3 -m hydra_android -s emulator-5554 -o report.json
+python3 -m perdedor_android -s emulator-5554             # prints JSON to stdout
+python3 -m perdedor_android -s emulator-5554 -o report.json
 ```
 
 If `adb` isn't installed, or no device is reachable at the given serial,
@@ -31,7 +31,7 @@ failing outright -- the emitted report is always schema-valid.
 
 22 checks total. No Pafish/al-khaser/VMAware equivalent exists for Android --
 see [docs/CHECK_COVERAGE.md](../../docs/CHECK_COVERAGE.md) for why this
-entire agent's check list is HYDRA-original rather than ported from an
+entire agent's check list is PERDEDOR-original rather than ported from an
 upstream tool.
 
 | Category | Checks |

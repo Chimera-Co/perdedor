@@ -1,4 +1,4 @@
-"""Unified scoring for HYDRA findings.
+"""Unified scoring for PERDEDOR findings.
 
 Two numbers are always reported side by side, deliberately mirroring the
 CHIMERA KVM hardening report's own conclusion that a raw detection count

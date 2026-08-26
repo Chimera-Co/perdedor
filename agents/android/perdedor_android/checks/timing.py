@@ -11,8 +11,8 @@ natural place to add a genuine timing probe once the on-device agent
 
 from __future__ import annotations
 
-from hydra_common import FindingFactory
-from hydra_common.models import Category, Finding, Platform, Severity
+from perdedor_common import FindingFactory
+from perdedor_common.models import Category, Finding, Platform, Severity
 
 from .. import adb
 

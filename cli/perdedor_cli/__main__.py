@@ -1,13 +1,13 @@
-"""HYDRA CLI: pick a sandbox platform, run its full check suite, get a score.
+"""PERDEDOR CLI: pick a sandbox platform, run its full check suite, get a score.
 
-    hydra test linux
-    hydra test android -s emulator-5554
-    hydra test windows                    # shells out to the PowerShell agent
+    perdedor test linux
+    perdedor test android -s emulator-5554
+    perdedor test windows                    # shells out to the PowerShell agent
 
 Also supports aggregating reports collected from multiple guests into one
 unified report:
 
-    hydra report linux-report.json android-report.json windows-report.json -o hydra-report.html
+    perdedor report linux-report.json android-report.json windows-report.json -o perdedor-report.html
 """
 
 from __future__ import annotations
@@ -21,7 +21,7 @@ import tempfile
 from pathlib import Path
 
 _REPO_ROOT = Path(__file__).resolve().parents[2]
-_WINDOWS_AGENT_SCRIPT = _REPO_ROOT / "agents" / "windows" / "Invoke-Hydra.ps1"
+_WINDOWS_AGENT_SCRIPT = _REPO_ROOT / "agents" / "windows" / "Invoke-Perdedor.ps1"
 
 _PLATFORMS = ("windows", "linux", "android")
 
@@ -42,7 +42,7 @@ def _run_windows_agent(serial: str | None) -> dict | None:
     if not _WINDOWS_AGENT_SCRIPT.exists():
         print(
             f"error: Windows agent script not found at {_WINDOWS_AGENT_SCRIPT}\n"
-            "(the `hydra` CLI locates it relative to the repo checkout -- this only works "
+            "(the `perdedor` CLI locates it relative to the repo checkout -- this only works "
             "when running from an editable install or the repo itself)",
             file=sys.stderr,
         )
@@ -65,11 +65,11 @@ def _run_windows_agent(serial: str | None) -> dict | None:
 
 def _run_agent(platform: str, serial: str | None) -> dict | None:
     if platform == "linux":
-        from hydra_linux.runner import run_scan
+        from perdedor_linux.runner import run_scan
 
         return run_scan().to_dict()
     if platform == "android":
-        from hydra_android.runner import run_scan
+        from perdedor_android.runner import run_scan
 
         return run_scan(serial).to_dict()
     if platform == "windows":
@@ -78,6 +78,18 @@ def _run_agent(platform: str, serial: str | None) -> dict | None:
 
 
 def _cmd_test(args: argparse.Namespace) -> int:
+    use_color = None if not args.no_color else False
+
+    # The splash banner is decorative terminal output, never emitted in
+    # --json mode -- stdout must stay pure JSON there (Chapter 15 of the
+    # build guide covers why a caller piping stdout can never see anything
+    # else mixed in).
+    if not args.json:
+        from perdedor_common import __version__
+        from perdedor_common.text_format import render_banner
+
+        print(render_banner(use_color=use_color, version=__version__))
+
     report = _run_agent(args.platform, args.serial)
     if report is None:
         return 1
@@ -89,17 +101,16 @@ def _cmd_test(args: argparse.Namespace) -> int:
     if args.json:
         print(json.dumps(report, indent=2))
     else:
-        from hydra_common.text_format import render_platform_text
+        from perdedor_common.text_format import render_platform_text
 
-        use_color = None if not args.no_color else False
         print(render_platform_text(report, use_color=use_color, verbose=args.verbose))
 
     return 0
 
 
 def _cmd_report(args: argparse.Namespace) -> int:
-    from hydra_common.report import aggregate_reports, render_html
-    from hydra_common.validation import ValidationError
+    from perdedor_common.report import aggregate_reports, render_html
+    from perdedor_common.validation import ValidationError
 
     reports = []
     for path in args.reports:
@@ -112,7 +123,7 @@ def _cmd_report(args: argparse.Namespace) -> int:
     try:
         aggregate = aggregate_reports(reports)
     except ValidationError as exc:
-        print(f"error: input report does not match the HYDRA schema: {exc}", file=sys.stderr)
+        print(f"error: input report does not match the PERDEDOR schema: {exc}", file=sys.stderr)
         return 1
 
     if args.json:
@@ -126,7 +137,7 @@ def _cmd_report(args: argparse.Namespace) -> int:
     summary = aggregate["overall_summary"]
     platforms = ", ".join(aggregate["platforms"])
     print(
-        f"HYDRA unified: {summary['raw_score']} clean, weighted {summary['weighted_score']}/100 across [{platforms}]",
+        f"PERDEDOR unified: {summary['raw_score']} clean, weighted {summary['weighted_score']}/100 across [{platforms}]",
         file=sys.stderr,
     )
     return 0
@@ -134,7 +145,7 @@ def _cmd_report(args: argparse.Namespace) -> int:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="hydra", description="HYDRA: cross-platform sandbox-evasion self-test suite for CHIMERA."
+        prog="perdedor", description="PERDEDOR: cross-platform sandbox-evasion self-test suite for CHIMERA."
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
@@ -158,11 +169,11 @@ def build_parser() -> argparse.ArgumentParser:
         "report",
         help="aggregate one or more previously-collected JSON reports into one unified HTML+JSON report",
     )
-    report.add_argument("reports", nargs="+", help="paths to JSON reports produced by any HYDRA agent")
+    report.add_argument("reports", nargs="+", help="paths to JSON reports produced by any PERDEDOR agent")
     report.add_argument(
         "-o",
         "--output",
-        default="hydra-report.html",
+        default="perdedor-report.html",
         help="path to write the unified HTML report (default: %(default)s)",
     )
     report.add_argument("--json", default=None, help="also write the unified aggregate as JSON to this path")

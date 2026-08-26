@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    HYDRA Windows agent entry point. Runs every check across all four
+    PERDEDOR Windows agent entry point. Runs every check across all four
     detection categories and emits a schema-conformant JSON report.
 
 .DESCRIPTION
@@ -12,7 +12,7 @@
     If given, write the JSON report there instead of stdout.
 
 .EXAMPLE
-    pwsh -File .\Invoke-Hydra.ps1 -OutputPath C:\hydra\windows-report.json
+    pwsh -File .\Invoke-Perdedor.ps1 -OutputPath C:\perdedor\windows-report.json
 #>
 [CmdletBinding()]
 param(
@@ -22,7 +22,7 @@ param(
 $ErrorActionPreference = 'Stop'
 $scriptRoot = $PSScriptRoot
 
-Import-Module (Join-Path $scriptRoot 'common/Hydra.Common.psm1') -Force
+Import-Module (Join-Path $scriptRoot 'common/Perdedor.Common.psm1') -Force
 . (Join-Path $scriptRoot 'common/Signatures.ps1')
 . (Join-Path $scriptRoot 'probes/Environment.ps1')
 . (Join-Path $scriptRoot 'probes/Timing.ps1')
@@ -35,11 +35,11 @@ $findings += Invoke-TimingChecks
 $findings += Invoke-BehaviouralChecks
 $findings += Invoke-DesignChecks
 
-$report = New-HydraReport -Findings $findings
+$report = New-PerdedorReport -Findings $findings
 $json = $report | ConvertTo-Json -Depth 10
 
 # Status/summary lines go to stderr so stdout stays pure JSON when no
-# -OutputPath is given (mirrors agents/linux/hydra_linux/__main__.py) --
+# -OutputPath is given (mirrors agents/linux/perdedor_linux/__main__.py) --
 # a caller piping stdout straight into a JSON parser must never see them.
 if ($OutputPath) {
     $json | Out-File -FilePath $OutputPath -Encoding utf8
@@ -50,4 +50,4 @@ else {
 }
 
 $s = $report.summary
-[Console]::Error.WriteLine("HYDRA windows scan: $($s.raw_score) clean, weighted $($s.weighted_score)/100 ($($s.errored) errored, $($s.skipped) skipped)")
+[Console]::Error.WriteLine("PERDEDOR windows scan: $($s.raw_score) clean, weighted $($s.weighted_score)/100 ($($s.errored) errored, $($s.skipped) skipped)")

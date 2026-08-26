@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import json
 
-from hydra_cli import __main__ as cli_main
-from hydra_cli.__main__ import main
+from perdedor_cli import __main__ as cli_main
+from perdedor_cli.__main__ import main
 
 
 def test_test_linux_writes_schema_valid_json(tmp_path) -> None:
@@ -27,10 +27,30 @@ def test_test_linux_default_output_is_human_readable_text(capsys) -> None:
     exit_code = main(["test", "linux", "--no-color"])
     assert exit_code == 0
     out = capsys.readouterr().out
-    assert "HYDRA -- Linux Sandbox-Evasion Self-Test" in out
+    assert "PERDEDOR -- Linux Sandbox-Evasion Self-Test" in out
     assert "Score:" in out
     # human-readable mode must not just be JSON on stdout
     assert not out.strip().startswith("{")
+
+
+def test_test_linux_shows_splash_banner_before_the_report(capsys) -> None:
+    exit_code = main(["test", "linux", "--no-color"])
+    assert exit_code == 0
+    out = capsys.readouterr().out
+    assert "Sandbox-Evasion Self-Test Suite" in out
+    # the banner must appear before the report, not after
+    assert out.index("Self-Test Suite") < out.index("Score:")
+
+
+def test_test_linux_json_flag_never_shows_the_banner(capsys) -> None:
+    """--json must keep stdout as pure JSON -- the decorative splash banner
+    is exactly the kind of stray text that would break a caller piping
+    stdout straight into a JSON parser (see the Write-Host stdout-pollution
+    bug case study for why this discipline matters)."""
+    exit_code = main(["test", "linux", "--json"])
+    assert exit_code == 0
+    report = json.loads(capsys.readouterr().out)
+    assert report["platform"] == "linux"
 
 
 def test_test_linux_json_flag_prints_raw_json(capsys) -> None:
@@ -71,7 +91,7 @@ def test_report_aggregates_multiple_platforms(tmp_path) -> None:
     )
     assert exit_code == 0
     assert html_output.exists()
-    assert "HYDRA Unified Evasion-Probe Report" in html_output.read_text(encoding="utf-8")
+    assert "PERDEDOR Unified Evasion-Probe Report" in html_output.read_text(encoding="utf-8")
 
     aggregate = json.loads(json_output.read_text(encoding="utf-8"))
     assert set(aggregate["platforms"]) == {"linux", "android"}
@@ -84,7 +104,7 @@ def test_report_rejects_malformed_input(tmp_path, capsys) -> None:
 
     exit_code = main(["report", str(bad_report), "-o", str(tmp_path / "out.html")])
     assert exit_code == 1
-    assert "does not match the HYDRA schema" in capsys.readouterr().err
+    assert "does not match the PERDEDOR schema" in capsys.readouterr().err
 
 
 def test_report_rejects_missing_file(tmp_path, capsys) -> None:
@@ -94,7 +114,7 @@ def test_report_rejects_missing_file(tmp_path, capsys) -> None:
 
 
 def test_test_windows_reports_clear_error_when_pwsh_missing(monkeypatch, capsys) -> None:
-    """`hydra test windows` only runs the Windows platform's checks (never
+    """`perdedor test windows` only runs the Windows platform's checks (never
     falling back to another platform's suite) -- when the pwsh prerequisite
     is missing it must fail loudly with actionable guidance, not silently
     report an empty/wrong-platform result."""
