@@ -12,8 +12,8 @@ from __future__ import annotations
 import time
 from pathlib import Path
 
-from hydra_common import FindingFactory
-from hydra_common.models import Category, Finding, Platform, Severity
+from perdedor_common import FindingFactory
+from perdedor_common.models import Category, Finding, Platform, Severity
 
 from .. import utils
 

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from hydra_android import adb
-from hydra_android.checks import design, environment
+from perdedor_android import adb
+from perdedor_android.checks import design, environment
 
 
 def test_qemu_kernel_flag_reports_error_when_device_unreachable(monkeypatch) -> None:
@@ -55,7 +55,7 @@ def test_build_fingerprint_errors_when_adb_unreachable(monkeypatch) -> None:
 
 def test_cpu_abi_detects_x86(monkeypatch) -> None:
     """No Pafish/al-khaser/VMAware equivalent exists for this check -- it's
-    HYDRA-original. An x86/x86_64 ABI means any ARM-only payload needs a
+    PERDEDOR-original. An x86/x86_64 ABI means any ARM-only payload needs a
     translation layer (libhoudini) to run at all, which is itself a tell."""
     monkeypatch.setattr(adb, "getprop", lambda serial, prop: "x86_64")
     finding = environment.check_cpu_abi(serial=None)

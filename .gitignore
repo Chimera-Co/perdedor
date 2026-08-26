@@ -64,7 +64,7 @@ __pycache__/
 build/
 dist/
 
-# HYDRA scan output (analyst-run, not source)
+# PERDEDOR scan output (analyst-run, not source)
 reports/*.json
 reports/*.html
 !reports/.gitkeep

@@ -1,7 +1,7 @@
 """Known Android emulator/sandbox signatures, per CHIMERA Ch.3.3
 (Android-Specific Evasion Landscape). No public Pafish/al-khaser/VMAware
-equivalent exists for Android -- this is the gap HYDRA itself was proposed
-to close (CHIMERA synopsis, Introduction), so this list is HYDRA-original
+equivalent exists for Android -- this is the gap PERDEDOR itself was proposed
+to close (CHIMERA synopsis, Introduction), so this list is PERDEDOR-original
 rather than ported from an upstream tool. See docs/CHECK_COVERAGE.md.
 """
 
