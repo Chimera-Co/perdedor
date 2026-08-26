@@ -1,9 +1,9 @@
 """Category 4 (Ch.3.2.4): design-choice / platform-specific detection.
 
 Not virtualisation-in-general, but quirks specific to *this* analysis
-platform's known tells -- exactly the category HYDRA itself exists to keep
+platform's known tells -- exactly the category PERDEDOR itself exists to keep
 current on (CHIMERA Ch.3.2.4: "a CHIMERA-specific instance of this problem
-is exactly what HYDRA is intended to continuously check for"). Covers
+is exactly what PERDEDOR is intended to continuously check for"). Covers
 al-khaser's "Analysis Tools" section and a Linux-native reading of its
 username/hostname blacklist.
 """
@@ -15,8 +15,8 @@ import re
 import socket
 from pathlib import Path
 
-from hydra_common import FindingFactory
-from hydra_common.models import Category, Finding, Platform, Severity
+from perdedor_common import FindingFactory
+from perdedor_common.models import Category, Finding, Platform, Severity
 
 from .. import signatures, utils
 

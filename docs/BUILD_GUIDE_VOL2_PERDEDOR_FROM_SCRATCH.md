@@ -1,5 +1,5 @@
-# HYDRA Build Guide — Volume 2: The Complete Source, Line by Line
-### Every file in the HYDRA repository, explained well enough to rebuild the whole project from an empty folder
+# PERDEDOR Build Guide — Volume 2: The Complete Source, Line by Line
+### Every file in the PERDEDOR repository, explained well enough to rebuild the whole project from an empty folder
 
 ---
 
@@ -11,9 +11,9 @@ fundamentals, Python, PowerShell, C, computer architecture, virtualization,
 malware analysis, and everything else — that this document assumes you
 already know. If a term here feels unfamiliar, it is defined in Volume 1's
 glossary (its Chapter 21); this volume does not re-explain general
-concepts, only HYDRA's specific application of them.
+concepts, only PERDEDOR's specific application of them.
 
-**How this document is organized:** it walks through the HYDRA repository
+**How this document is organized:** it walks through the PERDEDOR repository
 in the order a new contributor would naturally explore it — starting from
 the schema (the one thing every other file agrees on), through the shared
 Python library, then each of the three platform agents in turn, then the
@@ -35,33 +35,33 @@ X changed" is a more valuable skill than re-deriving it from scratch every
 time.
 
 **A note on accuracy:** every code excerpt in this document is copied
-directly from the real, current HYDRA source tree at the time this volume
+directly from the real, current PERDEDOR source tree at the time this volume
 was written. If you're reading this alongside a checkout of the repository,
 the file paths given (relative to the repository root, e.g.
-`common/python/hydra_common/models.py`) are exact.
+`common/python/perdedor_common/models.py`) are exact.
 
 ### Table of Contents
 
 1. Repository Tour
 2. The JSON Schema, Line by Line
-3. `hydra_common` — The Shared Library, Line by Line
+3. `perdedor_common` — The Shared Library, Line by Line
 4. `pyproject.toml` and Packaging, Explained
 5. The Linux Agent, Part 1: The Native C Helper
 6. The Linux Agent, Part 2: `cpu.py`, `signatures.py`, `utils.py`
 7. The Linux Agent, Part 3: The Check Modules
 8. The Linux Agent, Part 4: `runner.py`, `__main__.py`, Wiring It Together
-9. The Windows Agent, Part 1: `Hydra.Common.psm1` and `Signatures.ps1`
+9. The Windows Agent, Part 1: `Perdedor.Common.psm1` and `Signatures.ps1`
 10. The Windows Agent, Part 2: The Probe Modules
-11. The Windows Agent, Part 3: `Invoke-Hydra.ps1`, the Entry Point
+11. The Windows Agent, Part 3: `Invoke-Perdedor.ps1`, the Entry Point
 12. The Android Agent, Part 1: `adb.py` and `signatures.py`
 13. The Android Agent, Part 2: The Check Modules
 14. The Android Agent, Part 3: `runner.py`, `__main__.py`
-15. The CLI: `cli/hydra_cli/__main__.py`, Line by Line
+15. The CLI: `cli/perdedor_cli/__main__.py`, Line by Line
 16. The Tests, File by File
-17. End-to-End Trace: What Actually Happens When You Run `hydra test linux`
+17. End-to-End Trace: What Actually Happens When You Run `perdedor test linux`
 18. Case Studies: Six Real Bugs Caught During Development
 19. Rebuild It Yourself: A Step-by-Step Guide From an Empty Folder
-20. How to Extend HYDRA Yourself
+20. How to Extend PERDEDOR Yourself
 21. Final Checklist
 
 ---
@@ -72,19 +72,19 @@ Here is the complete file layout, with a one-line purpose for every file —
 your map for the rest of this document.
 
 ```
-hydra/
+perdedor/
 ├── README.md                          top-level overview and quick start
 ├── pyproject.toml                     Python packaging/build configuration
 ├── .gitignore                         files Git should never track
 │
 ├── schema/
-│   └── hydra-report.schema.json       the one shape every agent's output must match
+│   └── perdedor-report.schema.json       the one shape every agent's output must match
 │
 ├── docs/
 │   ├── ARCHITECTURE.md                design principles and component map
 │   └── CHECK_COVERAGE.md              per-check mapping to Pafish/al-khaser/VMAware
 │
-├── common/python/hydra_common/        shared Python library, used by every Python agent + the CLI
+├── common/python/perdedor_common/        shared Python library, used by every Python agent + the CLI
 │   ├── __init__.py                    the package's public exports
 │   ├── models.py                      Category/Platform/Status/Severity enums, Finding, PlatformReport
 │   ├── scoring.py                     severity-weighted scoring formula
@@ -99,9 +99,9 @@ hydra/
 │   │   ├── native/
 │   │   │   ├── cpuid_rdtsc.c          tiny C helper: the only way to reach CPUID/RDTSC from this agent
 │   │   │   └── Makefile               builds cpuid_rdtsc.c into the cpuid_rdtsc binary
-│   │   └── hydra_linux/
+│   │   └── perdedor_linux/
 │   │       ├── __init__.py
-│   │       ├── __main__.py            `python -m hydra_linux` entry point
+│   │       ├── __main__.py            `python -m perdedor_linux` entry point
 │   │       ├── runner.py              runs every check module, assembles one PlatformReport
 │   │       ├── cpu.py                 Python wrapper around the native helper (CPUID/RDTSC access)
 │   │       ├── signatures.py          known hypervisor/VM/sandbox identity signatures
@@ -115,9 +115,9 @@ hydra/
 │   │
 │   ├── windows/
 │   │   ├── README.md
-│   │   ├── Invoke-Hydra.ps1           entry point: `pwsh -File Invoke-Hydra.ps1`
+│   │   ├── Invoke-Perdedor.ps1           entry point: `pwsh -File Invoke-Perdedor.ps1`
 │   │   ├── common/
-│   │   │   ├── Hydra.Common.psm1      Finding/report construction + scoring, mirrors hydra_common
+│   │   │   ├── Perdedor.Common.psm1      Finding/report construction + scoring, mirrors perdedor_common
 │   │   │   └── Signatures.ps1         known hypervisor/VM/sandbox identity signatures (Windows-specific)
 │   │   └── probes/
 │   │       ├── Environment.ps1        category 1 checks
@@ -127,12 +127,12 @@ hydra/
 │   │
 │   └── android/
 │       ├── README.md
-│       └── hydra_android/
+│       └── perdedor_android/
 │           ├── __init__.py
-│           ├── __main__.py            `python -m hydra_android` entry point
+│           ├── __main__.py            `python -m perdedor_android` entry point
 │           ├── runner.py              runs every check module, assembles one PlatformReport
 │           ├── adb.py                 thin wrapper around the `adb` command
-│           ├── signatures.py          known Android emulator identity signatures (HYDRA-original)
+│           ├── signatures.py          known Android emulator identity signatures (PERDEDOR-original)
 │           └── checks/
 │               ├── __init__.py
 │               ├── environment.py     category 1 checks
@@ -140,25 +140,25 @@ hydra/
 │               ├── behavioural.py     category 3 checks
 │               └── design.py          category 4 checks
 │
-├── cli/hydra_cli/
-│   └── __main__.py                    the `hydra` command: `hydra test <platform>` / `hydra report`
+├── cli/perdedor_cli/
+│   └── __main__.py                    the `perdedor` command: `perdedor test <platform>` / `perdedor report`
 │
 └── tests/
-    ├── test_common.py                 tests for hydra_common (models, scoring, validation, report, FindingFactory)
+    ├── test_common.py                 tests for perdedor_common (models, scoring, validation, report, FindingFactory)
     ├── test_linux_agent.py            tests for Linux-specific logic + regression tests
     ├── test_windows_agent_report.py   integration test: runs the real pwsh agent, validates output
     ├── test_android_agent.py          tests for Android-specific logic + regression tests
-    └── test_cli.py                    end-to-end tests for the `hydra` command itself
+    └── test_cli.py                    end-to-end tests for the `perdedor` command itself
 ```
 
 **Why this specific layout?** Three independent design decisions, each
 traceable to a concept from Volume 1:
 
-1. **`hydra_common` is separate from every agent.** Only the *Python*
+1. **`perdedor_common` is separate from every agent.** Only the *Python*
    agents (Linux, Android) and the CLI can literally `import` it (Volume
    1, §4.9) — PowerShell cannot import a Python module at all. This is why
    the Windows agent has its own, independent (but carefully kept
-   equivalent) `Hydra.Common.psm1`, rather than somehow sharing code
+   equivalent) `Perdedor.Common.psm1`, rather than somehow sharing code
    directly with the Python side. The JSON Schema (Chapter 2, below) is
    what actually keeps the two independent implementations honest against
    each other, not shared code.
@@ -176,7 +176,7 @@ traceable to a concept from Volume 1:
 
 ## Chapter 2: The JSON Schema, Line by Line
 
-**File:** `schema/hydra-report.schema.json`
+**File:** `schema/perdedor-report.schema.json`
 
 This is the single most important file in the entire project — the one
 document every other file, in every language, is written to agree with.
@@ -187,9 +187,9 @@ means every agent's code you read afterward will make sense in terms of
 ```json
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://hydra.chimera.local/schema/hydra-report.schema.json",
-  "title": "HYDRA Platform Report",
-  "description": "Unified report format emitted by every HYDRA agent (Windows, Linux, Android). One suite, one schema, three platforms.",
+  "$id": "https://perdedor.chimera.local/schema/perdedor-report.schema.json",
+  "title": "PERDEDOR Platform Report",
+  "description": "Unified report format emitted by every PERDEDOR agent (Windows, Linux, Android). One suite, one schema, three platforms.",
   "type": "object",
 ```
 
@@ -200,11 +200,11 @@ avoids ambiguity). `$id` is a unique identifying URL for this schema — it
 does not need to be a real, fetchable web address (and isn't, here); it
 just needs to be a globally unique name. `title`/`description` are
 human-readable documentation, ignored by validators. `"type": "object"`
-is the first real rule: a valid HYDRA report must be a JSON object (Volume
+is the first real rule: a valid PERDEDOR report must be a JSON object (Volume
 1, §9.1) — not an array, not a bare string, at the top level.
 
 ```json
-  "required": ["hydra_version", "platform", "hostname", "generated_at", "findings", "summary"],
+  "required": ["perdedor_version", "platform", "hostname", "generated_at", "findings", "summary"],
   "additionalProperties": false,
 ```
 
@@ -220,7 +220,7 @@ unnoticed.
 
 ```json
   "properties": {
-    "hydra_version": { "type": "string" },
+    "perdedor_version": { "type": "string" },
     "platform": { "type": "string", "enum": ["windows", "linux", "android"] },
     "hostname": { "type": "string" },
     "generated_at": { "type": "string", "format": "date-time" },
@@ -238,7 +238,7 @@ unnoticed.
 ```
 
 Each top-level field's rule, one at a time:
-- `hydra_version` — any string (the project's own version number, e.g.
+- `perdedor_version` — any string (the project's own version number, e.g.
   `"0.1.0"`).
 - `platform` — a string, but constrained by `"enum"` to be *exactly* one
   of the three listed values — this is JSON Schema's equivalent of
@@ -350,7 +350,7 @@ has `remediation` but not `error_detail`; an `error` finding has
 Notice that the schema *cannot* fully express "error_detail must be
 non-null when status is 'error'" — that's a rule *across* two different
 fields, which basic JSON Schema's per-field `properties` block has no way
-to state. This exact gap is why HYDRA's own validator (Chapter 3.3, below)
+to state. This exact gap is why PERDEDOR's own validator (Chapter 3.3, below)
 adds one specific extra check beyond what the schema file alone captures.
 
 ```json
@@ -372,7 +372,7 @@ adds one specific extra check beyond what the schema file alone captures.
           "type": "number",
           "minimum": 0,
           "maximum": 100,
-          "description": "Severity-weighted cleanliness score 0-100 (100 = nothing detected). See hydra_common.scoring."
+          "description": "Severity-weighted cleanliness score 0-100 (100 = nothing detected). See perdedor_common.scoring."
         }
       }
     }
@@ -389,17 +389,17 @@ is a number, additionally bounded between 0 and 100 inclusive, matching
 exactly the range the scoring formula (Chapter 3.2, below) is designed to
 produce.
 
-## Chapter 3: `hydra_common` — The Shared Library, Line by Line
+## Chapter 3: `perdedor_common` — The Shared Library, Line by Line
 
 ### 3.1 `models.py` — the data model
 
-**File:** `common/python/hydra_common/models.py`
+**File:** `common/python/perdedor_common/models.py`
 
 ```python
-"""Shared data model for every HYDRA agent.
+"""Shared data model for every PERDEDOR agent.
 
 This module is the single source of truth for the report shape described in
-schema/hydra-report.schema.json. Windows, Linux, and Android agents that are
+schema/perdedor-report.schema.json. Windows, Linux, and Android agents that are
 written in Python import this directly; the PowerShell agent emits matching
 JSON by hand (see agents/windows/README.md) since it cannot import Python.
 """
@@ -429,7 +429,7 @@ top of essentially every `.py` file in this project; it's boilerplate
 worth recognizing but not worth dwelling on.
 
 `import platform as _platform` — Python's own *built-in* `platform` module
-(unrelated to HYDRA's own `Platform` enum below, hence the leading
+(unrelated to PERDEDOR's own `Platform` enum below, hence the leading
 underscore rename to `_platform`, avoiding a naming collision) provides
 OS-identification helpers like `platform.system()` (returns `"Linux"`,
 `"Windows"`, `"Darwin"` for macOS, etc.).
@@ -489,7 +489,7 @@ class Finding:
     error_detail: str | None = None
 ```
 
-This is HYDRA's single most important class (Volume 1, §3.5) — the result
+This is PERDEDOR's single most important class (Volume 1, §3.5) — the result
 of running exactly one check. `@dataclass(frozen=True)` (Volume 1, §4.7)
 auto-generates `__init__` from these ten fields and makes every instance
 immutable after construction (Volume 1, §3.8/§18.2). Field order matters
@@ -497,7 +497,7 @@ here for one subtle reason: dataclasses require fields *with* a default
 value (`evidence`, `remediation`, `error_detail` — each defaulting to
 `None`) to come *after* every field *without* one — this is a plain
 Python language rule (mirroring how default-valued function parameters
-must come last, Volume 1, §3.4), not a HYDRA-specific design choice.
+must come last, Volume 1, §3.4), not a PERDEDOR-specific design choice.
 
 ```python
     def to_dict(self) -> dict:
@@ -538,7 +538,7 @@ class PlatformReport:
     platform: Platform
     findings: tuple[Finding, ...]
     hostname: str = field(default_factory=socket.gethostname)
-    hydra_version: str = "0.1.0"
+    perdedor_version: str = "0.1.0"
     generated_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     agent_metadata: dict[str, str] = field(default_factory=dict)
 ```
@@ -581,7 +581,7 @@ worth understanding precisely here:
         from .scoring import score_report  # local import avoids a cycle
 
         return {
-            "hydra_version": self.hydra_version,
+            "perdedor_version": self.perdedor_version,
             "platform": self.platform.value,
             "hostname": self.hostname,
             "generated_at": self.generated_at.isoformat(),
@@ -633,7 +633,7 @@ Chapter 8 shows exactly where the Linux agent's `runner.py` calls this.
 
 ### 3.2 `scoring.py` — the weighted scoring formula
 
-**File:** `common/python/hydra_common/scoring.py`
+**File:** `common/python/perdedor_common/scoring.py`
 
 ```python
 SEVERITY_WEIGHT: dict[Severity, float] = {
@@ -756,18 +756,18 @@ a very typical, harmless example of their limited precision in practice).
 
 ### 3.3 `validation.py` — the dependency-free schema validator
 
-**File:** `common/python/hydra_common/validation.py`
+**File:** `common/python/perdedor_common/validation.py`
 
 This module deliberately does **not** use the popular third-party
 `jsonschema` PyPI package (Volume 1, §4.12 covered `pip`/third-party
-packages) — its own docstring explains exactly why: HYDRA agents are
+packages) — its own docstring explains exactly why: PERDEDOR agents are
 meant to run inside isolated sandbox environments that might have no
 internet access to install anything, so the shared library stays
 dependency-free (standard-library only), and instead implements just
-the specific subset of validation logic HYDRA actually needs, by hand.
+the specific subset of validation logic PERDEDOR actually needs, by hand.
 
 ```python
-_REQUIRED_TOP = {"hydra_version", "platform", "hostname", "generated_at", "findings", "summary"}
+_REQUIRED_TOP = {"perdedor_version", "platform", "hostname", "generated_at", "findings", "summary"}
 _PLATFORMS = {"windows", "linux", "android"}
 _CATEGORIES = {"environment_artifact", "timing", "behavioural_interaction", "design_specific"}
 _STATUSES = {"clean", "detected", "error", "skipped"}
@@ -928,7 +928,7 @@ miscounted something.
 
 ### 3.4 `finding_factory.py` — the boilerplate reducer
 
-**File:** `common/python/hydra_common/finding_factory.py`
+**File:** `common/python/perdedor_common/finding_factory.py`
 
 This module exists purely for ergonomics: with dozens of checks per
 platform (Chapters 7, 13 will show ~37 on Linux, ~30 on Windows, ~22 on
@@ -1050,9 +1050,9 @@ nothing to fix.
 
 ### 3.5 `report.py` — multi-platform aggregation and HTML rendering
 
-**File:** `common/python/hydra_common/report.py`
+**File:** `common/python/perdedor_common/report.py`
 
-This is the module behind the `hydra report` CLI subcommand (Chapter 15
+This is the module behind the `perdedor report` CLI subcommand (Chapter 15
 covers the CLI itself) — combining multiple already-collected platform
 reports (Windows + Linux + Android, or any subset) into one unified view.
 
@@ -1193,10 +1193,10 @@ here" placeholder.
 
 ### 3.6 `text_format.py` — human-readable colored terminal output
 
-**File:** `common/python/hydra_common/text_format.py`
+**File:** `common/python/perdedor_common/text_format.py`
 
 This is what a user actually sees by default when running
-`hydra test <platform>` (without `--json`) — HYDRA's primary,
+`perdedor test <platform>` (without `--json`) — PERDEDOR's primary,
 CLI-native output format (Volume 1, §18.6 covered CLI design principles;
 this module is where that philosophy is realized concretely).
 
@@ -1247,7 +1247,7 @@ def render_platform_text(report: dict, *, use_color: bool | None = None, verbose
 
     s = report["summary"]
     lines: list[str] = []
-    lines.append(f"{_BOLD}HYDRA -- {report['platform'].capitalize()} Sandbox-Evasion Self-Test{_RESET}")
+    lines.append(f"{_BOLD}PERDEDOR -- {report['platform'].capitalize()} Sandbox-Evasion Self-Test{_RESET}")
     ...
     lines.append(
         f"Score: {_BOLD}{s['raw_score']}{_RESET} clean (applicable checks)"
@@ -1311,7 +1311,7 @@ independent output formats.
 
 ### 3.7 `__init__.py` — the package's public interface
 
-**File:** `common/python/hydra_common/__init__.py`
+**File:** `common/python/perdedor_common/__init__.py`
 
 ```python
 from .finding_factory import FindingFactory
@@ -1327,19 +1327,19 @@ __all__ = [
 __version__ = "0.1.0"
 ```
 
-This file is what makes `hydra_common` usable as `import hydra_common` /
-`from hydra_common import FindingFactory` (Volume 1, §4.9) from anywhere
+This file is what makes `perdedor_common` usable as `import perdedor_common` /
+`from perdedor_common import FindingFactory` (Volume 1, §4.9) from anywhere
 else in the project, rather than callers needing to know and write out
-the deeper, real internal path (`from hydra_common.finding_factory import
+the deeper, real internal path (`from perdedor_common.finding_factory import
 FindingFactory`) every time. It deliberately re-exports only a curated
 subset of names — the ones every check-module author actually needs day
 to day — leaving things like the internal `validate_report`/HTML-renderer
 functions reachable only via their own specific submodule
-(`from hydra_common.validation import validate_report`), signaling "this
+(`from perdedor_common.validation import validate_report`), signaling "this
 is a more specialized, less frequently needed piece of the library."
 `__all__` is a special, Python-recognized variable name that explicitly
 declares a module's public interface — among other effects, it controls
-exactly what `from hydra_common import *` (a wildcard import, generally
+exactly what `from perdedor_common import *` (a wildcard import, generally
 discouraged in most real code, but sometimes used in quick interactive
 exploration) would actually bring in.
 
@@ -1358,9 +1358,9 @@ pleasant to hand-edit as a config file, with sections marked by
 
 ```toml
 [project]
-name = "hydra"
+name = "perdedor"
 version = "0.1.0"
-description = "HYDRA: cross-platform sandbox-evasion self-test suite for CHIMERA (Windows, Linux, Android)"
+description = "PERDEDOR: cross-platform sandbox-evasion self-test suite for CHIMERA (Windows, Linux, Android)"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
@@ -1368,7 +1368,7 @@ dependencies = []
 ```
 
 `[project]` is the standardized core metadata block. `dependencies = []`
-— an empty list — states explicitly, formally, that HYDRA has *zero*
+— an empty list — states explicitly, formally, that PERDEDOR has *zero*
 required third-party packages (the same "stdlib-only" principle from
 §3.3, now declared at the project-configuration level, not just as a
 docstring comment). `requires-python = ">=3.10"` declares the minimum
@@ -1383,25 +1383,25 @@ module, are directly related).
 dev = ["pytest>=7", "black", "isort", "ruff"]
 ```
 
-Unlike `dependencies` (needed just to *run* HYDRA), `[project.optional-
+Unlike `dependencies` (needed just to *run* PERDEDOR), `[project.optional-
 dependencies]` declares packages only needed for *development* —
 `pytest` (Volume 1, §18.1), `black`/`isort`/`ruff` (Volume 1, §18.5).
 Installed on demand with `pip install -e ".[dev]"` (the `[dev]` suffix
 selects this specific optional group) — someone who only wants to *run*
-HYDRA, not develop it, never needs to install any of these four packages
+PERDEDOR, not develop it, never needs to install any of these four packages
 at all.
 
 ```toml
 [project.scripts]
-hydra = "hydra_cli.__main__:main"
+perdedor = "perdedor_cli.__main__:main"
 ```
 
-This is the specific configuration that makes the plain `hydra` command
+This is the specific configuration that makes the plain `perdedor` command
 (Chapter 15) exist at all, system-wide, after installation — it tells
 Python's packaging tooling "generate a small executable script named
-`hydra`, and have it import the `main` function from
-`hydra_cli.__main__` and call it" (this is called an **entry point**).
-This is precisely why `cli/hydra_cli/__main__.py`'s `main()` function
+`perdedor`, and have it import the `main` function from
+`perdedor_cli.__main__` and call it" (this is called an **entry point**).
+This is precisely why `cli/perdedor_cli/__main__.py`'s `main()` function
 (Chapter 15) has the exact structure it does — this line is what actually
 wires that function up to a real, typeable terminal command.
 
@@ -1411,8 +1411,8 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-package-dir = { "hydra_common" = "common/python/hydra_common", "hydra_linux" = "agents/linux/hydra_linux", "hydra_android" = "agents/android/hydra_android", "hydra_cli" = "cli/hydra_cli" }
-packages = ["hydra_common", "hydra_linux", "hydra_android", "hydra_cli"]
+package-dir = { "perdedor_common" = "common/python/perdedor_common", "perdedor_linux" = "agents/linux/perdedor_linux", "perdedor_android" = "agents/android/perdedor_android", "perdedor_cli" = "cli/perdedor_cli" }
+packages = ["perdedor_common", "perdedor_linux", "perdedor_android", "perdedor_cli"]
 ```
 
 `[build-system]` declares which tool actually performs the "build/
@@ -1421,13 +1421,13 @@ most widely used Python packaging tools. The `[tool.setuptools]`
 `package-dir` mapping is the single line that makes this project's
 somewhat unusual repository layout (Chapter 1) actually work as an
 installable Python package: by default, Python packaging tools expect
-every package to live directly under one common root folder — but HYDRA's
+every package to live directly under one common root folder — but PERDEDOR's
 real layout deliberately spreads its four Python packages across
 `common/python/`, `agents/linux/`, `agents/android/`, and `cli/`, for the
 organizational reasons Chapter 1 explained (grouping by platform/
 component, not flattening everything Python-related into one folder just
 because it's all Python). This mapping explicitly tells setuptools "when
-you see the *import name* `hydra_common`, its actual files live over
+you see the *import name* `perdedor_common`, its actual files live over
 here, at this specific different path" — one entry per package, resolving
 the mismatch between "how the project is organized for humans reading it"
 and "the flat namespace Python's own import system expects."
@@ -1602,7 +1602,7 @@ that actually issues the real `CPUID` instruction:
   registers with its answer.
 
 This one function is, quite literally, the single lowest-level piece of
-the entire HYDRA project — every CPUID-based check on Linux, no matter
+the entire PERDEDOR project — every CPUID-based check on Linux, no matter
 how many layers of Python wrap around it, ultimately bottoms out at these
 four lines of inline assembly.
 
@@ -1617,7 +1617,7 @@ static uint64_t rdtsc_now(void) {
 `RDTSC` (Volume 1, §10.4) is a *64-bit* value, but returned split across
 *two* separate 32-bit registers — `EDX` holds the high (more significant)
 32 bits, `EAX` holds the low 32 bits (this specific split is simply how
-the x86 instruction is architecturally defined to behave, not a HYDRA
+the x86 instruction is architecturally defined to behave, not a PERDEDOR
 design choice). `((uint64_t)hi << 32) | lo` reassembles the full 64-bit
 value: `(uint64_t)hi` first *widens* `hi` from 32 bits to 64 bits (a
 **cast**, Volume 1 §3.2's type concept applied explicitly — without this
@@ -1766,7 +1766,7 @@ study (Chapter 18) will cover in full.
 
 ### 6.1 `utils.py` — small, shared helpers
 
-**File:** `agents/linux/hydra_linux/utils.py`
+**File:** `agents/linux/perdedor_linux/utils.py`
 
 This is the smallest, most foundational file in the Linux agent — three
 tiny functions every single check module (Chapter 7) ultimately builds on.
@@ -1870,13 +1870,13 @@ one general "couldn't get an answer" outcome.
 
 ### 6.2 `signatures.py` — the known-vendor identity data
 
-**File:** `agents/linux/hydra_linux/signatures.py`
+**File:** `agents/linux/perdedor_linux/signatures.py`
 
 This file contains no logic at all — it's pure data: the actual
 hypervisor/VM-identity strings and values every Linux check compares
 against, kept entirely separate from the *checks themselves* (Chapter 7),
 which is a deliberate, meaningful separation of concerns (Volume 1, §3.6):
-updating or extending HYDRA's known-signature coverage (e.g. adding a
+updating or extending PERDEDOR's known-signature coverage (e.g. adding a
 newly-discovered VirtualBox DMI string) never requires touching any actual
 check *logic* — only this one data file.
 
@@ -1979,7 +1979,7 @@ each one consumed by its corresponding check function.
 
 ### 6.3 `cpu.py` — the Python wrapper around the native helper
 
-**File:** `agents/linux/hydra_linux/cpu.py`
+**File:** `agents/linux/perdedor_linux/cpu.py`
 
 This module is the bridge between the Python agent and the compiled C
 binary from Chapter 5 — every function in it either builds/locates that
@@ -1997,7 +1997,7 @@ _NOT_APPLICABLE_EXIT_CODE = 2
 Python variable holding the current module's own file path;
 `.resolve()` converts it to an absolute, fully-resolved path (following
 any symbolic links, collapsing any `..` segments); `.parent.parent` walks
-up two directory levels (from `hydra_linux/cpu.py` up to `hydra_linux/`,
+up two directory levels (from `perdedor_linux/cpu.py` up to `perdedor_linux/`,
 then up again to `agents/linux/`); `/ "native"` (pathlib's overloaded `/`
 operator, Volume 1 §4.10, joins path segments) arrives at
 `agents/linux/native/` — the exact directory containing the `Makefile`
@@ -2210,11 +2210,11 @@ new about each one, trusting you to recognize the now-familiar shape.
 
 ### 7.1 The skeleton, explained in full
 
-**File:** `agents/linux/hydra_linux/checks/environment.py`
+**File:** `agents/linux/perdedor_linux/checks/environment.py`
 
 ```python
-from hydra_common import FindingFactory
-from hydra_common.models import Category, Finding, Platform, Severity
+from perdedor_common import FindingFactory
+from perdedor_common.models import Category, Finding, Platform, Severity
 
 from .. import cpu, signatures, utils
 
@@ -2226,8 +2226,8 @@ _f = FindingFactory(category=_CATEGORY, platform=_PLATFORM)
 `from .. import cpu, signatures, utils` — the double-dot (`..`) is
 Python's **relative import** syntax (Volume 1, §4.9's import mechanism,
 extended): a single dot would mean "from the current package"
-(`hydra_linux.checks`), two dots means "from the parent package"
-(`hydra_linux` itself) — reaching `cpu.py`, `signatures.py`, `utils.py`,
+(`perdedor_linux.checks`), two dots means "from the parent package"
+(`perdedor_linux` itself) — reaching `cpu.py`, `signatures.py`, `utils.py`,
 the three files from Chapter 6, which all live one directory level up
 from this `checks/` folder. The three module-level constants — `_PLATFORM`,
 `_CATEGORY`, and, built from both of them, `_f` (the module's one
@@ -2349,7 +2349,7 @@ only what's genuinely different in each subsequent check.
 
 ### 7.3 `timing.py` — the two timing checks
 
-**File:** `agents/linux/hydra_linux/checks/timing.py`
+**File:** `agents/linux/perdedor_linux/checks/timing.py`
 
 ```python
 def check_uptime() -> Finding:
@@ -2395,8 +2395,8 @@ evidence.
 
 ### 7.4 `behavioural.py` and `design.py` — what's different
 
-**Files:** `agents/linux/hydra_linux/checks/behavioural.py`,
-`agents/linux/hydra_linux/checks/design.py`
+**Files:** `agents/linux/perdedor_linux/checks/behavioural.py`,
+`agents/linux/perdedor_linux/checks/design.py`
 
 These two files implement Volume 1's Chapter 15.3/15.4 categories exactly
 — `check_shell_history()` reads `~/.bash_history`/`~/.zsh_history` via
@@ -2430,7 +2430,7 @@ or less.
 
 ### 7.5 `checks/__init__.py` — wiring the four category modules together
 
-**File:** `agents/linux/hydra_linux/checks/__init__.py`
+**File:** `agents/linux/perdedor_linux/checks/__init__.py`
 
 ```python
 from . import behavioural, design, environment, timing
@@ -2450,13 +2450,13 @@ every category with one small, generic loop
 instead of needing four separate, hand-written, near-identical lines
 calling each category module by name individually. Adding a hypothetical
 fifth category to the whole project would require exactly one new line
-here (Chapter 20 covers extending HYDRA this way in more depth).
+here (Chapter 20 covers extending PERDEDOR this way in more depth).
 
 ## Chapter 8: The Linux Agent, Part 4: `runner.py`, `__main__.py`, Wiring It Together
 
 ### 8.1 `runner.py`
 
-**File:** `agents/linux/hydra_linux/runner.py`
+**File:** `agents/linux/perdedor_linux/runner.py`
 
 ```python
 def run_scan() -> PlatformReport:
@@ -2505,16 +2505,16 @@ architecture strings, gathered once, at report-assembly time.
 
 ### 8.2 `__main__.py`
 
-**File:** `agents/linux/hydra_linux/__main__.py`
+**File:** `agents/linux/perdedor_linux/__main__.py`
 
 The presence of a file literally named `__main__.py` inside the
-`hydra_linux` package is what makes `python3 -m hydra_linux` (Volume 1,
+`perdedor_linux` package is what makes `python3 -m perdedor_linux` (Volume 1,
 §4.12) work at all — Python specifically looks for this exact filename
 when run this way.
 
 ```python
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="hydra_linux")
+    parser = argparse.ArgumentParser(prog="perdedor_linux")
     parser.add_argument(
         "-o", "--output", type=str, default=None, help="write JSON report to this path instead of stdout"
     )
@@ -2532,7 +2532,7 @@ def main(argv: list[str] | None = None) -> int:
 
     summary = report["summary"]
     print(
-        f"HYDRA linux scan: {summary['raw_score']} clean, weighted {summary['weighted_score']}/100 "
+        f"PERDEDOR linux scan: {summary['raw_score']} clean, weighted {summary['weighted_score']}/100 "
         f"({summary['errored']} errored, {summary['skipped']} skipped)",
         file=sys.stderr,
     )
@@ -2582,18 +2582,18 @@ convention), and wrapping that return value in `SystemExit(...)` and
 become the process's real, observable exit code when the script finishes
 running.
 
-## Chapter 9: The Windows Agent, Part 1: `Hydra.Common.psm1` and `Signatures.ps1`
+## Chapter 9: The Windows Agent, Part 1: `Perdedor.Common.psm1` and `Signatures.ps1`
 
 The Windows agent is a complete, independent reimplementation of
-everything `hydra_common` (Chapter 3) provides — necessarily so, since
+everything `perdedor_common` (Chapter 3) provides — necessarily so, since
 PowerShell cannot `import` a Python module (Chapter 1 already explained
 why). This chapter shows exactly how each piece was rebuilt in PowerShell,
 kept deliberately equivalent to its Python counterpart field-for-field and
 formula-for-formula.
 
-### 9.1 `Hydra.Common.psm1`
+### 9.1 `Perdedor.Common.psm1`
 
-**File:** `agents/windows/common/Hydra.Common.psm1`
+**File:** `agents/windows/common/Perdedor.Common.psm1`
 
 A `.psm1` file is a **PowerShell module** (Volume 1, §3.6's module
 concept, PowerShell's specific file extension for it) — a collection of
@@ -2623,7 +2623,7 @@ and careful cross-checking — Chapter 18 discusses this kind of
 "synchronized twin implementation" risk as a general lesson).
 
 ```powershell
-function New-HydraFinding {
+function New-PerdedorFinding {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)][string]$Id,
@@ -2637,7 +2637,7 @@ function New-HydraFinding {
         $ErrorDetail = $null
     )
     if ($Status -eq 'error' -and [string]::IsNullOrEmpty($ErrorDetail)) {
-        throw "New-HydraFinding: status 'error' requires -ErrorDetail (check id: $Id)"
+        throw "New-PerdedorFinding: status 'error' requires -ErrorDetail (check id: $Id)"
     }
     [PSCustomObject]@{
         id            = $Id
@@ -2658,7 +2658,7 @@ of Python's `@dataclass(frozen=True)` construct that would be idiomatic
 to reach for here, so a constructor *function* returning a fresh, never-
 mutated-afterward object achieves the same practical immutability
 *outcome* (nothing in this codebase ever modifies a finding object after
-`New-HydraFinding` returns it) through discipline and convention, rather
+`New-PerdedorFinding` returns it) through discipline and convention, rather
 than a language-enforced guarantee.
 
 `[ValidateSet('environment_artifact', ...)]` is PowerShell's own built-in
@@ -2691,7 +2691,7 @@ argument to "" in PowerShell, which would silently drift from the schema's
 it faithfully."*
 
 ```powershell
-function Get-HydraSummary {
+function Get-PerdedorSummary {
     [CmdletBinding()]
     param([Parameter(Mandatory)][AllowEmptyCollection()][array]$Findings)
 
@@ -2736,11 +2736,11 @@ subsequent `.Count` call in that specific edge case) before `.Count`
 reads how many elements survived the filter.
 
 ```powershell
-function New-HydraBoolFinding {
+function New-PerdedorBoolFinding {
     ...
     $status = if ($IsDetected) { 'detected' } else { 'clean' }
     $effectiveRemediation = if ($IsDetected) { $Remediation } else { $null }
-    New-HydraFinding -Id $Id -Category $Category -Name $Name -Description $Description `
+    New-PerdedorFinding -Id $Id -Category $Category -Name $Name -Description $Description `
         -Status $status -Severity $Severity -Evidence $Evidence -Remediation $effectiveRemediation
 }
 ```
@@ -2753,13 +2753,13 @@ tend to favor plain functions taking explicit `-Category`/`-Name`
 parameters every call, over Python-style pre-bound objects — a genuine,
 idiomatic difference between the two languages' typical styles, not a
 functional one). The backtick `` ` `` at the end of the first
-`New-HydraFinding` line is PowerShell's **line-continuation** character —
+`New-PerdedorFinding` line is PowerShell's **line-continuation** character —
 purely a formatting device letting one long logical command span multiple
 physical lines for readability, with no effect on the command's actual
 behavior.
 
 ```powershell
-function Find-HydraSignature {
+function Find-PerdedorSignature {
     [CmdletBinding()]
     param([string]$Text, [Parameter(Mandatory)][array]$Signatures)
     if ([string]::IsNullOrWhiteSpace($Text)) { return $null }
@@ -2783,7 +2783,7 @@ about the letter 'I' that can trip up naive case-insensitive comparisons
 if the *culture-aware* lowercasing method were used instead).
 
 ```powershell
-Export-ModuleMember -Function New-HydraFinding, New-HydraBoolFinding, Get-HydraSummary, New-HydraReport, Find-HydraSignature
+Export-ModuleMember -Function New-PerdedorFinding, New-PerdedorBoolFinding, Get-PerdedorSummary, New-PerdedorReport, Find-PerdedorSignature
 ```
 
 The final line of the module: `Export-ModuleMember` explicitly declares
@@ -2804,7 +2804,7 @@ exactly what's wanted here, since this file's entire content is just
 `$Script:SomeName = @(...)` variable assignments meant to become directly
 visible to the probe files (Chapter 10) that dot-source it — not a
 self-contained module with its own function-exporting boundary the way
-`Hydra.Common.psm1` is.
+`Perdedor.Common.psm1` is.
 
 This file mirrors Chapter 6.2's Linux `signatures.py` closely for the
 signatures both platforms share (`DmiVendorSignatures`,
@@ -2857,18 +2857,18 @@ function Test-SmbiosVendor {
         $bios = Get-CimInstance -ClassName Win32_BIOS -ErrorAction Stop
     }
     catch {
-        return New-HydraFinding -Id $id -Category environment_artifact -Name $name -Description $description `
+        return New-PerdedorFinding -Id $id -Category environment_artifact -Name $name -Description $description `
             -Status error -Severity high -ErrorDetail "CIM query failed: $($_.Exception.Message)"
     }
 
     $candidates = @($cs.Manufacturer, $cs.Model, $bios.Manufacturer, $bios.Version, $bios.SerialNumber)
     $hit = $null
     foreach ($candidate in $candidates) {
-        $match = Find-HydraSignature -Text $candidate -Signatures $Script:DmiVendorSignatures
+        $match = Find-PerdedorSignature -Text $candidate -Signatures $Script:DmiVendorSignatures
         if ($match) { $hit = "$candidate (matched '$match')"; break }
     }
     $evidence = "CS.Manufacturer=$($cs.Manufacturer) CS.Model=$($cs.Model) BIOS.Manufacturer=$($bios.Manufacturer) BIOS.Version=$($bios.Version)"
-    New-HydraBoolFinding -Id $id -Category environment_artifact -Name $name -Description $description -Severity high `
+    New-PerdedorBoolFinding -Id $id -Category environment_artifact -Name $name -Description $description -Severity high `
         -IsDetected ([bool]$hit) -Evidence $evidence `
         -Remediation 'Override SMBIOS via libvirt <sysinfo> (or -smbios flags) to a real vendor identity.'
 }
@@ -2879,12 +2879,12 @@ This is the exact PowerShell equivalent of Chapter 7.1's Python
 declare identity, declare description, gather data (here, two
 `Get-CimInstance` calls — Volume 1, §6.7 — wrapped in a `try`/`catch`,
 Volume 1 §6.6, since a CIM query genuinely can fail), handle the failure
-case first (`catch { return New-HydraFinding -Status error ... }`), then
-compute and return the verdict (`New-HydraBoolFinding ... -IsDetected
+case first (`catch { return New-PerdedorFinding -Status error ... }`), then
+compute and return the verdict (`New-PerdedorBoolFinding ... -IsDetected
 ([bool]$hit)`). The one Windows-specific wrinkle worth calling out:
 `$candidates = @($cs.Manufacturer, $cs.Model, $bios.Manufacturer,
 $bios.Version, $bios.SerialNumber)` gathers *five* separate string
-fields and checks each one with `Find-HydraSignature` (Chapter 9.1) in a
+fields and checks each one with `Find-PerdedorSignature` (Chapter 9.1) in a
 `foreach` loop, `break`-ing as soon as the first match is found — directly
 mirroring the Linux agent's own multi-field DMI-scanning approach
 (Chapter 7.2's `_dmi_checks()`), just implemented as an explicit loop over
@@ -2902,15 +2902,15 @@ genuinely different from anything the Linux/Android agents do.
 
 **`Test-SmbiosFirmwareTableRaw`** (in `Environment.ps1`):
 ```powershell
-function Get-HydraFirmwareTableBytes {
+function Get-PerdedorFirmwareTableBytes {
     param([Parameter(Mandatory)][string]$Provider, [string]$TableId = '')
     try {
-        $providerSig = ConvertTo-HydraFirmwareSignature -Text $Provider
-        $tableSig = if ($TableId) { ConvertTo-HydraFirmwareSignature -Text $TableId } else { [uint32]0 }
-        $size = [Hydra.Firmware]::GetSystemFirmwareTable($providerSig, $tableSig, $null, 0)
+        $providerSig = ConvertTo-PerdedorFirmwareSignature -Text $Provider
+        $tableSig = if ($TableId) { ConvertTo-PerdedorFirmwareSignature -Text $TableId } else { [uint32]0 }
+        $size = [Perdedor.Firmware]::GetSystemFirmwareTable($providerSig, $tableSig, $null, 0)
         if ($size -eq 0) { return $null }
         $buffer = New-Object byte[] $size
-        $written = [Hydra.Firmware]::GetSystemFirmwareTable($providerSig, $tableSig, $buffer, $size)
+        $written = [Perdedor.Firmware]::GetSystemFirmwareTable($providerSig, $tableSig, $buffer, $size)
         if ($written -eq 0) { return $null }
         return $buffer
     }
@@ -2929,13 +2929,13 @@ $size`) and call the *same* function again, this time actually passing
 that buffer in, to receive the real firmware table data. `Test-
 SmbiosFirmwareTableRaw` itself then treats those raw bytes as plain ASCII
 text (`[System.Text.Encoding]::ASCII.GetString($buffer)`) and runs the
-exact same `Find-HydraSignature` substring search against it — this is
+exact same `Find-PerdedorSignature` substring search against it — this is
 the concrete implementation of Volume 1 §12.7's "read the raw table
 directly, bypassing the higher-level WMI layer entirely" technique.
 
 **`Test-DebuggerPresent` / `Test-RemoteDebuggerPresent`** (in
-`Design.ps1`): call `[Hydra.Debug]::IsDebuggerPresent()` and
-`[Hydra.Debug]::CheckRemoteDebuggerPresent($handle, [ref]$isPresent)`
+`Design.ps1`): call `[Perdedor.Debug]::IsDebuggerPresent()` and
+`[Perdedor.Debug]::CheckRemoteDebuggerPresent($handle, [ref]$isPresent)`
 directly (Volume 1, §16.4) — the `[ref]$isPresent` syntax is PowerShell's
 way of passing a variable **by reference** rather than by value (matching
 the underlying Win32 function's own signature, which expects a pointer to
@@ -2946,7 +2946,7 @@ function genuinely works that way).
 
 **`Test-WindowClassArtifacts`** (in `Design.ps1`): loops over
 `$Script:VmWindowClassNames` (Chapter 9.2) calling
-`[Hydra.Window]::FindWindow($className, $null)` for each one — passing
+`[Perdedor.Window]::FindWindow($className, $null)` for each one — passing
 `$null` for the second parameter (the window's *title text*) means "match
 by class name alone, regardless of title," and checking whether the
 returned handle is `[IntPtr]::Zero` (a null/invalid handle, .NET's
@@ -2984,12 +2984,12 @@ around `System.Drawing.Point` no longer being directly usable via
   reading `/sys/class/net/*/address` directly — different underlying data
   sources, identical detection *logic*.
 
-## Chapter 11: The Windows Agent, Part 3: `Invoke-Hydra.ps1`, the Entry Point
+## Chapter 11: The Windows Agent, Part 3: `Invoke-Perdedor.ps1`, the Entry Point
 
-**File:** `agents/windows/Invoke-Hydra.ps1`
+**File:** `agents/windows/Invoke-Perdedor.ps1`
 
 This is the single file a user actually runs (`pwsh -File Invoke-
-Hydra.ps1`) — the Windows agent's equivalent of Linux's `__main__.py`
+Perdedor.ps1`) — the Windows agent's equivalent of Linux's `__main__.py`
 (Chapter 8.2).
 
 ```powershell
@@ -3004,7 +3004,7 @@ $scriptRoot = $PSScriptRoot
 
 `param([string]$OutputPath)` at the very top of a `.ps1` file (before any
 other statement) declares this *entire script* as callable with named
-parameters, exactly like a function — `pwsh -File Invoke-Hydra.ps1
+parameters, exactly like a function — `pwsh -File Invoke-Perdedor.ps1
 -OutputPath C:\report.json` binds directly to this `$OutputPath`
 variable. `$ErrorActionPreference = 'Stop'` is a script-wide setting
 (distinct from, but conceptually related to, the per-cmdlet
@@ -3022,7 +3022,7 @@ own location, not the caller's current directory" problem, in the
 PowerShell-native way).
 
 ```powershell
-Import-Module (Join-Path $scriptRoot 'common/Hydra.Common.psm1') -Force
+Import-Module (Join-Path $scriptRoot 'common/Perdedor.Common.psm1') -Force
 . (Join-Path $scriptRoot 'common/Signatures.ps1')
 . (Join-Path $scriptRoot 'probes/Environment.ps1')
 . (Join-Path $scriptRoot 'probes/Timing.ps1')
@@ -3033,7 +3033,7 @@ Import-Module (Join-Path $scriptRoot 'common/Hydra.Common.psm1') -Force
 `Join-Path` builds a correct, OS-appropriate file path by combining two
 path segments (PowerShell's cross-platform equivalent of Python's
 `pathlib`'s `/` operator, Chapter 6.3). `Import-Module ... -Force` loads
-`Hydra.Common.psm1` as a real module (Chapter 9.1) — `-Force` ensures a
+`Perdedor.Common.psm1` as a real module (Chapter 9.1) — `-Force` ensures a
 fresh reload even if a module with the same name happened to already be
 loaded from a previous run in the same PowerShell session (relevant
 during iterative development/testing, where re-running the script
@@ -3057,7 +3057,7 @@ $findings += Invoke-TimingChecks
 $findings += Invoke-BehaviouralChecks
 $findings += Invoke-DesignChecks
 
-$report = New-HydraReport -Findings $findings
+$report = New-PerdedorReport -Findings $findings
 $json = $report | ConvertTo-Json -Depth 10
 ```
 
@@ -3070,7 +3070,7 @@ noting as a subtle but real difference from Python's list `.extend()`,
 Chapter 8.1, which mutates the existing list in place; PowerShell arrays
 are fixed-size under the hood, so `+=` on one is always secretly building
 a brand-new array each time, which is slightly less efficient for very
-large collections but functionally equivalent here, since HYDRA's total
+large collections but functionally equivalent here, since PERDEDOR's total
 finding count per platform is small, at most a few dozen) calls one
 category's `Invoke-XChecks` function (each defined at the bottom of its
 respective probe file, directly analogous to Python's per-module
@@ -3100,7 +3100,7 @@ else {
 }
 
 $s = $report.summary
-[Console]::Error.WriteLine("HYDRA windows scan: $($s.raw_score) clean, weighted $($s.weighted_score)/100 ($($s.errored) errored, $($s.skipped) skipped)")
+[Console]::Error.WriteLine("PERDEDOR windows scan: $($s.raw_score) clean, weighted $($s.weighted_score)/100 ($($s.errored) errored, $($s.skipped) skipped)")
 ```
 
 This is exactly Linux's `__main__.py` stdout/stderr discipline (Chapter
@@ -3124,7 +3124,7 @@ separation Volume 1 §5.6 described actually holds.
 
 ### 12.1 `adb.py` — the thin `adb` wrapper
 
-**File:** `agents/android/hydra_android/adb.py`
+**File:** `agents/android/perdedor_android/adb.py`
 
 Everything the Android agent does flows through this one small file — no
 check anywhere in this agent talks to a device except through these four
@@ -3237,10 +3237,10 @@ literal text, which this function then just string-compares against
 
 ### 12.2 `signatures.py`
 
-**File:** `agents/android/hydra_android/signatures.py`
+**File:** `agents/android/perdedor_android/signatures.py`
 
 As the module's own docstring states directly, this file is
-**HYDRA-original** — there is no upstream Pafish/al-khaser/VMAware
+**PERDEDOR-original** — there is no upstream Pafish/al-khaser/VMAware
 equivalent for any of it (Volume 1, §17.4/Chapter 15's Android
 discussion). Its tables map directly onto the Android-specific concepts
 from Volume 1 §11.6: `BUILD_PROP_EMULATOR_SIGNATURES` (goldfish/ranchu/
@@ -3258,7 +3258,7 @@ it, Chapter 13).
 
 ### 13.1 `environment.py` — the `_prop_check` helper and the qemu-kernel-flag bug fix
 
-**File:** `agents/android/hydra_android/checks/environment.py`
+**File:** `agents/android/perdedor_android/checks/environment.py`
 
 ```python
 def _prop_check(
@@ -3301,7 +3301,7 @@ loop from Chapter 6.1 — worth noticing as a second, independently
 occurring way of expressing the exact same underlying idea, since the
 Android agent's own `signatures.py` doesn't actually reuse Linux's
 `utils.any_signature_in` (there is no shared code between the Linux and
-Android *Python* agents at all beyond `hydra_common` itself, by
+Android *Python* agents at all beyond `perdedor_common` itself, by
 deliberate design — Chapter 1 explained the boundary between what's
 genuinely shared vs. platform-specific).
 
@@ -3362,7 +3362,7 @@ collapsed, exactly the way the real, historical version of this bug did.
 
 ### 13.3 `behavioural.py` — parsing free-text `dumpsys` output
 
-**File:** `agents/android/hydra_android/checks/behavioural.py`
+**File:** `agents/android/perdedor_android/checks/behavioural.py`
 
 ```python
 def check_battery_plausibility(serial: str | None = None) -> Finding:
@@ -3415,7 +3415,7 @@ practice — self-caught, without needing an external reviewer to flag it.
 
 ### 13.4 `design.py` — the last of the four Android categories
 
-**File:** `agents/android/hydra_android/checks/design.py`
+**File:** `agents/android/perdedor_android/checks/design.py`
 
 - **`check_camera_feature()`** calls `adb.shell(serial, "pm list
   features")` (Volume 1, §11.6's package-manager concept) and checks
@@ -3441,7 +3441,7 @@ practice — self-caught, without needing an external reviewer to flag it.
 
 ### 14.1 `runner.py`
 
-**File:** `agents/android/hydra_android/runner.py`
+**File:** `agents/android/perdedor_android/runner.py`
 
 ```python
 def run_scan(serial: str | None = None) -> PlatformReport:
@@ -3483,7 +3483,7 @@ validate as `additionalProperties: { "type": "string" }`.
 
 ### 14.2 `__main__.py`
 
-**File:** `agents/android/hydra_android/__main__.py`
+**File:** `agents/android/perdedor_android/__main__.py`
 
 ```python
 if not adb.adb_binary_available():
@@ -3513,18 +3513,18 @@ in structure to Linux's `__main__.py` (Chapter 8.2), differing only in the
 one extra `-s`/`--serial` argparse flag this agent needs and Linux's does
 not.
 
-## Chapter 15: The CLI — `cli/hydra_cli/__main__.py`, Line by Line
+## Chapter 15: The CLI — `cli/perdedor_cli/__main__.py`, Line by Line
 
-**File:** `cli/hydra_cli/__main__.py`
+**File:** `cli/perdedor_cli/__main__.py`
 
-This is the file behind the literal `hydra` command (Chapter 4's
+This is the file behind the literal `perdedor` command (Chapter 4's
 `pyproject.toml` entry-point configuration is what wires it up) — the
 single point where a user's typed command actually becomes "run this one
 platform's agent and show me the result."
 
 ```python
 _REPO_ROOT = Path(__file__).resolve().parents[2]
-_WINDOWS_AGENT_SCRIPT = _REPO_ROOT / "agents" / "windows" / "Invoke-Hydra.ps1"
+_WINDOWS_AGENT_SCRIPT = _REPO_ROOT / "agents" / "windows" / "Invoke-Perdedor.ps1"
 
 _PLATFORMS = ("windows", "linux", "android")
 ```
@@ -3532,7 +3532,7 @@ _PLATFORMS = ("windows", "linux", "android")
 `.parents[2]` — `Path.parents` is an indexable sequence of every
 ancestor directory of a path, from nearest to furthest;
 `__file__.resolve().parents[2]` walks up exactly two levels from
-`cli/hydra_cli/__main__.py` (index `0` would be `cli/hydra_cli/`, index
+`cli/perdedor_cli/__main__.py` (index `0` would be `cli/perdedor_cli/`, index
 `1` would be `cli/`, index `2` reaches the true repository root) — the
 same "locate things relative to my own file, not the current working
 directory" technique from Chapters 6.3 and 11, applied once more here,
@@ -3619,10 +3619,10 @@ unpredictable, environment-specific behavior at worst.
 ```python
 def _run_agent(platform: str, serial: str | None) -> dict | None:
     if platform == "linux":
-        from hydra_linux.runner import run_scan
+        from perdedor_linux.runner import run_scan
         return run_scan().to_dict()
     if platform == "android":
-        from hydra_android.runner import run_scan
+        from perdedor_android.runner import run_scan
         return run_scan(serial).to_dict()
     if platform == "windows":
         return _run_windows_agent(serial)
@@ -3633,13 +3633,13 @@ This function is where "the user picked exactly one platform, and only
 that platform's checks run" (Volume 1's §18.6 explicit design
 requirement) is physically enforced in code — there is no branch here
 that runs more than one platform, and no fallback/auto-detection branch
-at all. The `import` statements for `hydra_linux`/`hydra_android` are
+at all. The `import` statements for `perdedor_linux`/`perdedor_android` are
 placed *inside* their respective `if` branches, rather than at the top of
 the file — this is a deliberate performance/robustness choice, not
-accidental: importing `hydra_linux` triggers, indirectly, the whole
+accidental: importing `perdedor_linux` triggers, indirectly, the whole
 Linux-agent module-loading chain (Chapter 7's check modules, which
 themselves reference `cpu.py`, Chapter 6.3), and there is no reason for
-running `hydra test windows` to pay that cost (or risk any Linux-specific
+running `perdedor test windows` to pay that cost (or risk any Linux-specific
 import-time failure) at all — each platform's real Python dependencies
 are only loaded, lazily, at the exact moment they're actually needed.
 `raise AssertionError(...)` for the "impossible" fourth case is a
@@ -3665,7 +3665,7 @@ def _cmd_test(args: argparse.Namespace) -> int:
     if args.json:
         print(json.dumps(report, indent=2))
     else:
-        from hydra_common.text_format import render_platform_text
+        from perdedor_common.text_format import render_platform_text
         use_color = None if not args.no_color else False
         print(render_platform_text(report, use_color=use_color, verbose=args.verbose))
 
@@ -3687,7 +3687,7 @@ whether the output happens to be a real terminal or not).
 
 ```python
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="hydra", description="...")
+    parser = argparse.ArgumentParser(prog="perdedor", description="...")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     test = subparsers.add_parser("test", help="test one sandbox platform against its full check suite and print a score")
@@ -3701,17 +3701,17 @@ def build_parser() -> argparse.ArgumentParser:
 ```
 
 `add_subparsers(dest="command", required=True)` sets up `argparse`'s
-built-in mechanism for a command that itself has *sub-commands* (`hydra
-test ...` vs. `hydra report ...` — a very common CLI pattern, seen in
+built-in mechanism for a command that itself has *sub-commands* (`perdedor
+test ...` vs. `perdedor report ...` — a very common CLI pattern, seen in
 tools like `git` (`git commit`, `git push`) or `docker` (`docker run`,
 `docker build`) — Volume 1's CLI discussion, §5/§18.6, didn't cover
 subparsers explicitly, but this is the standard `argparse` mechanism for
 building exactly this kind of two-level command structure).
-`required=True` means the bare command `hydra` with no subcommand at all
+`required=True` means the bare command `perdedor` with no subcommand at all
 is itself an error, forcing a user to always specify `test` or `report`.
 `test.add_argument("platform", choices=_PLATFORMS, ...)` — a **positional**
 argument (Volume 1, §5.3 — no leading dashes), and `choices=_PLATFORMS`
-is precisely what makes `hydra test macos` (or any value outside the
+is precisely what makes `perdedor test macos` (or any value outside the
 three legal platforms) fail immediately, with `argparse`'s own built-in
 clear error message, *before* `_run_agent` (above) is ever even reached —
 this is the actual, concrete enforcement point behind the "impossible"
@@ -3742,7 +3742,7 @@ corresponding handler function directly onto the parsed arguments
 themselves — so `args.func(args)` always calls exactly the right function
 for whichever subcommand was actually used, regardless of how many
 subcommands this CLI might grow to have in the future (Chapter 20 revisits
-this as part of "how to add a new subcommand" if HYDRA were extended
+this as part of "how to add a new subcommand" if PERDEDOR were extended
 further). `main(argv: list[str] | None = None)` — accepting an optional,
 explicit `argv` list (rather than always implicitly reading the real
 `sys.argv`) is precisely what makes this function directly, easily
@@ -3758,9 +3758,9 @@ suite is to run.
 
 Volume 1 §18.1 covered `pytest`, unit vs. integration tests, regression
 tests, and `monkeypatch`-based mocking conceptually. This chapter shows
-each of those ideas realized in HYDRA's actual test suite, file by file.
+each of those ideas realized in PERDEDOR's actual test suite, file by file.
 
-### 16.1 `test_common.py` — testing `hydra_common` in isolation
+### 16.1 `test_common.py` — testing `perdedor_common` in isolation
 
 ```python
 def _finding(status: Status, severity: Severity = Severity.MEDIUM, n: int = 0) -> Finding:
@@ -3822,7 +3822,7 @@ def test_platform_report_to_dict_round_trips_through_schema_shape() -> None:
     assert json.dumps(d)  # must be JSON-serialisable
 ```
 
-This test exercises three separate pieces of `hydra_common` together in
+This test exercises three separate pieces of `perdedor_common` together in
 one flow — `PlatformReport` construction (Chapter 3.1), `to_dict()`
 serialization, and `validate_report()` (Chapter 3.3) — verifying they
 actually agree with each other end-to-end, making it closer to an
@@ -3975,7 +3975,7 @@ def test_windows_agent_produces_schema_valid_report(tmp_path) -> None:
 This is the only test in the whole suite that genuinely runs a *real,
 external, compiled/interpreted program from a different language* — no
 mocking at all, the actual `pwsh` interpreter running the actual
-`Invoke-Hydra.ps1` script (Chapter 11) end to end, exactly as a real user
+`Invoke-Perdedor.ps1` script (Chapter 11) end to end, exactly as a real user
 would. `pytestmark = pytest.mark.skipif(shutil.which("pwsh") is None,
 ...)` — applying this special module-level variable makes `pytest`
 automatically skip *every* test in this file (rather than failing them)
@@ -4063,7 +4063,7 @@ def test_report_aggregates_multiple_platforms(tmp_path) -> None:
     exit_code = main(["report", str(linux_report), str(android_report), "-o", str(html_output), "--json", str(json_output)])
     assert exit_code == 0
     assert html_output.exists()
-    assert "HYDRA Unified Evasion-Probe Report" in html_output.read_text(encoding="utf-8")
+    assert "PERDEDOR Unified Evasion-Probe Report" in html_output.read_text(encoding="utf-8")
 
     aggregate = json.loads(json_output.read_text(encoding="utf-8"))
     assert set(aggregate["platforms"]) == {"linux", "android"}
@@ -4071,28 +4071,28 @@ def test_report_aggregates_multiple_platforms(tmp_path) -> None:
 ```
 
 This test is a genuine, full **end-to-end** exercise of the entire
-pipeline this whole project is built around: it runs `hydra test linux`
-for real, then `hydra test android` for real (no device attached, so
+pipeline this whole project is built around: it runs `perdedor test linux`
+for real, then `perdedor test android` for real (no device attached, so
 every Android finding will correctly come back as `error` — Chapter 14.2
 — but the report is still schema-valid, which is precisely the point),
 writes both real JSON files to a real temporary directory, then runs
-`hydra report` (Chapter 3.5's `aggregate_reports`/`render_html`) against
+`perdedor report` (Chapter 3.5's `aggregate_reports`/`render_html`) against
 both of them together, and finally verifies both the generated HTML
 file's presence/content *and* the generated aggregate JSON's structure —
 touching essentially every major piece of code covered across this entire
 volume, in one single test function.
 
-## Chapter 17: End-to-End Trace: What Actually Happens When You Run `hydra test linux`
+## Chapter 17: End-to-End Trace: What Actually Happens When You Run `perdedor test linux`
 
 This chapter ties every previous chapter together by tracing one single
 command, one step at a time, from keystroke to terminal output — pointing
 back to the exact file and chapter responsible for each step.
 
-1. **The shell finds the `hydra` command.** Because HYDRA was installed
+1. **The shell finds the `perdedor` command.** Because PERDEDOR was installed
    with `pip install -e .` (Volume 1, §4.12), a small generated script
-   named `hydra` exists somewhere on the system `PATH`, created from the
+   named `perdedor` exists somewhere on the system `PATH`, created from the
    `[project.scripts]` entry-point declaration (Chapter 4) — running it
-   ultimately calls `hydra_cli.__main__.main()`.
+   ultimately calls `perdedor_cli.__main__.main()`.
 2. **`main()` parses the command line.** `build_parser()` (Chapter 15)
    constructs the full `argparse` parser tree; `parser.parse_args(argv)`
    consumes `["test", "linux"]`, matches it against the `test` subparser,
@@ -4105,15 +4105,15 @@ back to the exact file and chapter responsible for each step.
    line, `return args.func(args)`, calls it.
 4. **`_cmd_test` calls `_run_agent("linux", None)`.** Matching the
    `if platform == "linux":` branch (Chapter 15), which lazily
-   `import`s `hydra_linux.runner` for the first time.
-5. **Importing `hydra_linux.runner` cascades through the whole Linux
+   `import`s `perdedor_linux.runner` for the first time.
+5. **Importing `perdedor_linux.runner` cascades through the whole Linux
    package.** Python's import machinery (Volume 1, §4.9) loads
-   `hydra_linux/__init__.py` (Chapter 8.2, trivial — just re-exports
+   `perdedor_linux/__init__.py` (Chapter 8.2, trivial — just re-exports
    `run_scan`), which needs `runner.py` (Chapter 8.1), which needs
-   `hydra_linux.checks` (`checks/__init__.py`, Chapter 7.5), which in turn
+   `perdedor_linux.checks` (`checks/__init__.py`, Chapter 7.5), which in turn
    imports all four category modules (`environment.py`, `timing.py`,
    `behavioural.py`, `design.py` — Chapter 7), each of which imports
-   `hydra_common` (Chapter 3, itself already loaded once and cached by
+   `perdedor_common` (Chapter 3, itself already loaded once and cached by
    Python for reuse), plus `cpu.py`, `signatures.py`, `utils.py`
    (Chapter 6).
 6. **`run_scan()` executes.** `for module in CHECK_MODULES:
@@ -4329,7 +4329,7 @@ fluke specific to CPUID binaries.
 Python-produced report instead correctly used JSON's genuine `null` for
 exactly this situation.
 
-**Root cause:** `New-HydraFinding`'s original parameter declarations
+**Root cause:** `New-PerdedorFinding`'s original parameter declarations
 used explicit `[string]$Remediation = $null` type constraints (Chapter
 9.1 covers the corrected version). PowerShell's parameter-binding system,
 when a parameter is explicitly typed, automatically attempts to *convert*
@@ -4355,7 +4355,7 @@ genuinely PowerShell-specific gotcha (Python's own type hints, Volume 1
 bug, for a completely different reason: they simply never touch runtime
 values at all) — a good, concrete reminder that every language has its
 own specific set of sharp edges, and porting a design from one language to
-another (Python's `Finding` dataclass to PowerShell's `New-HydraFinding`
+another (Python's `Finding` dataclass to PowerShell's `New-PerdedorFinding`
 function, here) requires understanding *both* languages' actual runtime
 behavior in detail, not just their surface-level syntax similarity.
 
@@ -4366,7 +4366,7 @@ behavior in detail, not just their surface-level syntax similarity.
 agent's JSON output at all, with a `json.JSONDecodeError` — even though
 the PowerShell script itself reported success.
 
-**Root cause:** an earlier version of `Invoke-Hydra.ps1` (Chapter 11) used
+**Root cause:** an earlier version of `Invoke-Perdedor.ps1` (Chapter 11) used
 PowerShell's `Write-Host` cmdlet for its status/summary messages ("Wrote
 report to ...", the final score summary). `Write-Host` looks, superficially,
 like an ordinary "print this to the screen" command — but it specifically
@@ -4457,7 +4457,7 @@ in advance.
 the project's own development, before it ever shipped, not in response to
 any observed failure.
 
-**Root cause:** an early draft of `agents/android/hydra_android/checks/
+**Root cause:** an early draft of `agents/android/perdedor_android/checks/
 behavioural.py` (Chapter 13.3) contained a small, genuinely redundant
 piece of code: a public `check_battery_temperature()` function whose
 entire body was just a single call to a differently-named, near-identical
@@ -4488,7 +4488,7 @@ rather than only as abstract rules stated in a style guide.
 
 This chapter is the payoff for everything before it: a concrete, ordered
 build sequence, starting from a genuinely empty directory, that arrives at
-the complete HYDRA project. Every step names the exact file(s) to create
+the complete PERDEDOR project. Every step names the exact file(s) to create
 and points back to the chapter that explains its full content — follow
 this order and every file you write will only ever depend on something
 you've *already* built, never something still ahead of you.
@@ -4499,7 +4499,7 @@ Volume 1 §7.3), and, if you want to test the Windows agent too,
 PowerShell 7+ (`pwsh`, installable on Linux/macOS/Windows alike — Volume
 1 §6.1). Create an empty directory and `git init` it (Volume 1, §8.2).
 
-**Step 1 — The schema first.** Create `schema/hydra-report.schema.json`
+**Step 1 — The schema first.** Create `schema/perdedor-report.schema.json`
 exactly as described in Chapter 2. This is deliberately the very first
 file, because every other file's *shape* is defined by it — writing any
 agent code before the schema exists would mean designing the shape
@@ -4509,13 +4509,13 @@ against.
 **Step 2 — The Python packaging skeleton.** Create `pyproject.toml`
 (Chapter 4) with the `[project]`, `[project.optional-dependencies]`,
 `[project.scripts]`, `[build-system]`, and `[tool.setuptools]` blocks —
-even though the packages it references (`hydra_common`, `hydra_linux`,
+even though the packages it references (`perdedor_common`, `perdedor_linux`,
 etc.) don't exist as real directories yet. This is fine: `pyproject.toml`
 is just configuration, read only when you actually try to `pip install`
 the project, which you won't do until Step 6.
 
-**Step 3 — `hydra_common`, the shared foundation.** Create
-`common/python/hydra_common/` and, in this exact internal order (each
+**Step 3 — `perdedor_common`, the shared foundation.** Create
+`common/python/perdedor_common/` and, in this exact internal order (each
 depends only on the ones before it):
 1. `models.py` (Chapter 3.1) — the four enums, `Finding`, `PlatformReport`.
 2. `scoring.py` (Chapter 3.2) — depends on `models.py`'s `Finding`/
@@ -4552,24 +4552,24 @@ outcome is correct and expected; what matters is confirming it behaves as
 designed before building the Python wrapper on top of it.
 
 **Step 5 — The rest of the Linux agent, bottom-up.** Inside
-`agents/linux/hydra_linux/`, in order:
+`agents/linux/perdedor_linux/`, in order:
 1. `utils.py` (Chapter 6.1) — no internal dependencies.
 2. `signatures.py` (Chapter 6.2) — pure data, no dependencies.
 3. `cpu.py` (Chapter 6.3) — depends on the native binary from Step 4.
 4. `checks/environment.py`, `checks/timing.py`, `checks/behavioural.py`,
-   `checks/design.py` (Chapter 7) — each depends on `hydra_common`
+   `checks/design.py` (Chapter 7) — each depends on `perdedor_common`
    (Step 3), plus `cpu.py`/`signatures.py`/`utils.py` as needed.
 5. `checks/__init__.py` (Chapter 7.5) — depends on all four check
    modules existing first.
 6. `runner.py` (Chapter 8.1) — depends on `checks/__init__.py`.
 7. `__main__.py` and `__init__.py` (Chapter 8.2) — depend on `runner.py`.
 
-**Verify Step 5:** `python3 -m hydra_linux` should now print a complete,
+**Verify Step 5:** `python3 -m perdedor_linux` should now print a complete,
 real, schema-valid JSON report of your own machine to the terminal.
 Write and run `tests/test_linux_agent.py` (Chapter 16.2) at this point.
 
 **Step 6 — The Android agent, in the same bottom-up order.** Inside
-`agents/android/hydra_android/`:
+`agents/android/perdedor_android/`:
 1. `adb.py` (Chapter 12.1).
 2. `signatures.py` (Chapter 12.2).
 3. `checks/environment.py`, `checks/timing.py`, `checks/behavioural.py`,
@@ -4577,7 +4577,7 @@ Write and run `tests/test_linux_agent.py` (Chapter 16.2) at this point.
 4. `checks/__init__.py`, `runner.py`, `__main__.py`, `__init__.py`
    (Chapter 14, mirroring Steps 5.5-5.7 exactly).
 
-**Verify Step 6:** `python3 -m hydra_android` (with or without a real
+**Verify Step 6:** `python3 -m perdedor_android` (with or without a real
 device/emulator attached — either way should produce a schema-valid
 report, per Chapter 14's design). Write and run `tests/test_android_agent.py`
 (Chapter 16.3).
@@ -4590,32 +4590,32 @@ subset sooner, or build it alongside the Python agents if you have
 `pwsh` available for continuous testing throughout. Inside
 `agents/windows/`:
 1. `common/Signatures.ps1` (Chapter 9.2) — pure data.
-2. `common/Hydra.Common.psm1` (Chapter 9.1) — depends on nothing but
+2. `common/Perdedor.Common.psm1` (Chapter 9.1) — depends on nothing but
    PowerShell/.NET itself.
 3. `probes/Environment.ps1`, `probes/Timing.ps1`,
    `probes/Behavioural.ps1`, `probes/Design.ps1` (Chapter 10) — each
-   depends on `Hydra.Common.psm1` and `Signatures.ps1` being dot-
+   depends on `Perdedor.Common.psm1` and `Signatures.ps1` being dot-
    sourced/imported first (handled by the entry point, next).
-4. `Invoke-Hydra.ps1` (Chapter 11) — the entry point tying everything
+4. `Invoke-Perdedor.ps1` (Chapter 11) — the entry point tying everything
    above together.
 
-**Verify Step 7:** `pwsh -File Invoke-Hydra.ps1` should print a complete,
+**Verify Step 7:** `pwsh -File Invoke-Perdedor.ps1` should print a complete,
 real, schema-valid JSON report — this works even on macOS/Linux, per
 Chapter 11's design, degrading Windows-only checks to `error`/`skipped`
 gracefully rather than crashing. Write and run
 `tests/test_windows_agent_report.py` (Chapter 16.4).
 
 **Step 8 — The CLI, tying every agent together.** Create
-`cli/hydra_cli/__main__.py` (Chapter 15) — this is deliberately one of
+`cli/perdedor_cli/__main__.py` (Chapter 15) — this is deliberately one of
 the *last* files written, since it depends on every agent (Steps 5-7)
 already existing and working independently first. Update
 `pyproject.toml`'s `package-dir`/`packages`/`[project.scripts]` entries
-(Chapter 4) to include `hydra_cli` if you hadn't already anticipated it
+(Chapter 4) to include `perdedor_cli` if you hadn't already anticipated it
 in Step 2.
 
 **Verify Step 8:** reinstall (`pip install -e ".[dev]"` again, to pick up
-the new `hydra` entry point) and run `hydra test linux`, `hydra test
-android`, and (if `pwsh` is available) `hydra test windows` — each should
+the new `perdedor` entry point) and run `perdedor test linux`, `perdedor test
+android`, and (if `pwsh` is available) `perdedor test windows` — each should
 produce the colored terminal summary described in Chapter 3.6. Write and
 run `tests/test_cli.py` (Chapter 16.5).
 
@@ -4628,7 +4628,7 @@ ruff check .
 ```
 All tests should pass; all three formatting/linting tools should report
 no issues (Volume 1, §18.5). This is the point at which you have a
-complete, working, tested reimplementation of the entire HYDRA project.
+complete, working, tested reimplementation of the entire PERDEDOR project.
 
 **Step 10 — Documentation.** Write `docs/ARCHITECTURE.md` and
 `docs/CHECK_COVERAGE.md`, and per-agent `README.md` files — not because
@@ -4636,9 +4636,9 @@ the *code* depends on them in any way, but because a project without
 documentation explaining *why* it's built the way it is quickly becomes
 much harder for anyone (including your own future self) to maintain or
 extend correctly — precisely the problem this two-volume document set
-itself was written to solve for HYDRA specifically.
+itself was written to solve for PERDEDOR specifically.
 
-## Chapter 20: How to Extend HYDRA Yourself
+## Chapter 20: How to Extend PERDEDOR Yourself
 
 Having rebuilt the project (Chapter 19), here is exactly how to extend it
 — each scenario points to the precise files you'd touch and the precise
@@ -4648,10 +4648,10 @@ the real codebase.
 ### 20.1 Adding a new check to an existing platform/category
 
 Say you want to add a new Linux `environment_artifact` check. Open
-`agents/linux/hydra_linux/checks/environment.py` (Chapter 7):
+`agents/linux/perdedor_linux/checks/environment.py` (Chapter 7):
 
 1. If your check needs new signature data, add it to
-   `agents/linux/hydra_linux/signatures.py` (Chapter 6.2) first — a new
+   `agents/linux/perdedor_linux/signatures.py` (Chapter 6.2) first — a new
    tuple or dict, following the existing naming convention.
 2. Write a new function following the exact five-part skeleton from
    Chapter 7.1: declare `check_id`/`name` (following the
@@ -4684,25 +4684,25 @@ you're writing it in (Chapter 10.1 for the PowerShell equivalent of step
 This is a bigger change, touching the schema (Chapter 2) — the single
 source of truth every other file depends on:
 
-1. Add the new category string to `schema/hydra-report.schema.json`'s
+1. Add the new category string to `schema/perdedor-report.schema.json`'s
    `category` enum (Chapter 2).
-2. Add the corresponding member to `Category` in `hydra_common/models.py`
+2. Add the corresponding member to `Category` in `perdedor_common/models.py`
    (Chapter 3.1) — Python side.
-3. Add it to `hydra_common/scoring.py` if the new category needs its own
+3. Add it to `perdedor_common/scoring.py` if the new category needs its own
    severity-weighting behavior (unlikely — `SEVERITY_WEIGHT`, Chapter 3.2,
    is already category-independent by design, weighting purely by
    severity regardless of category, so this step is usually a no-op).
-4. Add it to `hydra_common/validation.py`'s `_CATEGORIES` set (Chapter
+4. Add it to `perdedor_common/validation.py`'s `_CATEGORIES` set (Chapter
    3.3) — otherwise every report using the new category would
    immediately fail validation.
 5. Add the matching `[ValidateSet(...)]` entry in every PowerShell
-   function in `Hydra.Common.psm1` that currently lists all four
-   categories (Chapter 9.1) — there are two: `New-HydraFinding` and
-   `New-HydraBoolFinding`.
+   function in `Perdedor.Common.psm1` that currently lists all four
+   categories (Chapter 9.1) — there are two: `New-PerdedorFinding` and
+   `New-PerdedorBoolFinding`.
 6. Create the new `checks/<new_category>.py` (and `.ps1`) file in every
    platform you want to support it on, following Chapter 7.1's skeleton.
 7. Add the new module to every platform's `CHECK_MODULES` tuple (Chapter
-   7.5) and `Invoke-Hydra.ps1`'s `$findings +=` list (Chapter 11).
+   7.5) and `Invoke-Perdedor.ps1`'s `$findings +=` list (Chapter 11).
 8. Update `docs/ARCHITECTURE.md`'s category list (Volume 1, Chapter 15
    covers *why* the current four categories are the ones they are — a
    genuinely new category should have an equally clear, real technical
@@ -4729,7 +4729,7 @@ layout" reasoning) exactly:
    just code-structure copying" step Volume 1's Chapter 12/§17
    discussion of Pafish/al-khaser/VMAware's own platform-specific
    technique catalogs was really about).
-3. Wire the new agent into `cli/hydra_cli/__main__.py`'s `_PLATFORMS`
+3. Wire the new agent into `cli/perdedor_cli/__main__.py`'s `_PLATFORMS`
    tuple and `_run_agent()` dispatcher (Chapter 15) — exactly one new
    `if platform == "macos":` branch, mirroring the existing three.
 4. Write `tests/test_macos_agent.py` following the existing test files'
@@ -4763,11 +4763,11 @@ reach.
 - [ ] Explain the difference between a Type 1 and Type 2 hypervisor, and
   where KVM/QEMU fit into that distinction.
 - [ ] Explain why SMBIOS/DMI data is such a rich detection signal, and
-  why HYDRA's Windows agent reads it through two independent mechanisms.
+  why PERDEDOR's Windows agent reads it through two independent mechanisms.
 - [ ] List all four detection categories from memory, with two concrete
   example checks each.
 - [ ] Explain what Pafish, al-khaser, and VMAware each are, and precisely
-  what gap none of them close that HYDRA was built to close.
+  what gap none of them close that PERDEDOR was built to close.
 - [ ] Explain the difference between `error` and `skipped` status, and
   give a real example of each from the actual codebase.
 
@@ -4780,7 +4780,7 @@ reach.
 - [ ] Explain all seven real bugs from Chapter 18, in your own words,
   including root cause and fix for each.
 - [ ] Trace, from memory, everything that happens between typing
-  `hydra test linux` and seeing output, without re-reading Chapter 17.
+  `perdedor test linux` and seeing output, without re-reading Chapter 17.
 - [ ] Given an empty folder, rebuild the project's file structure and
   dependency order from memory, matching Chapter 19's sequence.
 
@@ -4796,7 +4796,7 @@ next project, too, whatever it turns out to be.
 
 **End of Volume 2, and of this two-volume set.** Between Volume 1's
 foundations and this volume's complete, line-by-line account of every
-file in the HYDRA repository, you now have everything needed to
+file in the PERDEDOR repository, you now have everything needed to
 understand, maintain, extend, and — if you ever needed to — rebuild this
 entire project from nothing, without consulting any other source. That
 was the goal from the first page. Go build something.

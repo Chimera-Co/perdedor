@@ -1,7 +1,7 @@
 <#
 .SYNOPSIS
     Known hypervisor/VM/sandbox identity signatures shared across Windows
-    checks. Mirrors agents/linux/hydra_linux/signatures.py where the same
+    checks. Mirrors agents/linux/perdedor_linux/signatures.py where the same
     concept applies to both platforms, and additionally carries the
     Windows-only registry/file/window-class catalogs that are the bulk of
     Pafish's and al-khaser's actual technique lists (see docs/CHECK_COVERAGE.md).

@@ -1,13 +1,13 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://hydra.chimera.local/schema/hydra-report.schema.json",
-  "title": "HYDRA Platform Report",
-  "description": "Unified report format emitted by every HYDRA agent (Windows, Linux, Android). One suite, one schema, three platforms.",
+  "$id": "https://perdedor.chimera.local/schema/perdedor-report.schema.json",
+  "title": "PERDEDOR Platform Report",
+  "description": "Unified report format emitted by every PERDEDOR agent (Windows, Linux, Android). One suite, one schema, three platforms.",
   "type": "object",
-  "required": ["hydra_version", "platform", "hostname", "generated_at", "findings", "summary"],
+  "required": ["perdedor_version", "platform", "hostname", "generated_at", "findings", "summary"],
   "additionalProperties": false,
   "properties": {
-    "hydra_version": { "type": "string" },
+    "perdedor_version": { "type": "string" },
     "platform": { "type": "string", "enum": ["windows", "linux", "android"] },
     "hostname": { "type": "string" },
     "generated_at": { "type": "string", "format": "date-time" },
@@ -83,7 +83,7 @@
           "type": "number",
           "minimum": 0,
           "maximum": 100,
-          "description": "Severity-weighted cleanliness score 0-100 (100 = nothing detected). See hydra_common.scoring."
+          "description": "Severity-weighted cleanliness score 0-100 (100 = nothing detected). See perdedor_common.scoring."
         }
       }
     }

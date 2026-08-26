@@ -16,10 +16,10 @@ import subprocess
 from pathlib import Path
 
 import pytest
-from hydra_common.validation import validate_report
+from perdedor_common.validation import validate_report
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
-_AGENT_SCRIPT = _REPO_ROOT / "agents" / "windows" / "Invoke-Hydra.ps1"
+_AGENT_SCRIPT = _REPO_ROOT / "agents" / "windows" / "Invoke-Perdedor.ps1"
 
 pytestmark = pytest.mark.skipif(shutil.which("pwsh") is None, reason="PowerShell 7 (pwsh) not installed")
 

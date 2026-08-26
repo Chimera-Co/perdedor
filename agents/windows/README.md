@@ -1,4 +1,4 @@
-# HYDRA Windows Agent
+# PERDEDOR Windows Agent
 
 Self-contained PowerShell 7 agent -- no external modules, no compilation.
 CPUID is read directly via the .NET `System.Runtime.Intrinsics.X86.X86Base`
@@ -8,8 +8,8 @@ helper is needed on this platform.
 ## Run
 
 ```powershell
-pwsh -File .\Invoke-Hydra.ps1                                   # prints JSON to stdout
-pwsh -File .\Invoke-Hydra.ps1 -OutputPath C:\hydra\report.json  # writes to a file
+pwsh -File .\Invoke-Perdedor.ps1                                   # prints JSON to stdout
+pwsh -File .\Invoke-Perdedor.ps1 -OutputPath C:\perdedor\report.json  # writes to a file
 ```
 
 Run from an elevated prompt inside the golden image itself, before it is
@@ -32,8 +32,8 @@ trap-flag single-stepping) are explicitly out of scope for this agent.
 
 ## Report format
 
-`common/Hydra.Common.psm1` builds the exact same JSON shape as
-`hydra_common` on the Python side (see `schema/hydra-report.schema.json`) --
+`common/Perdedor.Common.psm1` builds the exact same JSON shape as
+`perdedor_common` on the Python side (see `schema/perdedor-report.schema.json`) --
 verified by round-tripping a Windows-produced report through the Python
 validator in `tests/test_windows_agent_report.py`.
 

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from hydra_common.models import Finding, Platform, PlatformReport
+from perdedor_common.models import Finding, Platform, PlatformReport
 
 from .checks import CHECK_MODULES
 

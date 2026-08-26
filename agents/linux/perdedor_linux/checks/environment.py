@@ -11,8 +11,8 @@ import os
 import urllib.request
 from pathlib import Path
 
-from hydra_common import FindingFactory
-from hydra_common.models import Category, Finding, Platform, Severity
+from perdedor_common import FindingFactory
+from perdedor_common.models import Category, Finding, Platform, Severity
 
 from .. import cpu, signatures, utils
 

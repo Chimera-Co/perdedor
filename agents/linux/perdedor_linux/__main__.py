@@ -1,9 +1,9 @@
-"""Entry point: `python -m hydra_linux [-o output.json]`
+"""Entry point: `python -m perdedor_linux [-o output.json]`
 
 Runs every check and writes a schema-conformant JSON report. With no -o,
 prints to stdout so it can be piped straight off the guest, e.g.:
 
-    ssh sandbox-run 'python3 -m hydra_linux' > linux-report.json
+    ssh sandbox-run 'python3 -m perdedor_linux' > linux-report.json
 """
 
 from __future__ import annotations
@@ -16,7 +16,7 @@ from .runner import run_scan
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="hydra_linux")
+    parser = argparse.ArgumentParser(prog="perdedor_linux")
     parser.add_argument(
         "-o", "--output", type=str, default=None, help="write JSON report to this path instead of stdout"
     )
@@ -34,7 +34,7 @@ def main(argv: list[str] | None = None) -> int:
 
     summary = report["summary"]
     print(
-        f"HYDRA linux scan: {summary['raw_score']} clean, weighted {summary['weighted_score']}/100 "
+        f"PERDEDOR linux scan: {summary['raw_score']} clean, weighted {summary['weighted_score']}/100 "
         f"({summary['errored']} errored, {summary['skipped']} skipped)",
         file=sys.stderr,
     )

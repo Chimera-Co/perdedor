@@ -1,5 +1,5 @@
-# HYDRA Learning Guide — Volume 1: Foundations
-### From "I have never programmed before" to "I understand every concept behind HYDRA"
+# PERDEDOR Learning Guide — Volume 1: Foundations
+### From "I have never programmed before" to "I understand every concept behind PERDEDOR"
 
 ---
 
@@ -8,9 +8,9 @@
 This is Volume 1 of a two-volume set. It is written so that a person with
 **zero prior knowledge** of programming, operating systems, computer
 hardware, virtualization, or cybersecurity can read it start to finish and
-come out the other side understanding every single concept that the HYDRA
-project touches. Volume 2 (`BUILD_GUIDE_VOL2_HYDRA_FROM_SCRATCH.md`) then
-takes that foundation and walks through the *actual HYDRA source code*, line
+come out the other side understanding every single concept that the PERDEDOR
+project touches. Volume 2 (`BUILD_GUIDE_VOL2_PERDEDOR_FROM_SCRATCH.md`) then
+takes that foundation and walks through the *actual PERDEDOR source code*, line
 by line, so that after reading both volumes you could rebuild the entire
 project yourself from an empty folder.
 
@@ -27,7 +27,7 @@ Internals). If a chapter feels confusing, it is worth going back one or two
 chapters rather than pushing forward.
 
 **A note on depth:** this document goes deeper than a typical "intro to
-programming" tutorial on purpose. HYDRA is a security tool that pokes at the
+programming" tutorial on purpose. PERDEDOR is a security tool that pokes at the
 lowest levels of a computer — CPU instructions, firmware tables, kernel
 modules — so a shallow explanation would leave you unable to understand why
 the tool works. Take your time. There is no exam and no deadline.
@@ -52,8 +52,8 @@ the tool works. Take your time. There is no exam and no deadline.
 16. Reverse Engineering and Debugging Basics
 17. The Prior Art: Pafish, al-khaser, and VMAware
 18. Security Engineering Practices Used in This Project
-19. Networking Basics Relevant to HYDRA
-20. Putting It All Together: How HYDRA's Design Falls Out of These Ideas
+19. Networking Basics Relevant to PERDEDOR
+20. Putting It All Together: How PERDEDOR's Design Falls Out of These Ideas
 21. Complete Glossary
 22. Suggested Study Plan
 
@@ -71,7 +71,7 @@ here to there") one at a time, extremely fast, and does exactly what each
 instruction says.
 
 Every program you have ever used — a web browser, a game, a word processor,
-and every tool inside HYDRA — is, underneath, nothing but a very long list
+and every tool inside PERDEDOR — is, underneath, nothing but a very long list
 of these simple instructions.
 
 ### 1.2 Bits and bytes
@@ -93,7 +93,7 @@ represent 2×2×2×2×2×2×2×2 = 256 different values (0 through 255).
 Bytes are, in turn, grouped into larger units:
 - **Kilobyte (KB)** ≈ 1,000 bytes (technically 1,024 in most computing
   contexts, because computers count in powers of 2, not powers of 10 — you
-  will see both 1000-based and 1024-based versions used; HYDRA's code uses
+  will see both 1000-based and 1024-based versions used; PERDEDOR's code uses
   1024-based units, often written **KiB**, **MiB**, **GiB** to be precise
   about this)
 - **Megabyte (MB / MiB)** ≈ 1,000 KB / 1,024 KiB
@@ -101,7 +101,7 @@ Bytes are, in turn, grouped into larger units:
   handful to a few dozen GiB of RAM, and a hundred or more GiB of storage
 - **Terabyte (TB / TiB)** ≈ 1,000 GB / 1,024 GiB
 
-You'll see these units throughout HYDRA's code — for example, one of its
+You'll see these units throughout PERDEDOR's code — for example, one of its
 checks flags a virtual machine that has suspiciously little RAM (`<= 4
 GiB`) or a suspiciously small disk (`<= 60 GiB`), because real, everyday
 laptops and desktops in current use tend to have more than that, while
@@ -125,7 +125,7 @@ byte (8 bits) — a nice, compact match. The number 255 (which is `11111111`
 in binary) is simply `ff` in hex. In code, hex numbers are usually written
 with a `0x` prefix, e.g. `0xff` or `0x40000000`.
 
-You will see hex numbers constantly in HYDRA's code, especially in the
+You will see hex numbers constantly in PERDEDOR's code, especially in the
 Linux and Windows agents' CPU-related checks — for example, the code asks
 the CPU for "CPUID leaf `0x40000000`" (explained fully in Chapter 10). That
 `0x40000000` is just a specific, agreed-upon number that both the CPU and
@@ -134,7 +134,7 @@ Hex is used instead of decimal here purely because it lines up so cleanly
 with bytes and makes patterns in the numbers easier for humans to spot.
 
 **Practical conversion tip:** you will never need to hand-convert between
-these systems while working with HYDRA — Python and PowerShell both do it
+these systems while working with PERDEDOR — Python and PowerShell both do it
 for you (e.g. Python's `hex(255)` returns `'0xff'`, and `int('ff', 16)`
 returns `255`). What matters is recognizing *that* a number is in hex (the
 `0x` prefix) and having a rough mental model of why it's used.
@@ -154,7 +154,7 @@ A computer has (at least) two very different places to keep data:
   and the operating system itself, waiting to be loaded into RAM when
   needed.
 
-This distinction matters directly to HYDRA: one of its Linux checks reads
+This distinction matters directly to PERDEDOR: one of its Linux checks reads
 `/proc/meminfo` to find the total amount of RAM (a low amount is a sandbox
 tell), and a different check reads `/sys/block/*/size` to find the size of
 the *disk* (a small disk is a separate, independent sandbox tell). They are
@@ -177,7 +177,7 @@ Modern CPUs do this *billions* of times per second (a "3 GHz" CPU
 completes roughly 3 billion of these cycles every second) and have
 multiple **cores** — essentially multiple independent CPUs bundled onto one
 chip, each able to run its own instruction stream at the same time. This is
-why "core count" is meaningful, and why HYDRA has a "low core count" check:
+why "core count" is meaningful, and why PERDEDOR has a "low core count" check:
 a virtual machine given only 1-2 cores when a real user's everyday computer
 usually has 4, 6, 8, or more is a plausible sandbox tell.
 
@@ -187,8 +187,8 @@ relatively slow to access) or storage (even slower, but essentially
 unlimited), registers hold just a handful of bytes each, but the CPU can
 read and write them in a single cycle. Registers are where the CPU keeps
 the numbers it is actively working with right now. You will see specific
-register names — `EAX`, `EBX`, `ECX`, `EDX` — throughout HYDRA's Linux and
-Windows agents. Chapter 10 explains exactly what these are and why HYDRA
+register names — `EAX`, `EBX`, `ECX`, `EDX` — throughout PERDEDOR's Linux and
+Windows agents. Chapter 10 explains exactly what these are and why PERDEDOR
 cares about them.
 
 ### 1.6 Peripherals and buses
@@ -205,7 +205,7 @@ called **PCI** (Peripheral Component Interconnect) or its modern variant
 these IDs to automatically find and load the right driver software for each
 device.
 
-This matters to HYDRA directly: one of its Linux checks
+This matters to PERDEDOR directly: one of its Linux checks
 (`linux.env.pci_virtio_devices`) reads the vendor ID of every PCI device
 present in the system and checks it against a list of vendor IDs that are
 known to belong to *virtual*, hypervisor-provided devices (rather than real
@@ -236,7 +236,7 @@ virtual machine, because there's no real physical motherboard to report on
 — and by default, many hypervisors fill in that fake data with strings
 that literally say things like `"QEMU"`, `"innotek GmbH"` (the original
 company behind VirtualBox), or `"VMware, Inc."`. This is one of the single
-richest sources of "this is a virtual machine" evidence, and HYDRA checks
+richest sources of "this is a virtual machine" evidence, and PERDEDOR checks
 it extensively on both Linux and Windows (Chapter 12 explains exactly how).
 
 ---
@@ -280,7 +280,7 @@ crashes or misbehaves, the kernel can shut it down without the whole
 computer crashing. If the kernel itself crashes, the whole system typically
 goes down (a "kernel panic" on Linux/macOS, a "blue screen" on Windows).
 
-This distinction matters to HYDRA because many of its checks specifically
+This distinction matters to PERDEDOR because many of its checks specifically
 read files the *kernel* exposes about itself and the hardware — Chapter 11
 covers Linux's `/proc` and `/sys` virtual filesystems, which are exactly
 this: windows into kernel-held information, readable from ordinary
@@ -298,7 +298,7 @@ separate processes, or groups of related processes), and each is isolated
 from the others' memory by default.
 
 Every process has a numeric identifier, the **PID (Process ID)**, and the
-OS keeps a list of every currently-running process. HYDRA reads this list
+OS keeps a list of every currently-running process. PERDEDOR reads this list
 directly in several checks — for example, to see whether known
 analysis/debugging tools (like Wireshark, a network traffic inspector, or
 gdb, a debugger) are currently running, since their presence alone is a
@@ -317,7 +317,7 @@ Linux/macOS paths use forward slashes and start from a single root, written
 `/`: for example `/home/alice/notes.txt`. Windows paths use backslashes and
 start from a drive letter: `C:\Users\Alice\notes.txt`. This is a small but
 constant source of friction when writing software that has to run on both
-— and it's part of why HYDRA has entirely separate agents for Windows,
+— and it's part of why PERDEDOR has entirely separate agents for Windows,
 Linux, and Android rather than one shared codebase for all three.
 
 ### 2.5 Permissions
@@ -330,9 +330,9 @@ everyone else). Some operations require **elevated privileges** — on
 Linux/macOS this is "root" access (via a command called `sudo`), on Windows
 it's "Administrator" access ("running as admin" / an elevated prompt).
 
-HYDRA's checks are deliberately written to *never require* elevated
+PERDEDOR's checks are deliberately written to *never require* elevated
 privileges — they only read information any ordinary logged-in user can
-already see. This matters because HYDRA's Windows agent README explicitly
+already see. This matters because PERDEDOR's Windows agent README explicitly
 recommends running it "from an elevated prompt" for the most complete
 results, but even without elevation, checks degrade gracefully (reporting
 `error` with a clear reason) rather than crashing.
@@ -344,7 +344,7 @@ named text values inherited from whatever started it (usually your shell,
 covered in Chapter 5). They're used for lightweight configuration: for
 example, on Linux, the `USER` environment variable holds your username;
 on Windows, `%LOCALAPPDATA%` holds the path to a per-user folder for
-application data. HYDRA reads several of these directly — for instance, its
+application data. PERDEDOR reads several of these directly — for instance, its
 Linux "suspicious username" check reads the `USER` (or `LOGNAME`)
 environment variable and compares it against a list of implausible names
 like `"sandbox"` or `"test"`.
@@ -357,7 +357,7 @@ task and exiting. On Linux these are usually called **daemons**; on Windows
 they're called **services**. Virtualization guest-integration tools
 (explained fully in Chapter 12) are almost always installed as a
 background service/daemon — for example, VirtualBox installs a Windows
-service called `VBoxService`. HYDRA's Windows agent literally asks Windows
+service called `VBoxService`. PERDEDOR's Windows agent literally asks Windows
 "is there a service named `VBoxService` installed?" as one of its checks —
 if the answer is yes, this machine is (or very recently was) a VirtualBox
 guest, full stop, regardless of anything else.
@@ -366,7 +366,7 @@ guest, full stop, regardless of anything else.
 
 This chapter explains the concepts that exist in *every* programming
 language before Chapter 4 shows you what they look like specifically in
-Python (the language most of HYDRA is written in). If you already know how
+Python (the language most of PERDEDOR is written in). If you already know how
 to program in any language, skim this chapter — you likely just need the
 vocabulary refresher.
 
@@ -388,7 +388,7 @@ rest.
   usually slower than compiled code but much faster to develop and test
   with, since there's no separate "build" step.
 
-HYDRA uses both: its Linux and Android agents, its shared library, and its
+PERDEDOR uses both: its Linux and Android agents, its shared library, and its
 command-line tool are all Python (interpreted); its Windows agent is
 PowerShell (also interpreted, running on top of a compiled runtime called
 .NET); and its Linux agent additionally includes one small piece of C
@@ -417,12 +417,12 @@ it takes. The universally common basic types are:
   number greater than 10?" is a boolean question.
 - **None / null**: a special value meaning "no value at all" — distinct
   from `0`, `False`, or an empty string. Python spells this `None`;
-  PowerShell/.NET spell it `$null`; many languages spell it `null`. HYDRA
+  PowerShell/.NET spell it `$null`; many languages spell it `null`. PERDEDOR
   uses this constantly: for example, when a check tries to read a file that
   doesn't exist, the function that reads it returns `None` rather than an
   empty string, so the calling code can tell "the file was empty" apart
   from "the file could not be read at all" — a distinction that turned out
-  to matter for a real bug HYDRA hit during development (Volume 2 covers
+  to matter for a real bug PERDEDOR hit during development (Volume 2 covers
   this bug as a case study).
 
 ### 3.3 Collections
@@ -438,14 +438,14 @@ together:
   zero-based because the index is really "how many elements to skip from
   the start," and skipping zero elements gets you the first one).
 - A **tuple** is like a list, but *immutable* — once created, it cannot be
-  changed. Chapter 4 explains why HYDRA specifically prefers tuples over
+  changed. Chapter 4 explains why PERDEDOR specifically prefers tuples over
   lists in several places, tying back to the "immutability" principle
   this codebase follows throughout.
 - A **dictionary** (called a "hash map," "hash table," or "associative
   array" in other languages) is a collection of **key-value pairs**: each
   value is looked up by a unique key rather than by position, e.g.
   `{"qemu": "QEMU/KVM", "vbox": "VirtualBox"}` lets you look up the
-  human-readable vendor name for a short signature string. HYDRA's
+  human-readable vendor name for a short signature string. PERDEDOR's
   signature lists (Chapters 12 and 15 cover what these signatures actually
   are) are almost all dictionaries or tuples.
 - A **set** is an unordered collection of *unique* values — like a list
@@ -470,7 +470,7 @@ another. **Control flow** statements change that default order:
   value**). Functions are the single most important tool for organizing
   code, because they let you write a piece of logic once and reuse it
   everywhere it's needed, and give that logic a memorable name. Nearly
-  every "check" in HYDRA (e.g. `check_cpu_brand_string`) is a function:
+  every "check" in PERDEDOR (e.g. `check_cpu_brand_string`) is a function:
   a self-contained unit that runs one specific test and returns one
   specific result.
 - **Exceptions / error handling**: when something goes wrong inside a
@@ -480,7 +480,7 @@ another. **Control flow** statements change that default order:
   and jumps to the nearest place in the code that has declared it knows how
   to **catch** (handle) that kind of problem, using a `try` / `except` (or
   `try` / `catch`) block. If nothing catches it, the exception propagates
-  all the way up and crashes the program with an error message. HYDRA's
+  all the way up and crashes the program with an error message. PERDEDOR's
   code uses `try`/`except` heavily, precisely because it's constantly doing
   things that might fail for reasons outside its control (a file that
   doesn't exist on this particular OS, a command that isn't installed, a
@@ -496,7 +496,7 @@ individual instance of a class is called an **object**). For example, you
 might define a class called `Finding` that bundles together "which check
 this is," "did it detect something," "how severe is that," and "what
 evidence backs it up" — instead of passing those four-plus separate values
-around individually everywhere in the code. This is exactly what HYDRA does
+around individually everywhere in the code. This is exactly what PERDEDOR does
 — its `Finding` class (Chapter 4 of Volume 2 covers it in full) is the
 single most important data structure in the whole project; almost
 everything else in the codebase exists to create, collect, or display
@@ -505,7 +505,7 @@ everything else in the codebase exists to create, collect, or display
 A specific, restricted style of class that only exists to hold data (with
 no complicated behavior attached) is often called a **data class**,
 **record**, or **DTO** ("Data Transfer Object"). Python has a built-in
-`@dataclass` feature for exactly this, which HYDRA uses for `Finding` and
+`@dataclass` feature for exactly this, which PERDEDOR uses for `Finding` and
 `PlatformReport`. Chapter 4 covers `@dataclass` syntax directly.
 
 ### 3.6 Modules and packages
@@ -517,8 +517,8 @@ use the functions/classes it defines, without needing to know or care how
 they're implemented internally — only what they do. This is one of the
 most important ideas in all of software engineering: it lets you build
 complex systems out of smaller, independently-understandable pieces, and
-it's the entire reason HYDRA's repository is organized the way it is (a
-shared `hydra_common` package, three separate per-platform agent packages,
+it's the entire reason PERDEDOR's repository is organized the way it is (a
+shared `perdedor_common` package, three separate per-platform agent packages,
 and a CLI package that imports from all of them — Volume 2, Chapter 2 gives
 the full tour).
 
@@ -532,7 +532,7 @@ block), C uses `//` (single-line) or `/* ... */` (multi-line). Comments are
 for explaining *why* code does something non-obvious, not *what* it does
 (well-named code should make the "what" obvious on its own) — this project
 in particular follows that discipline strictly, and Volume 2 will point out
-specific comments in HYDRA's code that exist because they document a real
+specific comments in PERDEDOR's code that exist because they document a real
 bug, a subtle platform difference, or a design tradeoff that wouldn't be
 obvious from the code alone.
 
@@ -552,7 +552,7 @@ a way that's very hard to trace back to its cause. Immutable data sidesteps
 this entire class of bug: if nothing can be changed after creation, nothing
 can be silently changed out from under you.
 
-HYDRA deliberately builds its two most important data structures
+PERDEDOR deliberately builds its two most important data structures
 (`Finding` and `PlatformReport`) as **frozen** (immutable) — attempting to
 modify one after creation raises an error rather than silently succeeding.
 Chapter 4 shows exactly how Python enables this (`@dataclass(frozen=True)`)
@@ -560,7 +560,7 @@ and Volume 2 explains where this choice actually mattered in practice.
 
 ## Chapter 4: Python Deep Dive
 
-Python is the language used for HYDRA's shared library (`hydra_common`),
+Python is the language used for PERDEDOR's shared library (`perdedor_common`),
 its Linux agent, its Android agent, and its command-line tool. This chapter
 teaches Python from scratch, in enough depth to read (and eventually write)
 every `.py` file in the project.
@@ -573,7 +573,7 @@ you get for free, without installing anything extra). You write `.py` text
 files, and run them with the `python` (or `python3`) command, which reads
 and executes them.
 
-HYDRA deliberately restricts itself to Python's **standard library only**
+PERDEDOR deliberately restricts itself to Python's **standard library only**
 for its Linux and Android agents (no third-party packages required to run
 them) — this is a design choice, not an accident: it means the agent can be
 copied onto a fresh machine and just work, without needing an internet
@@ -632,13 +632,13 @@ def add(a: int, b: int) -> int:
 
 Type hints are **not enforced at runtime** by Python itself — they're
 purely documentation for humans and for separate tools (like `mypy`) that
-can check your code for type mistakes before you ever run it. HYDRA's
+can check your code for type mistakes before you ever run it. PERDEDOR's
 coding-style rules require type annotations on every function signature,
 and you will see them on essentially every function in the codebase — they
 make it possible to know, at a glance, exactly what a function expects and
 returns, without having to read its entire body.
 
-More advanced type hints you'll see throughout HYDRA:
+More advanced type hints you'll see throughout PERDEDOR:
 - `str | None` means "either a string, or `None`" (this is Python's
   "union type" syntax, read as "str or None"). It's used constantly for
   values that are legitimately allowed to be absent — e.g. an Android
@@ -657,7 +657,7 @@ More advanced type hints you'll see throughout HYDRA:
 Strings are written with either single (`'...'`) or double (`"..."`)
 quotes — Python treats them identically, but this project's `black`
 formatter standardizes on double quotes throughout. A few string features
-used heavily in HYDRA:
+used heavily in PERDEDOR:
 
 - **f-strings** (formatted string literals): put an `f` right before the
   opening quote, and then any `{expression}` inside the string is replaced
@@ -666,7 +666,7 @@ used heavily in HYDRA:
   count = 3
   print(f"{count} devices found")   # prints: 3 devices found
   ```
-  You will see f-strings on nearly every line of HYDRA that builds a
+  You will see f-strings on nearly every line of PERDEDOR that builds a
   human-readable description or evidence string, e.g.
   `f"{value!r}" + (f" (matched {hit!r})" if hit else "")`. The `!r` suffix
   inside an f-string means "use `repr()` instead of `str()`" — `repr()`
@@ -679,12 +679,12 @@ used heavily in HYDRA:
   returns the list `["a", "b", "c"]`; `text.strip()` removes leading/
   trailing whitespace; `"vbox" in "innotek vbox device"` checks whether one
   string contains another (this `in` check, used on lowercased text, is the
-  single most common pattern in HYDRA's entire signature-matching logic —
+  single most common pattern in PERDEDOR's entire signature-matching logic —
   Chapter 15 covers what's actually being matched and why).
 - **Byte strings** (`bytes`, written `b"..."`): a sequence of raw bytes
   rather than Unicode text characters — used when working with genuinely
   binary data (like CPU register contents or a raw firmware table) before
-  it's been decoded into human-readable text. HYDRA's CPU-vendor-string
+  it's been decoded into human-readable text. PERDEDOR's CPU-vendor-string
   decoding logic works directly with `bytes` objects, converting raw
   register values into byte sequences and then decoding those into ASCII
   text (Chapter 10 explains exactly what's being decoded and why register
@@ -697,15 +697,15 @@ Python treats several values as "falsy" in a boolean context (like an
 `0.0`, empty strings `""`, empty lists `[]`, empty dicts `{}`, and empty
 tuples `()` are all falsy; essentially everything else is "truthy." This
 means `if value:` is a common, idiomatic shorthand for "if value is not
-None and not empty." HYDRA uses this constantly, e.g.
+None and not empty." PERDEDOR uses this constantly, e.g.
 `if match:` after a signature lookup that returns either a matched string
 or `None`.
 
-A very important, HYDRA-specific distinction: several functions
+A very important, PERDEDOR-specific distinction: several functions
 deliberately return `None` to mean "I could not determine this" (an
 *error* condition) as opposed to returning an empty value to mean "I
 checked, and there was genuinely nothing there" (a *clean* result). Getting
-this distinction backwards was a real bug caught during HYDRA's
+this distinction backwards was a real bug caught during PERDEDOR's
 development (Volume 2 covers it as a named case study) — it's one of the
 most important lessons in the entire codebase: **absence of data is not
 automatically a "clean" result.**
@@ -731,7 +731,7 @@ if `tool` is in `running`, include it" — producing a new list of just the
 tools that are actually running. This single line replaces what would
 otherwise be a multi-line explicit loop with an empty list, a `for`, an
 `if`, and an `.append()` call — comprehensions are extremely idiomatic
-Python and appear throughout HYDRA's signature-matching checks.
+Python and appear throughout PERDEDOR's signature-matching checks.
 
 Dictionaries have a `.get(key, default)` method that looks up a key and
 returns a fallback value instead of raising an error if the key isn't
@@ -781,7 +781,7 @@ comparison and a readable string representation, purely from the list of
 fields you declare. `frozen=True` is the specific flag that makes
 instances **immutable** after creation — attempting `some_finding.id =
 "new"` after the fact raises an error. This is exactly the
-"immutability" principle from Chapter 3.8, applied concretely: HYDRA's
+"immutability" principle from Chapter 3.8, applied concretely: PERDEDOR's
 `Finding` and `PlatformReport` classes are both frozen dataclasses.
 
 ### 4.8 Enums
@@ -802,7 +802,7 @@ class Severity(str, Enum):
     CRITICAL = "critical"
 ```
 
-HYDRA defines four enums this way — `Category`, `Platform`, `Status`, and
+PERDEDOR defines four enums this way — `Category`, `Platform`, `Status`, and
 `Severity` — precisely because each of these concepts really is a small,
 fixed, closed set of options (there are exactly four detection categories,
 exactly three platforms, exactly four possible statuses, exactly five
@@ -820,20 +820,20 @@ contents into scope with `import`:
 ```python
 import os                                    # import the whole module
 from pathlib import Path                     # import one specific name
-from hydra_common import FindingFactory      # import from a HYDRA package
+from perdedor_common import FindingFactory      # import from a PERDEDOR package
 ```
 
 `import os` then requires writing `os.cpu_count()` (dotted access); `from
 pathlib import Path` lets you write `Path(...)` directly.
 
-HYDRA's Python code is organized into four packages (Volume 2, Chapter 2
-gives the exact file layout): `hydra_common` (shared code: data models,
-scoring, validation, reporting — used by every agent), `hydra_linux`,
-`hydra_android` (the two Python-based platform agents), and `hydra_cli`
+PERDEDOR's Python code is organized into four packages (Volume 2, Chapter 2
+gives the exact file layout): `perdedor_common` (shared code: data models,
+scoring, validation, reporting — used by every agent), `perdedor_linux`,
+`perdedor_android` (the two Python-based platform agents), and `perdedor_cli`
 (the command-line entry point that ties everything together). This is the
 "modules and packages" idea from Chapter 3.6 in concrete form.
 
-### 4.10 The standard library modules HYDRA relies on
+### 4.10 The standard library modules PERDEDOR relies on
 
 - **`os`**: operating-system interaction — reading environment variables
   (`os.environ`), counting CPU cores (`os.cpu_count()`).
@@ -846,7 +846,7 @@ scoring, validation, reporting — used by every agent), `hydra_linux`,
   Python and capture their output — e.g. running `ps -eo comm` to list
   running processes, or invoking the native C helper binary described in
   Chapter 7. `subprocess.run([...], capture_output=True, text=True, timeout=...,
-  check=False)` is the exact pattern used throughout HYDRA: it runs a
+  check=False)` is the exact pattern used throughout PERDEDOR: it runs a
   command, captures its stdout/stderr as text (rather than raw bytes),
   enforces a maximum time limit (so a hung command can't freeze the whole
   scan), and disables automatically raising an exception on a non-zero
@@ -854,7 +854,7 @@ scoring, validation, reporting — used by every agent), `hydra_linux`,
   failure itself rather than being forced into exception-handling for
   what's often an entirely expected outcome (e.g. "this tool isn't
   installed on this machine").
-- **`socket`**: low-level networking — HYDRA uses `socket.gethostname()`
+- **`socket`**: low-level networking — PERDEDOR uses `socket.gethostname()`
   to read the machine's hostname for its "suspicious hostname" check.
 - **`urllib.request`**: make outbound HTTP requests — used for the cloud
   metadata reachability check (Chapter 19 explains what a cloud metadata
@@ -866,8 +866,8 @@ scoring, validation, reporting — used by every agent), `hydra_linux`,
 - **`dataclasses`**: covered above (§4.7).
 - **`enum`**: covered above (§4.8).
 - **`argparse`**: build command-line interfaces — parse the words a user
-  types after the program name (like `hydra test linux --json`) into
-  structured data your code can act on. HYDRA's CLI (Volume 2, Chapter 8)
+  types after the program name (like `perdedor test linux --json`) into
+  structured data your code can act on. PERDEDOR's CLI (Volume 2, Chapter 8)
   is built entirely on `argparse`.
 - **`re`** (regular expressions): pattern-matching against text — e.g.
   validating that a string looks like a MAC address
@@ -887,7 +887,7 @@ except Exception:
     reachable = False
 ```
 
-This is a direct excerpt from HYDRA's cloud-metadata check. `try:` marks
+This is a direct excerpt from PERDEDOR's cloud-metadata check. `try:` marks
 the block that might fail; `except Exception:` catches *any* kind of
 failure (a deliberately broad catch here, because literally any failure —
 timeout, connection refused, DNS failure, etc. — means exactly the same
@@ -904,10 +904,10 @@ this looks too broad, and I mean it anyway, for this specific reason."
 - `python3 script.py` runs a single file directly.
 - `python3 -m package_name` runs a package as a program (Python looks for
   a special file named `__main__.py` inside that package and runs it) —
-  this is exactly how you run HYDRA's Linux and Android agents directly:
-  `python3 -m hydra_linux`.
+  this is exactly how you run PERDEDOR's Linux and Android agents directly:
+  `python3 -m perdedor_linux`.
 - **pip** is Python's package installer, used to download and install
-  third-party packages from the internet (or, as with HYDRA itself, to
+  third-party packages from the internet (or, as with PERDEDOR itself, to
   install a local project so its modules become importable system-wide):
   `pip install -e .` installs the current project in **editable mode**
   (`-e`), meaning changes to the source files take effect immediately
@@ -934,7 +934,7 @@ macOS), **zsh** (the current macOS default, very similar to Bash),
 visible text-entry window running a shell is often called a **terminal**
 or **console**.
 
-HYDRA is explicitly, deliberately "CLI-only" — it has no graphical
+PERDEDOR is explicitly, deliberately "CLI-only" — it has no graphical
 interface at all. This is a stated design goal, not a limitation: a CLI
 tool is trivially scriptable (you can run it automatically as part of a
 larger automated process), works identically over a remote connection
@@ -943,10 +943,10 @@ a tool aimed at technical analysts who already live in a terminal.
 
 ### 5.2 Basic commands
 
-A handful of commands appear throughout HYDRA's own checks (as commands the
+A handful of commands appear throughout PERDEDOR's own checks (as commands the
 *agent itself* runs, not just commands you'd type yourself):
 - `ps` — list running processes.
-- `cat` (or, in HYDRA's Python code, simply reading a file directly) —
+- `cat` (or, in PERDEDOR's Python code, simply reading a file directly) —
   show a file's contents.
 - `dpkg-query` / `rpm` — list installed packages, on Debian/Ubuntu-family
   and Red-Hat-family Linux systems respectively (Chapter 11 explains why
@@ -955,11 +955,11 @@ A handful of commands appear throughout HYDRA's own checks (as commands the
 - `systemd-detect-virt` — a command, built into `systemd` (Linux's most
   common startup/service-management system, Chapter 11), that
   independently reports what kind of virtualized (or bare-metal)
-  environment it thinks it's running in — HYDRA uses it as a cross-check
+  environment it thinks it's running in — PERDEDOR uses it as a cross-check
   against its own findings.
 - `make` — builds compiled software from source code, following a recipe
   file called a `Makefile` (Chapter 7 covers this fully, since it's how
-  HYDRA's native C helper gets compiled).
+  PERDEDOR's native C helper gets compiled).
 
 ### 5.3 Command syntax: arguments, flags, and pipes
 
@@ -968,16 +968,16 @@ A typical command looks like: `command argument1 argument2 --flag value`.
 function's parameters in Chapter 3.4); **flags** (also called "options" or
 "switches") are named, usually optional, and can appear in any order —
 conventionally starting with one dash for a single-letter short form
-(`-s`) or two dashes for a full-word long form (`--serial`). HYDRA's own
-CLI follows this exact convention: `hydra test android -s emulator-5554`
-and `hydra test android --serial emulator-5554` mean the same thing.
+(`-s`) or two dashes for a full-word long form (`--serial`). PERDEDOR's own
+CLI follows this exact convention: `perdedor test android -s emulator-5554`
+and `perdedor test android --serial emulator-5554` mean the same thing.
 
 The **pipe** operator `|` connects the output of one command directly into
 the input of the next, letting you chain small, single-purpose tools
 together into a more complex operation without writing any new code — a
 foundational Unix philosophy ("do one thing well, then compose"). You'll
-see this pattern conceptually mirrored in how HYDRA's own `hydra test`
-(produce a report) and `hydra report` (consume reports, produce a
+see this pattern conceptually mirrored in how PERDEDOR's own `perdedor test`
+(produce a report) and `perdedor report` (consume reports, produce a
 combined view) commands are designed to be chained together, even though
 they're connected via files rather than a literal shell pipe.
 
@@ -987,7 +987,7 @@ A **shell script** is a text file full of shell commands, run together as
 a program — conventionally given a `.sh` extension and started with a
 **shebang** line, `#!/bin/bash` or `#!/usr/bin/env bash`, as its very first
 line, which tells the OS which interpreter to run the rest of the file
-with. HYDRA itself doesn't ship shell scripts (its automation is Python
+with. PERDEDOR itself doesn't ship shell scripts (its automation is Python
 and PowerShell), but understanding shell scripting is essential for
 understanding the Linux commands its Python code shells out to via
 `subprocess` (§4.10), and for building/testing the project during
@@ -1001,10 +1001,10 @@ Every command, when it finishes, produces a numeric **exit code** (also
 any non-zero value means "some kind of failure" (different tools use
 different non-zero values to mean different specific failures). This is a
 universal convention across essentially every OS and every command-line
-tool ever written, and it's central to how HYDRA's native C helper
+tool ever written, and it's central to how PERDEDOR's native C helper
 (Chapter 7) communicates results back to the Python code that invokes it —
 Python's `subprocess.run(...).returncode` reads this exact value, and
-HYDRA's C helper uses *specific* exit codes (0 = success, 1 = usage error,
+PERDEDOR's C helper uses *specific* exit codes (0 = success, 1 = usage error,
 2 = "not applicable on this hardware") that the Python wrapper code
 explicitly checks for and reacts to differently.
 
@@ -1019,7 +1019,7 @@ Every process has (at least) three built-in communication channels:
 - **stdin** ("standard input") — where a program reads input from, if it
   needs any (often the keyboard, unless redirected).
 
-This distinction is *load-bearing* in HYDRA's own design: its Windows
+This distinction is *load-bearing* in PERDEDOR's own design: its Windows
 agent writes status/progress messages to stderr and its actual JSON report
 to stdout, specifically so that a caller (like the Python CLI, which
 captures the Windows agent's output) can reliably separate "the data" from
@@ -1030,7 +1030,7 @@ covers this fix as a case study).
 
 ## Chapter 6: PowerShell and .NET Deep Dive
 
-HYDRA's Windows agent is written entirely in PowerShell. This chapter
+PERDEDOR's Windows agent is written entirely in PowerShell. This chapter
 explains PowerShell from scratch, plus enough of the underlying .NET
 runtime to understand why the Windows agent is built the way it is.
 
@@ -1039,7 +1039,7 @@ runtime to understand why the Windows agent is built the way it is.
 PowerShell is Microsoft's modern shell and scripting language, available
 on Windows (built in) and, as **PowerShell 7+** ("PowerShell Core"), on
 Linux and macOS too (this cross-platform availability is exactly why
-HYDRA's earlier development sessions were able to test the Windows agent's
+PERDEDOR's earlier development sessions were able to test the Windows agent's
 logic on a Mac, as covered in Volume 2). Files are conventionally named
 `.ps1`. Where Bash is fundamentally text-oriented (commands take and
 produce plain text), PowerShell is fundamentally **object-oriented**: every
@@ -1079,19 +1079,19 @@ passed in to be treated as a string.
 
 By strong PowerShell convention, functions that test/check something and
 return true/false-ish results are named `Test-Something` (mirroring the
-built-in `Test-Path` cmdlet) — and HYDRA's own check functions follow this
+built-in `Test-Path` cmdlet) — and PERDEDOR's own check functions follow this
 convention exactly: `Test-CpuidHypervisorBit`, `Test-DebuggerPresent`,
 `Test-RegistryArtifacts`, and so on are all functions the Windows agent
 defines itself, one per check, matching PowerShell's own naming idiom for
 "things that test a condition."
 
-**A PowerShell-specific gotcha that mattered during HYDRA's development:**
+**A PowerShell-specific gotcha that mattered during PERDEDOR's development:**
 declaring a parameter with an explicit type like `[string]$Value` silently
 *converts* `$null` (PowerShell's "no value" / `None` equivalent) into an
 empty string `""` the moment it's assigned — because PowerShell tries to
 coerce every value into the declared type, and converting "nothing" into
 "the empty string" is its default coercion rule for the string type. This
-matters enormously for a tool like HYDRA that needs to distinguish "no
+matters enormously for a tool like PERDEDOR that needs to distinguish "no
 remediation text because none applies" from "remediation text that happens
 to be blank" — Volume 2 covers the exact fix (removing the `[string]` type
 constraint on parameters that need to genuinely support `$null`).
@@ -1109,7 +1109,7 @@ like `[System.Environment]::ProcessorCount`, it's reaching directly into
 than `.`, specifically means "access something that belongs to the class
 itself, not to a particular instance of it" — a **static member**).
 
-HYDRA's Windows agent leans on .NET intrinsics heavily for reading the CPU
+PERDEDOR's Windows agent leans on .NET intrinsics heavily for reading the CPU
 directly (`System.Runtime.Intrinsics.X86.X86Base`, covered fully in
 Chapter 10) — this is a deliberate, explicit design choice, called out in
 the agent's own README: because this specific .NET feature requires
@@ -1133,7 +1133,7 @@ In PowerShell, you set this up with `Add-Type`, giving it a small snippet
 of inline C# code that declares the external function's exact signature:
 
 ```powershell
-Add-Type -Namespace Hydra -Name Firmware -MemberDefinition @'
+Add-Type -Namespace Perdedor -Name Firmware -MemberDefinition @'
 [DllImport("kernel32.dll", SetLastError=true)]
 public static extern uint GetSystemFirmwareTable(uint FirmwareTableProviderSignature, uint FirmwareTableID, byte[] pFirmwareTableBuffer, uint BufferSize);
 '@
@@ -1143,8 +1143,8 @@ Breaking this down:
 - `Add-Type` compiles the C# text given to it on the fly and makes the
   result available to the rest of the PowerShell script, as if it were a
   built-in .NET type.
-- `-Namespace Hydra -Name Firmware` names the new type `Hydra.Firmware` —
-  afterward, the script calls it as `[Hydra.Firmware]::GetSystemFirmwareTable(...)`.
+- `-Namespace Perdedor -Name Firmware` names the new type `Perdedor.Firmware` —
+  afterward, the script calls it as `[Perdedor.Firmware]::GetSystemFirmwareTable(...)`.
 - `[DllImport("kernel32.dll", ...)]` is a C# **attribute** (metadata
   attached to a piece of code) that tells .NET "this function isn't
   implemented here — go find it inside `kernel32.dll`" (a **DLL**,
@@ -1160,24 +1160,24 @@ Breaking this down:
   the call can crash the whole PowerShell process, since you're now
   directly bridging into raw native memory operations.
 
-HYDRA's Windows agent uses this P/Invoke pattern four separate times, each
+PERDEDOR's Windows agent uses this P/Invoke pattern four separate times, each
 declared once near the top of the relevant file and reused by every check
 that needs it:
-- **`Hydra.Firmware`** (`GetSystemFirmwareTable`, from `kernel32.dll`) —
+- **`Perdedor.Firmware`** (`GetSystemFirmwareTable`, from `kernel32.dll`) —
   reads the *raw* SMBIOS firmware table directly (Chapter 12 explains
   what this table is), bypassing Windows' higher-level WMI/CIM reporting
   layer entirely, to catch spoofing that only fools the higher layer.
-- **`Hydra.Debug`** (`IsDebuggerPresent`, `CheckRemoteDebuggerPresent`,
+- **`Perdedor.Debug`** (`IsDebuggerPresent`, `CheckRemoteDebuggerPresent`,
   `GetCurrentProcess`, from `kernel32.dll`) — classic anti-debugging
   primitives (Chapter 16 explains what a debugger is and why its presence
   matters).
-- **`Hydra.Window`** (`FindWindow`, from `user32.dll`, the core Windows
+- **`Perdedor.Window`** (`FindWindow`, from `user32.dll`, the core Windows
   GUI-related system DLL) — looks for hidden windows created by specific
   known guest-tool tray applications, by their internal window "class
   name" (an identifier Windows assigns every window, usually invisible to
-  the end user, that HYDRA can search for even if the actual window itself
+  the end user, that PERDEDOR can search for even if the actual window itself
   is hidden or minimized).
-- **`Hydra.Mouse`** (`GetCursorPos`, from `user32.dll`) — reads the
+- **`Perdedor.Mouse`** (`GetCursorPos`, from `user32.dll`) — reads the
   current mouse cursor position, sampled twice a fraction of a second
   apart, as a crude "is a human actually present" signal.
 
@@ -1190,7 +1190,7 @@ try {
     $cs = Get-CimInstance -ClassName Win32_ComputerSystem -ErrorAction Stop
 }
 catch {
-    return New-HydraFinding -Status error -ErrorDetail "CIM query failed: $($_.Exception.Message)"
+    return New-PerdedorFinding -Status error -ErrorDetail "CIM query failed: $($_.Exception.Message)"
 }
 ```
 `-ErrorAction Stop` is worth calling out specifically: by default, many
@@ -1198,7 +1198,7 @@ PowerShell cmdlets treat their own errors as "non-terminating" — meaning
 they print a warning but keep running, rather than actually triggering a
 `catch` block. `-ErrorAction Stop` forces a specific cmdlet call to treat
 its own errors as immediately fatal (triggering `catch`), which is exactly
-the behavior HYDRA's checks need: if a query for hardware information
+the behavior PERDEDOR's checks need: if a query for hardware information
 fails, the check should stop and report an `error` `Finding`, not silently
 continue with partial or missing data. `$_` inside a `catch` block refers
 to the error/exception object itself; `$_.Exception.Message` reads its
@@ -1214,7 +1214,7 @@ a filesystem drive, e.g. `Test-Path -LiteralPath 'HKLM:\SOFTWARE\Oracle\VirtualB
 Guest Additions'` checks whether that specific registry key exists,
 exactly the same way you'd check whether a file exists. Guest-integration
 software (Chapter 12) very often leaves behind distinctive registry keys,
-which is why HYDRA's `win.env.registry_artifacts` check tests roughly
+which is why PERDEDOR's `win.env.registry_artifacts` check tests roughly
 thirty known key paths associated with VirtualBox, VMware, Xen, Wine, and
 Sandboxie.
 
@@ -1227,29 +1227,29 @@ querying structured information about hardware and OS state — things like
 is one of hundreds of predefined WMI/CIM "classes" (each describing one
 category of system information), and `Get-CimInstance` queries it,
 returning a structured object whose properties you can read directly
-(`$cs.Manufacturer`, `$cs.Model`, etc.). HYDRA's Windows agent uses several
+(`$cs.Manufacturer`, `$cs.Model`, etc.). PERDEDOR's Windows agent uses several
 of these classes: `Win32_ComputerSystem`, `Win32_BIOS`, `Win32_PnPEntity`
 (Plug-and-Play devices — hardware components Windows has detected),
 `Win32_DiskDrive`, `Win32_NetworkAdapterConfiguration`.
 
 ## Chapter 7: C Programming Basics
 
-HYDRA's Linux agent includes one small piece of code written in C, rather
+PERDEDOR's Linux agent includes one small piece of code written in C, rather
 than pure Python. This chapter explains why, and teaches enough C to read
 that one file.
 
-### 7.1 Why does HYDRA need C at all?
+### 7.1 Why does PERDEDOR need C at all?
 
 Python (Chapter 4) is a high-level language: it deliberately hides most
 low-level hardware detail from you, for safety and simplicity. That's
 almost always the right tradeoff — but it means Python has **no built-in
 way** to execute two very specific, very low-level x86 CPU instructions
-that HYDRA absolutely needs: `CPUID` (ask the CPU to report information
+that PERDEDOR absolutely needs: `CPUID` (ask the CPU to report information
 about itself) and `RDTSC` (read the CPU's internal cycle counter). Neither
 of these is a "function you call" in the normal sense — they are literal
 CPU instructions, one step below even C, that only a compiled language
 talking almost directly to the hardware can issue. Chapter 10 explains
-exactly what these two instructions do and why HYDRA needs them so much
+exactly what these two instructions do and why PERDEDOR needs them so much
 that it's worth writing (and shipping) a small C program just to reach
 them.
 
@@ -1296,7 +1296,7 @@ A `Makefile` is a small recipe file (named exactly `Makefile`, read by the
 project's binary from its source files, including which compiler to use
 and which flags/options to pass it, so that "build this project" is always
 just the one command `make`, regardless of how complex the actual
-compilation steps are. HYDRA's native helper has exactly this: a `Makefile`
+compilation steps are. PERDEDOR's native helper has exactly this: a `Makefile`
 alongside its C source, and the Python wrapper code that needs the
 compiled binary runs `make` automatically, the very first time it's
 needed, if the binary doesn't already exist — so a user never has to
@@ -1322,7 +1322,7 @@ real-world security vulnerabilities, and is a large part of *why*
 languages like Python, Rust, and Go, which manage memory automatically and
 safely, have become so popular for new software.)
 
-HYDRA's own C helper is small and carefully scoped specifically to
+PERDEDOR's own C helper is small and carefully scoped specifically to
 minimize this risk — it does a handful of narrow, well-understood
 operations (read CPU registers, read a timer, print the results as text)
 and nothing more, precisely because "small and simple" is one of the best
@@ -1345,7 +1345,7 @@ struct CpuidResult {
 `unsigned int` means "a 32-bit integer that can only be zero or positive"
 (no negative numbers) — an appropriate type for CPU register contents,
 which are really just raw bit patterns being interpreted as numbers, not
-meaningfully "signed" quantities at all. HYDRA's C helper uses a struct
+meaningfully "signed" quantities at all. PERDEDOR's C helper uses a struct
 exactly like this one to hold the four register values (`EAX`, `EBX`,
 `ECX`, `EDX`) that the `CPUID` instruction produces (Chapter 10 explains
 what these four registers mean).
@@ -1360,7 +1360,7 @@ flow keywords — just direct manipulation of registers and memory). C
 allows embedding raw assembly instructions directly inside otherwise
 normal C code, called **inline assembly**, using a compiler-specific
 extension (GCC and Clang both support the syntax `asm volatile (...)`).
-This is precisely how HYDRA's native helper issues the `CPUID` and
+This is precisely how PERDEDOR's native helper issues the `CPUID` and
 `RDTSC` instructions — there is no other way to reach them from C (or any
 other language) except through exactly this mechanism, because they are
 not "library functions" at all; they are literal CPU opcodes with no
@@ -1370,7 +1370,7 @@ higher-level API wrapping them.
 
 C's standard library provides `printf` (formatted print — "print
 formatted") for writing text to stdout (Chapter 5.6), and functions like
-`atoi`/`strtol` for parsing text into numbers. HYDRA's C helper's entire
+`atoi`/`strtol` for parsing text into numbers. PERDEDOR's C helper's entire
 "interface" to the outside world is exactly this: it's a tiny
 command-line program that takes a couple of text arguments (which CPUID
 leaf to query, or how many timing iterations to run), and prints its
@@ -1384,7 +1384,7 @@ basic string splitting, with no need for a more complex data format.
 C code that includes inline assembly for one specific CPU family (x86)
 will not even *compile* on a different CPU family (like ARM, common on
 Apple Silicon Macs and most Android devices) — the assembly instructions
-simply don't exist there. HYDRA's C source handles this with a
+simply don't exist there. PERDEDOR's C source handles this with a
 **preprocessor conditional**: `#if defined(__x86_64__) || defined(__i386__)`
 ... `#else` ... `#endif`. The C preprocessor is a text-substitution step
 that runs *before* actual compilation, and `__x86_64__`/`__i386__` are
@@ -1395,7 +1395,7 @@ the real CPUID/RDTSC logic, and on anything else it compiles in a small
 stub that immediately reports "not applicable" (via a specific exit code,
 §5.5) instead of failing to build at all. This is exactly the kind of
 graceful-degradation design principle that runs throughout the entire
-HYDRA project (Chapter 18 covers it as a named theme), applied here at the
+PERDEDOR project (Chapter 18 covers it as a named theme), applied here at the
 lowest possible level — inside a single C file.
 
 ## Chapter 8: Git and Version Control
@@ -1448,12 +1448,12 @@ agreed-upon "source of truth").
   copy.
 - **`.gitignore`**: a file listing patterns for files/directories Git
   should never track (e.g. compiled binaries, temporary files, files
-  containing secrets). HYDRA's own `.gitignore` excludes things like the
+  containing secrets). PERDEDOR's own `.gitignore` excludes things like the
   compiled native-helper binary (§7.3) and generated JSON report files —
   because these are *outputs*, reproducible from the tracked source at
   any time, not source material that needs its own history.
 
-### 8.3 Why this matters for a project like HYDRA
+### 8.3 Why this matters for a project like PERDEDOR
 
 Beyond simple backup/collaboration, Git's history is itself a form of
 documentation: `git log` shows the sequence of commits (and their
@@ -1493,8 +1493,8 @@ quoted strings); square brackets `[]` delimit an **array** (an ordered
 list); values can be strings (in double quotes), numbers, `true`/`false`,
 `null`, or nested objects/arrays.
 
-This is *exactly* the format every HYDRA agent produces as its report, and
-exactly the format `hydra report` reads back in to combine multiple
+This is *exactly* the format every PERDEDOR agent produces as its report, and
+exactly the format `perdedor report` reads back in to combine multiple
 reports together — JSON is the literal, physical "glue" connecting every
 piece of this project, precisely because it's the one format every part
 of the project (Python code, PowerShell code, a human reading it directly
@@ -1514,7 +1514,7 @@ needed.
 
 Neither Python's `Finding`/`PlatformReport` dataclasses (§4.7) nor
 PowerShell's equivalent hashtables are *themselves* JSON — they're native
-in-memory data structures in each language. HYDRA's `to_dict()` method
+in-memory data structures in each language. PERDEDOR's `to_dict()` method
 (covered fully in Volume 2) is the explicit conversion step: turning a
 Python object into a plain dictionary/list/string structure that
 `json.dumps` can then serialize. This conversion step is necessary because
@@ -1530,22 +1530,22 @@ A **JSON Schema** is itself written in JSON, and describes the *shape*
 another piece of JSON is required to have — which fields must be present,
 what type each field must be, which values are allowed, and so on. It's
 the JSON world's equivalent of a rulebook or contract: "any report that
-claims to be a valid HYDRA report MUST have a `platform` field that is one
+claims to be a valid PERDEDOR report MUST have a `platform` field that is one
 of exactly `windows`/`linux`/`android`, MUST have a `findings` array where
 every element has an `id`, a `status` that's one of `clean`/`detected`/
 `error`/`skipped`, ..." and so on.
 
-Why does this matter for HYDRA specifically? Because HYDRA has **three
+Why does this matter for PERDEDOR specifically? Because PERDEDOR has **three
 independent agents, written in two completely different programming
 languages** (Python and PowerShell), that all need to produce output in
-*exactly* the same shape, so that a downstream tool (like `hydra report`,
+*exactly* the same shape, so that a downstream tool (like `perdedor report`,
 which combines reports from all three platforms into one unified view) can
 treat them identically without needing separate code paths per platform.
-The schema (`schema/hydra-report.schema.json` in the actual repo) is the
+The schema (`schema/perdedor-report.schema.json` in the actual repo) is the
 single, authoritative, language-independent definition of that shared
 shape — the Python agents and the PowerShell agent were each built
-independently to match it, and HYDRA includes its own **validator**
-(covered in Volume 2, `hydra_common/validation.py`) that checks any given
+independently to match it, and PERDEDOR includes its own **validator**
+(covered in Volume 2, `perdedor_common/validation.py`) that checks any given
 report against this schema and raises a clear, specific error naming
 exactly which rule was violated, if any report — from any agent — ever
 drifts out of the exact agreed-upon shape.
@@ -1554,7 +1554,7 @@ drifts out of the exact agreed-upon shape.
 
 This chapter goes back to the CPU (Chapter 1.5) and goes *much* deeper —
 deep enough to fully understand the single most technically intricate part
-of HYDRA: its direct use of the `CPUID` and `RDTSC` CPU instructions.
+of PERDEDOR: its direct use of the `CPUID` and `RDTSC` CPU instructions.
 
 ### 10.1 Instruction sets and architectures
 
@@ -1566,7 +1566,7 @@ Chapter 7.6), and exactly how they behave. Compiled programs (Chapter
 means a program compiled for one architecture generally cannot run
 directly on a CPU of a different architecture at all.
 
-The two architectures relevant to HYDRA:
+The two architectures relevant to PERDEDOR:
 - **x86 / x86-64** (also called **AMD64** or **x64**): the architecture
   used by essentially all traditional desktop/laptop/server PCs (both Intel
   and AMD chips implement it) — this is where "x86" originally referred to
@@ -1580,10 +1580,10 @@ The two architectures relevant to HYDRA:
   battery-powered/mobile devices — every Android phone's CPU is ARM, and
   Apple's own "Apple Silicon" Macs (M1/M2/M3/M4 chips) are ARM too.
 
-**Why this matters enormously for HYDRA**: `CPUID` and `RDTSC` (below) are
+**Why this matters enormously for PERDEDOR**: `CPUID` and `RDTSC` (below) are
 x86-*specific* instructions — they do not exist at all on ARM. This single
-fact is the direct reason HYDRA's native C helper has the architecture
-guard described in Chapter 7.8, and the direct reason several of HYDRA's
+fact is the direct reason PERDEDOR's native C helper has the architecture
+guard described in Chapter 7.8, and the direct reason several of PERDEDOR's
 checks explicitly report `skipped` (not `error`, not `clean` — a
 deliberately distinct third outcome) when run on non-x86 hardware: the
 check genuinely does not apply there, which is a fundamentally different
@@ -1597,7 +1597,7 @@ relevant here are named `EAX`, `EBX`, `ECX`, `EDX` (the `E` prefix
 historically stood for "extended," from when these were widened from an
 even older 16-bit generation of registers named `AX`, `BX`, `CX`, `DX`; on
 the modern 64-bit architecture there's a further-widened set prefixed `R`
-instead — `RAX`, etc. — but HYDRA works at the 32-bit `E`-register level
+instead — `RAX`, etc. — but PERDEDOR works at the 32-bit `E`-register level
 throughout, which is sufficient for everything it needs). Each of these
 four registers holds exactly 4 bytes (32 bits) — no more, no less. They
 have no fixed meaning by themselves; any given instruction defines what it
@@ -1617,18 +1617,18 @@ leaf numbers ask for completely different categories of information —
 there are dozens of standardized leaves, covering things like the CPU
 manufacturer's name, which optional CPU features are supported (does this
 CPU support a specific kind of fast math instructions, etc.), cache sizes,
-and — critically for HYDRA — whether a hypervisor is present at all, and
+and — critically for PERDEDOR — whether a hypervisor is present at all, and
 if so, which one.
 
-Three specific leaves matter to HYDRA, and it's worth understanding each
+Three specific leaves matter to PERDEDOR, and it's worth understanding each
 precisely, because getting even one detail wrong here produces a
 *silently* wrong answer rather than a crash (this happened for real during
-HYDRA's development — see Volume 2's bug case study):
+PERDEDOR's development — see Volume 2's bug case study):
 
 - **Leaf `0`** ("get vendor ID"): returns, packed across `EBX`, `EDX`, and
   `ECX` — in that specific order — a 12-character ASCII string identifying
   the actual physical CPU manufacturer, e.g. `"GenuineIntel"` or
-  `"AuthenticAMD"`. HYDRA doesn't directly use leaf 0 itself, but
+  `"AuthenticAMD"`. PERDEDOR doesn't directly use leaf 0 itself, but
   understanding its register order (`EBX`, `EDX`, `ECX`) matters because it
   is the order most public documentation and tutorials describe first —
   and it is *not* the same order used by the hypervisor leaf below, which
@@ -1641,7 +1641,7 @@ HYDRA's development — see Volume 2's bug case study):
   well-behaved guest software can enable virtualization-aware
   optimizations. Ironically, this same, entirely legitimate signal is one
   of the very first things a sandbox-evasive piece of malware checks too —
-  it's a single bit, trivially fast to check, and reliably present. HYDRA's
+  it's a single bit, trivially fast to check, and reliably present. PERDEDOR's
   `check_cpuid_hypervisor_bit` (Linux) / `Test-CpuidHypervisorBit`
   (Windows) checks literally read this exact bit.
 - **Leaf `0x40000000`** ("hypervisor vendor ID," only meaningful when the
@@ -1653,7 +1653,7 @@ HYDRA's development — see Volume 2's bug case study):
   `EDX`, `ECX` order. This isn't a mistake in the standard; it's simply an
   independent convention set by the hypervisor vendors (loosely following
   Xen's original precedent) that happens not to match leaf 0's older,
-  separately-defined convention. HYDRA's own code comments call this out
+  separately-defined convention. PERDEDOR's own code comments call this out
   explicitly as "an easy, silent-wrong-answer bug" — because swapping
   `ECX` and `EDX` here doesn't crash anything; it just silently decodes
   into garbage text that will never match any known hypervisor's
@@ -1697,7 +1697,7 @@ executes in perhaps a few dozen cycles; under most hypervisors, a
 cycles — a difference easily large enough to detect just by timing it with
 `RDTSC` immediately before and after.
 
-This is exactly HYDRA's `linux.timing.rdtsc_cpuid_jitter` check: it
+This is exactly PERDEDOR's `linux.timing.rdtsc_cpuid_jitter` check: it
 executes `RDTSC`, then `CPUID`, then `RDTSC` again, thousands of times in
 a tight loop, and looks at how the resulting cycle counts are distributed
 (their minimum, median, mean, maximum, and how spread-out/"jittery" they
@@ -1715,7 +1715,7 @@ intrinsic the way it exposes `CPUID` (via `X86Base`). Windows' `RDTSC`
 substitute check instead uses .NET's `Stopwatch` class (built on a
 Windows facility called **QPC**, "QueryPerformanceCounter" — a
 high-resolution, but still OS-mediated, and therefore inherently *coarser*
-timer than a direct hardware register read). HYDRA's own code and
+timer than a direct hardware register read). PERDEDOR's own code and
 documentation are explicit and honest about this being a heuristic
 approximation, not a true cycle-accurate measurement, rather than silently
 overstating its own precision — an example of the "documented boundaries"
@@ -1734,7 +1734,7 @@ used by some other architectures, and also, confusingly, by the way
 humans normally write numbers left-to-right).
 
 In code, this is exactly why you'll see `.to_bytes(4, "little")` in
-HYDRA's Python (§4.4) — explicitly telling Python "take this 32-bit
+PERDEDOR's Python (§4.4) — explicitly telling Python "take this 32-bit
 number and lay its bytes out little-endian-style" — and why the
 PowerShell equivalent uses `[BitConverter]::GetBytes(...)`, relying on
 .NET's `BitConverter` to do the equivalent conversion for the machine
@@ -1754,17 +1754,17 @@ multithreading (SMT)** (Intel calls its specific implementation
 logical processors, sharing some of that core's internal resources, to
 squeeze out extra performance when one logical thread is stalled waiting
 on something. From software's point of view (and from `os.cpu_count()` /
-`[System.Environment]::ProcessorCount`, which is exactly what HYDRA's
+`[System.Environment]::ProcessorCount`, which is exactly what PERDEDOR's
 "low core count" checks read), you generally cannot tell the difference
 between "N real physical cores" and "N/2 physical cores with SMT" purely
 from a plain count — both simply report "N logical CPUs." This is a minor
-but honest caveat worth knowing: HYDRA's core-count check is a coarse
+but honest caveat worth knowing: PERDEDOR's core-count check is a coarse
 heuristic, not a precise measurement of physical silicon.
 
 ## Chapter 11: Operating System Internals
 
 Chapter 2 covered universal OS concepts. This chapter goes deep into the
-specific internals of the three operating systems HYDRA targets.
+specific internals of the three operating systems PERDEDOR targets.
 
 ### 11.1 Linux: everything is (sort of) a file
 
@@ -1772,7 +1772,7 @@ A defining Linux/Unix philosophy is that the kernel exposes an enormous
 amount of live system information as ordinary-looking files, readable
 with completely ordinary file-reading code — no special API, no special
 permissions (for most of them), just "open this path and read the text
-inside." HYDRA's Linux agent leans on this philosophy almost entirely;
+inside." PERDEDOR's Linux agent leans on this philosophy almost entirely;
 notice how few of its checks need to run an external command at all,
 compared to how many just read a file directly.
 
@@ -1782,25 +1782,25 @@ the kernel generates its contents live, on demand, the instant something
 reads them. It exposes live information about running processes (each
 process gets a directory `/proc/<pid>/`) and overall system state:
 - `/proc/uptime` — how long the system has been running (in seconds),
-  read by HYDRA's low-uptime check (Chapter 15 explains why low uptime
+  read by PERDEDOR's low-uptime check (Chapter 15 explains why low uptime
   matters at all).
 - `/proc/meminfo` — detailed memory statistics, including `MemTotal:`,
-  read by HYDRA's low-RAM check.
+  read by PERDEDOR's low-RAM check.
 - `/proc/modules` — every kernel module (see §11.2) currently loaded,
-  read by HYDRA's guest-kernel-module check.
+  read by PERDEDOR's guest-kernel-module check.
 - `/proc/scsi/scsi` — information about SCSI-protocol storage devices
   (a decades-old but still widely used storage protocol/standard),
-  including vendor strings, read by HYDRA's SCSI-vendor check.
+  including vendor strings, read by PERDEDOR's SCSI-vendor check.
 - `/proc/1/cgroup` — control-group membership (§13.2) of process ID 1
   (the very first process the kernel starts, and therefore the ultimate
-  ancestor of every other process) — read by HYDRA's container-detection
+  ancestor of every other process) — read by PERDEDOR's container-detection
   check, since a distinctive `cgroup` path here is one of the strongest
   signals that the process is running inside a container rather than
   directly on a full OS install.
 - `/proc/version` — kernel version and build information as free text;
   Microsoft's WSL ("Windows Subsystem for Linux," a compatibility layer
   that runs a real Linux kernel/userland *inside* Windows) leaves the word
-  "microsoft" right in this string, which HYDRA checks for directly.
+  "microsoft" right in this string, which PERDEDOR checks for directly.
 
 **`/sys`** (sysfs) is a second, separate virtual filesystem, more
 structured and more specifically organized around hardware devices and
@@ -1808,20 +1808,20 @@ kernel objects (as opposed to `/proc`'s slightly more historical,
 grab-bag organization):
 - `/sys/class/dmi/id/*` — the SMBIOS/DMI firmware information described
   in §1.7, exposed as one small file per field (`sys_vendor`,
-  `product_name`, `bios_vendor`, `board_vendor`, etc.) — HYDRA's Linux
+  `product_name`, `bios_vendor`, `board_vendor`, etc.) — PERDEDOR's Linux
   agent reads eleven of these fields, each independently, because
   different hypervisors are inconsistent about which specific fields they
   bother to spoof, so checking only one or two would miss real evidence
   sitting in the others.
 - `/sys/bus/pci/devices/*/vendor` — one file per PCI device (§1.6),
-  giving that device's raw vendor ID in hex — read by HYDRA's virtio/PCI
+  giving that device's raw vendor ID in hex — read by PERDEDOR's virtio/PCI
   vendor-ID check.
 - `/sys/block/*/device/{vendor,model}` and `/sys/block/*/size` — per-disk
-  vendor/model strings and raw size (in 512-byte sectors — HYDRA's code
-  multiplies by 512 to convert to bytes), read by HYDRA's block-device
+  vendor/model strings and raw size (in 512-byte sectors — PERDEDOR's code
+  multiplies by 512 to convert to bytes), read by PERDEDOR's block-device
   and small-disk checks.
 - `/sys/class/net/*/address` — each network interface's MAC address
-  (Chapter 19 explains MAC addresses), read by HYDRA's MAC-OUI check.
+  (Chapter 19 explains MAC addresses), read by PERDEDOR's MAC-OUI check.
 
 ### 11.2 Linux kernel modules
 
@@ -1831,7 +1831,7 @@ file). This is how most hardware drivers work: rather than the kernel
 having every possible driver for every possible piece of hardware built in
 permanently (which would be enormous and mostly wasted), only the modules
 actually needed for the hardware present get loaded. `/proc/modules`
-(above) lists every module currently loaded. HYDRA's guest-kernel-module
+(above) lists every module currently loaded. PERDEDOR's guest-kernel-module
 check specifically looks for module name prefixes belonging to
 paravirtualized guest drivers — `virtio` (generic), `vboxguest`/`vboxsf`/
 `vboxvideo` (VirtualBox), `vmwgfx`/`vmw_balloon`/`vmw_vmci` (VMware),
@@ -1850,11 +1850,11 @@ itself has finished initializing. Among its many built-in utilities,
 `systemd-detect-virt` is a small command specifically designed to answer
 "what kind of virtualized (or non-virtualized/'bare metal') environment am
 I running in?" — using systemd's own independent detection logic (which
-overlaps with, but is maintained completely separately from, HYDRA's own
-checks). HYDRA runs this command and treats its answer as an independent
-cross-check against everything else it found — if HYDRA's own CPUID/DMI
+overlaps with, but is maintained completely separately from, PERDEDOR's own
+checks). PERDEDOR runs this command and treats its answer as an independent
+cross-check against everything else it found — if PERDEDOR's own CPUID/DMI
 checks come back "clean" but `systemd-detect-virt` reports `"kvm"` anyway,
-that's a strong signal something in HYDRA's own spoofing coverage has a
+that's a strong signal something in PERDEDOR's own spoofing coverage has a
 gap.
 
 ### 11.4 Linux package managers
@@ -1864,10 +1864,10 @@ packaged and maintained Linux-based operating systems, e.g. Ubuntu,
 Debian, Fedora, Arch) use different **package managers** — tools for
 installing, removing, and tracking installed software — and, critically,
 these are *not* interchangeable or compatible with each other. The two
-families relevant to HYDRA: Debian/Ubuntu-based systems use `dpkg`
+families relevant to PERDEDOR: Debian/Ubuntu-based systems use `dpkg`
 (and its friendlier front-end `apt`), queryable with `dpkg-query`;
 Red Hat/Fedora-based systems use `rpm` (and its friendlier front-end
-`dnf`/`yum`), queryable with `rpm -qa`. HYDRA's installed-package-count
+`dnf`/`yum`), queryable with `rpm -qa`. PERDEDOR's installed-package-count
 check (part of its "behavioral / wear-and-tear" category, Chapter 15) has
 to try both, because it has no way of knowing in advance which family a
 given Linux install belongs to, and gracefully accepts that neither may
@@ -1877,10 +1877,10 @@ be present at all (e.g. inside a minimal container) by reporting
 ### 11.5 Windows internals, continued
 
 Chapter 6.7 already covered the Windows Registry and WMI/CIM. A few more
-Windows-specific concepts used by HYDRA:
+Windows-specific concepts used by PERDEDOR:
 
 - **Services**: introduced in §2.7 — background processes managed
-  centrally by Windows, queryable with `Get-Service`. HYDRA's guest-
+  centrally by Windows, queryable with `Get-Service`. PERDEDOR's guest-
   service check looks for services named things like `VBoxService`,
   `VMTools`, `vmware-tools`, `qemu-ga`.
 - **PnP (Plug and Play) devices**: Windows' system for automatically
@@ -1889,9 +1889,9 @@ Windows-specific concepts used by HYDRA:
   string that embeds the same PCI vendor-ID concept from §1.6, in text
   form (e.g. containing `VEN_1AF4` for a virtio device).
 - **Environment variables** like `%LOCALAPPDATA%` (a per-user folder for
-  application-specific data, used by HYDRA's browser-history check to
+  application-specific data, used by PERDEDOR's browser-history check to
   find where Chrome/Edge store their history file) and `%USERPROFILE%`
-  (the current user's home folder, used by HYDRA's aged-files check).
+  (the current user's home folder, used by PERDEDOR's aged-files check).
 
 ### 11.6 Android internals
 
@@ -1901,7 +1901,7 @@ traditional Linux desktop distribution — no systemd, no `/etc/passwd`
 in the traditional sense for regular apps, a completely different
 application model (apps run inside a managed runtime, heavily sandboxed
 from each other by default, using Linux's own user-ID-based isolation
-creatively). A few Android-specific concepts HYDRA's Android agent relies
+creatively). A few Android-specific concepts PERDEDOR's Android agent relies
 on directly:
 
 - **`getprop` / system properties**: Android maintains a large,
@@ -1910,7 +1910,7 @@ on directly:
   name, and countless other settings — readable with the `getprop`
   command (optionally with one specific property name, or with none, to
   dump everything). This is functionally similar to a very simplified
-  version of the Windows Registry (§6.7), specific to Android. HYDRA's
+  version of the Windows Registry (§6.7), specific to Android. PERDEDOR's
   Android agent reads dozens of these properties, because Android's own
   emulator implementations (covered next, and in Chapter 12) set very
   distinctive values for many of them by default.
@@ -1923,13 +1923,13 @@ on directly:
   leave extremely distinctive fingerprints — property values that
   literally contain the word `"goldfish"` or `"ranchu"`, virtual device
   files with those names, and so on — which is exactly what several of
-  HYDRA's Android checks search for directly.
+  PERDEDOR's Android checks search for directly.
 - **`ro.kernel.qemu`**: one single, extremely blunt system property that
   the goldfish/ranchu emulator kernel sets to `1`, existing for no reason
   other than "yes, this is the emulator" — real devices never set it at
   all (not "set it to 0" — it's simply absent). This is exactly the
   distinction covered in §4.5/§2 about `None`/absence-of-data mattering:
-  HYDRA's check for this property has to specifically distinguish "the
+  PERDEDOR's check for this property has to specifically distinguish "the
   device is unreachable, so I don't know" from "the device is reachable,
   and this property is genuinely just not set" (which is the *normal,
   expected, real-device* case) from "the device is reachable, and this
@@ -1950,7 +1950,7 @@ on directly:
   anyway. Its mere presence on a device is a strong signal that the
   device's *real* underlying CPU is x86, which is itself unusual/
   suspicious for anything claiming to be a real Android phone (real
-  phones are essentially universally ARM). HYDRA checks for this both
+  phones are essentially universally ARM). PERDEDOR checks for this both
   directly (file-presence checks for the actual `libhoudini`-related
   files) and indirectly (checking whether the reported CPU ABI —
   Application Binary Interface, essentially "which instruction set/
@@ -1962,35 +1962,35 @@ on directly:
   apps, viewing logs, and, relevant here, running arbitrary shell commands
   on the device (`adb shell <command>`) and reading its system properties
   (`adb shell getprop <name>`, or the shorthand `adb shell getprop`
-  wrapped by many tools, HYDRA included, as `adb.getprop`). Every single
-  Android check HYDRA runs goes through `adb` — this is a deliberate
+  wrapped by many tools, PERDEDOR included, as `adb.getprop`). Every single
+  Android check PERDEDOR runs goes through `adb` — this is a deliberate
   architectural choice (covered in the Android agent's own README, and
   explained further in Chapter 12/Volume 2) to avoid needing to build and
   install a dedicated companion app on the device at all: `adb` alone is
-  already enough to reach the great majority of what HYDRA needs to
+  already enough to reach the great majority of what PERDEDOR needs to
   check.
 - **`dumpsys`**: an Android system command that dumps detailed diagnostic
   information about a specific system service — e.g. `dumpsys battery`
   reports current battery charge level, charging state, and temperature;
   `dumpsys sensorservice` lists every hardware sensor (accelerometer,
-  gyroscope, proximity sensor, etc.) the device claims to have. HYDRA's
+  gyroscope, proximity sensor, etc.) the device claims to have. PERDEDOR's
   Android agent parses this command's free-text output directly (using
   the regular-expression pattern-matching from §4.10) since, unlike
   `getprop`, `dumpsys` has no simpler structured-output mode for these
   particular subsystems.
 - **`pm` (Package Manager)**: the on-device command for querying and
   managing installed apps — `pm list packages -3` lists only third-party
-  ("-3" = not part of the base OS image) installed apps, used by HYDRA's
+  ("-3" = not part of the base OS image) installed apps, used by PERDEDOR's
   installed-app-count check (a mobile-specific version of the same
   "wear and tear" idea from §11.4's desktop package-count check); `pm
   list features` lists hardware/software capabilities the device claims
-  to support (e.g. `android.hardware.camera`), used by HYDRA's
+  to support (e.g. `android.hardware.camera`), used by PERDEDOR's
   camera-feature check.
 
 ## Chapter 12: Virtualization Deep Dive
 
 Virtualization is the technology at the very center of this entire
-project — HYDRA exists to detect it. This chapter explains what it
+project — PERDEDOR exists to detect it. This chapter explains what it
 actually is, mechanically, from the ground up.
 
 ### 12.1 What is virtualization?
@@ -2009,7 +2009,7 @@ operating systems on one physical server (huge cost savings, the
 foundation of essentially all modern cloud computing); you can test
 software against many different OS configurations without needing
 separate physical machines for each; and — the reason this matters
-directly to HYDRA/CHIMERA — you can safely run and observe **untrusted or
+directly to PERDEDOR/CHIMERA — you can safely run and observe **untrusted or
 malicious software** inside a disposable, isolated guest, without
 risking the real host machine, and can discard/reset the guest instantly
 afterward.
@@ -2030,7 +2030,7 @@ afterward.
   a VM or two on their own desktop.
 
 **KVM** (Kernel-based Virtual Machine), which comes up constantly in this
-project (and in CHIMERA, the sandbox platform HYDRA was built to support),
+project (and in CHIMERA, the sandbox platform PERDEDOR was built to support),
 is interesting because it blurs this line: it's a feature *built directly
 into the Linux kernel itself*, turning an ordinary Linux installation into
 a Type-1-like hypervisor without needing separate bare-metal hypervisor
@@ -2081,7 +2081,7 @@ source software that can operate in two very different modes:
    controllers, network cards, graphics, etc.) — this "QEMU/KVM" pairing
    is the standard, high-performance way to run x86 Linux VMs, and is the
    specific hypervisor combination CHIMERA's own KVM hardening work (the
-   report that originally motivated HYDRA's creation) is built around.
+   report that originally motivated PERDEDOR's creation) is built around.
 
 ### 12.5 Paravirtualization and VirtIO
 
@@ -2104,11 +2104,11 @@ by QEMU/KVM (and other hypervisors) — a family of virtual devices
 etc.) that only exist as a concept inside virtualized environments, with
 no physical hardware equivalent at all.
 
-This directly explains one of HYDRA's richest and most reliable detection
+This directly explains one of PERDEDOR's richest and most reliable detection
 signals: because VirtIO devices are registered on the guest's PCI bus
 (§1.6) with a specific, publicly documented vendor ID (`0x1af4`,
 officially assigned to Red Hat for exactly this purpose), simply
-enumerating PCI devices and checking their vendor IDs (HYDRA's
+enumerating PCI devices and checking their vendor IDs (PERDEDOR's
 `pci_virtio_devices`/`pnp_virtual_devices` checks) reliably identifies a
 QEMU/KVM guest — because *no real physical device ever legitimately uses
 that vendor ID*; its only possible meaning is "this is a virtio device,"
@@ -2128,12 +2128,12 @@ a background service/daemon (§2.7), leave distinctive files on disk, and
 often register distinctive registry keys (on Windows, §6.7). Because
 they're aimed at making a VM *nicer to use interactively* rather than at
 being stealthy, they tend to be extremely easy, unambiguous detection
-signals — HYDRA checks for their processes/services, their files on disk,
+signals — PERDEDOR checks for their processes/services, their files on disk,
 and (on Windows) their registry footprint, as three independent, largely
 redundant checks, precisely because catching *any one* of these is
 already close to definitive proof.
 
-### 12.7 SMBIOS/DMI spoofing, and why HYDRA reads it twice (Windows)
+### 12.7 SMBIOS/DMI spoofing, and why PERDEDOR reads it twice (Windows)
 
 Returning to §1.7's introduction of SMBIOS/DMI: because this firmware-
 level identity data is such a rich, blunt detection signal, hardening a VM
@@ -2148,7 +2148,7 @@ underlying firmware table. It is technically possible for a spoofing setup
 to intercept and rewrite what WMI reports *without* actually correcting
 the true, lower-level raw table underneath — which would fool a naive
 checker that only looks at WMI, while leaving the real evidence sitting
-completely untouched, one layer down. This is exactly why HYDRA's Windows
+completely untouched, one layer down. This is exactly why PERDEDOR's Windows
 agent *also* reads the raw SMBIOS table directly via the
 `GetSystemFirmwareTable` Win32 API (§6.5) and scans its raw bytes for the
 same vendor signatures, entirely independently of what WMI reports — two
@@ -2168,11 +2168,11 @@ which the VM itself can query to learn things like its own cloud-assigned
 ID, region, and configuration. This address is only ever reachable from
 *inside* a cloud VM (or certain container platforms that deliberately
 proxy it) — an ordinary laptop or a non-cloud-hosted VM will simply get no
-response at all when trying to reach it. HYDRA's cloud-metadata-
+response at all when trying to reach it. PERDEDOR's cloud-metadata-
 reachability check exploits exactly this: it doesn't need to understand or
 parse *any* of the metadata content — the mere fact that *something*
 answered at all, within a short timeout, is already conclusive proof this
-machine is a cloud VM. This is a genuinely novel check (as HYDRA's own
+machine is a cloud VM. This is a genuinely novel check (as PERDEDOR's own
 code comments note) that none of the older prior-art tools (Chapter 17)
 include, because they mostly predate mainstream cloud-based malware
 detonation infrastructure.
@@ -2241,7 +2241,7 @@ signals, specific to the namespace/cgroup mechanism itself:
   container runtime), or `kubepods` (Kubernetes, a container-orchestration
   platform) baked right into the cgroup path itself.
 
-HYDRA's `linux.env.container_or_wsl` check looks for exactly these two
+PERDEDOR's `linux.env.container_or_wsl` check looks for exactly these two
 signals (plus, separately, the WSL kernel-version-string check from
 §11.1) — bundled into one check because, conceptually, they're all
 answering the same underlying analyst question: "is this detonation
@@ -2251,18 +2251,18 @@ compatibility layer) instead?" — a distinction that matters enormously for
 genuine malware analysis safety, independent of whether any *malware-
 facing* evasion signal is present at all.
 
-### 13.4 Why HYDRA's own development used Docker
+### 13.4 Why PERDEDOR's own development used Docker
 
 A separate, important point: Docker containers are also simply a
 convenient, fast, disposable, real-Linux testing environment for
-*developing and validating* HYDRA's Linux agent itself — running
+*developing and validating* PERDEDOR's Linux agent itself — running
 `docker run --rm python:3.12-slim ...` gives you a genuine, fresh Linux
 environment (with, notably, its own genuinely different DMI/PCI/cgroup
 reality than your actual host machine) in seconds, without needing an
 actual VM at all. This project's own Linux README documents exactly this
 practice, and it's a good general lesson: **the tool used to test/develop
 something is not always the same category of thing the tool is checking
-for** — HYDRA uses containers as a development convenience while its
+for** — PERDEDOR uses containers as a development convenience while its
 actual detection logic is aimed at virtual machines, and it also happens
 to have a check that tells the two apart when it matters.
 
@@ -2318,9 +2318,9 @@ fully automatically, producing a structured report of observed behavior
 for each one, which security teams and automated detection systems then
 use to build defenses.
 
-### 14.4 CHIMERA: the project HYDRA was built to support
+### 14.4 CHIMERA: the project PERDEDOR was built to support
 
-This entire HYDRA project exists as a companion tool to **CHIMERA**, a
+This entire PERDEDOR project exists as a companion tool to **CHIMERA**, a
 hardened, multi-platform malware-detonation sandbox built around exactly
 this idea, using KVM (§12.2) as its underlying hypervisor. CHIMERA's own
 design work involved extensively studying and closing exactly the kind of
@@ -2334,7 +2334,7 @@ During that work, CHIMERA's own documentation identified a specific,
 concrete gap: those three verification tools only cover Windows and Linux
 — none of them support Android at all, and none of them share a common
 report format that would let you score a mixed fleet of Windows, Linux,
-*and* Android sandboxes consistently, side by side. **HYDRA is the tool
+*and* Android sandboxes consistently, side by side. **PERDEDOR is the tool
 built to close exactly that gap** — a single, unified, cross-platform
 self-test suite, aiming for parity with (and, on Android, coverage well
 beyond) those three tools' combined technique catalog, sharing one report
@@ -2353,7 +2353,7 @@ it's currently running inside an analysis sandbox — and if so, to behave
 completely differently (do nothing at all, or do something harmless and
 misleading) specifically to produce a boring, useless analysis report and
 starve the defenders of real information. This is the exact behavior
-category HYDRA exists to test a sandbox *against*, from the defender's own
+category PERDEDOR exists to test a sandbox *against*, from the defender's own
 side: by running the same categories of checks a real piece of
 sandbox-evasive malware would run, an analyst can find and fix a sandbox's
 weaknesses *before* real malware ever gets the chance to exploit them.
@@ -2365,16 +2365,16 @@ possible" template VM disk image — set up once, with deliberate attention
 to removing/spoofing every detectable artifact a project like CHIMERA
 knows about, and then frozen and reused (or freshly cloned) for every
 future detonation, rather than reconfiguring a fresh VM from scratch each
-time. HYDRA's checks are specifically meant to be run *against a golden
+time. PERDEDOR's checks are specifically meant to be run *against a golden
 image, before it's ever used for a real detonation* — nearly every one of
-HYDRA's "remediation" suggestions (the fix text attached to a `detected`
+PERDEDOR's "remediation" suggestions (the fix text attached to a `detected`
 finding) is phrased in exactly these terms: "fix this on the golden image
 before freezing it," not "fix this live, during an active detonation,"
 because live analysis environments deliberately have zero tooling running
-inside them at all (the exact opposite of HYDRA's own approach — see
+inside them at all (the exact opposite of PERDEDOR's own approach — see
 §14.7 below).
 
-### 14.7 Why HYDRA runs *inside* the guest, unlike CHIMERA's real detonation model
+### 14.7 Why PERDEDOR runs *inside* the guest, unlike CHIMERA's real detonation model
 
 This is a subtlety worth being explicit about, because it could otherwise
 look like a contradiction: CHIMERA's actual malware-detonation sandboxes
@@ -2382,9 +2382,9 @@ are deliberately **agentless** — meaning no extra software runs inside the
 guest at all during a real detonation, specifically *because* the presence
 of any unusual extra software/process is itself exactly the kind of thing
 sophisticated malware checks for (this is the "design-specific" detection
-category from Chapter 15). HYDRA, by contrast, absolutely does run
+category from Chapter 15). PERDEDOR, by contrast, absolutely does run
 directly inside the target (whichever platform it's testing). There is no
-real contradiction here, because HYDRA is never used during an actual
+real contradiction here, because PERDEDOR is never used during an actual
 detonation — it's an *analyst-run self-test*, executed deliberately,
 by a human, against a golden image, specifically *before* that image is
 ever used to detonate anything real. Pafish and al-khaser (Chapter 17)
@@ -2394,13 +2394,13 @@ alongside real malware during a genuine analysis session.
 
 ## Chapter 15: Malware Evasion Techniques — The Four-Category Model
 
-Every single check HYDRA runs is tagged with exactly one of four
+Every single check PERDEDOR runs is tagged with exactly one of four
 **detection categories**, a classification scheme that comes directly
 from CHIMERA's own theoretical model of sandbox-evasion techniques
 (originally laid out in CHIMERA's design chapter 3.2). Understanding these
 four categories deeply is the single most important conceptual piece of
 this entire document, because it's the organizing principle behind
-*every* file in HYDRA's codebase (Volume 2 will show you exactly where
+*every* file in PERDEDOR's codebase (Volume 2 will show you exactly where
 each category shows up in the actual source).
 
 ### 15.1 Category 1: `environment_artifact`
@@ -2414,7 +2414,7 @@ This is the largest and generally most reliable category, because
 virtualization software has to invent an enormous amount of fake
 hardware/firmware identity for a guest to see (Chapter 12 covered exactly
 why), and it's very easy for some piece of that fake identity to leak an
-obvious tell. Concrete examples, all of which HYDRA checks for on at least
+obvious tell. Concrete examples, all of which PERDEDOR checks for on at least
 one platform:
 - CPU vendor/hypervisor-presence signatures via `CPUID` (§10.3).
 - SMBIOS/DMI firmware strings (§1.7, §12.7) — motherboard/BIOS/chassis
@@ -2458,7 +2458,7 @@ Concrete examples:
 **Definition**: detection based on the *absence of evidence a real human
 has actually been using this machine* over time — sometimes called "wear
 and tear" detection, after the specific academic research (Miramirkhani
-et al.'s work on this exact topic, cited directly in HYDRA's own code
+et al.'s work on this exact topic, cited directly in PERDEDOR's own code
 comments) that popularized the idea. A disposable sandbox VM, freshly
 provisioned for each detonation and then discarded, will never accumulate
 the small, mundane signs of genuine, ongoing human use that a real
@@ -2494,7 +2494,7 @@ Concrete examples:
 **Definition**: quirks of *this particular analysis platform's own
 design/setup*, as opposed to virtualization-in-general. This category is
 explicitly framed, in CHIMERA's own theoretical model, as the category a
-tool like HYDRA has to keep *continuously current on* — because, unlike
+tool like PERDEDOR has to keep *continuously current on* — because, unlike
 the other three categories (which are rooted in relatively stable,
 long-lived technical facts about how CPUs and hypervisors work), this
 category is really about "did whoever set up this specific analysis
@@ -2532,8 +2532,8 @@ Concrete examples:
 ### 15.5 Why this four-category split matters for scoring, not just organization
 
 Beyond being a useful mental model, this categorization is *load-bearing*
-in HYDRA's actual output: every `Finding` in a report is tagged with
-exactly one of these four categories, and HYDRA's human-readable and
+in PERDEDOR's actual output: every `Finding` in a report is tagged with
+exactly one of these four categories, and PERDEDOR's human-readable and
 aggregated reports group findings by category, so an analyst reviewing
 results can immediately see *where* a sandbox's weaknesses cluster — e.g.
 "this sandbox has excellent environment-artifact hardening but terrible
@@ -2577,9 +2577,9 @@ commercial disassembler/decompiler, an industry standard for professional
 reverse engineering), **Ghidra** (a free, open-source alternative
 originally developed by the NSA and released publicly in 2019), and
 **radare2**/**r2** (a free, open-source, more command-line-oriented
-alternative). All three appear directly in HYDRA's own list of "known
+alternative). All three appear directly in PERDEDOR's own list of "known
 analysis tool process names" (§15.4) — their mere presence running on a
-machine is itself one of HYDRA's design-specific detection checks.
+machine is itself one of PERDEDOR's design-specific detection checks.
 
 ### 16.3 Debuggers
 
@@ -2603,7 +2603,7 @@ exactly what a program does, malware very commonly includes deliberate
 **anti-debugging** checks — logic that tries to detect whether it's
 currently running under a debugger, and if so, behaves differently (exits
 immediately, or does something deliberately misleading) specifically to
-frustrate step-by-step analysis. HYDRA implements a representative,
+frustrate step-by-step analysis. PERDEDOR implements a representative,
 *intentionally limited* subset of the many known anti-debug techniques,
 on Windows specifically, using two genuinely simple, well-documented Win32
 API functions covered in §6.5:
@@ -2616,11 +2616,11 @@ API functions covered in §6.5:
   separate analysis tool watching the target process from outside, a
   common technique for evading the simpler `IsDebuggerPresent` check
   alone).
-- HYDRA additionally checks .NET's own managed-code equivalent,
+- PERDEDOR additionally checks .NET's own managed-code equivalent,
   `System.Diagnostics.Debugger.IsAttached`, specific to whether a *managed*
   (.NET) debugger is attached to the PowerShell process itself.
 
-### 16.5 What HYDRA deliberately does *not* implement, and why
+### 16.5 What PERDEDOR deliberately does *not* implement, and why
 
 This is a good, concrete example of the "documented boundaries" principle
 covered fully in Chapter 18: real-world malware anti-debug logic goes
@@ -2630,7 +2630,7 @@ a low-level Windows data structure called the **PEB** (Process Environment
 Block, an internal per-process bookkeeping structure Windows maintains,
 not part of any officially documented/stable public API), deliberately
 setting the CPU's **trap flag** to detect single-instruction-stepping,
-and dozens more similarly deep techniques. HYDRA's own documentation is
+and dozens more similarly deep techniques. PERDEDOR's own documentation is
 explicit and honest that these deeper techniques are out of scope for a
 PowerShell-based agent — genuinely reaching them would require either
 unsafe, low-level native code well beyond a simple P/Invoke declaration
@@ -2645,10 +2645,10 @@ documenting what it does**).
 
 ## Chapter 17: The Prior Art — Pafish, al-khaser, and VMAware
 
-HYDRA was explicitly built to reach parity with (and, on Android, go
+PERDEDOR was explicitly built to reach parity with (and, on Android, go
 beyond) three specific, well-established open-source tools. Understanding
 what each one actually is — and isn't — is essential context for
-understanding HYDRA's own design.
+understanding PERDEDOR's own design.
 
 ### 17.1 Pafish ("Paranoid Fish")
 
@@ -2674,12 +2674,12 @@ dozens of registry keys across multiple hypervisors, an extensive
 analysis-tool process blacklist, DLL-injection and anti-dumping
 self-tests, a substantial anti-debugging section (§16.4), and a "Human
 Interface" section (mouse movement, font/process counts) that directly
-inspired HYDRA's own behavioral checks of the same names. Because of its
+inspired PERDEDOR's own behavioral checks of the same names. Because of its
 sheer breadth, al-khaser is generally treated as the more thorough,
 harder-to-fully-pass reference implementation of "what would a genuinely
 determined piece of malware check for," and it's the single largest
-individual source of technique inspiration for HYDRA's own Windows and
-Linux check catalogs (HYDRA's own coverage documentation cites it, by
+individual source of technique inspiration for PERDEDOR's own Windows and
+Linux check catalogs (PERDEDOR's own coverage documentation cites it, by
 name, dozens of times).
 
 ### 17.3 VMAware
@@ -2690,16 +2690,16 @@ above) — meaning it's meant to be embedded directly into other software
 as a reusable detection component, exposing both individual technique
 checks and an aggregated overall score. Its scoring approach (`clean/
 total` as a headline number, alongside a more nuanced weighted
-assessment) directly inspired HYDRA's own two-number scoring design
+assessment) directly inspired PERDEDOR's own two-number scoring design
 (§18.4 and Volume 2 cover this exactly). VMAware is also notable for
-including some of the more technically involved checks HYDRA borrows
+including some of the more technically involved checks PERDEDOR borrows
 from directly, like raw SMBIOS firmware-table scanning (§12.7) rather
 than relying solely on higher-level OS-provided hardware-info APIs.
 
-### 17.4 What none of the three do — the gap HYDRA fills
+### 17.4 What none of the three do — the gap PERDEDOR fills
 
 Despite their real strengths, all three tools share the same fundamental
-limitation that motivated HYDRA's creation: **none of them support
+limitation that motivated PERDEDOR's creation: **none of them support
 Android**, and **none of them share a common output format** with each
 other — each produces its own bespoke text/console output, with no way
 to programmatically combine results from, say, a Windows run and a Linux
@@ -2711,13 +2711,13 @@ single, consistent tool and workflow using Pafish/al-khaser/VMAware alone
 — they'd need three (or, for Android, effectively zero, since nothing
 comparable exists at all) completely separate tools, each with its own
 output format, requiring manual, error-prone reconciliation to get any
-kind of unified picture. This is precisely the gap HYDRA is built to
+kind of unified picture. This is precisely the gap PERDEDOR is built to
 close — one CLI, one report schema (Chapter 9), one scoring method,
 across all three platforms.
 
 ## Chapter 18: Security Engineering Practices Used in This Project
 
-This chapter steps back from HYDRA's specific technical subject matter and
+This chapter steps back from PERDEDOR's specific technical subject matter and
 covers the general software-engineering *practices* the project follows —
 practices that apply to building reliable, trustworthy software of any
 kind, not just security tools.
@@ -2729,7 +2729,7 @@ A **test** is a small piece of code whose entire job is to check that some
 and automatically verifying it produces the expected output, rather than
 a human having to manually check by hand, every single time, forever. A
 collection of tests is a **test suite**, typically run with a dedicated
-**test framework** — HYDRA's Python code uses **pytest**, the most widely
+**test framework** — PERDEDOR's Python code uses **pytest**, the most widely
 used Python testing framework, which automatically discovers and runs
 every function in the `tests/` directory whose name starts with `test_`,
 and reports which passed and which failed.
@@ -2738,13 +2738,13 @@ and reports which passed and which failed.
   isolation (e.g. "does the severity-weighted scoring formula produce the
   right number for this specific input?").
 - An **integration test** checks that multiple pieces work correctly
-  *together* (e.g. HYDRA's `test_windows_agent_report.py` actually runs
+  *together* (e.g. PERDEDOR's `test_windows_agent_report.py` actually runs
   the real PowerShell agent script and verifies its real output validates
   against the real JSON schema — testing the whole pipeline end-to-end,
   not just one function in isolation).
 - A **regression test** is a test written specifically *after* fixing a
   real bug, whose entire purpose is making sure that exact bug can never
-  silently come back unnoticed in the future. HYDRA's codebase has
+  silently come back unnoticed in the future. PERDEDOR's codebase has
   several of these, each with a comment explaining the original bug in
   detail — e.g. the CPUID register-order test from §10.3, and the
   Android "device unreachable vs. property genuinely unset" test from
@@ -2760,7 +2760,7 @@ and reports which passed and which failed.
   demand. Python's `pytest`, via a built-in feature called `monkeypatch`,
   lets a test temporarily replace a real function with a fake one for the
   duration of that one test only, automatically restoring the original
-  afterward — you'll see `monkeypatch.setattr(...)` throughout HYDRA's
+  afterward — you'll see `monkeypatch.setattr(...)` throughout PERDEDOR's
   test files, doing exactly this.
 
 **Test-Driven Development (TDD)** is a specific *workflow*, not just "have
@@ -2789,17 +2789,17 @@ pipeline?" bugs before they can ever happen.
 ### 18.3 Graceful degradation and the "never crash the whole scan over one check" principle
 
 A theme that comes up constantly throughout this document (and will come
-up constantly again in Volume 2): almost every individual check HYDRA runs
+up constantly again in Volume 2): almost every individual check PERDEDOR runs
 is doing something that might simply not be possible on this particular
 machine — a file that doesn't exist, a command that isn't installed, a
 Windows-only cmdlet running on macOS, a native CPU instruction on
-non-x86 hardware, a device that's currently unreachable over adb. HYDRA's
+non-x86 hardware, a device that's currently unreachable over adb. PERDEDOR's
 design treats every one of these as an entirely *expected*, individually-
 handled outcome, using the `error`/`skipped` statuses (Volume 2 covers the
 `Finding`/`Status` model exactly), rather than letting any single check's
 failure crash or halt the entire rest of the scan. This is why you'll see
 `try`/`except` (or PowerShell's `try`/`catch`) wrapped individually around
-so many of HYDRA's checks — the failure boundary is deliberately drawn
+so many of PERDEDOR's checks — the failure boundary is deliberately drawn
 around *each individual check*, so that one failing check can never take
 down thirty working ones alongside it.
 
@@ -2812,7 +2812,7 @@ away) is a fundamentally bigger problem than an `info`-severity low font
 count (a subtle, easily-missed signal that only the most thorough malware
 would bother checking, and even then only as one weak signal among many).
 A pure `clean/total` count treats these as numerically identical, which
-would be actively misleading. HYDRA (following VMAware's own precedent,
+would be actively misleading. PERDEDOR (following VMAware's own precedent,
 §17.3) reports **two** numbers side by side for exactly this reason:
 
 - **`raw_score`**: a simple `clean/applicable` count (errored/skipped
@@ -2828,17 +2828,17 @@ would be actively misleading. HYDRA (following VMAware's own precedent,
 
 ### 18.5 Code formatting, linting, and static analysis
 
-- A **formatter** (HYDRA uses **black** for Python) automatically
+- A **formatter** (PERDEDOR uses **black** for Python) automatically
   rewrites code into one single, consistent visual style (line length,
   spacing, quote style, etc.), removing any need for humans to
   argue over or manually enforce style preferences — you write
   reasonably-formed code, run the formatter, and it comes out
   byte-for-byte consistent with every other file in the project.
-- An **import sorter** (HYDRA uses **isort**) automatically arranges a
+- An **import sorter** (PERDEDOR uses **isort**) automatically arranges a
   file's `import` statements (§4.9) into a consistent, logical order
   (standard library imports, then third-party imports, then the
   project's own internal imports, each group alphabetized).
-- A **linter** (HYDRA uses **ruff**, a fast, modern Python linter) scans
+- A **linter** (PERDEDOR uses **ruff**, a fast, modern Python linter) scans
   code for likely mistakes, bad practices, and style-guide violations
   *without* actually running it — catching things like an unused import,
   a variable that's assigned but never used, or (as came up directly
@@ -2853,8 +2853,8 @@ would be actively misleading. HYDRA (following VMAware's own precedent,
 
 A well-designed command-line tool follows several conventions users come
 to expect, mostly by long-standing Unix tradition: distinct **positional
-arguments** for required, unambiguous choices (like HYDRA's
-`hydra test <platform>`, where the platform genuinely must be specified,
+arguments** for required, unambiguous choices (like PERDEDOR's
+`perdedor test <platform>`, where the platform genuinely must be specified,
 in a specific position, every time) versus optional **flags** for
 everything else (§5.3); clear, actionable error messages printed to
 **stderr**, not stdout (§5.6), so a script capturing the tool's real
@@ -2864,10 +2864,10 @@ used as one step inside a larger automated pipeline, with the calling
 script able to detect success/failure just by checking the exit code,
 without needing to parse any actual output text at all.
 
-HYDRA's own CLI design goes one specific step further, deliberately: it
+PERDEDOR's own CLI design goes one specific step further, deliberately: it
 does *not* offer a "test everything at once, auto-detect the platform"
 mode — the user must explicitly say which single platform they're testing
-(`hydra test windows`, `hydra test linux`, or `hydra test android`), and
+(`perdedor test windows`, `perdedor test linux`, or `perdedor test android`), and
 only that one platform's full check suite runs. This is a direct
 requirement from this project's own specification, not an accidental
 limitation — the reasoning being that auto-detecting "which platform am I
@@ -2877,9 +2877,9 @@ with complete certainty, exactly which sandbox they're testing (they just
 built it), so there's no actual scenario where auto-detection would add
 real value, only additional complexity and a new potential failure mode.
 
-## Chapter 19: Networking Basics Relevant to HYDRA
+## Chapter 19: Networking Basics Relevant to PERDEDOR
 
-You don't need a full networking course to understand HYDRA — just these
+You don't need a full networking course to understand PERDEDOR — just these
 specific pieces.
 
 ### 19.1 IP addresses
@@ -2925,7 +2925,7 @@ SMBIOS/DMI situation in §12.7 — most hypervisors default to using their
 it: VirtualBox's default is `08:00:27` (originally registered to
 "Cadmus Computer Systems," the OUI VirtualBox inherited); QEMU/KVM's
 default (via libvirt) is `52:54:00`; VMware has several registered
-blocks including `00:0c:29` and `00:50:56`. HYDRA's MAC-OUI checks
+blocks including `00:0c:29` and `00:50:56`. PERDEDOR's MAC-OUI checks
 (present on both Linux and Windows) read every network interface's MAC
 address and compare just its first three bytes against a table of these
 known hypervisor-default OUIs.
@@ -2936,7 +2936,7 @@ known hypervisor-default OUIs.
 browsers and countless other programs use to request and receive data
 over a network — a **client** sends a **request** to a specific address
 (URL), and a **server** at that address sends back a **response**.
-HYDRA's cloud-metadata-reachability check (§12.8) makes an HTTP request
+PERDEDOR's cloud-metadata-reachability check (§12.8) makes an HTTP request
 to the fixed link-local metadata address, with a short **timeout**
 (a maximum time to wait before giving up and treating it as failed) — and,
 notably, it doesn't care *what* comes back, or whether the request even
@@ -2944,11 +2944,11 @@ succeeds in a conventional sense; it only cares whether *anything at all*
 answered within that short window, since only a genuine cloud VM would
 have anything listening there to answer at all.
 
-## Chapter 20: Putting It All Together — How HYDRA's Design Falls Out of These Ideas
+## Chapter 20: Putting It All Together — How PERDEDOR's Design Falls Out of These Ideas
 
 Before moving to Volume 2's line-by-line code walkthrough, it's worth
 explicitly connecting every idea from this volume to the actual shape of
-the HYDRA project, so the transition feels obvious rather than abrupt.
+the PERDEDOR project, so the transition feels obvious rather than abrupt.
 
 **The three-agent, one-schema architecture** (Chapter 9 + Chapter 2.4)
 exists because Windows, Linux, and Android are three genuinely different
@@ -2957,13 +2957,13 @@ languages best suited to each (Chapters 4, 6 — Python fits Linux/Android
 cleanly; PowerShell/.NET is the natural, idiomatic choice for deep Windows
 system access) — but a JSON Schema (Chapter 9) lets all three still agree
 on one common *output* shape, so a human or another program consuming
-HYDRA's results never needs to care which language or platform produced
+PERDEDOR's results never needs to care which language or platform produced
 any given report.
 
 **The four detection categories** (Chapter 15) exist because they're a
 genuinely meaningful, real technical taxonomy of *how* virtualization
 leaks evidence — not an arbitrary organizational choice — and tagging
-every check with one lets HYDRA's reports surface *where* a sandbox's
+every check with one lets PERDEDOR's reports surface *where* a sandbox's
 weaknesses actually cluster, rather than just a flat list.
 
 **The native C helper** (Chapter 7) exists purely because two specific
@@ -3164,7 +3164,7 @@ conventionally means success. (5.5)
 **f-string** — Python syntax for embedding expressions directly inside a
 string literal. (4.4)
 
-**Finding** — HYDRA's core data structure: the result of running exactly
+**Finding** — PERDEDOR's core data structure: the result of running exactly
 one check.
 
 **Firmware** — low-level software built into hardware, running before the
@@ -3361,7 +3361,7 @@ for describing shapes of text. (4.10)
 **Registry (Windows)** — a hierarchical database of Windows system and
 application settings. (6.7)
 
-**Remediation** — in HYDRA specifically, the suggested hardening fix
+**Remediation** — in PERDEDOR specifically, the suggested hardening fix
 attached to a detected finding.
 
 **Remote (Git)** — a copy of a Git repository hosted elsewhere, e.g. on
@@ -3386,7 +3386,7 @@ Windows, with no visible window. See also Daemon. (2.7)
 
 **Set** — an unordered collection of unique values. (3.3)
 
-**Severity** — HYDRA's classification of how serious a detected finding
+**Severity** — PERDEDOR's classification of how serious a detected finding
 is: info, low, medium, high, critical.
 
 **Shebang** — the `#!` line at the top of a script file specifying which
@@ -3533,7 +3533,7 @@ explain why Pafish/al-khaser/VMAware weren't enough on their own.
 
 **Week 6 — Engineering practice, then synthesis.** Chapters 18, 19, 20
 (Security Engineering Practices, Networking, Putting It All Together).
-Goal: understand *why* HYDRA is built the way it is, not just *what* it
+Goal: understand *why* PERDEDOR is built the way it is, not just *what* it
 does — this chapter's synthesis should feel like it's stating things you
 already independently believe, based on everything before it, rather than
 introducing new information.
@@ -3554,8 +3554,8 @@ not a failure.
 ---
 
 **End of Volume 1.** Continue to
-[`BUILD_GUIDE_VOL2_HYDRA_FROM_SCRATCH.md`](BUILD_GUIDE_VOL2_HYDRA_FROM_SCRATCH.md)
-for the complete, line-by-line walkthrough of HYDRA's actual source code —
+[`BUILD_GUIDE_VOL2_PERDEDOR_FROM_SCRATCH.md`](BUILD_GUIDE_VOL2_PERDEDOR_FROM_SCRATCH.md)
+for the complete, line-by-line walkthrough of PERDEDOR's actual source code —
 everything in this volume was building toward being able to read that
 document and understand *every single line* of it, well enough to
 reproduce the entire project yourself from an empty folder.

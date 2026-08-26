@@ -1,4 +1,4 @@
-"""Entry point: `python -m hydra_android [-s SERIAL] [-o output.json]`
+"""Entry point: `python -m perdedor_android [-s SERIAL] [-o output.json]`
 
 Drives the target device (or CHIMERA's own qemu-system-aarch64 guest) over
 adb. If no device is reachable at all, every check reports `error` with a
@@ -6,7 +6,7 @@ clear reason rather than the scan failing outright -- the emitted report is
 always schema-valid so it can still be aggregated.
 
     adb devices                                  # find the serial
-    python3 -m hydra_android -s emulator-5554 -o android-report.json
+    python3 -m perdedor_android -s emulator-5554 -o android-report.json
 """
 
 from __future__ import annotations
@@ -20,7 +20,7 @@ from .runner import run_scan
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="hydra_android")
+    parser = argparse.ArgumentParser(prog="perdedor_android")
     parser.add_argument(
         "-s",
         "--serial",
@@ -54,7 +54,7 @@ def main(argv: list[str] | None = None) -> int:
 
     summary = report["summary"]
     print(
-        f"HYDRA android scan: {summary['raw_score']} clean, weighted {summary['weighted_score']}/100 "
+        f"PERDEDOR android scan: {summary['raw_score']} clean, weighted {summary['weighted_score']}/100 "
         f"({summary['errored']} errored, {summary['skipped']} skipped)",
         file=sys.stderr,
     )
