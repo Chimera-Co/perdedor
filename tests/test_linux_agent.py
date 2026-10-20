@@ -79,3 +79,20 @@ def test_cpu_brand_string_skipped_when_cpuid_unavailable(monkeypatch) -> None:
     monkeypatch.setattr(environment.cpu, "brand_string", lambda: None)
     finding = environment.check_cpu_brand_string()
     assert finding.status.value == "skipped"
+
+
+def test_supplied_cpuid_helper_is_used_without_building(tmp_path, monkeypatch):
+    import subprocess
+
+    from perdedor_linux import cpu
+
+    helper = tmp_path / "helper"
+    subprocess.run(
+        ["cc", "-O2", "-o", str(helper), str(cpu._NATIVE_DIR / "cpuid_rdtsc.c")], check=True, capture_output=True
+    )
+    monkeypatch.setattr(cpu, "_BINARY", tmp_path / "never-built")
+    monkeypatch.setenv("PERDEDOR_CPUID_HELPER", str(helper))
+    assert cpu._ensure_built() == helper
+    assert not (tmp_path / "never-built").exists()
+    monkeypatch.setenv("PERDEDOR_CPUID_HELPER", str(tmp_path / "missing"))
+    assert cpu._ensure_built() is None
