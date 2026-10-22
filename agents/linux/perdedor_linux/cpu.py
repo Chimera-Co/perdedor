@@ -5,10 +5,15 @@ out to a tiny C binary built on first use (see agents/linux/native/). Every
 public function returns None instead of raising when the primitive is
 unavailable (non-x86 host, no C compiler present) -- callers turn that into
 a "skipped" finding rather than crashing the whole scan over one probe.
+
+A sandbox guest usually has no compiler. A prebuilt (e.g. statically linked)
+helper can be supplied instead through the PERDEDOR_CPUID_HELPER environment
+variable; it is used only if it answers like the helper (usage exit code 1).
 """
 
 from __future__ import annotations
 
+import os
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
@@ -34,6 +39,11 @@ def _is_runnable(binary: Path) -> bool:
 
 
 def _ensure_built() -> Path | None:
+    supplied = os.environ.get("PERDEDOR_CPUID_HELPER")
+    if supplied:
+        # Never fall back to building when a helper was supplied but is unusable:
+        # the caller asked for that binary, so report the checks as skipped.
+        return Path(supplied) if _is_runnable(Path(supplied)) else None
     if _BINARY.exists() and not _is_runnable(_BINARY):
         _BINARY.unlink(missing_ok=True)
     if not _BINARY.exists():
