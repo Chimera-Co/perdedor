@@ -32,8 +32,15 @@ catalog/
   threats.json          malware families / tools / actors -> technique keys, with sources
   upstreams.json        upstream projects tracked by the watcher
   inventory/<tool>.json upstream technique inventories at a pinned revision (coverage basis)
-agents/<platform>/      one agent per platform (windows = PowerShell 7 + native helper; others = Python 3 stdlib)
-native/                 shared C probe helper (Windows via mingw-w64, Linux static)
+native/                 THE agent for Windows and Linux: C++17, statically linked, no runtime needed
+  src/core/             registry, selection, watchdog, JSON report, CLI (do not change without need)
+  src/common/           checks compiled into both builds (x86 CPU, timing, instruction probes)
+  src/windows/          Windows-only checks (+ winutil helpers); build: perdedor-windows-x64.exe / -x86.exe
+  src/linux/            Linux-only checks; build: perdedor-linux-x86_64 (static, also runs on Android-x86)
+agents/android/         host-side adb driver (Python): nothing is installed on the device; may push the
+                        static native binary to x86_64 devices for CPU/timing probes
+agents/macos/, agents/ios/  host-side ssh (or local) drivers (Python)
+agents/windows/, agents/linux/  v1 PowerShell / Python agents, frozen as fallbacks (no new checks)
 common/python/perdedor_common/  models, registry, catalog, scoring, planner, renderers
 cli/perdedor_cli/       `perdedor` command
 research/               scoring lab and research datasets
@@ -83,9 +90,39 @@ Techniques an upstream tool tests that cannot be done safely or at all from user
 mode get a `not_feasible` entry with the reason (for example "needs a kernel
 driver"). That is how coverage stays honest.
 
+## Why native
+
+Malware probes the machine natively; a check suite that needs PowerShell 7 or
+Python on the target tests a machine that does not look like a victim, misses
+low-level tells (RDTSC, exceptions, raw tables, ntdll) and cannot run on minimal
+servers, appliances or IoT images. The native agent is one static binary per
+target with no runtime dependencies (Windows 7+ x86/x64, any x86_64 Linux).
+
 ## Writing a check
 
-Python agents (`agents/<platform>/perdedor_<platform>/checks/<module>.py`):
+Native (C++17, `native/src/<common|windows|linux>/<area>_*.cpp`):
+
+```cpp
+#include "../core/perdedor.hpp"
+namespace perdedor { namespace {
+std::vector<Finding> clock_source(Context& ctx) {
+    long iterations = ctx.param_int("timing.iterations", 2000);   // operator-tunable
+    ...
+    return {bool_check("timing.clock_source", "Clock source", "What and why.", Severity::High,
+                       is_virtual, evidence_json, "How to fix.")};
+}
+}  // namespace
+PERDEDOR_REGISTER(clock_source, "timing.clock_source", "fast", false, "timing.clock_source");
+}  // namespace perdedor
+```
+
+Ids are given without the platform prefix (`env.x` becomes `win.env.x` or
+`linux.env.x`). Files are picked up by the Makefile automatically. Probes that
+can fault (privileged/undefined instructions, I/O ports, debug tricks) must use
+the guarded-execution helper in `src/common/guard.hpp`. Never let an exception
+or a fault escape a check; the runner's watchdog only covers hangs.
+
+Python drivers (`agents/<platform>/perdedor_<platform>/checks/<module>.py`):
 
 ```python
 from perdedor_common import FindingFactory
