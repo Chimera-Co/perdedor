@@ -1,0 +1,1424 @@
+{
+  "source_id": "al-khaser",
+  "revision": "v1.1.0",
+  "commit": "6d6453654545c370b966f399db863c011d19c08a",
+  "fetched": "2026-11-08",
+  "techniques": [
+    {
+      "name": "AntiDisassmAsmJmpSameTarget",
+      "detail": "Analysis-tools: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "AntiDisassmConstantCondition",
+      "detail": "Analysis-tools: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "AntiDisassmFunctionPointer",
+      "detail": "Analysis-tools: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "AntiDisassmImpossibleDiasassm",
+      "detail": "Analysis-tools: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "AntiDisassmReturnPointerAbuse",
+      "detail": "Analysis-tools: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "AntiDisassmSEHMisuse",
+      "detail": "Analysis-tools: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "CanOpenCsrss",
+      "detail": "Debugger Detection: Checking SeDebugPrivilege",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "CheckRemoteDebuggerPresentAPI",
+      "detail": "Debugger Detection: Checking CheckRemoteDebuggerPresent API",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "CloseHandle_InvalideHandle",
+      "detail": "Debugger Detection: Checking CloseHandle with an invalide handle",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "CreateRemoteThread_Injection",
+      "detail": "Hyper-V Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "ErasePEHeaderFromMemory",
+      "detail": "Anti Dumping: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "GetSetThreadContext_Injection",
+      "detail": "Hyper-V Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "HardwareBreakpoints",
+      "detail": "Debugger Detection: Checking Hardware Breakpoints",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "HeapFlags",
+      "detail": "Debugger Detection: Checking ProcessHeap.Flags",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "HeapForceFlags",
+      "detail": "Debugger Detection: Checking ProcessHeap.ForceFlags",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "Interrupt_0x2d",
+      "detail": "Debugger Detection: Checking Interupt 0x2d",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "Interrupt_3",
+      "detail": "Debugger Detection: Checking Interupt 1",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "IsDebuggerPresentAPI",
+      "detail": "Debugger Detection: Checking IsDebuggerPresent API",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "IsDebuggerPresentPEB",
+      "detail": "Debugger Detection: Checking PEB.BeingDebugged",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "IsParentExplorerExe",
+      "detail": "Debugger Detection: Checking If Parent Process is explorer.exe",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "LowFragmentationHeap",
+      "detail": "Debugger Detection: Checking Low Fragmentation Heap",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "MemoryBreakpoints_PageGuard",
+      "detail": "Debugger Detection: Checking Memory Breakpoints PAGE GUARD",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "ModuleBoundsHookCheck",
+      "detail": "Debugger Detection: Checking for API hooks outside module bounds",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "NtCreateThreadEx_Injection",
+      "detail": "Hyper-V Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "NtGlobalFlag",
+      "detail": "Debugger Detection: Checking PEB.NtGlobalFlag",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "NtQueryInformationProcess_ProcessDebugFlags",
+      "detail": "Debugger Detection: Checking NtQueryInformationProcess with ProcessDebugFlags",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "NtQueryInformationProcess_ProcessDebugObject",
+      "detail": "Debugger Detection: Checking NtQueryInformationProcess with ProcessDebugObject",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "NtQueryInformationProcess_ProcessDebugPort",
+      "detail": "Debugger Detection: Checking NtQueryInformationProcess with ProcessDebugPort",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "NtQueryObject_ObjectAllTypesInformation",
+      "detail": "Debugger Detection: Checking NtQueryObject with ObjectAllTypesInformation",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "NtQueryObject_ObjectTypeInformation",
+      "detail": "Debugger Detection: Checking NtQueryObject with ObjectTypeInformation",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "NtQuerySystemInformation_SystemKernelDebuggerInformation",
+      "detail": "Debugger Detection: Checking NtQuerySystemInformation with SystemKernelDebuggerInformation",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "NtSetInformationThread_ThreadHideFromDebugger",
+      "detail": "Debugger Detection: Checking NtSetInformationThread with ThreadHideFromDebugger",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "NtSystemDebugControl_Command",
+      "detail": "Debugger Detection: Checking NtSystemDebugControl",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "NtYieldExecutionAPI",
+      "detail": "Debugger Detection: Checking NtYieldExecution",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "NumberOfProcessors",
+      "detail": "Generic Sandboxe/VM Detection: Checking Number of processors in machine",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "OutputDebugStringAPI",
+      "detail": "Debugger Detection: Checking OutputDebugString",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "PageExceptionBreakpointCheck",
+      "detail": "Debugger Detection: Checking for page exception breakpoints",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "ProcessJob",
+      "detail": "Debugger Detection: Checking if process is in a job",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "QueueUserAPC_Injection",
+      "detail": "Hyper-V Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "RtlCreateUserThread_Injection",
+      "detail": "Hyper-V Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "ScanForModules_DotNetModuleStructures",
+      "detail": "DLL Injection Detection: Walking process memory for .NET module structures",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "ScanForModules_EnumProcessModulesEx_32bit",
+      "detail": "DLL Injection Detection: Enumerating modules with EnumProcessModulesEx [32-bit]",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "ScanForModules_EnumProcessModulesEx_64bit",
+      "detail": "DLL Injection Detection: Enumerating modules with EnumProcessModulesEx [64-bit]",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "ScanForModules_EnumProcessModulesEx_All",
+      "detail": "DLL Injection Detection: Enumerating modules with EnumProcessModulesEx [ALL]",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "ScanForModules_LDR_Direct",
+      "detail": "DLL Injection Detection: Enumerating the process LDR directly",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "ScanForModules_LdrEnumerateLoadedModules",
+      "detail": "DLL Injection Detection: Enumerating the process LDR via LdrEnumerateLoadedModules",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "ScanForModules_MemoryWalk_GMI",
+      "detail": "DLL Injection Detection: Walking process memory with GetModuleInformation",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "ScanForModules_MemoryWalk_Hidden",
+      "detail": "DLL Injection Detection: Walking process memory for hidden modules",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "ScanForModules_ToolHelp32",
+      "detail": "DLL Injection Detection: Enumerating modules with ToolHelp32",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "SetHandleInformatiom_ProtectedHandle",
+      "detail": "Debugger Detection: Checking CloseHandle protected handle trick",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "SetWindowsHooksEx_Injection",
+      "detail": "Hyper-V Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "SharedUserData_KernelDebugger",
+      "detail": "Debugger Detection: Checking SharedUserData->KdDebuggerEnabled",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "SizeOfImage",
+      "detail": "Anti Dumping: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "SoftwareBreakpoints",
+      "detail": "Debugger Detection: Checking Software Breakpoints",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "TLSCallbackProcess",
+      "detail": "TLS Callbacks: TLS process attach callback",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "TLSCallbackThread",
+      "detail": "TLS Callbacks: TLS thread attach callback",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "TrapFlag",
+      "detail": "Debugger Detection: Checking trap flag",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "UnhandledExcepFilterTest",
+      "detail": "Debugger Detection: Checking UnhandledExcepFilterTest",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "VMDriverServices",
+      "detail": "Generic Sandboxe/VM Detection: VM Driver Services",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "VirtualAlloc_WriteWatch_APICalls",
+      "detail": "Debugger Detection: Checking VirtualAlloc write watch (API calls)",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "VirtualAlloc_WriteWatch_BufferOnly",
+      "detail": "Debugger Detection: Checking VirtualAlloc write watch (buffer only)",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "VirtualAlloc_WriteWatch_CodeWrite",
+      "detail": "Debugger Detection: Checking VirtualAlloc write watch (code write)",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "VirtualAlloc_WriteWatch_IsDebuggerPresent",
+      "detail": "Debugger Detection: Checking VirtualAlloc write watch (IsDebuggerPresent)",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "WUDF_IsAnyDebuggerPresent",
+      "detail": "Debugger Detection: Checking WudfIsAnyDebuggerPresent API",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "WUDF_IsKernelDebuggerPresent",
+      "detail": "Debugger Detection: Checking WudfIsKernelDebuggerPresent API",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "WUDF_IsUserDebuggerPresent",
+      "detail": "Debugger Detection: Checking WudfIsUserDebuggerPresent API",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "accelerated_sleep",
+      "detail": "Generic Sandboxe/VM Detection: Check if time has been accelerated",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "analysis_tools_process",
+      "detail": "Analysis-tools: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "cachememory_wmi",
+      "detail": "Generic Sandboxe/VM Detection: Checking Win32_CacheMemory with WMI",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "check_hyperv_driver_objects",
+      "detail": "Hyper-V Detection: Checking for Hyper-V driver objects",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "check_hyperv_global_objects",
+      "detail": "Hyper-V Detection: Checking for Hyper-V global objects",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "cim_memory_wmi",
+      "detail": "Generic Sandboxe/VM Detection: Checking CIM_Memory with WMI",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "cim_numericsensor_wmi",
+      "detail": "Generic Sandboxe/VM Detection: Checking CIM_NumericSensor with WMI",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "cim_physicalconnector_wmi",
+      "detail": "Generic Sandboxe/VM Detection: Checking CIM_PhysicalConnector with WMI",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "cim_sensor_wmi",
+      "detail": "Generic Sandboxe/VM Detection: Checking CIM_Sensor with WMI",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "cim_slot_wmi",
+      "detail": "Generic Sandboxe/VM Detection: Checking CIM_Slot with WMI",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "cim_temperaturesensor_wmi",
+      "detail": "Generic Sandboxe/VM Detection: Checking CIM_TemperatureSensor with WMI",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "cim_voltagesensor_wmi",
+      "detail": "Generic Sandboxe/VM Detection: Checking CIM_VoltageSensor with WMI",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "cpu_fan_wmi",
+      "detail": "Generic Sandboxe/VM Detection: Checking CPU fan using WMI",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "cpuid_hypervisor_vendor",
+      "detail": "Generic Sandboxe/VM Detection: Checking hypervisor vendor using cpuid(0x40000000)",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "cpuid_is_hypervisor",
+      "detail": "Generic Sandboxe/VM Detection: Checking if CPU hypervisor field is set using cpuid(0x1)",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "current_temperature_acpi_wmi",
+      "detail": "Generic Sandboxe/VM Detection: Checking Current Temperature using WMI",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "disk_size_getdiskfreespace",
+      "detail": "Generic Sandboxe/VM Detection: Checking disk size using GetDiskFreeSpaceEx",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "disk_size_wmi",
+      "detail": "Generic Sandboxe/VM Detection: Checking hard disk size using WMI",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "dizk_size_deviceiocontrol",
+      "detail": "Generic Sandboxe/VM Detection: Checking hard disk size using DeviceIoControl",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "firmware_ACPI",
+      "detail": "Generic Sandboxe/VM Detection: Checking ACPI table strings",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "gdt_trick",
+      "detail": "Generic Sandboxe/VM Detection: Checking Global Descriptor Table location",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "hosting_check",
+      "detail": "Generic Sandboxe/VM Detection: Check if Machine is hosted on Cloud",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "hybridanalysismacdetect",
+      "detail": "VirtualBox Detection: Checking MAC address (Hybrid Analysis)",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "idt_trick",
+      "detail": "Generic Sandboxe/VM Detection: Checking Interupt Descriptor Table location",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "known_file_names",
+      "detail": "Generic Sandboxe/VM Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "known_hostnames",
+      "detail": "Generic Sandboxe/VM Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "known_usernames",
+      "detail": "Generic Sandboxe/VM Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "kvm_dir",
+      "detail": "KVM Detection: Checking KVM virio directory",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "kvm_files",
+      "detail": "KVM Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "kvm_reg_keys",
+      "detail": "KVM Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "lack_user_input",
+      "detail": "Generic Sandboxe/VM Detection: Checking lack of user input",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "ldt_trick",
+      "detail": "Generic Sandboxe/VM Detection: Checking Local Descriptor Table location",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "loaded_dlls",
+      "detail": "Generic Sandboxe/VM Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "looking_glass_vdd_processes",
+      "detail": "Generic Sandboxe/VM Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "manufacturer_computer_system_wmi",
+      "detail": "Generic Sandboxe/VM Detection: Checking Manufacturer from ComputerSystem using WMI",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "memory_space",
+      "detail": "Generic Sandboxe/VM Detection: Checking memory space using GlobalMemoryStatusEx",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "memoryarray_wmi",
+      "detail": "Generic Sandboxe/VM Detection: Checking Win32_MemoryArray with WMI",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "memorydevice_wmi",
+      "detail": "Generic Sandboxe/VM Detection: Checking Win32_MemoryDevice with WMI",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "model_computer_system_wmi",
+      "detail": "Generic Sandboxe/VM Detection: Checking Model from ComputerSystem using WMI",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "mouse_movement",
+      "detail": "Generic Sandboxe/VM Detection: Checking mouse movement",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "number_SMBIOS_tables",
+      "detail": "Generic Sandboxe/VM Detection: Checking SMBIOS tables",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "number_cores_wmi",
+      "detail": "Generic Sandboxe/VM Detection: Checking Number of cores in machine using WMI",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "other_known_sandbox_environment_checks",
+      "detail": "Generic Sandboxe/VM Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "parallels_check_mac",
+      "detail": "Parallels Detection: Checking Mac Address start with 00:1C:42",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "parallels_process",
+      "detail": "Parallels Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "parallels_reg_keys",
+      "detail": "Parallels Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "perfctrs_thermalzoneinfo_wmi",
+      "detail": "Generic Sandboxe/VM Detection: Checking ThermalZoneInfo performance counters with WMI",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "physicalmemory_wmi",
+      "detail": "Generic Sandboxe/VM Detection: Checking Win32_PhysicalMemory with WMI",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "pirated_windows",
+      "detail": "Generic Sandboxe/VM Detection: Checking if Windows is Genuine",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "portconnector_wmi",
+      "detail": "Generic Sandboxe/VM Detection: Checking Win32_PortConnector with WMI",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "power_capabilities",
+      "detail": "Generic Sandboxe/VM Detection: Checking power capabilities",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "process_id_processor_wmi",
+      "detail": "Generic Sandboxe/VM Detection: Checking ProcessId using WMI",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "qemu_dir",
+      "detail": "QEMU Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "qemu_firmware_ACPI",
+      "detail": "QEMU Detection: Checking ACPI tables",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "qemu_firmware_SMBIOS",
+      "detail": "QEMU Detection: Checking SMBIOS firmware",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "qemu_processes",
+      "detail": "QEMU Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "qemu_reg_key_value",
+      "detail": "QEMU Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "qemu_reg_keys",
+      "detail": "QEMU Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "query_license_value",
+      "detail": "Generic Sandboxe/VM Detection: Checking NtQueryLicenseValue with Kernel-VMDetection-Private",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "rdtsc_diff_locky",
+      "detail": "Timing-attacks: Checking RDTSC Locky trick",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "rdtsc_diff_vmexit",
+      "detail": "Timing-attacks: Checking RDTSC which force a VM Exit (cpuid)",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "registry_disk_enum",
+      "detail": "Generic Sandboxe/VM Detection: Checking Enum\\\\IDE and Enum\\\\SCSI entries for VM strings",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "registry_services_disk_enum",
+      "detail": "Generic Sandboxe/VM Detection: Checking Services\\\\Disk\\\\Enum entries for VM strings",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "serial_number_bios_wmi",
+      "detail": "Generic Sandboxe/VM Detection: Checking SerialNumber from BIOS using WMI",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "setupdi_diskdrive",
+      "detail": "Generic Sandboxe/VM Detection: Checking SetupDi_diskdrive",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "smbiosmemory_wmi",
+      "detail": "Generic Sandboxe/VM Detection: Checking Win32_SMBIOSMemory with WMI",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "str_trick",
+      "detail": "Generic Sandboxe/VM Detection: Checking Store Task Register",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "timing_CreateTimerQueueTimer",
+      "detail": "Timing-attacks: Delaying execution using CreateTimerQueueTimer ...",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "timing_CreateWaitableTimer",
+      "detail": "Timing-attacks: Delaying execution using CreateWaitableTimer ...",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "timing_IcmpSendEcho",
+      "detail": "Timing-attacks: Delaying execution using IcmpSendEcho ...",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "timing_NtDelayexecution",
+      "detail": "Timing-attacks: Performing a sleep using NtDelayExecution ...",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "timing_SetTimer",
+      "detail": "Timing-attacks: Delaying execution using SetTimer ...",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "timing_WaitForMultipleObjects",
+      "detail": "Timing-attacks: Delaying execution using WaitForMultipleObjects ...",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "timing_WaitForSingleObject",
+      "detail": "Timing-attacks: Delaying execution using WaitForSingleObject ...",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "timing_sleep_loop",
+      "detail": "Timing-attacks: Performing a sleep() in a loop ...",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "timing_timeSetEvent",
+      "detail": "Timing-attacks: Delaying execution using timeSetEvent ...",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_baseboard_wmi",
+      "detail": "VirtualBox Detection: Checking Win32_BaseBoard from WMI",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_bus_wmi",
+      "detail": "VirtualBox Detection: Checking Win32_Bus from WMI",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_check_mac",
+      "detail": "VirtualBox Detection: Checking Mac Address start with 08:00:27",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_devices",
+      "detail": "VirtualBox Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_dir",
+      "detail": "VirtualBox Detection: Checking VirtualBox Guest Additions directory",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_eventlogfile_wmi",
+      "detail": "VirtualBox Detection: Checking NTEventLog from WMI",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_files",
+      "detail": "VirtualBox Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_firmware_ACPI",
+      "detail": "VirtualBox Detection: Checking ACPI tables",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_firmware_SMBIOS",
+      "detail": "VirtualBox Detection: Checking SMBIOS firmware",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_mac_wmi",
+      "detail": "VirtualBox Detection: Checking MAC address from WMI",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_network_share",
+      "detail": "VirtualBox Detection: Checking VirtualBox Shared Folders network provider",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_pnpentity_controllers_wmi",
+      "detail": "VirtualBox Detection: Checking Win32_PnPDevice Name from WMI for VBox controller hardware",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_pnpentity_pcideviceid_wmi",
+      "detail": "VirtualBox Detection: Checking Win32_PnPDevice DeviceId from WMI for VBox PCI device",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_pnpentity_vboxname_wmi",
+      "detail": "VirtualBox Detection: Checking Win32_PnPDevice Name from WMI for VBOX names",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_processes",
+      "detail": "VirtualBox Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_reg_key_value",
+      "detail": "VirtualBox Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_reg_keys",
+      "detail": "VirtualBox Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_window_class",
+      "detail": "VirtualBox Detection: Checking VBoxTrayToolWndClass / VBoxTrayToolWnd",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "virtual_pc_process",
+      "detail": "Virtual PC Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "virtual_pc_reg_keys",
+      "detail": "Virtual PC Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vmware_adapter_name",
+      "detail": "VMWare Detection: Checking VMWare network adapter name",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vmware_devices",
+      "detail": "VMWare Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vmware_dir",
+      "detail": "VMWare Detection: Checking VMWare directory",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vmware_files",
+      "detail": "VMWare Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vmware_firmware_ACPI",
+      "detail": "VMWare Detection: Checking ACPI tables",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vmware_firmware_SMBIOS",
+      "detail": "VMWare Detection: Checking SMBIOS firmware",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vmware_mac",
+      "detail": "VMWare Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vmware_reg_key_value",
+      "detail": "VMWare Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vmware_reg_keys",
+      "detail": "VMWare Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "voltageprobe_wmi",
+      "detail": "Generic Sandboxe/VM Detection: Checking Win32_VoltageProbe with WMI",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "wine_exports",
+      "detail": "Wine Detection: Checking Wine via dll exports",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "wine_reg_keys",
+      "detail": "Wine Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "xen_check_mac",
+      "detail": "Xen Detection: Checking Mac Address start with 08:16:3E",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "xen_process",
+      "detail": "Xen Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "xen_reg_keys",
+      "detail": "Xen Detection: grouped checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    }
+  ]
+}

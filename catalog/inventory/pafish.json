@@ -1,0 +1,472 @@
+{
+  "source_id": "pafish",
+  "revision": "v0.6",
+  "commit": "b497899ff355ea7b9ecc1f5cd34a9fd1def02aec",
+  "fetched": "2026-11-08",
+  "techniques": [
+    {
+      "name": "bochs_cpu_amd1",
+      "detail": "Bochs detection: cpuid AMD wrong value for processor name",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "bochs_cpu_amd2",
+      "detail": "Bochs detection: cpuid AMD wrong value for Easter egg",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "bochs_cpu_intel1",
+      "detail": "Bochs detection: cpuid Intel wrong value for processor name",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "check_hook_CreateProcessA_m1",
+      "detail": "Hooks detection: Checking function CreateProcessA method 1",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "check_hook_ShellExecuteExW_m1",
+      "detail": "Hooks detection: Checking function ShellExecuteExW method 1",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "cpu_hv",
+      "detail": "CPU information based detections: Checking hypervisor bit in cpuid feature bits",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "cpu_known_vm_vendors",
+      "detail": "CPU information based detections: Checking cpuid hypervisor vendor for known VM vendors",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "cpu_rdtsc",
+      "detail": "CPU information based detections: Checking the difference between CPU timestamp counters (rdtsc)",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "cpu_rdtsc_force_vmexit",
+      "detail": "CPU information based detections: Checking the difference between CPU timestamp counters (rdtsc) forcing VM exit",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "cuckoo_check_tls",
+      "detail": "Cuckoo detection: Looking in the TLS for the hooks information structure",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "debug_beingdebugged_peb",
+      "detail": "Debuggers detection: Using BeingDebugged via PEB access",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "debug_isdebuggerpresent",
+      "detail": "Debuggers detection: Using IsDebuggerPresent()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "debug_outputdebugstring",
+      "detail": "Debuggers detection: Using OutputDebugString()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "gensandbox_IsNativeVhdBoot",
+      "detail": "Generic sandbox detection: Checking if operating system IsNativeVhdBoot()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "gensandbox_common_names",
+      "detail": "Generic sandbox detection: Checking common sample names in drives root",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "gensandbox_drive_size",
+      "detail": "Generic sandbox detection: Checking if disk size <= 60GB via DeviceIoControl()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "gensandbox_drive_size2",
+      "detail": "Generic sandbox detection: Checking if disk size <= 60GB via GetDiskFreeSpaceExA()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "gensandbox_less_than_onegb",
+      "detail": "Generic sandbox detection: Checking if pysical memory is < 1Gb",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "gensandbox_one_cpu",
+      "detail": "Generic sandbox detection: Checking if NumberOfProcessors is < 2 via PEB access",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "gensandbox_one_cpu_GetSystemInfo",
+      "detail": "Generic sandbox detection: Checking if NumberOfProcessors is < 2 via GetSystemInfo()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "gensandbox_path",
+      "detail": "Generic sandbox detection: Checking file path",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "gensandbox_sleep_patched",
+      "detail": "Generic sandbox detection: Checking if Sleep() is patched using GetTickCount()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "gensandbox_uptime",
+      "detail": "Generic sandbox detection: Checking operating system uptime using GetTickCount()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "gensandbox_username",
+      "detail": "Generic sandbox detection: Checking username",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "qemu_cpu_name",
+      "detail": "Qemu detection: cpuid CPU brand string 'QEMU Virtual CPU'",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "qemu_reg_key1",
+      "detail": "Qemu detection: Scsi port->bus->target id->logical unit id-> 0 identifier",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "rtt_confirm_dialog",
+      "detail": "Generic reverse turing tests: Checking dialog confirmation",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "rtt_mouse_click",
+      "detail": "Generic reverse turing tests: Checking mouse click activity",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "rtt_mouse_double_click",
+      "detail": "Generic reverse turing tests: Checking mouse double click activity",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "rtt_mouse_move",
+      "detail": "Generic reverse turing tests: Checking mouse movement",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "rtt_mouse_presence",
+      "detail": "Generic reverse turing tests: Checking mouse presence",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "rtt_mouse_speed_limit",
+      "detail": "Generic reverse turing tests: Checking mouse speed",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "rtt_plausible_confirm_dialog",
+      "detail": "Generic reverse turing tests: Checking plausible dialog confirmation",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "sboxie_detect_sbiedll",
+      "detail": "Sandboxie detection: Using GetModuleHandle(sbiedll.dll)",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_devices",
+      "detail": "VirtualBox detection: Looking for pseudo devices",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_mac",
+      "detail": "VirtualBox detection: Looking for a MAC address starting with 08:00:27",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_network_share",
+      "detail": "VirtualBox detection: Looking for VBox network share",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_processes",
+      "detail": "VirtualBox detection: Looking for VBox processes (vboxservice.exe, vboxtray.exe)",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_reg_key1",
+      "detail": "VirtualBox detection: Scsi port->bus->target id->logical unit id-> 0 identifier",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_reg_key3",
+      "detail": "VirtualBox detection: Reg key (HKLM\\\\SOFTWARE\\\\Oracle\\\\VirtualBox Guest Additions)",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_reg_key5",
+      "detail": "VirtualBox detection: Reg key (HKLM\\\\HARDWARE\\\\ACPI\\\\DSDT\\\\VBOX__)",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_reg_key7",
+      "detail": "VirtualBox detection: Reg key (HKLM\\\\HARDWARE\\\\ACPI\\\\FADT\\\\VBOX__)",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_reg_key8",
+      "detail": "VirtualBox detection: Reg key (HKLM\\\\HARDWARE\\\\ACPI\\\\RSDT\\\\VBOX__)",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_reg_key9",
+      "detail": "VirtualBox detection: Reg key (HKLM\\\\SYSTEM\\\\ControlSet001\\\\Services\\\\VBox*)",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_sysfile1",
+      "detail": "VirtualBox detection: Driver files in C:\\\\WINDOWS\\\\system32\\\\drivers\\\\VBox*",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_sysfile2",
+      "detail": "VirtualBox detection: Additional system files",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_traywindow",
+      "detail": "VirtualBox detection: Looking for VBoxTray windows",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vbox_wmi_devices",
+      "detail": "VirtualBox detection: Looking for VBox devices using WMI",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vmware_adapter_name",
+      "detail": "VMware detection: Looking for network adapter name",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vmware_devices",
+      "detail": "VMware detection: Looking for pseudo devices",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vmware_mac",
+      "detail": "VMware detection: Looking for a MAC address starting with 00:05:69, 00:0C:29, 00:1C:14 or 00:50:56",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vmware_reg_key1",
+      "detail": "VMware detection: Scsi port 0,1,2 ->bus->target id->logical unit id-> 0 identifier",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vmware_reg_key2",
+      "detail": "VMware detection: Reg key (HKLM\\\\SOFTWARE\\\\VMware, Inc.\\\\VMware Tools)",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vmware_sysfile1",
+      "detail": "VMware detection: Looking for C:\\\\WINDOWS\\\\system32\\\\drivers\\\\vmmouse.sys",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vmware_sysfile2",
+      "detail": "VMware detection: Looking for C:\\\\WINDOWS\\\\system32\\\\drivers\\\\vmhgfs.sys",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "vmware_wmi_serial",
+      "detail": "VMware detection: Looking for VMware serial number",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "wine_detect_get_unix_file_name",
+      "detail": "Wine detection: Using GetProcAddress(wine_get_unix_file_name) from kernel32.dll",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "wine_reg_key1",
+      "detail": "Wine detection: Reg key (HKCU\\\\SOFTWARE\\\\Wine)",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    }
+  ]
+}

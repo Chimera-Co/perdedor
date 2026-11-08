@@ -1,0 +1,23 @@
+[Unit]
+Description=Perdedor upstream watcher (new releases and unmapped techniques)
+Documentation=https://github.com/Chimera-Co/perdedor/blob/main/docs/UPSTREAM.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+# `perdedor upstream check` exits 10 when updates are available; that is a result, not a failure.
+SuccessExitStatus=10
+User=perdedor
+Group=perdedor
+StateDirectory=perdedor
+# Optional: GITHUB_TOKEN=... in this file raises the GitHub API rate limit (file mode 0600, root-owned).
+EnvironmentFile=-/etc/perdedor/upstream.env
+ExecStart=/usr/local/bin/perdedor upstream check --json --state /var/lib/perdedor/upstream-state.json --token-env GITHUB_TOKEN
+StandardOutput=journal
+TimeoutStartSec=15min
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/var/lib/perdedor

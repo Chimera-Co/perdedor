@@ -1,0 +1,144 @@
+{
+  "source_id": "rootbeer",
+  "revision": "0.1.2",
+  "commit": "de7bc7b4b09c9db148b62b331b4a44076b2eb480",
+  "fetched": "2026-11-08",
+  "techniques": [
+    {
+      "name": "canLoadNativeLibrary",
+      "detail": "RootBeer",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "checkForBinary",
+      "detail": "RootBeer",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "checkForBusyBoxBinary",
+      "detail": "RootBeer",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "checkForDangerousProps",
+      "detail": "RootBeer",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "checkForMagiskBinary",
+      "detail": "RootBeer",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "checkForNativeLibraryReadAccess",
+      "detail": "RootBeer",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "checkForRWPaths",
+      "detail": "RootBeer",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "checkForRootNative",
+      "detail": "RootBeer",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "checkForSuBinary",
+      "detail": "RootBeer",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "checkSuExists",
+      "detail": "RootBeer",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "detectPotentiallyDangerousApps",
+      "detail": "RootBeer",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "detectRootCloakingApps",
+      "detail": "RootBeer",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "detectRootManagementApps",
+      "detail": "RootBeer",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "detectTestKeys",
+      "detail": "RootBeer",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "isRooted",
+      "detail": "RootBeer",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "isRootedWithBusyBoxCheck",
+      "detail": "RootBeer",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "isRootedWithoutBusyBoxCheck",
+      "detail": "RootBeer",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    }
+  ]
+}

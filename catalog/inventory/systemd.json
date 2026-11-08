@@ -1,0 +1,248 @@
+{
+  "source_id": "systemd",
+  "revision": "v262.2",
+  "commit": "63511d7283d7d0e2a2fc28075481afaf1a7be8f5",
+  "fetched": "2026-11-08",
+  "techniques": [
+    {
+      "name": "VIRTUALIZATION_ACRN",
+      "detail": "vm: acrn",
+      "platforms": [
+        "linux"
+      ],
+      "score": null
+    },
+    {
+      "name": "VIRTUALIZATION_AMAZON",
+      "detail": "vm: amazon",
+      "platforms": [
+        "linux"
+      ],
+      "score": null
+    },
+    {
+      "name": "VIRTUALIZATION_APPLE",
+      "detail": "vm: apple",
+      "platforms": [
+        "linux"
+      ],
+      "score": null
+    },
+    {
+      "name": "VIRTUALIZATION_BHYVE",
+      "detail": "vm: bhyve",
+      "platforms": [
+        "linux"
+      ],
+      "score": null
+    },
+    {
+      "name": "VIRTUALIZATION_BOCHS",
+      "detail": "vm: bochs",
+      "platforms": [
+        "linux"
+      ],
+      "score": null
+    },
+    {
+      "name": "VIRTUALIZATION_CONTAINER_OTHER",
+      "detail": "container: container_other",
+      "platforms": [
+        "linux"
+      ],
+      "score": null
+    },
+    {
+      "name": "VIRTUALIZATION_DOCKER",
+      "detail": "container: docker",
+      "platforms": [
+        "linux"
+      ],
+      "score": null
+    },
+    {
+      "name": "VIRTUALIZATION_GOOGLE",
+      "detail": "vm: google",
+      "platforms": [
+        "linux"
+      ],
+      "score": null
+    },
+    {
+      "name": "VIRTUALIZATION_KVM",
+      "detail": "vm: kvm",
+      "platforms": [
+        "linux"
+      ],
+      "score": null
+    },
+    {
+      "name": "VIRTUALIZATION_LXC",
+      "detail": "container: lxc",
+      "platforms": [
+        "linux"
+      ],
+      "score": null
+    },
+    {
+      "name": "VIRTUALIZATION_LXC_LIBVIRT",
+      "detail": "container: lxc_libvirt",
+      "platforms": [
+        "linux"
+      ],
+      "score": null
+    },
+    {
+      "name": "VIRTUALIZATION_MICROSOFT",
+      "detail": "vm: microsoft",
+      "platforms": [
+        "linux"
+      ],
+      "score": null
+    },
+    {
+      "name": "VIRTUALIZATION_OPENVZ",
+      "detail": "container: openvz",
+      "platforms": [
+        "linux"
+      ],
+      "score": null
+    },
+    {
+      "name": "VIRTUALIZATION_ORACLE",
+      "detail": "vm: oracle",
+      "platforms": [
+        "linux"
+      ],
+      "score": null
+    },
+    {
+      "name": "VIRTUALIZATION_PARALLELS",
+      "detail": "vm: parallels",
+      "platforms": [
+        "linux"
+      ],
+      "score": null
+    },
+    {
+      "name": "VIRTUALIZATION_PODMAN",
+      "detail": "container: podman",
+      "platforms": [
+        "linux"
+      ],
+      "score": null
+    },
+    {
+      "name": "VIRTUALIZATION_POUCH",
+      "detail": "container: pouch",
+      "platforms": [
+        "linux"
+      ],
+      "score": null
+    },
+    {
+      "name": "VIRTUALIZATION_POWERVM",
+      "detail": "vm: powervm",
+      "platforms": [
+        "linux"
+      ],
+      "score": null
+    },
+    {
+      "name": "VIRTUALIZATION_PROOT",
+      "detail": "container: proot",
+      "platforms": [
+        "linux"
+      ],
+      "score": null
+    },
+    {
+      "name": "VIRTUALIZATION_QEMU",
+      "detail": "vm: qemu",
+      "platforms": [
+        "linux"
+      ],
+      "score": null
+    },
+    {
+      "name": "VIRTUALIZATION_QNX",
+      "detail": "vm: qnx",
+      "platforms": [
+        "linux"
+      ],
+      "score": null
+    },
+    {
+      "name": "VIRTUALIZATION_RKT",
+      "detail": "container: rkt",
+      "platforms": [
+        "linux"
+      ],
+      "score": null
+    },
+    {
+      "name": "VIRTUALIZATION_SRE",
+      "detail": "vm: sre",
+      "platforms": [
+        "linux"
+      ],
+      "score": null
+    },
+    {
+      "name": "VIRTUALIZATION_SYSTEMD_NSPAWN",
+      "detail": "container: systemd_nspawn",
+      "platforms": [
+        "linux"
+      ],
+      "score": null
+    },
+    {
+      "name": "VIRTUALIZATION_UML",
+      "detail": "vm: uml",
+      "platforms": [
+        "linux"
+      ],
+      "score": null
+    },
+    {
+      "name": "VIRTUALIZATION_VMWARE",
+      "detail": "vm: vmware",
+      "platforms": [
+        "linux"
+      ],
+      "score": null
+    },
+    {
+      "name": "VIRTUALIZATION_VM_OTHER",
+      "detail": "vm: vm_other",
+      "platforms": [
+        "linux"
+      ],
+      "score": null
+    },
+    {
+      "name": "VIRTUALIZATION_WSL",
+      "detail": "container: wsl",
+      "platforms": [
+        "linux"
+      ],
+      "score": null
+    },
+    {
+      "name": "VIRTUALIZATION_XEN",
+      "detail": "vm: xen",
+      "platforms": [
+        "linux"
+      ],
+      "score": null
+    },
+    {
+      "name": "VIRTUALIZATION_ZVM",
+      "detail": "vm: zvm",
+      "platforms": [
+        "linux"
+      ],
+      "score": null
+    }
+  ]
+}
