@@ -58,22 +58,22 @@
 <circle cx="464.0" cy="199.7" r="4" fill="var(--s2)" stroke="var(--bg)" stroke-width="2"><title>M3 measured only — H3a: 53.4</title></circle>
 <circle cx="532.0" cy="181.0" r="4" fill="var(--s2)" stroke="var(--bg)" stroke-width="2"><title>M3 measured only — H3b: 59.4</title></circle>
 <circle cx="600.0" cy="199.7" r="4" fill="var(--s2)" stroke="var(--bg)" stroke-width="2"><title>M3 measured only — H3b+clock: 53.4</title></circle>
-<path d="M56.0,350.7 L124.0,334.8 L192.0,324.5 L260.0,261.5 L328.0,265.7 L396.0,246.3 L464.0,250.8 L532.0,235.4 L600.0,250.8" fill="none" stroke="var(--s3)" stroke-width="2" stroke-linejoin="round"/>
-<circle cx="56.0" cy="350.7" r="4" fill="var(--s3)" stroke="var(--bg)" stroke-width="2"><title>PEM-1 (chosen) — H1: 4.3</title></circle>
-<circle cx="124.0" cy="334.8" r="4" fill="var(--s3)" stroke="var(--bg)" stroke-width="2"><title>PEM-1 (chosen) — H1S: 9.5</title></circle>
-<circle cx="192.0" cy="324.5" r="4" fill="var(--s3)" stroke="var(--bg)" stroke-width="2"><title>PEM-1 (chosen) — H1SH: 12.8</title></circle>
-<circle cx="260.0" cy="261.5" r="4" fill="var(--s3)" stroke="var(--bg)" stroke-width="2"><title>PEM-1 (chosen) — H2a: 33.3</title></circle>
-<circle cx="328.0" cy="265.7" r="4" fill="var(--s3)" stroke="var(--bg)" stroke-width="2"><title>PEM-1 (chosen) — H2b: 31.9</title></circle>
-<circle cx="396.0" cy="246.3" r="4" fill="var(--s3)" stroke="var(--bg)" stroke-width="2"><title>PEM-1 (chosen) — H2c: 38.2</title></circle>
-<circle cx="464.0" cy="250.8" r="4" fill="var(--s3)" stroke="var(--bg)" stroke-width="2"><title>PEM-1 (chosen) — H3a: 36.8</title></circle>
-<circle cx="532.0" cy="235.4" r="4" fill="var(--s3)" stroke="var(--bg)" stroke-width="2"><title>PEM-1 (chosen) — H3b: 41.8</title></circle>
-<circle cx="600.0" cy="250.8" r="4" fill="var(--s3)" stroke="var(--bg)" stroke-width="2"><title>PEM-1 (chosen) — H3b+clock: 36.8</title></circle>
+<path d="M56.0,347.4 L124.0,330.3 L192.0,319.7 L260.0,254.3 L328.0,258.9 L396.0,238.1 L464.0,243.1 L532.0,226.6 L600.0,243.1" fill="none" stroke="var(--s3)" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="56.0" cy="347.4" r="4" fill="var(--s3)" stroke="var(--bg)" stroke-width="2"><title>PEM-2 (chosen) — H1: 5.4</title></circle>
+<circle cx="124.0" cy="330.3" r="4" fill="var(--s3)" stroke="var(--bg)" stroke-width="2"><title>PEM-2 (chosen) — H1S: 10.9</title></circle>
+<circle cx="192.0" cy="319.7" r="4" fill="var(--s3)" stroke="var(--bg)" stroke-width="2"><title>PEM-2 (chosen) — H1SH: 14.4</title></circle>
+<circle cx="260.0" cy="254.3" r="4" fill="var(--s3)" stroke="var(--bg)" stroke-width="2"><title>PEM-2 (chosen) — H2a: 35.6</title></circle>
+<circle cx="328.0" cy="258.9" r="4" fill="var(--s3)" stroke="var(--bg)" stroke-width="2"><title>PEM-2 (chosen) — H2b: 34.1</title></circle>
+<circle cx="396.0" cy="238.1" r="4" fill="var(--s3)" stroke="var(--bg)" stroke-width="2"><title>PEM-2 (chosen) — H2c: 40.9</title></circle>
+<circle cx="464.0" cy="243.1" r="4" fill="var(--s3)" stroke="var(--bg)" stroke-width="2"><title>PEM-2 (chosen) — H3a: 39.2</title></circle>
+<circle cx="532.0" cy="226.6" r="4" fill="var(--s3)" stroke="var(--bg)" stroke-width="2"><title>PEM-2 (chosen) — H3b: 44.6</title></circle>
+<circle cx="600.0" cy="243.1" r="4" fill="var(--s3)" stroke="var(--bg)" stroke-width="2"><title>PEM-2 (chosen) — H3b+clock: 39.2</title></circle>
 <rect x="612" y="56.6" width="10" height="10" rx="2" fill="var(--s0)"/>
 <text class="l" x="628" y="65.6">M0 v1 formula (98)</text>
 <rect x="612" y="72.6" width="10" height="10" rx="2" fill="var(--s1)"/>
 <text class="l" x="628" y="81.6">M1 weighted pass rate (97)</text>
 <rect x="612" y="194.7" width="10" height="10" rx="2" fill="var(--s2)"/>
 <text class="l" x="628" y="203.7">M3 measured only (53)</text>
-<rect x="612" y="245.8" width="10" height="10" rx="2" fill="var(--s3)"/>
-<text class="l" x="628" y="254.8">PEM-1 (chosen) (37)</text>
+<rect x="612" y="238.1" width="10" height="10" rx="2" fill="var(--s3)"/>
+<text class="l" x="628" y="247.1">PEM-2 (chosen) (39)</text>
 </svg>

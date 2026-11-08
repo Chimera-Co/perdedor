@@ -63,8 +63,13 @@ class Params:
         techs = {}
         for t in json.loads((root / "catalog" / "techniques.json").read_text())["techniques"]:
             techs[t["key"]] = Technique(
-                t["key"], t["class"], cat_of[t["class"]], tiers[t["tier"]], float(t["discrimination"]),
-                t["tier"], tuple(t["platforms"]),
+                t["key"],
+                t["class"],
+                cat_of[t["class"]],
+                tiers[t["tier"]],
+                float(t["discrimination"]),
+                t["tier"],
+                tuple(t["platforms"]),
             )
         fams: List[dict] = []
         path = threats or root / "catalog" / "threats.json"
@@ -206,8 +211,9 @@ def families_for(P: Params, platform: str) -> Tuple[List[dict], bool]:
     return pseudo_families(P, platform), False
 
 
-def m4_family_survival(findings: Sequence[Mapping], P: Params, platform: str = "windows",
-                       families: Optional[List[dict]] = None) -> Result:
+def m4_family_survival(
+    findings: Sequence[Mapping], P: Params, platform: str = "windows", families: Optional[List[dict]] = None
+) -> Result:
     obs = aggregate(findings)
     if not obs:
         return Result(None)
@@ -261,8 +267,14 @@ def _beta(rng: random.Random, mean: float, kappa: float) -> float:
     return rng.betavariate(mean * kappa, (1 - mean) * kappa)
 
 
-def m5_hybrid(findings: Sequence[Mapping], P: Params, platform: str = "windows", draws: Optional[int] = None,
-              seed: int = 11, kappa: float = 12.0) -> Result:
+def m5_hybrid(
+    findings: Sequence[Mapping],
+    P: Params,
+    platform: str = "windows",
+    draws: Optional[int] = None,
+    seed: int = 11,
+    kappa: float = 12.0,
+) -> Result:
     """Point estimate = M4 when a sourced threat model exists, else M3. The interval and the
     coverage-imputed estimate come from Monte-Carlo draws in which
       * p and q are uncertain (Beta around the catalog value, concentration kappa),
@@ -312,8 +324,10 @@ def m5_hybrid(findings: Sequence[Mapping], P: Params, platform: str = "windows",
     # one finding are compared on the same draws (this keeps the estimate monotonic).
     keys = sorted(techs)
     rng = random.Random(seed)
-    draws_pq = [({k: _beta(rng, techs[k].p, kappa) for k in keys}, {k: _beta(rng, techs[k].q, kappa) for k in keys})
-                for _ in range(draws)]
+    draws_pq = [
+        ({k: _beta(rng, techs[k].p, kappa) for k in keys}, {k: _beta(rng, techs[k].q, kappa) for k in keys})
+        for _ in range(draws)
+    ]
     uniforms = [{k: rng.random() for k in keys} for _ in range(draws)]
     # Detection rate of untested techniques: the class's observed rate, shrunk towards the global
     # rate with the weight of `shrink` techniques (empirical Bayes; no flat prior, which would pull
@@ -328,7 +342,7 @@ def m5_hybrid(findings: Sequence[Mapping], P: Params, platform: str = "windows",
         n_c, h_c = cls_n.get(c, 0), cls_h.get(c, 0)
         rate[k] = (h_c + shrink * g) / (n_c + shrink)
     observed_draws, imputed_draws, expected_draws = [], [], []
-    for (p, q), u in zip(draws_pq, uniforms):
+    for (p, q), u in zip(draws_pq, uniforms, strict=True):
         hits = dict(base_hits)
         observed_draws.append(100.0 * survival(hits, p, q))
         exp_hits = dict(base_hits)
@@ -345,14 +359,17 @@ def m5_hybrid(findings: Sequence[Mapping], P: Params, platform: str = "windows",
 
     weight_all = sum(t.p * t.q for t in techs.values())
     weight_tested = sum(techs[k].p * techs[k].q for k in tested)
-    return Result(point, {
-        "sourced_threats": sourced,
-        "observed_interval": (pct(observed_draws, 0.05), pct(observed_draws, 0.95)),
-        "imputed_median": pct(imputed_draws, 0.5),
-        "imputed_expected": statistics.median(expected_draws),
-        "imputed_interval": (pct(imputed_draws, 0.05), pct(imputed_draws, 0.95)),
-        "coverage": weight_tested / weight_all if weight_all else 0.0,
-    })
+    return Result(
+        point,
+        {
+            "sourced_threats": sourced,
+            "observed_interval": (pct(observed_draws, 0.05), pct(observed_draws, 0.95)),
+            "imputed_median": pct(imputed_draws, 0.5),
+            "imputed_expected": statistics.median(expected_draws),
+            "imputed_interval": (pct(imputed_draws, 0.05), pct(imputed_draws, 0.95)),
+            "coverage": weight_tested / weight_all if weight_all else 0.0,
+        },
+    )
 
 
 def m5_imputed(findings: Sequence[Mapping], P: Params, platform: str = "windows") -> Result:

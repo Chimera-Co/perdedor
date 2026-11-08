@@ -1,0 +1,51 @@
+{
+ "files": {
+  "/sys/class/dmi/id/sys_vendor": "QEMU\n",
+  "/sys/class/dmi/id/product_name": "Standard PC (Q35 + ICH9, 2009)\n",
+  "/sys/class/dmi/id/bios_vendor": "SeaBIOS\n",
+  "/sys/class/dmi/id/bios_version": "rel-1.16.2-0-gea1b7a073390-prebuilt.qemu.org\n",
+  "/sys/class/dmi/id/bios_date": "04/01/2014\n",
+  "/sys/class/dmi/id/board_vendor": "QEMU\n",
+  "/sys/class/dmi/id/board_name": "\n",
+  "/sys/class/dmi/id/board_version": "\n",
+  "/sys/class/dmi/id/chassis_vendor": "QEMU\n",
+  "/sys/class/dmi/id/chassis_type": "1\n",
+  "/sys/class/dmi/id/chassis_version": "\n",
+  "/sys/class/dmi/id/product_serial": "\n",
+  "/sys/class/dmi/id/product_uuid": "2b1e4a8e-0000-0000-0000-000000000000\n",
+  "/sys/class/dmi/id/product_version": "\n",
+  "/sys/class/dmi/id/board_asset_tag": "\n",
+  "/proc/cpuinfo": "processor\t: 0\nvendor_id\t: GenuineIntel\nmodel name\t: QEMU Virtual CPU version 2.5+\nflags\t\t: fpu vme de pse tsc msr pae mce cx8 apic sep hypervisor lahf_lm\n\n",
+  "/sys/devices/system/clocksource/clocksource0/current_clocksource": "kvm-clock\n",
+  "/sys/devices/system/clocksource/clocksource0/available_clocksource": "kvm-clock tsc acpi_pm\n",
+  "/proc/modules": "virtio_net 61440 0 - Live 0x0\nvirtio_blk 20480 2 - Live 0x0\nvirtio_pci 24576 0 - Live 0x0\nqemu_fw_cfg 20480 0 - Live 0x0\n",
+  "/proc/cmdline": "BOOT_IMAGE=/vmlinuz root=/dev/vda1 ro console=ttyS0\n",
+  "/proc/scsi/scsi": "Attached devices:\nHost: scsi0 Channel: 00 Id: 00 Lun: 00\n  Vendor: QEMU     Model: QEMU HARDDISK    Rev: 2.5+\n",
+  "/etc/os-release": "NAME=\"Debian GNU/Linux\"\nID=debian\nVERSION_ID=\"12\"\n",
+  "/proc/version": "Linux version 6.1.0-27-amd64 (debian-kernel@lists.debian.org) (gcc-12 (Debian 12.2.0-14) 12.2.0) #1 SMP PREEMPT_DYNAMIC Debian 6.1.115-1 (2024-11-01)\n"
+ },
+ "dirs": [
+  "/sys/firmware/qemu_fw_cfg/by_name"
+ ],
+ "expect": {
+  "detected": [
+   "env.bios_signature",
+   "env.cpuinfo_hypervisor_flag",
+   "env.cpuinfo_virtual_model",
+   "env.dmi_sys_vendor",
+   "env.guest_kernel_modules",
+   "env.kernel_cmdline",
+   "env.legacy_bios_boot",
+   "env.qemu_fw_cfg",
+   "env.scsi_device_vendor",
+   "env.virtualisation_self_report",
+   "timing.clock_source"
+  ],
+  "not_detected": [
+   "env.dockerenv",
+   "env.proc_xen",
+   "env.sys_hypervisor",
+   "env.wsl_kernel"
+  ]
+ }
+}

@@ -78,3 +78,7 @@ agents/linux/native/cpuid_rdtsc
 # macOS
 .DS_Store
 native/build/
+
+# Catalog copy bundled into distributions by scripts/build_dist.sh
+common/python/perdedor_common/_catalog/
+dist/

@@ -1,9 +1,23 @@
 """Run the native CPU/timing selection and validate observable report contracts."""
 
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
+
+
+SRC = Path(__file__).resolve().parent.parent / "src"
+REGISTER = re.compile(r'PERDEDOR_REGISTER\([^;]*?"[^"]*", "(?:fast|medium|slow)", (?:true|false), ([^;]*)\);', re.S)
+
+
+def lowlevel_ids():
+    """Ids registered by the low-level sources; other jobs' cpu/timing checks have their own contracts."""
+    ids = set()
+    for src in list((SRC / "common").glob("*.cpp")) + list((SRC / "linux").glob("lowlevel_*.cpp")):
+        for args in REGISTER.findall(src.read_text()):
+            ids.update("linux." + i for i in re.findall(r'"([^"]+)"', args))
+    return ids
 
 
 def main():
@@ -19,9 +33,13 @@ def main():
     findings = {finding["id"]: finding for finding in report["findings"]}
     assert len(findings) == len(report["findings"]), "duplicate emitted ids"
     assert findings
+    owned = lowlevel_ids()
+    assert owned, "no low-level ids found in the sources"
     for finding in findings.values():
         assert finding["status"] != "error", finding
         assert finding["class"] in {"cpu", "timing"}, finding
+        if finding["id"] not in owned:
+            continue
         if finding["status"] == "skipped":
             assert finding["error_detail"], finding
         else:

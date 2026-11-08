@@ -1,8 +1,9 @@
 """Map check ids of other evasion suites onto Perdedor technique keys.
 
-The scoring lab needs every finding, whatever tool produced it, expressed as a technique from
-catalog/techniques.json, so that the same environment measured by different suites can be scored
-by one model. Perdedor ids map through the check catalogs; al-khaser, Pafish and VMAware ids map
+The exposure model scores techniques, not tools: a finding from al-khaser, Pafish or VMAware that
+measures the same technique as a Perdedor check is the same evidence. This module expresses every
+finding, whatever tool produced it, as a technique from catalog/techniques.json, so that one
+environment measured by several suites is scored once, on all the evidence. Perdedor ids map through the check catalogs; al-khaser, Pafish and VMAware ids map
 through the ordered rules below (first match wins). Unmapped ids are returned as None and counted
 by the lab, never silently dropped.
 """
@@ -12,16 +13,24 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, Iterable, List, Mapping, Optional, Tuple
 
-ROOT = Path(__file__).resolve().parents[2]
+from .catalog import default_catalog_dir
 
 # (tool, regex on the tool's own id, technique). Ordered: first match wins.
 RULES: List[Tuple[str, str, str]] = [
     # al-khaser ------------------------------------------------------------------------------
-    ("alkhaser", r"(current_temperature|cpu_fan|voltageprobe|thermalzoneinfo|cim_(numeric|temperature|voltage)?sensor)", "hardware.thermal_sensors"),
+    (
+        "alkhaser",
+        r"(current_temperature|cpu_fan|voltageprobe|thermalzoneinfo|cim_(numeric|temperature|voltage)?sensor)",
+        "hardware.thermal_sensors",
+    ),
     ("alkhaser", r"cachememory_wmi", "hardware.cpu_cache_clock"),
-    ("alkhaser", r"(cim_memory|memoryarray|memorydevice|physicalmemory|smbiosmemory)_wmi", "hardware.memory_modules"),
+    (
+        "alkhaser",
+        r"(cim_memory|memoryarray|memorydevice|physicalmemory|smbiosmemory)_wmi",
+        "hardware.memory_modules",
+    ),
     ("alkhaser", r"(portconnector|cim_physicalconnector|cim_slot)_wmi", "hardware.port_connectors"),
     ("alkhaser", r"(number_smbios_tables|_firmware_smbios)", "firmware.smbios_raw_table"),
     ("alkhaser", r"firmware_acpi", "firmware.acpi_tables"),
@@ -40,7 +49,11 @@ RULES: List[Tuple[str, str, str]] = [
     ("alkhaser", r"process_id_processor_wmi", "cpu.brand_string"),
     ("alkhaser", r"(gdt|idt|ldt|str)_trick", "cpu.descriptor_tables"),
     ("alkhaser", r"disk_size_|memory_space", "resources.disk_size"),
-    ("alkhaser", r"(setupdi_diskdrive|registry_disk_enum|registry_services_disk_enum)", "hardware.disk_identity"),
+    (
+        "alkhaser",
+        r"(setupdi_diskdrive|registry_disk_enum|registry_services_disk_enum)",
+        "hardware.disk_identity",
+    ),
     ("alkhaser", r"(model|manufacturer)_computer_system_wmi", "firmware.smbios_strings"),
     ("alkhaser", r"(serial_number_bios_wmi|vbox_baseboard_wmi)", "firmware.smbios_serials_uuid"),
     ("alkhaser", r"(check_mac|mac_wmi|hybridanalysismacdetect)", "network.mac_oui"),
@@ -54,11 +67,27 @@ RULES: List[Tuple[str, str, str]] = [
     ("alkhaser", r"wine_exports", "emulator.wine"),
     ("alkhaser", r"(vbox_bus_wmi|vbox_pnpentity)", "hardware.pci_vendor_ids"),
     ("alkhaser", r"vmware_adapter_name", "hardware.nic_identity"),
-    ("alkhaser", r"(kernel_debugger|kd_debugger|nt_system_debug_control|wudf_is_kernel)", "debugger.kernel_debugger"),
-    ("alkhaser", r"(hardware_breakpoints|memory_breakpoints|page_exception_breakpoint|software_breakpoints)", "debugger.hardware_breakpoints"),
+    (
+        "alkhaser",
+        r"(kernel_debugger|kd_debugger|nt_system_debug_control|wudf_is_kernel)",
+        "debugger.kernel_debugger",
+    ),
+    (
+        "alkhaser",
+        r"(hardware_breakpoints|memory_breakpoints|page_exception_breakpoint|software_breakpoints)",
+        "debugger.hardware_breakpoints",
+    ),
     ("alkhaser", r"(ntqip_debug_object|ntqo_object|close_handle)", "debugger.debug_objects"),
-    ("alkhaser", r"(interrupt_|trap_flag|unhandled_exception|output_debug_string|thread_hide|tls_|nt_yield)", "debugger.exception_tricks"),
-    ("alkhaser", r"(debugger_present|heap_|nt_global_flag|ntqip_debug|se_debug|low_fragmentation|valloc_write_watch|wudf_is)", "debugger.api_flags"),
+    (
+        "alkhaser",
+        r"(interrupt_|trap_flag|unhandled_exception|output_debug_string|thread_hide|tls_|nt_yield)",
+        "debugger.exception_tricks",
+    ),
+    (
+        "alkhaser",
+        r"(debugger_present|heap_|nt_global_flag|ntqip_debug|se_debug|low_fragmentation|valloc_write_watch|wudf_is)",
+        "debugger.api_flags",
+    ),
     ("alkhaser", r"^environment_artifact\.generic_", "artifacts.registry"),
     ("alkhaser", r"^design_specific\.generic_", "analysis_tools.processes"),
     # Pafish ---------------------------------------------------------------------------------
@@ -107,17 +136,17 @@ RULES: List[Tuple[str, str, str]] = [
 ]
 
 
-def perdedor_ids(root: Path = ROOT) -> Dict[str, str]:
+def perdedor_ids(catalog_dir: Optional[Path] = None) -> Dict[str, str]:
     out: Dict[str, str] = {}
-    for f in sorted((root / "catalog" / "checks").glob("*.json")):
+    for f in sorted(((catalog_dir or default_catalog_dir()) / "checks").glob("*.json")):
         for c in json.loads(f.read_text())["checks"]:
             out[c["id"]] = c["technique"]
     return out
 
 
 class ToolMap:
-    def __init__(self, root: Path = ROOT):
-        self.perdedor = perdedor_ids(root)
+    def __init__(self, catalog_dir: Optional[Path] = None):
+        self.perdedor = perdedor_ids(catalog_dir)
         self.rules = [(t, re.compile(rx), tech) for t, rx, tech in RULES]
 
     def technique(self, tool: str, check_id: str) -> Optional[str]:
@@ -128,3 +157,14 @@ class ToolMap:
             if t == tool and rx.search(local):
                 return tech
         return None
+
+
+def as_findings(tool: str, checks: Iterable[Mapping], tool_map: Optional[ToolMap] = None) -> List[dict]:
+    """Findings of any supported tool, each with its technique filled in (unmapped ones dropped)."""
+    tm = tool_map or ToolMap()
+    out = []
+    for c in checks:
+        tech = c.get("technique") or tm.technique(tool, c["id"])
+        if tech:
+            out.append({**c, "tool": tool, "technique": tech})
+    return out
