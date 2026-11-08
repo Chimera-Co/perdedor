@@ -6,9 +6,10 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 SRC = Path(__file__).resolve().parent.parent / "src"
-REGISTER = re.compile(r'PERDEDOR_REGISTER\([^;]*?"[^"]*", "(?:fast|medium|slow)", (?:true|false), ([^;]*)\);', re.S)
+REGISTER = re.compile(
+    r'PERDEDOR_REGISTER\([^;]*?"[^"]*", "(?:fast|medium|slow)", (?:true|false), ([^;]*)\);', re.S
+)
 
 
 def lowlevel_ids():
