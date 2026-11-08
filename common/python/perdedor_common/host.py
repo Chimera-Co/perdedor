@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import fcntl
 import os
+from fnmatch import fnmatchcase
 import re
 import subprocess
 from pathlib import Path
@@ -173,12 +174,107 @@ def native_binary(repo_root: Path | str, target: str, *, timeout: float = 900) -
         return out
 
 
-def check_tree(platform: str, catalog: Catalog | None = None) -> list[dict]:
-    """Selectable checks for a user interface, grouped category -> class -> checks."""
+_PLATFORM_SOURCES = {"windows": ("common", "windows"), "linux": ("common", "linux")}
+_ID_PREFIX = {"windows": "win", "linux": "linux"}
+_STRING = re.compile(r'"((?:[^"\\]|\\.)*)"')
+
+
+def _split_args(body: str) -> list[str]:
+    args, depth, cur, quote = [], 0, [], False
+    for i, ch in enumerate(body):
+        if quote:
+            cur.append(ch)
+            if ch == '"' and body[i - 1] != "\\":
+                quote = False
+            continue
+        if ch == '"':
+            quote = True
+        elif ch in "({[":
+            depth += 1
+        elif ch in ")}]":
+            depth -= 1
+        elif ch == "," and depth == 0:
+            args.append("".join(cur).strip())
+            cur = []
+            continue
+        cur.append(ch)
+    args.append("".join(cur).strip())
+    return args
+
+
+def native_registry(repo_root: Path | str, platform: str) -> list[dict]:
+    """The checks the native agent registers for ``platform``, read from its sources (every
+    PERDEDOR_REGISTER(fn, technique, cost, network, ids...) under src/common and src/<platform>),
+    so a controller can list them without running a guest binary. Empty if there is no native tree."""
+    if platform not in _PLATFORM_SOURCES:
+        return []
+    src = Path(repo_root) / "native" / "src"
+    out = []
+    for sub in _PLATFORM_SOURCES[platform]:
+        for path in sorted((src / sub).glob("*.cpp")):
+            text = path.read_text(encoding="utf-8", errors="replace")
+            pos = 0
+            while (start := text.find("PERDEDOR_REGISTER(", pos)) != -1:
+                i = start + len("PERDEDOR_REGISTER(")
+                depth, j, quote = 1, i, False
+                while j < len(text) and depth:
+                    ch = text[j]
+                    if quote:
+                        if ch == '"' and text[j - 1] != "\\":
+                            quote = False
+                    elif ch == '"':
+                        quote = True
+                    elif ch == "(":
+                        depth += 1
+                    elif ch == ")":
+                        depth -= 1
+                    j += 1
+                pos = j
+                args = _split_args(text[i : j - 1])
+                if len(args) < 5:
+                    continue
+                lits = [_STRING.fullmatch(a) for a in args[1:3]]
+                ids = [m.group(1) for a in args[4:] if (m := _STRING.fullmatch(a))]
+                if not all(lits) or not ids:
+                    continue
+                out.append(
+                    {
+                        "ids": [f"{_ID_PREFIX[platform]}.{x}" for x in ids],
+                        "technique": lits[0].group(1),
+                        "cost": lits[1].group(1),
+                        "network": args[3] == "true",
+                        "source": f"{path.relative_to(src).as_posix()}",
+                    }
+                )
+    return out
+
+
+def native_coverage(repo_root: Path | str, platform: str, catalog: Catalog | None = None) -> float:
+    """Share of the catalog's implemented checks for ``platform`` that the native agent registers."""
     catalog = catalog or load_catalog()
+    wanted = {c["id"] for c in catalog.checks_for(platform)}
+    if not wanted:
+        return 0.0
+    have = {i for spec in native_registry(repo_root, platform) for i in spec["ids"]}
+    return len(wanted & have) / len(wanted)
+
+
+def check_tree(
+    platform: str, catalog: Catalog | None = None, repo_root: Path | str | None = None
+) -> list[dict]:
+    """Selectable checks for a user interface, grouped category -> class -> checks. With ``repo_root``,
+    cost and network come from the native registry; checks only the native agent has are included."""
+    catalog = catalog or load_catalog()
+    native = {
+        i: spec for spec in (native_registry(repo_root, platform) if repo_root else []) for i in spec["ids"]
+    }
+    entries = {c["id"]: c for c in catalog.checks_for(platform)}
+    for cid, spec in native.items():
+        entries.setdefault(cid, {"id": cid, "technique": spec["technique"]})
     groups: dict[str, dict[str, list]] = {}
-    for c in sorted(catalog.checks_for(platform), key=lambda c: c["id"]):
+    for c in sorted(entries.values(), key=lambda c: c["id"]):
         tech = catalog.technique(c["technique"]) or {}
+        spec = native.get(c["id"], {})
         klass = tech.get("class", "other")
         cat = catalog.class_category(klass) if klass in catalog.classes else "other"
         groups.setdefault(cat, {}).setdefault(klass, []).append(
@@ -186,9 +282,11 @@ def check_tree(platform: str, catalog: Catalog | None = None) -> list[dict]:
                 "id": c["id"],
                 "technique": c["technique"],
                 "title": tech.get("title", c["technique"]),
-                "cost": c.get("cost", "fast"),
-                "network": bool(c.get("network", False)),
-                "severity": c.get("severity"),
+                # cost/network live in the native registry; the catalog states them only when known
+                "cost": spec.get("cost", c.get("cost")),
+                "network": spec.get("network", c.get("network")),
+                "native": c["id"] in native,
+                "tier": tech.get("tier"),
             }
         )
     tree = []
@@ -205,6 +303,59 @@ def check_tree(platform: str, catalog: Catalog | None = None) -> list[dict]:
             }
         )
     return tree
+
+
+def _matches(pattern: str, check_id: str, technique: str, catalog: Catalog) -> bool | None:
+    """Mirror of the native pattern_matches (native/src/core/registry.cpp) over catalog data.
+    Returns None for cost:/tag: selectors, which only the native registry can answer."""
+    if ":" not in pattern:
+        return fnmatchcase(check_id, pattern)
+    kind, value = pattern.split(":", 1)
+    value = value.strip()
+    tech = catalog.technique(technique) or {}
+    klass = tech.get("class", "")
+    if kind == "id":
+        return fnmatchcase(check_id, value)
+    if kind == "technique":
+        return fnmatchcase(technique, value)
+    if kind == "class":
+        return fnmatchcase(klass, value)
+    if kind == "category":
+        return fnmatchcase(catalog.class_category(klass) if klass in catalog.classes else "", value)
+    return None
+
+
+def select_findings(
+    findings: Sequence[Mapping[str, Any]], selection: Mapping[str, Any], catalog: Catalog | None = None
+) -> tuple[list, list[str]]:
+    """Apply a selection's only/skip to the findings of an agent that cannot select checks itself
+    (the v1 agents always run their full suite). Returns (kept findings, notes for the operator).
+    Profiles do not apply after the fact; cost:/tag: selectors are reported as not applicable."""
+    catalog = catalog or load_catalog()
+    notes, unanswerable = [], set()
+    only, skip = list(selection.get("only") or []), list(selection.get("skip") or [])
+    kept = []
+    for f in findings:
+        cid, tech = f.get("id", ""), f.get("technique") or (catalog.check(f.get("id", "")) or {}).get(
+            "technique", ""
+        )
+        if only:
+            hits = [_matches(p, cid, tech, catalog) for p in only]
+            unanswerable.update(p for p, h in zip(only, hits, strict=True) if h is None)
+            if not any(hits):
+                continue
+        hits = [_matches(p, cid, tech, catalog) for p in skip]
+        unanswerable.update(p for p, h in zip(skip, hits, strict=True) if h is None)
+        if any(hits):
+            continue
+        kept.append(f)
+    if selection.get("profile", "standard") != "standard" or only or skip:
+        notes.append("This agent always runs its full suite; the selection was applied to its results.")
+    if unanswerable:
+        notes.append(
+            f"Not applicable to this agent's results (no cost/tag data): {', '.join(sorted(unanswerable))}"
+        )
+    return kept, notes
 
 
 def known_params() -> Sequence[dict]:

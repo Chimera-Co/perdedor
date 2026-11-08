@@ -26,6 +26,7 @@ sys.path.insert(0, str(ROOT / "common" / "python"))
 
 from perdedor_common.catalog import load_catalog  # noqa: E402
 from perdedor_common.exposure import assess  # noqa: E402
+from perdedor_common.host import native_registry  # noqa: E402
 from perdedor_common.validation import validate_report  # noqa: E402
 
 
@@ -65,6 +66,22 @@ def main() -> int:
     if not_impl:
         fail(f"catalog does not mark these as implemented: {not_impl[:20]}")
     print(f"{len(ids)} checks in {len(specs)} probes, all in the catalog")
+
+    # Controllers read the registry from the sources (perdedor_common.host.native_registry) to build
+    # their check lists without running a guest binary; that reading must match the binary exactly.
+    if args.platform in ("windows", "linux"):
+
+        def key(spec):
+            return (tuple(spec["ids"]), spec["technique"], spec["cost"], bool(spec["network"]))
+
+        from_src = sorted(key(x) for x in native_registry(ROOT, args.platform))
+        from_bin = sorted(key(x) for x in specs)
+        if from_src != from_bin:
+            fail(
+                f"source registry differs from the binary: only in sources {sorted(set(from_src) - set(from_bin))[:5]}, "
+                f"only in binary {sorted(set(from_bin) - set(from_src))[:5]}"
+            )
+        print("source registry matches the binary")
 
     with tempfile.TemporaryDirectory() as tmp:
         out = Path(tmp) / "report.json"

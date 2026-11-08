@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import time
+from pathlib import Path
 
 import pytest
 from perdedor_common import host
@@ -96,3 +97,48 @@ def test_native_binary_reports_build_failures(tmp_path):
         host.native_binary(tmp_path, "linux-x86_64")
     with pytest.raises(host.BuildError, match="unknown native target"):
         host.native_binary(tmp_path, "macos-arm64")
+
+
+def test_select_findings_mirrors_native_selectors():
+    cat = load_catalog()
+    findings = [
+        {"id": c["id"], "technique": c["technique"], "status": "clean"} for c in cat.checks_for("windows")
+    ]
+    cpu = {f["id"] for f in findings if cat.techniques[f["technique"]]["class"] == "cpu"}
+    kept, notes = host.select_findings(findings, {"only": ["class:cpu"], "skip": []}, cat)
+    assert {f["id"] for f in kept} == cpu and notes
+    first = sorted(cpu)[0]
+    kept, _ = host.select_findings(findings, {"only": ["class:cpu"], "skip": [first]}, cat)
+    assert {f["id"] for f in kept} == cpu - {first}
+    kept, notes = host.select_findings(findings, {"only": [], "skip": ["cost:slow"]}, cat)
+    assert len(kept) == len(findings) and any("cost:slow" in n for n in notes)
+    kept, notes = host.select_findings(findings, {"profile": "standard"}, cat)
+    assert len(kept) == len(findings) and notes == []
+
+
+def test_native_registry_reads_single_and_multiline_registrations(tmp_path):
+    src = tmp_path / "native" / "src"
+    (src / "common").mkdir(parents=True)
+    (src / "windows").mkdir()
+    (src / "common" / "a.cpp").write_text(
+        "#define PERDEDOR_REGISTER(fn, technique, cost, network, ...) x\n"
+        'PERDEDOR_REGISTER(hv, "cpu.hypervisor_bit", "fast", false, "env.cpuid_hypervisor_bit");\n'
+    )
+    (src / "windows" / "b.cpp").write_text(
+        'PERDEDOR_REGISTER(f(1, 2), "timing.sleep_skip",\n    "slow", true,\n'
+        '    "timing.sleep_a", "timing.sleep_b");  // two ids\nconst char* s = "PERDEDOR_REGISTER(";\n'
+    )
+    reg = host.native_registry(tmp_path, "windows")
+    assert [(r["ids"], r["technique"], r["cost"], r["network"]) for r in reg] == [
+        (["win.env.cpuid_hypervisor_bit"], "cpu.hypervisor_bit", "fast", False),
+        (["win.timing.sleep_a", "win.timing.sleep_b"], "timing.sleep_skip", "slow", True),
+    ]
+    assert host.native_registry(tmp_path, "android") == []
+
+
+def test_check_tree_takes_cost_from_the_native_registry():
+    repo = Path(__file__).resolve().parents[1]
+    tree = host.check_tree("linux", load_catalog(), repo_root=repo)
+    checks = {c["id"]: c for g in tree for k in g["classes"] for c in k["checks"]}
+    native = {i: s for s in host.native_registry(repo, "linux") for i in s["ids"]}
+    assert native and all(checks[i]["native"] and checks[i]["cost"] == s["cost"] for i, s in native.items())
