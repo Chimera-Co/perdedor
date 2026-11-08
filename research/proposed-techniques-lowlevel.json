@@ -1,0 +1,91 @@
+[
+  {
+    "key": "cpu.cache_descriptors",
+    "class": "cpu",
+    "title": "Cache enumeration missing",
+    "attack": [
+      "T1497.001"
+    ],
+    "mbc": [
+      "B0009"
+    ],
+    "discrimination": 0.5,
+    "tier": "research",
+    "platforms": [
+      "windows",
+      "linux"
+    ],
+    "why": "Cache visibility is currently grouped under cpu.feature_consistency; a separate key would distinguish absent descriptor/cache leaves."
+  },
+  {
+    "key": "timing.timer_resolution",
+    "class": "timing",
+    "title": "Monotonic timer resolution",
+    "attack": [
+      "T1497.003"
+    ],
+    "mbc": [
+      "B0009"
+    ],
+    "discrimination": 0.5,
+    "tier": "research",
+    "platforms": [
+      "windows",
+      "linux"
+    ],
+    "why": "Resolution increments are currently grouped under timing.tsc_stability despite requiring no TSC."
+  },
+  {
+    "key": "debugger.software_breakpoints",
+    "class": "debugger",
+    "title": "Software breakpoint bytes at own code entries",
+    "attack": [
+      "T1622"
+    ],
+    "mbc": [
+      "B0001"
+    ],
+    "discrimination": 0.5,
+    "tier": "research",
+    "platforms": [
+      "windows",
+      "linux"
+    ],
+    "why": "Currently grouped under debugger.exception_tricks even though it reads bytes without triggering an exception."
+  },
+  {
+    "key": "instrumentation.import_export_redirection",
+    "class": "instrumentation",
+    "title": "IAT/EAT redirection",
+    "attack": [
+      "T1497.001"
+    ],
+    "mbc": [
+      "B0003"
+    ],
+    "discrimination": 0.5,
+    "tier": "research",
+    "platforms": [
+      "windows"
+    ],
+    "why": "Currently grouped under instrumentation.module_integrity; import target and export table changes deserve separate coverage accounting."
+  },
+  {
+    "key": "cpu.hypervisor_enlightenments",
+    "class": "cpu",
+    "title": "Hyper-V/Viridian enlightenment interface exposed",
+    "attack": [
+      "T1497.001"
+    ],
+    "mbc": [
+      "B0009"
+    ],
+    "discrimination": 0.9,
+    "tier": "occasional",
+    "platforms": [
+      "windows",
+      "linux"
+    ],
+    "why": "The Hv#1 interface signature and enlightenment leaves are currently grouped under cpu.hypervisor_leaf_range; they are fixed by a different setting (viridian=0 / hv_* flags) than relocated vendor leaves, so the planner should rank them separately."
+  }
+]

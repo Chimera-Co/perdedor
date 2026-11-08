@@ -49,9 +49,31 @@ $(BUILD)/core_tests: $(CORE) tests/core_tests.cpp tests/fake_platform.cpp
 	@mkdir -p $(BUILD)
 	$(LINUX_CXX) $(CXXSTD) -O0 -g $(WARN) -pthread -o $@ $(filter-out src/core/main.cpp,$(CORE)) tests/core_tests.cpp tests/fake_platform.cpp
 
-test: $(BUILD)/core_tests linux
+test: $(BUILD)/core_tests linux test-lowlevel
 	./$(BUILD)/core_tests
 	./$(BUILD)/perdedor-linux-x86_64 --list-checks > /dev/null
+
+# Low-level fixtures use the real guard and statistics, with no privileged setup.
+LOWLEVEL_TEST_SRC := tests/lowlevel_tests.cpp src/common/guard.cpp src/common/lowlevel.cpp \
+                     $(filter-out src/core/main.cpp,$(CORE)) tests/fake_platform.cpp
+LOWLEVEL_TEST_HEADERS := $(wildcard src/common/*.hpp) src/linux/lowlevel_parsers.hpp
+
+$(BUILD)/lowlevel_tests: $(LOWLEVEL_TEST_SRC) $(LOWLEVEL_TEST_HEADERS)
+	@mkdir -p $(BUILD)
+	$(LINUX_CXX) $(CXXSTD) $(OPT) $(WARN) -Werror -pthread -o $@ $(LOWLEVEL_TEST_SRC)
+
+$(BUILD)/lowlevel-tests-win64.exe: $(LOWLEVEL_TEST_SRC) $(LOWLEVEL_TEST_HEADERS)
+	@mkdir -p $(BUILD)
+	$(WIN64_CXX) $(CXXSTD) $(OPT) $(WARN) -Werror -D_WIN32_WINNT=0x0601 -static -o $@ $(LOWLEVEL_TEST_SRC)
+
+$(BUILD)/lowlevel-tests-win32.exe: $(LOWLEVEL_TEST_SRC) $(LOWLEVEL_TEST_HEADERS)
+	@mkdir -p $(BUILD)
+	$(WIN32_CXX) $(CXXSTD) $(OPT) $(WARN) -Werror -D_WIN32_WINNT=0x0601 -static -o $@ $(LOWLEVEL_TEST_SRC)
+
+.PHONY: test-lowlevel
+test-lowlevel: $(BUILD)/lowlevel_tests linux
+	./$(BUILD)/lowlevel_tests
+	python3 tests/lowlevel_smoke.py ./$(BUILD)/perdedor-linux-x86_64
 
 clean:
 	$(RM) -r $(BUILD)

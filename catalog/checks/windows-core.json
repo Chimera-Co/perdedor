@@ -110,16 +110,31 @@
    "status": "implemented",
    "fix": {
     "layer": "analysis-engine",
-    "effort": 3
+    "effort": 3,
+    "how": "Detach in-guest debuggers and launch the sample normally. Remove debugger-only launch flags and verify results against an uninstrumented image; keep legitimate security settings when they explain the observation.",
+    "chimera": "Agentless DRAKVUF should not attach a Windows debugger or Linux ptrace tracer. Check launch wrappers and image troubleshooting tools; cpuidmon, hidsim and firmware overrides do not alter debugger state."
    },
    "equivalents": {
-    "pafish": [
-     "debug_isdebuggerpresent"
-    ],
     "al-khaser": [
      "IsDebuggerPresentAPI"
+    ],
+    "pafish": [
+     "debug_isdebuggerpresent"
     ]
-   }
+   },
+   "reason": null,
+   "cost": "fast",
+   "network": false,
+   "requires": [
+    "native-helper"
+   ],
+   "description": "IsDebuggerPresent API flag for the current process. API failures are unavailable, not clean.",
+   "severity": "high",
+   "references": [
+    "https://anti-debug.checkpoint.com/techniques/debug-flags.html",
+    "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/IsDebuggerPresent.cpp"
+   ],
+   "params": []
   },
   {
    "id": "win.design.exact_sandbox_username",
@@ -161,9 +176,25 @@
    "status": "implemented",
    "fix": {
     "layer": "analysis-engine",
-    "effort": 3
+    "effort": 3,
+    "how": "Detach in-guest debuggers and launch the sample normally. Remove debugger-only launch flags and verify results against an uninstrumented image; keep legitimate security settings when they explain the observation.",
+    "chimera": "Agentless DRAKVUF should not attach a Windows debugger or Linux ptrace tracer. Check launch wrappers and image troubleshooting tools; cpuidmon, hidsim and firmware overrides do not alter debugger state."
    },
-   "equivalents": {}
+   "equivalents": {},
+   "description": "Frozen PowerShell CLR debugger attachment flag; intentionally not duplicated by the native agent.",
+   "severity": "high",
+   "references": [
+    "https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.debugger.isattached"
+   ],
+   "params": [],
+   "cost": "fast",
+   "network": false,
+   "requires": [
+    "pwsh7"
+   ],
+   "reason": null,
+   "native_status": "not_feasible",
+   "native_reason": "System.Diagnostics.Debugger.IsAttached is a CLR-only property. The native executable has no CLR; the frozen PowerShell implementation remains available."
   },
   {
    "id": "win.design.remote_debugger_present",
@@ -171,13 +202,28 @@
    "status": "implemented",
    "fix": {
     "layer": "analysis-engine",
-    "effort": 3
+    "effort": 3,
+    "how": "Detach in-guest debuggers and launch the sample normally. Remove debugger-only launch flags and verify results against an uninstrumented image; keep legitimate security settings when they explain the observation.",
+    "chimera": "Agentless DRAKVUF should not attach a Windows debugger or Linux ptrace tracer. Check launch wrappers and image troubleshooting tools; cpuidmon, hidsim and firmware overrides do not alter debugger state."
    },
    "equivalents": {
     "al-khaser": [
      "CheckRemoteDebuggerPresentAPI"
     ]
-   }
+   },
+   "reason": null,
+   "cost": "fast",
+   "network": false,
+   "requires": [
+    "native-helper"
+   ],
+   "description": "CheckRemoteDebuggerPresent API flag for the current process. API failures are unavailable, not clean.",
+   "severity": "high",
+   "references": [
+    "https://anti-debug.checkpoint.com/techniques/debug-flags.html",
+    "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/CheckRemoteDebuggerPresent.cpp"
+   ],
+   "params": []
   },
   {
    "id": "win.design.suspicious_hostname_or_user",
@@ -247,17 +293,32 @@
    "status": "implemented",
    "fix": {
     "layer": "hypervisor",
-    "effort": 3
+    "effort": 4,
+    "how": "Present a coherent CPU policy: match vendor, brand, feature dependencies, cache and topology to the configured vCPUs and real model. Do not advertise instructions the guest cannot execute.",
+    "chimera": "Validate Xen CPUID policy together with cpuidmon -s. Host-derived SMBIOS does not change CPUID. Test both guests and every advertised CPU leaf after masking."
    },
    "equivalents": {
-    "pafish": [
-     "cpu_brand"
-    ],
     "vmaware": [
-     "CPU_BRAND",
-     "QEMU_BRAND"
+     "CPU_BRAND"
+    ],
+    "pafish": [
+     "qemu_cpu_name"
     ]
-   }
+   },
+   "reason": null,
+   "cost": "fast",
+   "network": false,
+   "requires": [
+    "native-helper"
+   ],
+   "description": "Extended CPUID brand contains virtual/emulated CPU tokens; reports brand and match count.",
+   "severity": "high",
+   "references": [
+    "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html",
+    "https://github.com/NotRequiem/VMAware/blob/main/src/vmaware.hpp",
+    "https://github.com/a0rtega/pafish/blob/master/pafish/qemu.c"
+   ],
+   "params": []
   },
   {
    "id": "win.env.cpuid_hypervisor_bit",
@@ -265,19 +326,37 @@
    "status": "implemented",
    "fix": {
     "layer": "analysis-engine",
-    "effort": 3
+    "effort": 4,
+    "how": "Mask exposed hypervisor interfaces consistently, including relocated ranges and interface signatures. Remove dependent guest enlightenments only after checking boot, clock and interrupt behavior.",
+    "chimera": "The reviewed upstream cpuidmon stealth path clears leaf 1 ECX[31] and 0x40000000 through 0x40000004. Audit the deployed build for relocated Xen 0x40000100 and Viridian/Hyper-V leaves; do not assume -s covers them. Xen defines relocation in arch-x86/cpuid.h."
    },
    "equivalents": {
-    "pafish": [
-     "cpu_hv"
-    ],
     "al-khaser": [
      "cpuid_is_hypervisor"
+    ],
+    "pafish": [
+     "cpu_hv"
     ],
     "vmaware": [
      "HYPERVISOR_BIT"
     ]
-   }
+   },
+   "reason": null,
+   "cost": "fast",
+   "network": false,
+   "requires": [
+    "native-helper"
+   ],
+   "description": "CPUID.1 ECX[31] advertises a hypervisor; numeric ECX and bit value.",
+   "severity": "critical",
+   "references": [
+    "https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/tlfs/feature-discovery",
+    "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiVM/Generic.cpp",
+    "https://github.com/a0rtega/pafish/blob/master/pafish/cpu.c",
+    "https://github.com/NotRequiem/VMAware/blob/main/src/vmaware.hpp",
+    "https://github.com/tklengyel/drakvuf/blob/main/src/plugins/cpuidmon/cpuidmon.cpp"
+   ],
+   "params": []
   },
   {
    "id": "win.env.cpuid_hypervisor_vendor",
@@ -285,19 +364,37 @@
    "status": "implemented",
    "fix": {
     "layer": "analysis-engine",
-    "effort": 3
+    "effort": 4,
+    "how": "Mask exposed hypervisor interfaces consistently, including relocated ranges and interface signatures. Remove dependent guest enlightenments only after checking boot, clock and interrupt behavior.",
+    "chimera": "The reviewed upstream cpuidmon stealth path clears leaf 1 ECX[31] and 0x40000000 through 0x40000004. Audit the deployed build for relocated Xen 0x40000100 and Viridian/Hyper-V leaves; do not assume -s covers them. Xen defines relocation in arch-x86/cpuid.h."
    },
    "equivalents": {
-    "pafish": [
-     "cpu_known_vm_vendors"
-    ],
     "al-khaser": [
      "cpuid_hypervisor_vendor"
+    ],
+    "pafish": [
+     "cpu_known_vm_vendors"
     ],
     "vmaware": [
      "HYPERVISOR_STR"
     ]
-   }
+   },
+   "reason": null,
+   "cost": "fast",
+   "network": false,
+   "requires": [
+    "native-helper"
+   ],
+   "description": "CPUID 0x40000000 signature matched against known hypervisor vendors; includes maximum leaf.",
+   "severity": "critical",
+   "references": [
+    "https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/tlfs/feature-discovery",
+    "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiVM/Generic.cpp",
+    "https://github.com/a0rtega/pafish/blob/master/pafish/cpu.c",
+    "https://github.com/NotRequiem/VMAware/blob/main/src/vmaware.hpp",
+    "https://github.com/tklengyel/drakvuf/blob/main/src/plugins/cpuidmon/cpuidmon.cpp"
+   ],
+   "params": []
   },
   {
    "id": "win.env.guest_services",
@@ -459,19 +556,35 @@
    "status": "implemented",
    "fix": {
     "layer": "hypervisor",
-    "effort": 5
+    "effort": 5,
+    "how": "Calibrate on comparable bare metal and minimize exits and host scheduling noise. TSC offsetting/scaling and exit-cost compensation require coordinated hypervisor work; a static offset cannot remove per-exit cost and clock compensation must remain consistent across vCPUs and clocks.",
+    "chimera": "Not fixable by configuration. cpuidmon -s rewrites CPUID values but turns every CPUID into a vm_event round trip to dom0 (about 35x the plain exit cost, see the G2 numbers); masking through the Xen CPUID policy instead (xl.cfg cpuid=, verify that Xen 4.19 honours clearing the bit for HVM) removes the monitor cost but not the ~2.5k-cycle exit. Hiding the exit itself needs Xen-side TSC compensation for CPUID exits, which Xen 4.19 does not have; tsc_mode, TSC scaling and vCPU pinning do not remove per-exit cost. CHIMERA G2 measurements (2026-10-29, i7-13700HX host): median RDTSC;CPUID;RDTSC 2398-3720 cycles on the Xen HVM guest without an introspection monitor and 92530-94514 cycles with DRAKVUF cpuidmon -s, which forwards every CPUID to the dom0 monitor; al-khaser's avg10 rule fired 1000/1000 in every configuration, dom0 included (1590-1964 cycles)."
    },
-   "equivalents": {
-    "pafish": [
-     "cpu_rdtsc_force_vmexit"
-    ],
-    "al-khaser": [
-     "rdtsc_diff_vmexit"
-    ],
-    "vmaware": [
-     "TIMER"
-    ]
-   }
+   "equivalents": {},
+   "reason": null,
+   "cost": "medium",
+   "network": false,
+   "requires": [
+    "native-helper"
+   ],
+   "description": "Preserves the frozen Windows QPC-around-CPUID median measurement, 2000 samples and 20000 QPC-tick default. This is not an RDTSC cycle counter and is not portable across QPC frequencies.",
+   "severity": "high",
+   "references": [
+    "https://learn.microsoft.com/en-us/windows/win32/sysinfo/acquiring-high-resolution-time-stamps",
+    "https://github.com/Chimera-Co/perdedor/blob/main/agents/windows/probes/Timing.ps1"
+   ],
+   "params": [
+    {
+     "name": "timing.qpc_iterations",
+     "default": 2000,
+     "meaning": "QPC samples; clamped to 100..100000 and three seconds."
+    },
+    {
+     "name": "timing.qpc_ticks",
+     "default": 20000,
+     "meaning": "Median QPC-tick threshold retained from v1; clamped to 1..1e9 ticks."
+    }
+   ]
   },
   {
    "id": "win.timing.low_uptime",
@@ -479,16 +592,34 @@
    "status": "implemented",
    "fix": {
     "layer": "analysis-engine",
-    "effort": 1
+    "effort": 1,
+    "how": "Boot and exercise the image well before capture, then preserve believable uptime through the analysis lifecycle. Keep uptime and interrupt/tick clocks mutually consistent.",
+    "chimera": "Warm the Windows golden image before snapshot/launch. hidsim creates input but does not age uptime; review reset and time-acceleration policies together."
    },
    "equivalents": {
     "pafish": [
      "gensandbox_uptime"
-    ],
-    "vmaware": [
-     "UPTIME"
     ]
-   }
+   },
+   "reason": null,
+   "cost": "fast",
+   "network": false,
+   "requires": [
+    "native-helper"
+   ],
+   "description": "GetTickCount64 uptime and shared InterruptTime, or frozen Linux /proc/uptime check. A recent legitimate reboot also triggers the 600-second default.",
+   "severity": "low",
+   "references": [
+    "https://learn.microsoft.com/en-us/windows/win32/api/sysinfoapi/nf-sysinfoapi-gettickcount64",
+    "https://github.com/a0rtega/pafish/blob/master/pafish/gensandbox.c"
+   ],
+   "params": [
+    {
+     "name": "timing.uptime_seconds",
+     "default": 600,
+     "meaning": "Native Windows low-uptime threshold in seconds; clamped to 0..86400. Frozen Linux uses its fixed 600-second policy."
+    }
+   ]
   }
  ]
 }
