@@ -1,494 +1,1040 @@
 {
- "catalog_format": 2,
- "platform": "windows",
- "source": "perdedor v0.1 checks",
- "checks": [
-  {
-   "id": "win.behavioural.aged_files",
-   "technique": "wear_and_tear.user_files",
-   "status": "implemented",
-   "fix": {
-    "layer": "guest-image",
-    "effort": 2
-   },
-   "equivalents": {}
-  },
-  {
-   "id": "win.behavioural.browser_history",
-   "technique": "wear_and_tear.browser_history",
-   "status": "implemented",
-   "fix": {
-    "layer": "guest-image",
-    "effort": 2
-   },
-   "equivalents": {}
-  },
-  {
-   "id": "win.behavioural.font_count",
-   "technique": "wear_and_tear.fonts",
-   "status": "implemented",
-   "fix": {
-    "layer": "guest-image",
-    "effort": 2
-   },
-   "equivalents": {}
-  },
-  {
-   "id": "win.behavioural.installed_programs",
-   "technique": "wear_and_tear.installed_software",
-   "status": "implemented",
-   "fix": {
-    "layer": "guest-image",
-    "effort": 2
-   },
-   "equivalents": {}
-  },
-  {
-   "id": "win.behavioural.mouse_movement",
-   "technique": "human.mouse_activity",
-   "status": "implemented",
-   "fix": {
-    "layer": "analysis-engine",
-    "effort": 3
-   },
-   "equivalents": {
-    "pafish": [
-     "gensandbox_mouse_act"
-    ],
-    "al-khaser": [
-     "mouse_movement"
-    ]
-   }
-  },
-  {
-   "id": "win.behavioural.running_process_count",
-   "technique": "wear_and_tear.process_count",
-   "status": "implemented",
-   "fix": {
-    "layer": "guest-image",
-    "effort": 2
-   },
-   "equivalents": {}
-  },
-  {
-   "id": "win.design.analysis_tools_running",
-   "technique": "analysis_tools.processes",
-   "status": "implemented",
-   "fix": {
-    "layer": "guest-image",
-    "effort": 1
-   },
-   "equivalents": {
-    "al-khaser": [
-     "analysis_tools_process"
-    ]
-   }
-  },
-  {
-   "id": "win.design.blacklisted_dlls",
-   "technique": "analysis_tools.loaded_modules",
-   "status": "implemented",
-   "fix": {
-    "layer": "analysis-engine",
-    "effort": 3
-   },
-   "equivalents": {
-    "pafish": [
-     "sboxie_detect_sbiedll"
-    ],
-    "al-khaser": [
-     "loaded_dlls"
-    ],
-    "vmaware": [
-     "DLL"
-    ]
-   }
-  },
-  {
-   "id": "win.design.debugger_present",
-   "technique": "debugger.api_flags",
-   "status": "implemented",
-   "fix": {
-    "layer": "analysis-engine",
-    "effort": 3
-   },
-   "equivalents": {
-    "pafish": [
-     "debug_isdebuggerpresent"
-    ],
-    "al-khaser": [
-     "IsDebuggerPresentAPI"
-    ]
-   }
-  },
-  {
-   "id": "win.design.exact_sandbox_username",
-   "technique": "identity.username",
-   "status": "implemented",
-   "fix": {
-    "layer": "guest-image",
-    "effort": 2
-   },
-   "equivalents": {
-    "pafish": [
-     "gensandbox_username"
-    ],
-    "al-khaser": [
-     "known_usernames"
-    ]
-   }
-  },
-  {
-   "id": "win.design.mac_oui",
-   "technique": "network.mac_oui",
-   "status": "implemented",
-   "fix": {
-    "layer": "vm-config",
-    "effort": 1
-   },
-   "equivalents": {
-    "al-khaser": [
-     "*_check_mac"
-    ],
-    "vmaware": [
-     "MAC"
-    ]
-   }
-  },
-  {
-   "id": "win.design.managed_debugger_attached",
-   "technique": "debugger.api_flags",
-   "status": "implemented",
-   "fix": {
-    "layer": "analysis-engine",
-    "effort": 3
-   },
-   "equivalents": {}
-  },
-  {
-   "id": "win.design.remote_debugger_present",
-   "technique": "debugger.api_flags",
-   "status": "implemented",
-   "fix": {
-    "layer": "analysis-engine",
-    "effort": 3
-   },
-   "equivalents": {
-    "al-khaser": [
-     "CheckRemoteDebuggerPresentAPI"
-    ]
-   }
-  },
-  {
-   "id": "win.design.suspicious_hostname_or_user",
-   "technique": "identity.hostname",
-   "status": "implemented",
-   "fix": {
-    "layer": "guest-image",
-    "effort": 2
-   },
-   "equivalents": {
-    "al-khaser": [
-     "known_hostnames"
-    ]
-   }
-  },
-  {
-   "id": "win.design.window_class_artifacts",
-   "technique": "artifacts.window_classes",
-   "status": "implemented",
-   "fix": {
-    "layer": "guest-image",
-    "effort": 2
-   },
-   "equivalents": {
-    "pafish": [
-     "vbox_window_class"
-    ],
-    "al-khaser": [
-     "vbox_window_class"
-    ]
-   }
-  },
-  {
-   "id": "win.env.artifact_files",
-   "technique": "artifacts.files",
-   "status": "implemented",
-   "fix": {
-    "layer": "guest-image",
-    "effort": 2
-   },
-   "equivalents": {
-    "pafish": [
-     "*_files"
-    ],
-    "al-khaser": [
-     "*_files",
-     "*_dir"
-    ],
-    "vmaware": [
-     "VM_FILES"
-    ]
-   }
-  },
-  {
-   "id": "win.env.cloud_metadata_reachable",
-   "technique": "network.cloud_metadata",
-   "status": "implemented",
-   "fix": {
-    "layer": "network",
-    "effort": 1
-   },
-   "equivalents": {}
-  },
-  {
-   "id": "win.env.cpu_brand_string",
-   "technique": "cpu.brand_string",
-   "status": "implemented",
-   "fix": {
-    "layer": "hypervisor",
-    "effort": 3
-   },
-   "equivalents": {
-    "pafish": [
-     "cpu_brand"
-    ],
-    "vmaware": [
-     "CPU_BRAND",
-     "QEMU_BRAND"
-    ]
-   }
-  },
-  {
-   "id": "win.env.cpuid_hypervisor_bit",
-   "technique": "cpu.hypervisor_bit",
-   "status": "implemented",
-   "fix": {
-    "layer": "analysis-engine",
-    "effort": 3
-   },
-   "equivalents": {
-    "pafish": [
-     "cpu_hv"
-    ],
-    "al-khaser": [
-     "cpuid_is_hypervisor"
-    ],
-    "vmaware": [
-     "HYPERVISOR_BIT"
-    ]
-   }
-  },
-  {
-   "id": "win.env.cpuid_hypervisor_vendor",
-   "technique": "cpu.hypervisor_vendor_leaf",
-   "status": "implemented",
-   "fix": {
-    "layer": "analysis-engine",
-    "effort": 3
-   },
-   "equivalents": {
-    "pafish": [
-     "cpu_known_vm_vendors"
-    ],
-    "al-khaser": [
-     "cpuid_hypervisor_vendor"
-    ],
-    "vmaware": [
-     "HYPERVISOR_STR"
-    ]
-   }
-  },
-  {
-   "id": "win.env.guest_services",
-   "technique": "guest_tools.services",
-   "status": "implemented",
-   "fix": {
-    "layer": "guest-image",
-    "effort": 2
-   },
-   "equivalents": {
-    "al-khaser": [
-     "*_services"
-    ],
-    "vmaware": [
-     "VM_PROCESSES"
-    ]
-   }
-  },
-  {
-   "id": "win.env.low_core_count",
-   "technique": "resources.cpu_count",
-   "status": "implemented",
-   "fix": {
-    "layer": "vm-config",
-    "effort": 1
-   },
-   "equivalents": {
-    "pafish": [
-     "gensandbox_one_cpu*"
-    ],
-    "al-khaser": [
-     "NumberOfProcessors"
-    ],
-    "vmaware": [
-     "THREAD_COUNT"
-    ]
-   }
-  },
-  {
-   "id": "win.env.low_ram",
-   "technique": "resources.memory_size",
-   "status": "implemented",
-   "fix": {
-    "layer": "vm-config",
-    "effort": 1
-   },
-   "equivalents": {
-    "pafish": [
-     "gensandbox_less_than_onegb"
-    ],
-    "al-khaser": [
-     "memory_space"
-    ],
-    "vmaware": [
-     "RAM?"
-    ]
-   }
-  },
-  {
-   "id": "win.env.pnp_virtual_devices",
-   "technique": "hardware.pci_vendor_ids",
-   "status": "implemented",
-   "fix": {
-    "layer": "vm-config",
-    "effort": 3
-   },
-   "equivalents": {
-    "al-khaser": [
-     "vbox_pnpentity_*",
-     "pnp_devices"
-    ],
-    "vmaware": [
-     "PCI_VM",
-     "DEVICE_STRING"
-    ]
-   }
-  },
-  {
-   "id": "win.env.registry_artifacts",
-   "technique": "artifacts.registry",
-   "status": "implemented",
-   "fix": {
-    "layer": "guest-image",
-    "effort": 2
-   },
-   "equivalents": {
-    "pafish": [
-     "*_reg_key*"
-    ],
-    "al-khaser": [
-     "*_reg_keys",
-     "*_reg_key_value"
-    ],
-    "vmaware": [
-     "REGISTRY",
-     "HKLM_REGISTRIES"
-    ]
-   }
-  },
-  {
-   "id": "win.env.small_disk",
-   "technique": "resources.disk_size",
-   "status": "implemented",
-   "fix": {
-    "layer": "vm-config",
-    "effort": 1
-   },
-   "equivalents": {
-    "pafish": [
-     "gensandbox_drive_size*"
-    ],
-    "al-khaser": [
-     "disk_size_*"
-    ],
-    "vmaware": [
-     "DISK_SIZE"
-    ]
-   }
-  },
-  {
-   "id": "win.env.smbios_firmware_table_raw",
-   "technique": "firmware.smbios_raw_table",
-   "status": "implemented",
-   "fix": {
-    "layer": "firmware",
-    "effort": 4
-   },
-   "equivalents": {
-    "al-khaser": [
-     "*_firmware_SMBIOS"
-    ],
-    "vmaware": [
-     "FIRMWARE",
-     "SMBIOS_VM_BIT"
-    ]
-   }
-  },
-  {
-   "id": "win.env.smbios_vendor",
-   "technique": "firmware.smbios_strings",
-   "status": "implemented",
-   "fix": {
-    "layer": "firmware",
-    "effort": 3
-   },
-   "equivalents": {
-    "al-khaser": [
-     "wmi_*"
-    ],
-    "vmaware": [
-     "DMI_SCAN",
-     "WMI_MANUFACTURER"
-    ]
-   }
-  },
-  {
-   "id": "win.timing.cpuid_qpc_jitter",
-   "technique": "timing.cpuid_vmexit",
-   "status": "implemented",
-   "fix": {
-    "layer": "hypervisor",
-    "effort": 5
-   },
-   "equivalents": {
-    "pafish": [
-     "cpu_rdtsc_force_vmexit"
-    ],
-    "al-khaser": [
-     "rdtsc_diff_vmexit"
-    ],
-    "vmaware": [
-     "TIMER"
-    ]
-   }
-  },
-  {
-   "id": "win.timing.low_uptime",
-   "technique": "timing.uptime",
-   "status": "implemented",
-   "fix": {
-    "layer": "analysis-engine",
-    "effort": 1
-   },
-   "equivalents": {
-    "pafish": [
-     "gensandbox_uptime"
-    ],
-    "vmaware": [
-     "UPTIME"
-    ]
-   }
-  }
- ]
+  "catalog_format": 2,
+  "platform": "windows",
+  "source": "perdedor v0.1 checks",
+  "checks": [
+    {
+      "id": "win.behavioural.aged_files",
+      "technique": "wear_and_tear.user_files",
+      "status": "implemented",
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Put plausible documents, downloads and pictures in the profile and let them age before freezing the image.",
+        "chimera": "Age the CHIMERA Windows image before the snapshot commit (H3 apps, user files, browser use); re-check explorer and Defender state as in the snapshot checklist."
+      },
+      "equivalents": {
+        "vmaware": [
+          "FILE_ACCESS_HISTORY"
+        ]
+      },
+      "title": "Aged user files",
+      "severity": "medium",
+      "description": "Too few files older than a week in the user's folders.",
+      "reason": null,
+      "network": false,
+      "requires": [],
+      "params": [],
+      "references": [
+        "https://evasions.checkpoint.com/generic-os-queries.html",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ],
+      "cost": "medium"
+    },
+    {
+      "id": "win.behavioural.browser_history",
+      "technique": "wear_and_tear.browser_history",
+      "status": "implemented",
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Install and use the browsers in the image so history, cookies and caches exist before the snapshot.",
+        "chimera": "Age the CHIMERA Windows image before the snapshot commit (H3 apps, user files, browser use); re-check explorer and Defender state as in the snapshot checklist."
+      },
+      "equivalents": {},
+      "title": "Browser history size",
+      "severity": "medium",
+      "description": "Browser history databases are missing or nearly empty.",
+      "reason": null,
+      "network": false,
+      "requires": [],
+      "params": [],
+      "references": [
+        "https://evasions.checkpoint.com/generic-os-queries.html",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ],
+      "cost": "medium"
+    },
+    {
+      "id": "win.behavioural.font_count",
+      "technique": "wear_and_tear.fonts",
+      "status": "implemented",
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Install the usual application suites (Office, Adobe Reader) so their fonts arrive with them.",
+        "chimera": "Age the CHIMERA Windows image before the snapshot commit (H3 apps, user files, browser use); re-check explorer and Defender state as in the snapshot checklist."
+      },
+      "equivalents": {},
+      "title": "Installed font count",
+      "severity": "low",
+      "description": "Fewer fonts than a typical desktop with Office or common apps installed.",
+      "reason": null,
+      "network": false,
+      "requires": [],
+      "params": [],
+      "references": [
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ],
+      "cost": "fast"
+    },
+    {
+      "id": "win.behavioural.installed_programs",
+      "technique": "wear_and_tear.installed_software",
+      "status": "implemented",
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Install a realistic application set (browsers, Office, PDF reader, archivers, chat clients).",
+        "chimera": "Age the CHIMERA Windows image before the snapshot commit (H3 apps, user files, browser use); re-check explorer and Defender state as in the snapshot checklist."
+      },
+      "equivalents": {},
+      "title": "Installed program count",
+      "severity": "medium",
+      "description": "Fewer uninstall entries than a used workstation.",
+      "reason": null,
+      "network": false,
+      "requires": [],
+      "params": [],
+      "references": [
+        "https://evasions.checkpoint.com/generic-os-queries.html",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ],
+      "cost": "medium"
+    },
+    {
+      "id": "win.behavioural.mouse_movement",
+      "technique": "human.mouse_activity",
+      "status": "implemented",
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Drive input during analysis with a human-like simulator.",
+        "chimera": "hidsim is live in CHIMERA; confirm it starts before the sample and runs for the whole analysis."
+      },
+      "equivalents": {
+        "pafish": [
+          "gensandbox_mouse_act",
+          "rtt_mouse_move"
+        ],
+        "al-khaser": [
+          "mouse_movement"
+        ],
+        "invizzzible": [
+          "generic/MouseActive",
+          "generic/MouseRawActive",
+          "generic/UserInputActivity"
+        ]
+      },
+      "title": "Mouse movement",
+      "severity": "high",
+      "description": "The cursor does not move during the sampling window.",
+      "reason": null,
+      "network": false,
+      "requires": [],
+      "params": [],
+      "references": [
+        "https://evasions.checkpoint.com/human-like-behavior.html",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ],
+      "cost": "slow"
+    },
+    {
+      "id": "win.behavioural.running_process_count",
+      "technique": "wear_and_tear.process_count",
+      "status": "implemented",
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Start the usual background apps (update agents, chat, cloud sync) at logon in the image.",
+        "chimera": "Age the CHIMERA Windows image before the snapshot commit (H3 apps, user files, browser use); re-check explorer and Defender state as in the snapshot checklist."
+      },
+      "equivalents": {
+        "invizzzible": [
+          "generic/Max Processes number"
+        ]
+      },
+      "title": "Running process count",
+      "severity": "medium",
+      "description": "Fewer processes than an ordinary desktop session.",
+      "reason": null,
+      "network": false,
+      "requires": [],
+      "params": [],
+      "references": [
+        "https://evasions.checkpoint.com/processes.html",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ],
+      "cost": "fast"
+    },
+    {
+      "id": "win.design.analysis_tools_running",
+      "technique": "analysis_tools.processes",
+      "status": "implemented",
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Remove analysis tools from the image; run monitoring outside the guest.",
+        "chimera": "DRAKVUF is agentless; nothing should match. A hit means troubleshooting tools were left in the image."
+      },
+      "equivalents": {
+        "al-khaser": [
+          "analysis_tools_process"
+        ],
+        "invizzzible": [
+          "generic/AV and Research tools Processes",
+          "misc/Side Processes"
+        ]
+      },
+      "title": "Analysis tools running",
+      "severity": "high",
+      "description": "Debugger, monitor or sandbox helper processes are running.",
+      "reason": null,
+      "network": false,
+      "requires": [],
+      "params": [],
+      "references": [
+        "https://evasions.checkpoint.com/processes.html",
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "cost": "fast"
+    },
+    {
+      "id": "win.design.blacklisted_dlls",
+      "technique": "analysis_tools.loaded_modules",
+      "status": "implemented",
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Do not inject monitoring DLLs into the sample.",
+        "chimera": "DRAKVUF does not inject DLLs; a hit means an in-guest agent or AV hook is present."
+      },
+      "equivalents": {
+        "pafish": [
+          "sboxie_detect_sbiedll"
+        ],
+        "al-khaser": [
+          "loaded_dlls",
+          "ScanForModules_ToolHelp32"
+        ],
+        "vmaware": [
+          "DLL"
+        ],
+        "invizzzible": [
+          "sandboxie/Injected sbiedll module"
+        ]
+      },
+      "title": "Sandbox DLLs loaded",
+      "severity": "high",
+      "description": "Sandbox or hooking DLLs are loaded into the process.",
+      "reason": null,
+      "network": false,
+      "requires": [],
+      "params": [],
+      "references": [
+        "https://evasions.checkpoint.com/processes.html",
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "cost": "fast"
+    },
+    {
+      "id": "win.design.debugger_present",
+      "technique": "debugger.api_flags",
+      "status": "implemented",
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Detach in-guest debuggers and launch the sample normally. Remove debugger-only launch flags and verify results against an uninstrumented image; keep legitimate security settings when they explain the observation.",
+        "chimera": "Agentless DRAKVUF should not attach a Windows debugger or Linux ptrace tracer. Check launch wrappers and image troubleshooting tools; cpuidmon, hidsim and firmware overrides do not alter debugger state."
+      },
+      "equivalents": {
+        "al-khaser": [
+          "IsDebuggerPresentAPI"
+        ],
+        "pafish": [
+          "debug_isdebuggerpresent"
+        ]
+      },
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "IsDebuggerPresent API flag for the current process. API failures are unavailable, not clean.",
+      "severity": "high",
+      "references": [
+        "https://anti-debug.checkpoint.com/techniques/debug-flags.html",
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/IsDebuggerPresent.cpp"
+      ],
+      "params": []
+    },
+    {
+      "id": "win.design.exact_sandbox_username",
+      "technique": "identity.username",
+      "status": "implemented",
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Use an ordinary, unique user name.",
+        "chimera": "Rename the CHIMERA guest account to a plausible personal name in the image."
+      },
+      "equivalents": {
+        "pafish": [
+          "gensandbox_username"
+        ],
+        "al-khaser": [
+          "known_usernames"
+        ],
+        "invizzzible": [
+          "misc/Sandbox User Names"
+        ]
+      },
+      "title": "Sandbox user name",
+      "severity": "high",
+      "description": "The user name is one used by public sandboxes.",
+      "reason": null,
+      "network": false,
+      "requires": [],
+      "params": [],
+      "references": [
+        "https://evasions.checkpoint.com/generic-os-queries.html",
+        "https://github.com/a0rtega/pafish"
+      ],
+      "cost": "fast"
+    },
+    {
+      "id": "win.design.mac_oui",
+      "technique": "network.mac_oui",
+      "status": "implemented",
+      "fix": {
+        "layer": "vm-config",
+        "effort": 1,
+        "how": "Assign a MAC address with a physical NIC vendor's prefix.",
+        "chimera": "Set mac= in the vif line of xl.cfg to a physical vendor OUI (not 00:16:3e)."
+      },
+      "equivalents": {
+        "al-khaser": [
+          "*_check_mac",
+          "vmware_mac",
+          "vbox_mac_wmi"
+        ],
+        "vmaware": [
+          "MAC"
+        ],
+        "pafish": [
+          "vbox_mac",
+          "vmware_mac"
+        ],
+        "invizzzible": [
+          "vbox/Forbidden MACs",
+          "vmware/Forbidden MACs"
+        ]
+      },
+      "title": "Hypervisor MAC prefix",
+      "severity": "high",
+      "description": "The first adapter's MAC prefix belongs to a hypervisor vendor.",
+      "reason": null,
+      "network": false,
+      "requires": [],
+      "params": [],
+      "references": [
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://evasions.checkpoint.com/network.html"
+      ],
+      "cost": "fast"
+    },
+    {
+      "id": "win.design.managed_debugger_attached",
+      "technique": "debugger.api_flags",
+      "status": "implemented",
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Detach in-guest debuggers and launch the sample normally. Remove debugger-only launch flags and verify results against an uninstrumented image; keep legitimate security settings when they explain the observation.",
+        "chimera": "Agentless DRAKVUF should not attach a Windows debugger or Linux ptrace tracer. Check launch wrappers and image troubleshooting tools; cpuidmon, hidsim and firmware overrides do not alter debugger state."
+      },
+      "equivalents": {},
+      "description": "Frozen PowerShell CLR debugger attachment flag; intentionally not duplicated by the native agent.",
+      "severity": "high",
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.debugger.isattached"
+      ],
+      "params": [],
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "pwsh7"
+      ],
+      "reason": null,
+      "native_status": "not_feasible",
+      "native_reason": "System.Diagnostics.Debugger.IsAttached is a CLR-only property. The native executable has no CLR; the frozen PowerShell implementation remains available."
+    },
+    {
+      "id": "win.design.remote_debugger_present",
+      "technique": "debugger.api_flags",
+      "status": "implemented",
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Detach in-guest debuggers and launch the sample normally. Remove debugger-only launch flags and verify results against an uninstrumented image; keep legitimate security settings when they explain the observation.",
+        "chimera": "Agentless DRAKVUF should not attach a Windows debugger or Linux ptrace tracer. Check launch wrappers and image troubleshooting tools; cpuidmon, hidsim and firmware overrides do not alter debugger state."
+      },
+      "equivalents": {
+        "al-khaser": [
+          "CheckRemoteDebuggerPresentAPI"
+        ]
+      },
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "CheckRemoteDebuggerPresent API flag for the current process. API failures are unavailable, not clean.",
+      "severity": "high",
+      "references": [
+        "https://anti-debug.checkpoint.com/techniques/debug-flags.html",
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/CheckRemoteDebuggerPresent.cpp"
+      ],
+      "params": []
+    },
+    {
+      "id": "win.design.suspicious_hostname_or_user",
+      "technique": "identity.hostname",
+      "status": "implemented",
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Use a realistic computer name (e.g. DESKTOP-<initials>-<n> or an asset tag).",
+        "chimera": "Rename the CHIMERA guest before the snapshot commit."
+      },
+      "equivalents": {
+        "al-khaser": [
+          "known_hostnames"
+        ],
+        "pafish": [
+          "gensandbox_common_names"
+        ],
+        "invizzzible": [
+          "misc/Sandbox Computer Names",
+          "misc/Sandbox Host Names"
+        ]
+      },
+      "title": "Sandbox host name",
+      "severity": "high",
+      "description": "The computer name is one used by public sandboxes or looks generated.",
+      "reason": null,
+      "network": false,
+      "requires": [],
+      "params": [],
+      "references": [
+        "https://evasions.checkpoint.com/generic-os-queries.html",
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "cost": "fast"
+    },
+    {
+      "id": "win.design.window_class_artifacts",
+      "technique": "artifacts.window_classes",
+      "status": "implemented",
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Uninstall guest additions and analysis UIs from the image.",
+        "chimera": "CHIMERA uses Xen without guest tools; a hit means a tool window was left running."
+      },
+      "equivalents": {
+        "pafish": [
+          "vbox_window_class",
+          "vbox_traywindow"
+        ],
+        "al-khaser": [
+          "vbox_window_class"
+        ],
+        "invizzzible": [
+          "vbox/Window Class Name",
+          "vbox/Window Name"
+        ]
+      },
+      "title": "Guest tool window classes",
+      "severity": "medium",
+      "description": "Window classes of guest tools or analysis tools exist.",
+      "reason": null,
+      "network": false,
+      "requires": [],
+      "params": [],
+      "references": [
+        "https://evasions.checkpoint.com/ui-artifacts.html",
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "cost": "fast"
+    },
+    {
+      "id": "win.env.artifact_files",
+      "technique": "artifacts.files",
+      "status": "implemented",
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Remove guest-addition drivers and files from the image.",
+        "chimera": "Remove Xen PV drivers if installed (they leave xen*.sys) or accept the hit as a Xen tell."
+      },
+      "equivalents": {
+        "pafish": [
+          "*_files"
+        ],
+        "al-khaser": [
+          "*_files",
+          "*_dir"
+        ],
+        "vmaware": [
+          "VM_FILES"
+        ],
+        "invizzzible": [
+          "vbox/VBox Driver Files",
+          "vmware/VMWare Files",
+          "misc/Sandbox Specific Files"
+        ]
+      },
+      "title": "Hypervisor files",
+      "severity": "high",
+      "description": "Driver or tool files of a hypervisor's guest additions exist.",
+      "reason": null,
+      "network": false,
+      "requires": [],
+      "params": [],
+      "references": [
+        "https://evasions.checkpoint.com/filesystem.html",
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "cost": "fast"
+    },
+    {
+      "id": "win.env.cloud_metadata_reachable",
+      "technique": "network.cloud_metadata",
+      "status": "implemented",
+      "fix": {
+        "layer": "network",
+        "effort": 1,
+        "how": "Block link-local metadata traffic from analysis guests.",
+        "chimera": "CHIMERA's containment drops it; a hit means chimera-net-check failed and must be investigated."
+      },
+      "equivalents": {},
+      "title": "Cloud metadata endpoint",
+      "severity": "medium",
+      "description": "169.254.169.254 answers, so the guest runs in a cloud VM.",
+      "reason": null,
+      "network": true,
+      "requires": [
+        "network"
+      ],
+      "params": [],
+      "references": [
+        "https://evasions.checkpoint.com/network.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ],
+      "cost": "medium"
+    },
+    {
+      "id": "win.env.cpu_brand_string",
+      "technique": "cpu.brand_string",
+      "status": "implemented",
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Present a coherent CPU policy: match vendor, brand, feature dependencies, cache and topology to the configured vCPUs and real model. Do not advertise instructions the guest cannot execute.",
+        "chimera": "Validate Xen CPUID policy together with cpuidmon -s. Host-derived SMBIOS does not change CPUID. Test both guests and every advertised CPU leaf after masking."
+      },
+      "equivalents": {
+        "vmaware": [
+          "CPU_BRAND"
+        ],
+        "pafish": [
+          "qemu_cpu_name"
+        ]
+      },
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Extended CPUID brand contains virtual/emulated CPU tokens; reports brand and match count.",
+      "severity": "high",
+      "references": [
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html",
+        "https://github.com/NotRequiem/VMAware/blob/main/src/vmaware.hpp",
+        "https://github.com/a0rtega/pafish/blob/master/pafish/qemu.c"
+      ],
+      "params": []
+    },
+    {
+      "id": "win.env.cpuid_hypervisor_bit",
+      "technique": "cpu.hypervisor_bit",
+      "status": "implemented",
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 4,
+        "how": "Mask exposed hypervisor interfaces consistently, including relocated ranges and interface signatures. Remove dependent guest enlightenments only after checking boot, clock and interrupt behavior.",
+        "chimera": "The reviewed upstream cpuidmon stealth path clears leaf 1 ECX[31] and 0x40000000 through 0x40000004. Audit the deployed build for relocated Xen 0x40000100 and Viridian/Hyper-V leaves; do not assume -s covers them. Xen defines relocation in arch-x86/cpuid.h."
+      },
+      "equivalents": {
+        "al-khaser": [
+          "cpuid_is_hypervisor"
+        ],
+        "pafish": [
+          "cpu_hv"
+        ],
+        "vmaware": [
+          "HYPERVISOR_BIT"
+        ],
+        "invizzzible": [
+          "vmware/HypervisorBit"
+        ]
+      },
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "CPUID.1 ECX[31] advertises a hypervisor; numeric ECX and bit value.",
+      "severity": "critical",
+      "references": [
+        "https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/tlfs/feature-discovery",
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiVM/Generic.cpp",
+        "https://github.com/a0rtega/pafish/blob/master/pafish/cpu.c",
+        "https://github.com/NotRequiem/VMAware/blob/main/src/vmaware.hpp",
+        "https://github.com/tklengyel/drakvuf/blob/main/src/plugins/cpuidmon/cpuidmon.cpp"
+      ],
+      "params": []
+    },
+    {
+      "id": "win.env.cpuid_hypervisor_vendor",
+      "technique": "cpu.hypervisor_vendor_leaf",
+      "status": "implemented",
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 4,
+        "how": "Mask exposed hypervisor interfaces consistently, including relocated ranges and interface signatures. Remove dependent guest enlightenments only after checking boot, clock and interrupt behavior.",
+        "chimera": "The reviewed upstream cpuidmon stealth path clears leaf 1 ECX[31] and 0x40000000 through 0x40000004. Audit the deployed build for relocated Xen 0x40000100 and Viridian/Hyper-V leaves; do not assume -s covers them. Xen defines relocation in arch-x86/cpuid.h."
+      },
+      "equivalents": {
+        "al-khaser": [
+          "cpuid_hypervisor_vendor"
+        ],
+        "pafish": [
+          "cpu_known_vm_vendors"
+        ],
+        "vmaware": [
+          "HYPERVISOR_STR"
+        ],
+        "invizzzible": [
+          "hyperv/Hyper-V CPU HypervisorID",
+          "kvm/KVM CPU HypervisorID",
+          "kvm/KVM CPU VendorID",
+          "parallels/Parallels CPU HypervisorID",
+          "vmware/VMWare HypervisorID",
+          "xen/Xen CPU HypervisorID",
+          "xen/Xen CPU VendorID"
+        ]
+      },
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "CPUID 0x40000000 signature matched against known hypervisor vendors; includes maximum leaf.",
+      "severity": "critical",
+      "references": [
+        "https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/tlfs/feature-discovery",
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiVM/Generic.cpp",
+        "https://github.com/a0rtega/pafish/blob/master/pafish/cpu.c",
+        "https://github.com/NotRequiem/VMAware/blob/main/src/vmaware.hpp",
+        "https://github.com/tklengyel/drakvuf/blob/main/src/plugins/cpuidmon/cpuidmon.cpp"
+      ],
+      "params": []
+    },
+    {
+      "id": "win.env.guest_services",
+      "technique": "guest_tools.services",
+      "status": "implemented",
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Do not install guest tools in the analysis image.",
+        "chimera": "No Xen guest agent should be installed; remove xenagent/xenbus services if present."
+      },
+      "equivalents": {
+        "al-khaser": [
+          "*_services",
+          "VMDriverServices"
+        ],
+        "vmaware": [
+          "VM_PROCESSES"
+        ],
+        "invizzzible": [
+          "vbox/VBox Services Registry Keys",
+          "xen/Xen Services Registry Keys"
+        ]
+      },
+      "title": "Guest tool services",
+      "severity": "high",
+      "description": "Services of a hypervisor's guest tools are installed.",
+      "reason": null,
+      "network": false,
+      "requires": [],
+      "params": [],
+      "references": [
+        "https://evasions.checkpoint.com/registry.html",
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "cost": "fast"
+    },
+    {
+      "id": "win.env.low_core_count",
+      "technique": "resources.cpu_count",
+      "status": "implemented",
+      "fix": {
+        "layer": "vm-config",
+        "effort": 1,
+        "how": "Give the guest at least 4 vCPUs.",
+        "chimera": "Set vcpus= to 4 or more in xl.cfg."
+      },
+      "equivalents": {
+        "pafish": [
+          "gensandbox_one_cpu*",
+          "gensandbox_one_cpu",
+          "gensandbox_one_cpu_GetSystemInfo"
+        ],
+        "al-khaser": [
+          "NumberOfProcessors",
+          "number_cores_wmi"
+        ],
+        "vmaware": [
+          "THREAD_COUNT"
+        ],
+        "invizzzible": [
+          "generic/ProcessorsCount"
+        ]
+      },
+      "title": "Low core count",
+      "severity": "high",
+      "description": "Fewer logical processors than a modern desktop.",
+      "reason": null,
+      "network": false,
+      "requires": [],
+      "params": [],
+      "references": [
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://evasions.checkpoint.com/hardware.html"
+      ],
+      "cost": "fast"
+    },
+    {
+      "id": "win.env.low_ram",
+      "technique": "resources.memory_size",
+      "status": "implemented",
+      "fix": {
+        "layer": "vm-config",
+        "effort": 1,
+        "how": "Give the guest at least 8 GB.",
+        "chimera": "Set memory= to 8192 or more in xl.cfg."
+      },
+      "equivalents": {
+        "pafish": [
+          "gensandbox_less_than_onegb"
+        ],
+        "al-khaser": [
+          "memory_space",
+          "physicalmemory_wmi"
+        ],
+        "vmaware": [
+          "RAM?"
+        ],
+        "invizzzible": [
+          "generic/RAM"
+        ]
+      },
+      "title": "Low memory",
+      "severity": "high",
+      "description": "Less physical memory than a modern desktop.",
+      "reason": null,
+      "network": false,
+      "requires": [],
+      "params": [],
+      "references": [
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://evasions.checkpoint.com/hardware.html"
+      ],
+      "cost": "fast"
+    },
+    {
+      "id": "win.env.pnp_virtual_devices",
+      "technique": "hardware.pci_vendor_ids",
+      "status": "implemented",
+      "fix": {
+        "layer": "vm-config",
+        "effort": 3,
+        "how": "Pick emulated devices whose ids match real hardware, and remove virtual-only devices.",
+        "chimera": "Pick e1000/AHCI/HDA in xl.cfg; the Xen platform PCI device (5853) remains and needs device-model work."
+      },
+      "equivalents": {
+        "al-khaser": [
+          "vbox_pnpentity_*",
+          "pnp_devices",
+          "vbox_devices",
+          "vmware_devices",
+          "vbox_pnpentity_pcideviceid_wmi"
+        ],
+        "vmaware": [
+          "PCI_VM",
+          "DEVICE_STRING",
+          "DEVICES"
+        ]
+      },
+      "title": "Virtual PnP devices",
+      "severity": "high",
+      "description": "Plug-and-play devices carry hypervisor vendor ids or names.",
+      "reason": null,
+      "network": false,
+      "requires": [],
+      "params": [],
+      "references": [
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://evasions.checkpoint.com/hardware.html"
+      ],
+      "cost": "medium"
+    },
+    {
+      "id": "win.env.registry_artifacts",
+      "technique": "artifacts.registry",
+      "status": "implemented",
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Remove guest-tool keys and replace firmware strings in the registry by fixing the firmware.",
+        "chimera": "Firmware strings come from SMBIOS (firmware_override); remove Xen PV driver keys if present."
+      },
+      "equivalents": {
+        "pafish": [
+          "*_reg_key*"
+        ],
+        "al-khaser": [
+          "*_reg_keys",
+          "*_reg_key_value"
+        ],
+        "vmaware": [
+          "REGISTRY",
+          "HKLM_REGISTRIES",
+          "VIRTUAL_REGISTRY"
+        ],
+        "invizzzible": [
+          "xen/Xen Hardware Device Registry Keys",
+          "vbox/VBox Guest Additions Registry Key"
+        ]
+      },
+      "title": "Hypervisor registry keys",
+      "severity": "high",
+      "description": "Registry keys or values of a hypervisor or its guest tools exist.",
+      "reason": null,
+      "network": false,
+      "requires": [],
+      "params": [],
+      "references": [
+        "https://evasions.checkpoint.com/registry.html",
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "cost": "fast"
+    },
+    {
+      "id": "win.env.small_disk",
+      "technique": "resources.disk_size",
+      "status": "implemented",
+      "fix": {
+        "layer": "vm-config",
+        "effort": 1,
+        "how": "Give the guest a disk of 256 GB or more (thin-provisioned).",
+        "chimera": "Grow the CHIMERA disk image (qcow2/LVM) and extend C: before the snapshot."
+      },
+      "equivalents": {
+        "pafish": [
+          "gensandbox_drive_size*"
+        ],
+        "al-khaser": [
+          "disk_size_*",
+          "dizk_size_deviceiocontrol"
+        ],
+        "vmaware": [
+          "DISK_SIZE",
+          "DISK"
+        ],
+        "invizzzible": [
+          "generic/DiskSize",
+          "generic/DriveSize"
+        ]
+      },
+      "title": "Small system disk",
+      "severity": "high",
+      "description": "The system disk is smaller than a typical desktop disk.",
+      "reason": null,
+      "network": false,
+      "requires": [],
+      "params": [],
+      "references": [
+        "https://evasions.checkpoint.com/hardware.html",
+        "https://github.com/a0rtega/pafish"
+      ],
+      "cost": "fast"
+    },
+    {
+      "id": "win.env.smbios_firmware_table_raw",
+      "technique": "firmware.smbios_raw_table",
+      "status": "implemented",
+      "fix": {
+        "layer": "firmware",
+        "effort": 4,
+        "how": "Present a real machine's SMBIOS tables to the guest.",
+        "chimera": "Use firmware_override (H2 firmware ids) with tables derived from real hardware; check the VM bit in type 0."
+      },
+      "equivalents": {
+        "al-khaser": [
+          "*_firmware_SMBIOS",
+          "number_SMBIOS_tables"
+        ],
+        "vmaware": [
+          "FIRMWARE",
+          "SMBIOS_VM_BIT"
+        ],
+        "invizzzible": [
+          "vbox/FirmwareSMBIOS Table",
+          "vmware/FirmwareSMBIOS Table"
+        ]
+      },
+      "title": "Raw SMBIOS table",
+      "severity": "high",
+      "description": "The raw SMBIOS table names a hypervisor or has the VM bit set.",
+      "reason": null,
+      "network": false,
+      "requires": [],
+      "params": [],
+      "references": [
+        "https://www.dmtf.org/standards/smbios",
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html"
+      ],
+      "cost": "fast"
+    },
+    {
+      "id": "win.env.smbios_vendor",
+      "technique": "firmware.smbios_strings",
+      "status": "implemented",
+      "fix": {
+        "layer": "firmware",
+        "effort": 3,
+        "how": "Present a real vendor's manufacturer, product and serial strings.",
+        "chimera": "Set via firmware_override SMBIOS (H2 firmware ids)."
+      },
+      "equivalents": {
+        "al-khaser": [
+          "wmi_*",
+          "manufacturer_computer_system_wmi",
+          "model_computer_system_wmi",
+          "serial_number_bios_wmi"
+        ],
+        "vmaware": [
+          "DMI_SCAN",
+          "WMI_MANUFACTURER",
+          "FIRMWARE"
+        ]
+      },
+      "title": "SMBIOS vendor strings",
+      "severity": "high",
+      "description": "System manufacturer or model strings name a hypervisor.",
+      "reason": null,
+      "network": false,
+      "requires": [],
+      "params": [],
+      "references": [
+        "https://www.dmtf.org/standards/smbios",
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html"
+      ],
+      "cost": "medium"
+    },
+    {
+      "id": "win.timing.cpuid_qpc_jitter",
+      "technique": "timing.cpuid_vmexit",
+      "status": "implemented",
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 5,
+        "how": "Calibrate on comparable bare metal and minimize exits and host scheduling noise. TSC offsetting/scaling and exit-cost compensation require coordinated hypervisor work; a static offset cannot remove per-exit cost and clock compensation must remain consistent across vCPUs and clocks.",
+        "chimera": "Not fixable by configuration. cpuidmon -s rewrites CPUID values but turns every CPUID into a vm_event round trip to dom0 (about 35x the plain exit cost, see the G2 numbers); masking through the Xen CPUID policy instead (xl.cfg cpuid=, verify that Xen 4.19 honours clearing the bit for HVM) removes the monitor cost but not the ~2.5k-cycle exit. Hiding the exit itself needs Xen-side TSC compensation for CPUID exits, which Xen 4.19 does not have; tsc_mode, TSC scaling and vCPU pinning do not remove per-exit cost. CHIMERA G2 measurements (2026-10-29, i7-13700HX host): median RDTSC;CPUID;RDTSC 2398-3720 cycles on the Xen HVM guest without an introspection monitor and 92530-94514 cycles with DRAKVUF cpuidmon -s, which forwards every CPUID to the dom0 monitor; al-khaser's avg10 rule fired 1000/1000 in every configuration, dom0 included (1590-1964 cycles)."
+      },
+      "equivalents": {},
+      "reason": null,
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Preserves the frozen Windows QPC-around-CPUID median measurement, 2000 samples and 20000 QPC-tick default. This is not an RDTSC cycle counter and is not portable across QPC frequencies.",
+      "severity": "high",
+      "references": [
+        "https://learn.microsoft.com/en-us/windows/win32/sysinfo/acquiring-high-resolution-time-stamps",
+        "https://github.com/Chimera-Co/perdedor/blob/main/agents/windows/probes/Timing.ps1"
+      ],
+      "params": [
+        {
+          "name": "timing.qpc_iterations",
+          "default": 2000,
+          "meaning": "QPC samples; clamped to 100..100000 and three seconds."
+        },
+        {
+          "name": "timing.qpc_ticks",
+          "default": 20000,
+          "meaning": "Median QPC-tick threshold retained from v1; clamped to 1..1e9 ticks."
+        }
+      ]
+    },
+    {
+      "id": "win.timing.low_uptime",
+      "technique": "timing.uptime",
+      "status": "implemented",
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 1,
+        "how": "Boot and exercise the image well before capture, then preserve believable uptime through the analysis lifecycle. Keep uptime and interrupt/tick clocks mutually consistent.",
+        "chimera": "Warm the Windows golden image before snapshot/launch. hidsim creates input but does not age uptime; review reset and time-acceleration policies together."
+      },
+      "equivalents": {
+        "pafish": [
+          "gensandbox_uptime"
+        ],
+        "invizzzible": [
+          "generic/SystemUptime"
+        ]
+      },
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "GetTickCount64 uptime and shared InterruptTime, or frozen Linux /proc/uptime check. A recent legitimate reboot also triggers the 600-second default.",
+      "severity": "low",
+      "references": [
+        "https://learn.microsoft.com/en-us/windows/win32/api/sysinfoapi/nf-sysinfoapi-gettickcount64",
+        "https://github.com/a0rtega/pafish/blob/master/pafish/gensandbox.c"
+      ],
+      "params": [
+        {
+          "name": "timing.uptime_seconds",
+          "default": 600,
+          "meaning": "Native Windows low-uptime threshold in seconds; clamped to 0..86400. Frozen Linux uses its fixed 600-second policy."
+        }
+      ]
+    }
+  ]
 }

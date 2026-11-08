@@ -11,11 +11,33 @@ from perdedor_common.registry import CLASS_CATEGORY, spec
 from ..adb import shell_quote
 from ._base import device_for
 
-# Match the checked-in native/src/common/cpu_basic.cpp registrations. A catalog
-# regression test detects additions to the native CPU/timing source surface.
+# The low-level probes only native code can run: the cpu/timing registrations in
+# native/src/common/*.cpp and native/src/linux/lowlevel_*.cpp. Kernel and file-based Linux
+# checks are left out because the adb checks read the same data. A regression test keeps
+# this table equal to the native source.
 NATIVE_CHECKS = {
     "env.cpuid_hypervisor_bit": ("cpu.hypervisor_bit", Severity.CRITICAL),
     "env.cpuid_hypervisor_vendor": ("cpu.hypervisor_vendor_leaf", Severity.CRITICAL),
+    "env.cpu_brand_string": ("cpu.brand_string", Severity.HIGH),
+    "env.cpuid_hypervisor_leaf_range": ("cpu.hypervisor_leaf_range", Severity.HIGH),
+    "env.cpuid_enlightenments": ("cpu.hypervisor_leaf_range", Severity.HIGH),
+    "env.cpu_vendor_brand_consistency": ("cpu.feature_consistency", Severity.MEDIUM),
+    "env.cpu_feature_consistency": ("cpu.feature_consistency", Severity.MEDIUM),
+    "env.cpu_topology_consistency": ("cpu.topology_consistency", Severity.MEDIUM),
+    "env.cpu_cache_descriptors": ("cpu.feature_consistency", Severity.LOW),
+    "env.cpu_descriptor_tables": ("cpu.descriptor_tables", Severity.LOW),
+    "env.vmware_backdoor": ("cpu.vmware_backdoor", Severity.HIGH),
+    "env.virtualpc_opcode": ("cpu.undefined_instruction_behaviour", Severity.HIGH),
+    "env.hypercall_behavior": ("cpu.undefined_instruction_behaviour", Severity.MEDIUM),
+    "env.cpu_emulation_quirks": ("cpu.emulation_quirks", Severity.LOW),
+    "timing.rdtsc_cpuid_vmexit": ("timing.cpuid_vmexit", Severity.HIGH),
+    "timing.tsc_instruction_availability": ("timing.tsc_stability", Severity.LOW),
+    "timing.cpuid_leaf_timing": ("timing.cpuid_vmexit", Severity.LOW),
+    "timing.tsc_frequency_stability": ("timing.tsc_stability", Severity.MEDIUM),
+    "timing.sleep_acceleration": ("timing.sleep_acceleration", Severity.HIGH),
+    "timing.sleep_acceleration_long": ("timing.sleep_acceleration", Severity.HIGH),
+    "timing.timer_resolution": ("timing.tsc_stability", Severity.LOW),
+    "timing.syscall_instrumentation_latency": ("timing.instrumentation_latency", Severity.MEDIUM),
 }
 # DESIGN-V2 slow profile budget is <120 seconds; leave room for cleanup.
 NATIVE_TIMEOUT_SECONDS = 60

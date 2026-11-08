@@ -91,7 +91,12 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "freerasp": [
+          "onSimulator",
+          "simulator"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 4,
@@ -485,7 +490,12 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "freerasp": [
+          "onSimulator",
+          "simulator"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 4,

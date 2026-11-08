@@ -1,9 +1,10 @@
 # Android driver implementation notes
 
-177 registered checks; all 22 v1 ids and techniques remain. Counts by class:
-analysis_tools 6, artifacts 2, container 1, cpu 4, debugger 1, emulator 62,
+197 registered checks; all 22 v1 ids and techniques remain. Counts by class:
+analysis_tools 6, artifacts 2, container 1, cpu 16, debugger 1, emulator 62,
 firmware 1, hardware 3, identity 2, instrumentation 8, integrity 30,
-mobile_device 24, network 12, resources 4, timing 1, wear_and_tear 16.
+mobile_device 24, network 12, resources 4, timing 9, wear_and_tear 16.
+22 of the cpu/timing checks come from the native helper (see below).
 Four additional catalog entries document capabilities unavailable to this host driver.
 
 The earlier draft's property, vendor, kernel, hardware and user-activity checks
@@ -19,8 +20,14 @@ Use `--only class:integrity`, `--only tag:native`, `--skip PATTERN`, and
 `--param android.pid=1234 android.package=com.example.app` for target-specific checks.
 `--param native.binary=/absolute/path` overrides the repository's static binary.
 Native checks have slow cost and run under the deep profile or explicit selection.
-The current native sources register two CPU checks and no timing checks; the driver
-runs `--only class:cpu,class:timing --no-network` and tests pin that registration set.
+The driver remaps the 22 low-level probes that only native code can run: the cpu and
+timing registrations in `native/src/common/*.cpp` and `native/src/linux/lowlevel_*.cpp`
+(CPUID leaves and consistency, descriptor tables, VMware backdoor and opcode probes,
+RDTSC/CPUID exit cost, TSC stability, sleep acceleration, timer resolution, syscall
+latency). Kernel and file-based Linux checks are not remapped, because the adb checks
+read the same data. It runs `--only class:cpu,class:timing --no-network`, keeps only
+the remapped ids, and a regression test keeps the table equal to the native source.
+On the host the helper finishes this selection in about 11 s.
 It validates static ELF64 x86_64, allocates a private temporary directory, pushes,
 runs under a device timeout, and deletes the file and directory in a finally block.
 Cleanup failure is an error with the exact path for operator recovery. A disconnected
@@ -67,26 +74,33 @@ Unknown subscriber strings are never assumed to be IMEIs or checked with Luhn.
 - [TeaBot](https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store): build identity and operator country checks support those observations.
 - [SharkBot](https://www.cleafy.com/cleafy-labs/sharkbot-a-new-generation-of-android-trojan-is-targeting-banks-in-europe) and [ToxicPanda](https://www.bitsight.com/blog/toxicpanda-android-banking-malware-2025-study): emulator/analysis checks motivate property, file and CPU coverage. No unsupported family-specific threshold is attributed to these reports.
 
+## Upstream coverage
+
+From `perdedor coverage` on 9 Nov 2026:
+
+| Source | Covered |
+|---|---|
+| strazzere/anti-emulator | 10 of 13 (76.9 %) |
+| scottyab/rootbeer | 12 of 17 (70.6 %) |
+| freeRASP (Android and Flutter callbacks) | 14 of 22 (63.6 %) |
+
+The freeRASP mapping links a threat callback to the checks that observe the same
+condition from adb, for example `onPrivilegedAccess` to the su, Magisk, KernelSU and
+mount checks. The callbacks left unmapped need an app context: app integrity,
+device binding, obfuscation, screenshots, screen recording, malware, time spoofing
+and unsecured Wi-Fi. RootBeer's unmapped items are its aggregate `isRooted*` results
+and its native-library loading checks. anti-emulator's unmapped items are the QEMU
+breakpoint checks (`checkQemuBreakpoint`, `qemuBkpt`) and `hasEmulatorAdb`.
+
 ## Verification on Linux
 
-An existing .venv was present; `uv venv .venv` reported that it already existed.
-`uv pip install --python .venv/bin/python -e '.[dev]'` succeeded. Tests used
-`PYTHONPATH=$PWD/common/python:$PWD/cli:$PWD/agents/android`.
-
-- `.venv/bin/python -m pytest -q tests`: **70 passed in 12.14s**.
-- `make -C native test`: **core tests: all passed**; Linux list-checks exited 0.
-- Catalog tests and the Android registry/native mapping regression passed.
-- `ruff check .`: **All checks passed!**
-- `black --check .`: **51 files would be left unchanged.**
-- `isort --check-only .`: exit 0 (**Skipped 2 files**, ignored environment directories).
-- Stock `make -C native win64 win32` initially failed because this MinGW header
-  does not define RRF_SUBKEY_WOW6464KEY at the configured Windows version.
-  Both architectures compiled without warnings using
-  `make -C native win64 win32 CXXSTD='-std=c++17 -DRRF_SUBKEY_WOW6464KEY=0x00010000'`.
-  No Windows source was changed. Wine is unavailable.
-
-Formatting-only changes in existing Linux/shared Python files were necessary for
-the binding whole-tree checks. Their behavior is unchanged.
+- `pytest`: 156 passed, including the Android fixtures for a ranchu AVD, Genymotion,
+  BlueStacks/Nox-like, Android-x86 and a plausible phone, registry parity,
+  selection, caching, ABI rejection and helper cleanup on push, run, report and
+  cleanup failures.
+- `make -C native test` passes; `ruff`, `black --check` and `isort --check-only` are
+  clean.
+- No Android device or emulator was attached, so none of this ran on a real target.
 
 ## Limitations and target validation
 
@@ -114,46 +128,3 @@ This is not a claim to replicate every variant of Anubis, Hydra, Octo/Exobot,
 Xenomorph, Anatsa, Godfather, Chameleon, Brokewell, Crocodilus or SpyNote.
 Family-specific behavior needs versioned sample validation. Renamed/hidden root
 and instrumentation components remain a limitation of read-only host observations.
-
-## Changed files
-
-- `agents/android/perdedor_android/__main__.py`
-- `agents/android/perdedor_android/adb.py`
-- `agents/android/perdedor_android/checks/_base.py`
-- `agents/android/perdedor_android/checks/_parsers.py`
-- `agents/android/perdedor_android/checks/behavioural.py`
-- `agents/android/perdedor_android/checks/design.py`
-- `agents/android/perdedor_android/checks/device_hw.py`
-- `agents/android/perdedor_android/checks/emulator_files.py`
-- `agents/android/perdedor_android/checks/emulator_props.py`
-- `agents/android/perdedor_android/checks/environment.py`
-- `agents/android/perdedor_android/checks/kernel_hw.py`
-- `agents/android/perdedor_android/checks/native.py`
-- `agents/android/perdedor_android/checks/network.py`
-- `agents/android/perdedor_android/checks/security.py`
-- `agents/android/perdedor_android/checks/software.py`
-- `agents/android/perdedor_android/checks/telephony.py`
-- `agents/android/perdedor_android/checks/timing.py`
-- `agents/android/perdedor_android/checks/user_data.py`
-- `agents/android/perdedor_android/runner.py`
-- `agents/android/perdedor_android/signatures.py`
-- `agents/linux/perdedor_linux/__main__.py`
-- `agents/linux/perdedor_linux/checks/behavioural.py`
-- `agents/linux/perdedor_linux/checks/design.py`
-- `agents/linux/perdedor_linux/checks/environment.py`
-- `agents/linux/perdedor_linux/checks/timing.py`
-- `catalog/checks/android-core.json`
-- `catalog/checks/android-extended.json`
-- `catalog/checks/android-limitations.json`
-- `common/python/perdedor_common/catalog.py`
-- `common/python/perdedor_common/registry.py`
-- `docs/notes/android.md`
-- `research/proposed-techniques-android.json`
-- `tests/fixtures/android/android_x86.json`
-- `tests/fixtures/android/avd.json`
-- `tests/fixtures/android/bluestacks_nox.json`
-- `tests/fixtures/android/genymotion.json`
-- `tests/fixtures/android/phone.json`
-- `tests/test_android_agent.py`
-- `tests/test_catalog.py`
-- `tests/test_linux_agent.py`

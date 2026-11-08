@@ -1,0 +1,888 @@
+{
+  "source_id": "checkpoint-evasions",
+  "revision": "4cda4b058641",
+  "commit": "4cda4b058641cbf0dc14fe465368cd31fa196c91",
+  "fetched": "2026-11-08",
+  "techniques": [
+    {
+      "name": "android/anti-analysis/long-filenames",
+      "detail": "Long filenames",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "android/anti-analysis/wrong-values-manifest",
+      "detail": "Wrong values in the manifest structure",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "android/anti-analysis/wrong-zip-header-values",
+      "detail": "Wrong ZIP header data values",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/assembly/debugbreak",
+      "detail": "DebugBreak",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/assembly/ice",
+      "detail": "ICE",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/assembly/instruction-counting",
+      "detail": "Instruction Counting",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/assembly/instruction_prefixes",
+      "detail": "Instruction Prefixes",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/assembly/int2d",
+      "detail": "INT 2D",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/assembly/int3",
+      "detail": "INT 3",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/assembly/popf_and_cpuid",
+      "detail": "POPF and CPUID",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/assembly/popf_and_trap_flag",
+      "detail": "POPF and Trap Flag",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/assembly/ss_register",
+      "detail": "Stack Segment Register",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/debug-flags/manual-checks",
+      "detail": "Manual checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/debug-flags/using-win32-api",
+      "detail": "Using Win32 API",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/exceptions/hiding-cf-with-eh",
+      "detail": "Hiding Control Flow with Exception Handlers",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/exceptions/raiseexception",
+      "detail": "RaiseException()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/exceptions/unhandledexceptionfilter",
+      "detail": "UnhandledExceptionFilter()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/interactive/blockinput",
+      "detail": "BlockInput()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/interactive/generateconsolectrlevent",
+      "detail": "GenerateConsoleCtrlEvent()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/interactive/ntsetinformationthread",
+      "detail": "NtSetInformationThread()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/interactive/outputdebugstring",
+      "detail": "OutputDebugString()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/interactive/processsuspensiondetection",
+      "detail": "Process Suspension Detection",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/interactive/self-debugging",
+      "detail": "Self-Debugging",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/interactive/suspendthread",
+      "detail": "EnumWindows() and SuspendThread()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/interactive/switchdesktop",
+      "detail": "SwitchDesktop()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/misc/dbgprint",
+      "detail": "DbgPrint()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/misc/dbgsetdebugfilterstate",
+      "detail": "DbgSetDebugFilterState()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/misc/findwindow",
+      "detail": "FindWindow()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/misc/getwritewatch",
+      "detail": "VirtualAlloc() / GetWriteWatch()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/misc/ifeo-removal",
+      "detail": "IFEO removal",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/misc/parent-process-check",
+      "detail": "Parent Process Check",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/misc/selectors",
+      "detail": "Selectors",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/misc/switchtothread",
+      "detail": "NtYieldExecution() / SwitchToThread()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/object-handles/closehandle",
+      "detail": "CloseHandle()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/object-handles/createfile",
+      "detail": "CreateFile()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/object-handles/loadlibrary",
+      "detail": "LoadLibrary()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/object-handles/ntqueryobject",
+      "detail": "NtQueryObject()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/object-handles/openprocess",
+      "detail": "OpenProcess()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/process-memory/breakpoints",
+      "detail": "Breakpoints",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/process-memory/other-memory-checks",
+      "detail": "Other memory checks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/timing/getlocaltime",
+      "detail": "GetLocalTime()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/timing/getsystemtime",
+      "detail": "GetSystemTime()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/timing/gettickcount",
+      "detail": "GetTickCount()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/timing/kernel-timing",
+      "detail": "ZwGetTickCount() / KiGetTickCount()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/timing/queryperformancecounter",
+      "detail": "QueryPerformanceCounter()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/timing/rdpmc_rdtsc",
+      "detail": "RDPMC/RDTSC",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "anti-debug/timing/timegettime",
+      "detail": "timeGetTime()",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/cpu/check-for-global-tables-location",
+      "detail": "Check for global tables location: IDT/GDT/LDT",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/cpu/check-if-being-run-in-Hypervisor-via-cpuid",
+      "detail": "Check if being run in Hypervisor via CPUID instruction",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/cpu/check-vendor-id-via-cpuid",
+      "detail": "Check vendor ID string via CPUID instruction",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/cpu/detecting-environment-via-illegal-instructions-virtualpc",
+      "detail": "Detecting environment via execution of illegal instructions (VirtualPC only)",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/cpu/detecting-environment-via-in-backdoor-port-vmware",
+      "detail": "Detecting environment via IN instruction - backdoor port (VMware only)",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/cpu/using-exotic-instructions-to-fool-virtual-emulators",
+      "detail": "Using exotic instructions to fool virtual emulators",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/filesystem/check-if-exec-files-with-specific-names",
+      "detail": "Check if the executable files with specific names are present in physical disk drives' root",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/filesystem/check-if-exec-is-run",
+      "detail": "Check if the executable is run from specific directory",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/filesystem/check-if-full-path-exec",
+      "detail": "Check if full path to the executable contains one of the specific strings",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/filesystem/check-if-specific-directories-present",
+      "detail": "Check if specific directories are present",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/filesystem/check-if-specific-files-exist",
+      "detail": "Check if specific files exist",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/firmware-tables/check-specific-strings-in-raw-firmware-table",
+      "detail": "Check if specific strings are present in Raw Firmware Table",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/firmware-tables/check-specific-strings-in-raw-smbios-firmware-table",
+      "detail": "Check if specific strings are present in Raw SMBIOS Firmware Table",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/generic-os-queries/check-if-computer-name-is-specific",
+      "detail": "Check if the computer name is specific",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/generic-os-queries/check-if-hard-disk",
+      "detail": "Check if the hard disk drive size and free space are small",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/generic-os-queries/check-if-host-name-is-specific",
+      "detail": "Check if the host name is specific",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/generic-os-queries/check-if-number-of-processors",
+      "detail": "Check if the number of processors is low",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/generic-os-queries/check-if-os-was-boot-from-virtual-disk",
+      "detail": "Check if the OS was boot from virtual hard disk (Win8+)",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/generic-os-queries/check-if-quantity-of-monitors",
+      "detail": "Check if the quantity of monitors is small",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/generic-os-queries/check-if-screen-res",
+      "detail": "Check if the screen resolution is non-usual for host OS",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/generic-os-queries/check-if-system-uptime",
+      "detail": "Check if the system uptime is small",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/generic-os-queries/check-if-total-ram-is-low",
+      "detail": "Check if the total RAM is low",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/generic-os-queries/check-if-username-is-specific",
+      "detail": "Check if the username is specific",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/global-os-objects/check-if-object-directory-present",
+      "detail": "Check for object directory (Sandboxie only)",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/global-os-objects/check-if-objects-present",
+      "detail": "Check for global objects",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/global-os-objects/check-if-pipes-present",
+      "detail": "Check for specific global pipes",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/global-os-objects/check-if-specific-mutexes-present",
+      "detail": "Check for specific global mutexes",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/global-os-objects/check-if-specific-virtual-devices-present",
+      "detail": "Check for specific virtual devices",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/global-os-objects/check-if-virtual-registry-present",
+      "detail": "Check if virtual registry is present in OS (Sandboxie only)",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/hardware/check-directx-adapter",
+      "detail": "Check physical display adapter for IDirect3D9 interface",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/hardware/check-if-audio-device-is-absent",
+      "detail": "Check if audio device is absent",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/hardware/check-if-cpu-temperature-information-is-available",
+      "detail": "Check if CPU temperature information is available",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/hardware/check-if-hdd-has-specific-name",
+      "detail": "Check if HDD has specific name",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/hardware/check-if-hdd-vendor-id-has-specific-value",
+      "detail": "Check if HDD Vendor ID has specific value",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/hooks/check-incorrectly-hooked-functions",
+      "detail": "Check for incorrectly hooked functions",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/hooks/check-user-clicks-via-mouse-hooks",
+      "detail": "Check user clicks via mouse hooks",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/hooks/check-whether-hooks-are-set-within-system-functions",
+      "detail": "Check whether hooks are set within system functions",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/human-like-behavior/check-user-presence-at-the-moment-of-executing",
+      "detail": "Check for user presence at the moment of executing a process",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/human-like-behavior/general-detection-methods-via-registry",
+      "detail": "General detection methods via registry",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/network/check-if-network-belongs-to-security-perimeter",
+      "detail": "Check if network belongs to security perimeter",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/network/check-specific-network-properties",
+      "detail": "Specific network properties",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/network/cuckoo-resultserver-connection-based-anti-emulation-technique",
+      "detail": "Cuckoo ResultServer connection based anti-emulation technique",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/network/netvalidatename-result-based-anti-emulation-technique",
+      "detail": "NetValidateName result based anti-emulation technique",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/os-features/checking-debug-privileges",
+      "detail": "Checking debug privileges",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/os-features/detect-wine",
+      "detail": "Detect Wine",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/os-features/using-unbalanced-stack",
+      "detail": "Using unbalanced stack",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/processes/check-if-specific-artifacts-are-present-in-process",
+      "detail": "Check if specific artifacts are present in process address space (Sandboxie only)",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/processes/check-specific-running-processes-and-loaded-libraries",
+      "detail": "Check specific running processes and loaded libraries",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/registry/check-if-keys-contain-strings",
+      "detail": "Check if particular registry keys contain specified strings",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/registry/check-if-particular-registry-paths-exist",
+      "detail": "Check if particular registry paths exist",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/registry/check-if-vbawarning-enabled",
+      "detail": "Check if VBAWarnings enabled",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/timing/call-hooked-function-with-invalid-arguments",
+      "detail": "Call a potentially hooked delay function with invalid arguments",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/timing/check-system-boot-time",
+      "detail": "Check the system last boot time using different methods",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/timing/delayed-execution",
+      "detail": "Delayed execution",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/timing/difference-vm-hosts",
+      "detail": "Difference in time measurement in VM and hosts",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/timing/get-time-ntp",
+      "detail": "Get the current date and time from an external source (NTP, HTTP)",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/timing/sleep-skipping-detection",
+      "detail": "Sleep skipping detection",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/ui-artifacts/check-number-of-top-level-windows",
+      "detail": "Check if top level windows' number is too small",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/ui-artifacts/check-windows-with-certain-class",
+      "detail": "Check if windows with certain class names are present in the OS",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/wmi/check-last-boot-time",
+      "detail": "Check the last boot time",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/wmi/check-network-adapter-reset-time",
+      "detail": "Check the network adapters last reset time",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/wmi/escape-from-tracking",
+      "detail": "Escape from tracking using WMI",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    },
+    {
+      "name": "evasions/wmi/generic-wmi-queries",
+      "detail": "Generic WMI queries",
+      "platforms": [
+        "windows"
+      ],
+      "score": null
+    }
+  ]
+}

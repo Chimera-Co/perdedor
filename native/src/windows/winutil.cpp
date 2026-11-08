@@ -1,5 +1,7 @@
 #include "winutil.hpp"
 
+#include <cstring>
+
 namespace perdedor {
 namespace win {
 
@@ -38,38 +40,60 @@ bool reg_key_exists(HKEY root, const std::wstring& path) {
     return true;
 }
 
+// Reads one value through the 64-bit registry view. RegOpenKeyEx + RegQueryValueEx work on Windows 7 and
+// later from both the x64 and the x86 build (KEY_WOW64_64KEY is ignored on 32-bit Windows).
+static bool reg_query(HKEY root, const std::wstring& path, const std::wstring& value, DWORD& type,
+                      std::vector<unsigned char>& data) {
+    HKEY k;
+    if (RegOpenKeyExW(root, path.c_str(), 0, KEY_QUERY_VALUE | kView, &k) != ERROR_SUCCESS) return false;
+    DWORD size = 0;
+    LONG rc = RegQueryValueExW(k, value.c_str(), nullptr, &type, nullptr, &size);
+    for (int attempt = 0; rc == ERROR_SUCCESS && attempt < 4; ++attempt) {
+        data.assign(size + sizeof(wchar_t) * 2, 0);  // room for a terminator the value may lack
+        DWORD got = size;
+        rc = RegQueryValueExW(k, value.c_str(), nullptr, &type, data.data(), &got);
+        if (rc == ERROR_MORE_DATA) {
+            size = got;
+            rc = ERROR_SUCCESS;
+            continue;
+        }
+        if (rc == ERROR_SUCCESS) data.resize(got);
+        break;
+    }
+    RegCloseKey(k);
+    return rc == ERROR_SUCCESS;
+}
+
 bool reg_read_string(HKEY root, const std::wstring& path, const std::wstring& value, std::wstring& out) {
-    DWORD type = 0, size = 0;
-    if (RegGetValueW(root, path.c_str(), value.c_str(), RRF_RT_REG_SZ | RRF_RT_REG_EXPAND_SZ | RRF_RT_REG_MULTI_SZ | RRF_SUBKEY_WOW6464KEY,
-                     &type, nullptr, &size) != ERROR_SUCCESS)
-        return false;
-    std::wstring buf(size / sizeof(wchar_t) + 1, L'\0');
-    if (RegGetValueW(root, path.c_str(), value.c_str(), RRF_RT_REG_SZ | RRF_RT_REG_EXPAND_SZ | RRF_RT_REG_MULTI_SZ | RRF_SUBKEY_WOW6464KEY,
-                     &type, &buf[0], &size) != ERROR_SUCCESS)
-        return false;
+    DWORD type = 0;
+    std::vector<unsigned char> data;
+    if (!reg_query(root, path, value, type, data)) return false;
+    if (type != REG_SZ && type != REG_EXPAND_SZ && type != REG_MULTI_SZ) return false;
+    std::wstring buf(reinterpret_cast<const wchar_t*>(data.data()), data.size() / sizeof(wchar_t));
     if (type == REG_MULTI_SZ) {
+        while (!buf.empty() && buf.back() == L'\0') buf.pop_back();
         for (auto& ch : buf)
             if (ch == L'\0') ch = L'\n';
+    } else {
+        buf.resize(wcsnlen(buf.c_str(), buf.size()));
     }
-    buf.resize(wcsnlen(buf.c_str(), buf.size()));
     while (!buf.empty() && buf.back() == L'\n') buf.pop_back();
     out = buf;
     return true;
 }
 
 bool reg_read_dword(HKEY root, const std::wstring& path, const std::wstring& value, DWORD& out) {
-    DWORD size = sizeof out;
-    return RegGetValueW(root, path.c_str(), value.c_str(), RRF_RT_REG_DWORD | RRF_SUBKEY_WOW6464KEY, nullptr, &out, &size) ==
-           ERROR_SUCCESS;
+    DWORD type = 0;
+    std::vector<unsigned char> data;
+    if (!reg_query(root, path, value, type, data) || type != REG_DWORD || data.size() < sizeof(DWORD)) return false;
+    std::memcpy(&out, data.data(), sizeof(DWORD));
+    return true;
 }
 
 bool reg_read_binary(HKEY root, const std::wstring& path, const std::wstring& value, std::vector<unsigned char>& out) {
-    DWORD size = 0;
-    if (RegGetValueW(root, path.c_str(), value.c_str(), RRF_RT_REG_BINARY | RRF_SUBKEY_WOW6464KEY, nullptr, nullptr, &size) != ERROR_SUCCESS)
-        return false;
-    out.resize(size);
-    return RegGetValueW(root, path.c_str(), value.c_str(), RRF_RT_REG_BINARY | RRF_SUBKEY_WOW6464KEY, nullptr, out.data(), &size) ==
-           ERROR_SUCCESS;
+    DWORD type = 0;
+    if (!reg_query(root, path, value, type, out)) return false;
+    return type == REG_BINARY;
 }
 
 std::vector<std::wstring> reg_subkeys(HKEY root, const std::wstring& path) {

@@ -1,0 +1,554 @@
+{
+  "source_id": "capa-rules",
+  "revision": "v10.0.0",
+  "commit": "805f9eaccfb6a4e1ddffc809d71d1e2b5ccc15e5",
+  "fetched": "2026-11-08",
+  "techniques": [
+    {
+      "name": "capa/anti-analysis/anti-av/block-operations-on-executable-memory-pages-using-arbitrary-code-guard",
+      "detail": "anti-analysis/anti-av/block-operations-on-executable-memory-pages-using-arbitrary-code-guard.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-av/check-for-sandbox-and-av-modules",
+      "detail": "anti-analysis/anti-av/check-for-sandbox-and-av-modules.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-av/overwrite-dll-text-section-to-remove-hooks",
+      "detail": "anti-analysis/anti-av/overwrite-dll-text-section-to-remove-hooks.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-av/patch-antimalware-scan-interface-function",
+      "detail": "anti-analysis/anti-av/patch-antimalware-scan-interface-function.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-av/patch-bitdefender-hooking-dll-function",
+      "detail": "anti-analysis/anti-av/patch-bitdefender-hooking-dll-function.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-av/patch-event-tracing-for-windows-function",
+      "detail": "anti-analysis/anti-av/patch-event-tracing-for-windows-function.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-av/protect-spawned-processes-with-mitigation-policies",
+      "detail": "anti-analysis/anti-av/protect-spawned-processes-with-mitigation-policies.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-debugging/check-for-time-delay-in-dotnet",
+      "detail": "anti-analysis/anti-debugging/check-for-time-delay-in-dotnet.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-debugging/debugger-detection/check-for-debugger-via-api",
+      "detail": "anti-analysis/anti-debugging/debugger-detection/check-for-debugger-via-api.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-debugging/debugger-detection/check-for-hardware-breakpoints",
+      "detail": "anti-analysis/anti-debugging/debugger-detection/check-for-hardware-breakpoints.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-debugging/debugger-detection/check-for-kernel-debugger-via-shared-user-data-structure",
+      "detail": "anti-analysis/anti-debugging/debugger-detection/check-for-kernel-debugger-via-shared-user-data-structure.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-debugging/debugger-detection/check-for-outputdebugstring-error",
+      "detail": "anti-analysis/anti-debugging/debugger-detection/check-for-outputdebugstring-error.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-debugging/debugger-detection/check-for-peb-beingdebugged-flag",
+      "detail": "anti-analysis/anti-debugging/debugger-detection/check-for-peb-beingdebugged-flag.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-debugging/debugger-detection/check-for-peb-ntglobalflag-flag",
+      "detail": "anti-analysis/anti-debugging/debugger-detection/check-for-peb-ntglobalflag-flag.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-debugging/debugger-detection/check-for-protected-handle-exception",
+      "detail": "anti-analysis/anti-debugging/debugger-detection/check-for-protected-handle-exception.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-debugging/debugger-detection/check-for-software-breakpoints",
+      "detail": "anti-analysis/anti-debugging/debugger-detection/check-for-software-breakpoints.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-debugging/debugger-detection/check-for-time-delay-via-gettickcount",
+      "detail": "anti-analysis/anti-debugging/debugger-detection/check-for-time-delay-via-gettickcount.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-debugging/debugger-detection/check-for-time-delay-via-queryperformancecounter",
+      "detail": "anti-analysis/anti-debugging/debugger-detection/check-for-time-delay-via-queryperformancecounter.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-debugging/debugger-detection/check-for-trap-flag-exception",
+      "detail": "anti-analysis/anti-debugging/debugger-detection/check-for-trap-flag-exception.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-debugging/debugger-detection/check-for-unexpected-memory-writes",
+      "detail": "anti-analysis/anti-debugging/debugger-detection/check-for-unexpected-memory-writes.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-debugging/debugger-detection/check-process-job-object",
+      "detail": "anti-analysis/anti-debugging/debugger-detection/check-process-job-object.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-debugging/debugger-detection/check-processdebugport",
+      "detail": "anti-analysis/anti-debugging/debugger-detection/check-processdebugport.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-debugging/debugger-detection/execute-anti-debugging-instructions",
+      "detail": "anti-analysis/anti-debugging/debugger-detection/execute-anti-debugging-instructions.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-debugging/debugger-evasion/hide-thread-from-debugger",
+      "detail": "anti-analysis/anti-debugging/debugger-evasion/hide-thread-from-debugger.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-disasm/64-bit-execution-via-heavens-gate",
+      "detail": "anti-analysis/anti-disasm/64-bit-execution-via-heavens-gate.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-disasm/contain-anti-disasm-techniques",
+      "detail": "anti-analysis/anti-disasm/contain-anti-disasm-techniques.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-emulation/wine/check-if-process-is-running-under-wine",
+      "detail": "anti-analysis/anti-emulation/wine/check-if-process-is-running-under-wine.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-forensic/clear-logs/clear-windows-event-logs",
+      "detail": "anti-analysis/anti-forensic/clear-logs/clear-windows-event-logs.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-forensic/clear-logs/clear-windows-event-logs-remotely",
+      "detail": "anti-analysis/anti-forensic/clear-logs/clear-windows-event-logs-remotely.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-forensic/crash-the-windows-event-logging-service",
+      "detail": "anti-analysis/anti-forensic/crash-the-windows-event-logging-service.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-forensic/disable-powershell-transcription",
+      "detail": "anti-analysis/anti-forensic/disable-powershell-transcription.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-forensic/impersonate-file-version-information",
+      "detail": "anti-analysis/anti-forensic/impersonate-file-version-information.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-forensic/patch-process-command-line",
+      "detail": "anti-analysis/anti-forensic/patch-process-command-line.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-forensic/self-deletion/self-delete",
+      "detail": "anti-analysis/anti-forensic/self-deletion/self-delete.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-forensic/self-deletion/self-delete-using-alternate-data-streams",
+      "detail": "anti-analysis/anti-forensic/self-deletion/self-delete-using-alternate-data-streams.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-forensic/spoof-parent-pid",
+      "detail": "anti-analysis/anti-forensic/spoof-parent-pid.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-forensic/timestomp/timestomp-file",
+      "detail": "anti-analysis/anti-forensic/timestomp/timestomp-file.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-forensic/unload-sysmon",
+      "detail": "anti-analysis/anti-forensic/unload-sysmon.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-llm/terminate-anthropic-session-via-magic-strings",
+      "detail": "anti-analysis/anti-llm/terminate-anthropic-session-via-magic-strings.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-vm/vm-detection/check-for-foreground-window-switch",
+      "detail": "anti-analysis/anti-vm/vm-detection/check-for-foreground-window-switch.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-vm/vm-detection/check-for-microsoft-office-emulation",
+      "detail": "anti-analysis/anti-vm/vm-detection/check-for-microsoft-office-emulation.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-vm/vm-detection/check-for-sandbox-username-or-hostname",
+      "detail": "anti-analysis/anti-vm/vm-detection/check-for-sandbox-username-or-hostname.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-vm/vm-detection/check-for-unmoving-mouse-cursor",
+      "detail": "anti-analysis/anti-vm/vm-detection/check-for-unmoving-mouse-cursor.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-vm/vm-detection/check-for-windows-sandbox-via-device",
+      "detail": "anti-analysis/anti-vm/vm-detection/check-for-windows-sandbox-via-device.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-vm/vm-detection/check-for-windows-sandbox-via-dns-suffix",
+      "detail": "anti-analysis/anti-vm/vm-detection/check-for-windows-sandbox-via-dns-suffix.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-vm/vm-detection/check-for-windows-sandbox-via-genuine-state",
+      "detail": "anti-analysis/anti-vm/vm-detection/check-for-windows-sandbox-via-genuine-state.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-vm/vm-detection/check-for-windows-sandbox-via-process-name",
+      "detail": "anti-analysis/anti-vm/vm-detection/check-for-windows-sandbox-via-process-name.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-vm/vm-detection/check-for-windows-sandbox-via-registry",
+      "detail": "anti-analysis/anti-vm/vm-detection/check-for-windows-sandbox-via-registry.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-vm/vm-detection/detect-mouse-movement-via-activity-checks-on-windows",
+      "detail": "anti-analysis/anti-vm/vm-detection/detect-mouse-movement-via-activity-checks-on-windows.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-vm/vm-detection/detect-vm-via-disk-hardware-wmi-queries",
+      "detail": "anti-analysis/anti-vm/vm-detection/detect-vm-via-disk-hardware-wmi-queries.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-vm/vm-detection/detect-vm-via-motherboard-hardware-wmi-queries",
+      "detail": "anti-analysis/anti-vm/vm-detection/detect-vm-via-motherboard-hardware-wmi-queries.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-vm/vm-detection/reference-anti-vm-strings",
+      "detail": "anti-analysis/anti-vm/vm-detection/reference-anti-vm-strings.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-vm/vm-detection/reference-anti-vm-strings-targeting-parallels",
+      "detail": "anti-analysis/anti-vm/vm-detection/reference-anti-vm-strings-targeting-parallels.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-vm/vm-detection/reference-anti-vm-strings-targeting-qemu",
+      "detail": "anti-analysis/anti-vm/vm-detection/reference-anti-vm-strings-targeting-qemu.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-vm/vm-detection/reference-anti-vm-strings-targeting-virtualbox",
+      "detail": "anti-analysis/anti-vm/vm-detection/reference-anti-vm-strings-targeting-virtualbox.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-vm/vm-detection/reference-anti-vm-strings-targeting-virtualpc",
+      "detail": "anti-analysis/anti-vm/vm-detection/reference-anti-vm-strings-targeting-virtualpc.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-vm/vm-detection/reference-anti-vm-strings-targeting-vmware",
+      "detail": "anti-analysis/anti-vm/vm-detection/reference-anti-vm-strings-targeting-vmware.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/anti-vm/vm-detection/reference-anti-vm-strings-targeting-xen",
+      "detail": "anti-analysis/anti-vm/vm-detection/reference-anti-vm-strings-targeting-xen.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/obfuscation/obfuscated-with-advobfuscator",
+      "detail": "anti-analysis/obfuscation/obfuscated-with-advobfuscator.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/obfuscation/obfuscated-with-babel-obfuscator",
+      "detail": "anti-analysis/obfuscation/obfuscated-with-babel-obfuscator.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/obfuscation/obfuscated-with-callobfuscator",
+      "detail": "anti-analysis/obfuscation/obfuscated-with-callobfuscator.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/obfuscation/obfuscated-with-deepsea-obfuscator",
+      "detail": "anti-analysis/obfuscation/obfuscated-with-deepsea-obfuscator.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/obfuscation/obfuscated-with-dotfuscator",
+      "detail": "anti-analysis/obfuscation/obfuscated-with-dotfuscator.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/obfuscation/obfuscated-with-smartassembly",
+      "detail": "anti-analysis/obfuscation/obfuscated-with-smartassembly.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/obfuscation/obfuscated-with-spicesdotnet-obfuscator",
+      "detail": "anti-analysis/obfuscation/obfuscated-with-spicesdotnet-obfuscator.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/obfuscation/obfuscated-with-vs-obfuscation",
+      "detail": "anti-analysis/obfuscation/obfuscated-with-vs-obfuscation.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/obfuscation/obfuscated-with-yano",
+      "detail": "anti-analysis/obfuscation/obfuscated-with-yano.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/obfuscation/string/stackstring/contain-obfuscated-stackstrings",
+      "detail": "anti-analysis/obfuscation/string/stackstring/contain-obfuscated-stackstrings.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/packer/amber/packed-with-amber",
+      "detail": "anti-analysis/packer/amber/packed-with-amber.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/packer/aspack/packed-with-aspack",
+      "detail": "anti-analysis/packer/aspack/packed-with-aspack.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/packer/confuser/packed-with-confuser",
+      "detail": "anti-analysis/packer/confuser/packed-with-confuser.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/packer/dxpack/packed-with-dxpack",
+      "detail": "anti-analysis/packer/dxpack/packed-with-dxpack.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/packer/generic/packed-with-generic-packer",
+      "detail": "anti-analysis/packer/generic/packed-with-generic-packer.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/packer/gopacker/packed-with-gopacker",
+      "detail": "anti-analysis/packer/gopacker/packed-with-gopacker.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/packer/huan/packed-with-huan",
+      "detail": "anti-analysis/packer/huan/packed-with-huan.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/packer/kkrunchy/packed-with-kkrunchy",
+      "detail": "anti-analysis/packer/kkrunchy/packed-with-kkrunchy.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/packer/nmm-protect/packed-with-nmm-protect",
+      "detail": "anti-analysis/packer/nmm-protect/packed-with-nmm-protect.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/packer/nspack/packed-with-nspack",
+      "detail": "anti-analysis/packer/nspack/packed-with-nspack.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/packer/pebundle/packed-with-pebundle",
+      "detail": "anti-analysis/packer/pebundle/packed-with-pebundle.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/packer/pecompact/packed-with-pecompact",
+      "detail": "anti-analysis/packer/pecompact/packed-with-pecompact.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/packer/pelocknt/packed-with-pelocknt",
+      "detail": "anti-analysis/packer/pelocknt/packed-with-pelocknt.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/packer/peshield/packed-with-peshield",
+      "detail": "anti-analysis/packer/peshield/packed-with-peshield.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/packer/pespin/packed-with-pespin",
+      "detail": "anti-analysis/packer/pespin/packed-with-pespin.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/packer/petite/packed-with-petite",
+      "detail": "anti-analysis/packer/petite/packed-with-petite.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/packer/rlpack/packed-with-rlpack",
+      "detail": "anti-analysis/packer/rlpack/packed-with-rlpack.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/packer/themida/packed-with-themida",
+      "detail": "anti-analysis/packer/themida/packed-with-themida.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/packer/upack/packed-with-upack",
+      "detail": "anti-analysis/packer/upack/packed-with-upack.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/packer/upx/packed-with-upx",
+      "detail": "anti-analysis/packer/upx/packed-with-upx.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/packer/vmprotect/packed-with-vmprotect",
+      "detail": "anti-analysis/packer/vmprotect/packed-with-vmprotect.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/packer/y0da/packed-with-y0da-crypter",
+      "detail": "anti-analysis/packer/y0da/packed-with-y0da-crypter.yml",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "capa/anti-analysis/reference-analysis-tools-strings",
+      "detail": "anti-analysis/reference-analysis-tools-strings.yml",
+      "platforms": [],
+      "score": null
+    }
+  ]
+}

@@ -460,6 +460,10 @@
       "equivalents": {
         "anti-emulator": [
           "hasQEmuFiles"
+        ],
+        "freerasp": [
+          "onSimulator",
+          "simulator"
         ]
       },
       "fix": {
@@ -560,6 +564,10 @@
       "equivalents": {
         "anti-emulator": [
           "hasGenyFiles"
+        ],
+        "freerasp": [
+          "onSimulator",
+          "simulator"
         ]
       },
       "fix": {
@@ -593,7 +601,12 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "freerasp": [
+          "onSimulator",
+          "simulator"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 4,
@@ -625,7 +638,12 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "freerasp": [
+          "onSimulator",
+          "simulator"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 4,
@@ -2382,7 +2400,12 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "freerasp": [
+          "onSystemVpn",
+          "systemVPN"
+        ]
+      },
       "fix": {
         "layer": "network",
         "effort": 3,
@@ -2476,7 +2499,14 @@
       ],
       "equivalents": {
         "rootbeer": [
-          "checkForSuBinary"
+          "checkForSuBinary",
+          "checkSuExists",
+          "checkForBinary",
+          "checkForRootNative"
+        ],
+        "freerasp": [
+          "onPrivilegedAccess",
+          "privilegedAccess"
         ]
       },
       "fix": {
@@ -2507,7 +2537,8 @@
       ],
       "equivalents": {
         "rootbeer": [
-          "checkForBusyBoxBinary"
+          "checkForBusyBoxBinary",
+          "checkForBinary"
         ]
       },
       "fix": {
@@ -2536,7 +2567,15 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "rootbeer": [
+          "checkForMagiskBinary"
+        ],
+        "freerasp": [
+          "onPrivilegedAccess",
+          "privilegedAccess"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 3,
@@ -2563,7 +2602,12 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "freerasp": [
+          "onPrivilegedAccess",
+          "privilegedAccess"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 3,
@@ -2590,7 +2634,12 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "freerasp": [
+          "onHooks",
+          "hooks"
+        ]
+      },
       "fix": {
         "layer": "analysis-engine",
         "effort": 3,
@@ -2613,7 +2662,12 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "freerasp": [
+          "onHooks",
+          "hooks"
+        ]
+      },
       "fix": {
         "layer": "analysis-engine",
         "effort": 3,
@@ -2636,7 +2690,12 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "freerasp": [
+          "onHooks",
+          "hooks"
+        ]
+      },
       "fix": {
         "layer": "analysis-engine",
         "effort": 3,
@@ -2685,6 +2744,10 @@
       "equivalents": {
         "rootbeer": [
           "detectRootManagementApps"
+        ],
+        "freerasp": [
+          "onPrivilegedAccess",
+          "privilegedAccess"
         ]
       },
       "fix": {
@@ -2775,7 +2838,12 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "freerasp": [
+          "onHooks",
+          "hooks"
+        ]
+      },
       "fix": {
         "layer": "analysis-engine",
         "effort": 3,
@@ -2844,7 +2912,12 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "freerasp": [
+          "onAutomation",
+          "automation"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 2,
@@ -2867,7 +2940,12 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "freerasp": [
+          "onMultiInstance",
+          "multiInstance"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 4,
@@ -2923,6 +3001,10 @@
       "equivalents": {
         "rootbeer": [
           "checkForDangerousProps"
+        ],
+        "freerasp": [
+          "onDebug",
+          "debug"
         ]
       },
       "fix": {
@@ -2978,7 +3060,12 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "freerasp": [
+          "onBootloader",
+          "bootloader"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 3,
@@ -3005,7 +3092,12 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "freerasp": [
+          "onBootloader",
+          "bootloader"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 3,
@@ -3032,7 +3124,12 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "freerasp": [
+          "onBootloader",
+          "bootloader"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 3,
@@ -3086,7 +3183,12 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "freerasp": [
+          "onDevMode",
+          "devMode"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 3,
@@ -3113,7 +3215,12 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "freerasp": [
+          "onAdbEnabled",
+          "adbEnabled"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 3,
@@ -3140,7 +3247,12 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "freerasp": [
+          "onAdbEnabled",
+          "adbEnabled"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 3,
@@ -3167,7 +3279,12 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "freerasp": [
+          "onLocationSpoofing",
+          "locationSpoofing"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 3,
@@ -3248,7 +3365,12 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "freerasp": [
+          "onSystemVpn",
+          "systemVPN"
+        ]
+      },
       "fix": {
         "layer": "network",
         "effort": 3,
@@ -3328,6 +3450,10 @@
       "equivalents": {
         "rootbeer": [
           "checkForRWPaths"
+        ],
+        "freerasp": [
+          "onPrivilegedAccess",
+          "privilegedAccess"
         ]
       },
       "fix": {
@@ -3356,7 +3482,12 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "freerasp": [
+          "onPrivilegedAccess",
+          "privilegedAccess"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 3,
@@ -3383,7 +3514,12 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "freerasp": [
+          "onHooks",
+          "hooks"
+        ]
+      },
       "fix": {
         "layer": "analysis-engine",
         "effort": 3,
@@ -3429,7 +3565,12 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "freerasp": [
+          "onHooks",
+          "hooks"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 2,
@@ -3475,7 +3616,12 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "freerasp": [
+          "onAdbEnabled",
+          "adbEnabled"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 3,
@@ -3502,7 +3648,12 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "freerasp": [
+          "onPasscode",
+          "passcode"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 3,
@@ -3556,7 +3707,12 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "freerasp": [
+          "onLocationSpoofing",
+          "locationSpoofing"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 3,
@@ -3583,7 +3739,12 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "freerasp": [
+          "onDebug",
+          "debug"
+        ]
+      },
       "fix": {
         "layer": "analysis-engine",
         "effort": 2,
@@ -3605,7 +3766,12 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "freerasp": [
+          "onHooks",
+          "hooks"
+        ]
+      },
       "fix": {
         "layer": "analysis-engine",
         "effort": 3,
@@ -3631,6 +3797,10 @@
       "equivalents": {
         "other": [
           "detect_frida_threads"
+        ],
+        "freerasp": [
+          "onHooks",
+          "hooks"
         ]
       },
       "fix": {
@@ -3769,7 +3939,12 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "freerasp": [
+          "onUnofficialStore",
+          "unofficialStore"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 3,
@@ -3796,7 +3971,12 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "freerasp": [
+          "onSecureHardwareNotAvailable",
+          "secureHardwareNotAvailable"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 3,
@@ -3962,7 +4142,13 @@
       "requires": [
         "adb"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "anti-emulator": [
+          "hasKnownDeviceId",
+          "hasKnownImsi",
+          "hasKnownPhoneNumber"
+        ]
+      },
       "fix": {
         "layer": "vm-config",
         "effort": 4,
@@ -4253,6 +4439,699 @@
         "https://developer.android.com/tools/adb",
         "https://developer.android.com/reference/android/provider/Settings.Global"
       ]
+    },
+    {
+      "id": "android.env.cpu_brand_string",
+      "technique": "cpu.brand_string",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "slow",
+      "network": false,
+      "requires": [
+        "adb",
+        "native-helper"
+      ],
+      "equivalents": {
+        "vmaware": [
+          "CPU_BRAND"
+        ],
+        "pafish": [
+          "qemu_cpu_name"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Present a coherent CPU policy: match vendor, brand, feature dependencies, cache and topology to the configured vCPUs and real model. Do not advertise instructions the guest cannot execute.",
+        "chimera": "CHIMERA: the Android-x86 mobile VM runs on the same Xen host as the Linux guest, so the linux.env.cpu_brand_string fix applies unchanged. Validate Xen CPUID policy together with cpuidmon -s. Host-derived SMBIOS does not change CPUID. Test both guests and every advertised CPU leaf after masking."
+      },
+      "references": [
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html",
+        "https://github.com/NotRequiem/VMAware/blob/main/src/vmaware.hpp",
+        "https://github.com/a0rtega/pafish/blob/master/pafish/qemu.c"
+      ],
+      "description": "Runs the static Linux helper over adb. Extended CPUID brand contains virtual/emulated CPU tokens; reports brand and match count."
+    },
+    {
+      "id": "android.env.cpuid_hypervisor_leaf_range",
+      "technique": "cpu.hypervisor_leaf_range",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "slow",
+      "network": false,
+      "requires": [
+        "adb",
+        "native-helper"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 4,
+        "how": "Mask exposed hypervisor interfaces consistently, including relocated ranges and interface signatures. Remove dependent guest enlightenments only after checking boot, clock and interrupt behavior.",
+        "chimera": "CHIMERA: the Android-x86 mobile VM runs on the same Xen host as the Linux guest, so the linux.env.cpuid_hypervisor_leaf_range fix applies unchanged. The reviewed upstream cpuidmon stealth path clears leaf 1 ECX[31] and 0x40000000 through 0x40000004. Audit the deployed build for relocated Xen 0x40000100 and Viridian/Hyper-V leaves; do not assume -s covers them. Xen defines relocation in arch-x86/cpuid.h."
+      },
+      "references": [
+        "https://github.com/xen-project/xen/blob/RELEASE-4.19.0/xen/include/public/arch-x86/cpuid.h",
+        "https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/tlfs/feature-discovery",
+        "https://github.com/tklengyel/drakvuf/blob/main/src/plugins/cpuidmon/cpuidmon.cpp",
+        "https://xenbits.xen.org/gitweb/?p=xen.git;a=blob;f=xen/include/public/arch-x86/cpuid.h",
+        "https://www.kernel.org/doc/html/latest/virt/kvm/x86/cpuid.html"
+      ],
+      "description": "Runs the static Linux helper over adb. Scans the 512 0x100-aligned bases 0x40000000-0x4001FF00 for a hypervisor leaf range (max leaf inside the base's window plus a nonzero signature). Xen moves its leaves to 0x40000100 when Viridian is enabled; KVM can sit behind Hyper-V leaves."
+    },
+    {
+      "id": "android.env.cpuid_enlightenments",
+      "technique": "cpu.hypervisor_leaf_range",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "slow",
+      "network": false,
+      "requires": [
+        "adb",
+        "native-helper"
+      ],
+      "equivalents": {
+        "vmaware": [
+          "CPUID_SIGNATURE"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 4,
+        "how": "Mask exposed hypervisor interfaces consistently, including relocated ranges and interface signatures. Remove dependent guest enlightenments only after checking boot, clock and interrupt behavior.",
+        "chimera": "CHIMERA: the Android-x86 mobile VM runs on the same Xen host as the Linux guest, so the linux.env.cpuid_enlightenments fix applies unchanged. The reviewed upstream cpuidmon stealth path clears leaf 1 ECX[31] and 0x40000000 through 0x40000004. Audit the deployed build for relocated Xen 0x40000100 and Viridian/Hyper-V leaves; do not assume -s covers them. Xen defines relocation in arch-x86/cpuid.h."
+      },
+      "references": [
+        "https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/tlfs/feature-discovery",
+        "https://github.com/xen-project/xen/blob/RELEASE-4.19.0/xen/include/public/arch-x86/cpuid.h",
+        "https://github.com/NotRequiem/VMAware/blob/main/src/vmaware.hpp",
+        "https://github.com/tklengyel/drakvuf/blob/main/src/plugins/cpuidmon/cpuidmon.cpp"
+      ],
+      "description": "Runs the static Linux helper over adb. Looks for the Hyper-V TLFS interface signature 'Hv#1' (or SimpleVisor 'Shv') at base+1 of every hypervisor leaf base and records the feature, recommendation and limit leaves."
+    },
+    {
+      "id": "android.env.cpu_vendor_brand_consistency",
+      "technique": "cpu.feature_consistency",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "slow",
+      "network": false,
+      "requires": [
+        "adb",
+        "native-helper"
+      ],
+      "equivalents": {
+        "pafish": [
+          "bochs_cpu_amd1",
+          "bochs_cpu_amd2",
+          "bochs_cpu_intel1"
+        ],
+        "vmaware": [
+          "BOCHS_CPU"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Present a coherent CPU policy: match vendor, brand, feature dependencies, cache and topology to the configured vCPUs and real model. Do not advertise instructions the guest cannot execute.",
+        "chimera": "CHIMERA: the Android-x86 mobile VM runs on the same Xen host as the Linux guest, so the linux.env.cpu_vendor_brand_consistency fix applies unchanged. Validate Xen CPUID policy together with cpuidmon -s. Host-derived SMBIOS does not change CPUID. Test both guests and every advertised CPU leaf after masking."
+      },
+      "references": [
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html",
+        "https://github.com/a0rtega/pafish/blob/master/pafish/bochs.c",
+        "https://github.com/kernelwernel/VMAware/blob/main/src/vmaware.hpp"
+      ],
+      "description": "Runs the static Linux helper over adb. Leaf-0 vendor against the brand string (Intel vs AMD), and the raw untrimmed brand strings only Bochs reports (Pafish bochs_cpu_amd1/intel1). The AMD 0x8FFFFFFF easter-egg leaf (bochs_cpu_amd2) is recorded only: current AMD parts also return zeros there."
+    },
+    {
+      "id": "android.env.cpu_feature_consistency",
+      "technique": "cpu.feature_consistency",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "slow",
+      "network": false,
+      "requires": [
+        "adb",
+        "native-helper"
+      ],
+      "equivalents": {
+        "vmaware": [
+          "CPU_HEURISTIC"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Present a coherent CPU policy: match vendor, brand, feature dependencies, cache and topology to the configured vCPUs and real model. Do not advertise instructions the guest cannot execute.",
+        "chimera": "CHIMERA: the Android-x86 mobile VM runs on the same Xen host as the Linux guest, so the linux.env.cpu_feature_consistency fix applies unchanged. Validate Xen CPUID policy together with cpuidmon -s. Host-derived SMBIOS does not change CPUID. Test both guests and every advertised CPU leaf after masking."
+      },
+      "references": [
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html",
+        "https://github.com/xen-project/xen/blob/RELEASE-4.19.0/xen/include/public/arch-x86/cpuid.h",
+        "https://www.intel.com/content/www/us/en/products/sku/97128/intel-core-i77700-processor-8m-cache-up-to-4-20-ghz/specifications.html",
+        "https://www.intel.com/content/www/us/en/products/sku/81709/intel-xeon-processor-e52670-v3-30m-cache-2-30-ghz/specifications.html",
+        "https://www.amd.com/en/support/downloads/drivers.html/processors/ryzen/ryzen-3000-series/amd-ryzen-5-3600.html"
+      ],
+      "description": "Runs the static Linux helper over adb. Checks hypervisor bit versus leaf ranges, OSXSAVE/XSAVE/AVX dependencies, VMX/SVM vendor contradictions and missing features on three named models. Missing model features have low confidence because firmware and policy may hide them."
+    },
+    {
+      "id": "android.env.cpu_topology_consistency",
+      "technique": "cpu.topology_consistency",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "slow",
+      "network": false,
+      "requires": [
+        "adb",
+        "native-helper"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Present a coherent CPU policy: match vendor, brand, feature dependencies, cache and topology to the configured vCPUs and real model. Do not advertise instructions the guest cannot execute.",
+        "chimera": "CHIMERA: the Android-x86 mobile VM runs on the same Xen host as the Linux guest, so the linux.env.cpu_topology_consistency fix applies unchanged. Validate Xen CPUID policy together with cpuidmon -s. Host-derived SMBIOS does not change CPUID. Test both guests and every advertised CPU leaf after masking."
+      },
+      "references": [
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html",
+        "https://www.intel.com/content/www/us/en/products/sku/97128/intel-core-i77700-processor-8m-cache-up-to-4-20-ghz/specifications.html",
+        "https://www.intel.com/content/www/us/en/products/sku/81709/intel-xeon-processor-e52670-v3-30m-cache-2-30-ghz/specifications.html",
+        "https://www.amd.com/en/support/downloads/drivers.html/processors/ryzen/ryzen-3000-series/amd-ryzen-5-3600.html",
+        "https://ark.intel.com",
+        "https://www.amd.com/en/products/specifications"
+      ],
+      "description": "Runs the static Linux helper over adb. CPUID leaf 0xB/0x1F package thread count and leaf 4 core count against each other, the OS online-CPU count and a sourced table of real models (Intel ARK / AMD specifications). An OS count above the listed model's threads is a contradiction; other mismatches are cautions because affinity, hotplug and SMT settings explain them."
+    },
+    {
+      "id": "android.env.cpu_cache_descriptors",
+      "technique": "cpu.feature_consistency",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "slow",
+      "network": false,
+      "requires": [
+        "adb",
+        "native-helper"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Present a coherent CPU policy: match vendor, brand, feature dependencies, cache and topology to the configured vCPUs and real model. Do not advertise instructions the guest cannot execute.",
+        "chimera": "CHIMERA: the Android-x86 mobile VM runs on the same Xen host as the Linux guest, so the linux.env.cpu_cache_descriptors fix applies unchanged. Validate Xen CPUID policy together with cpuidmon -s. Host-derived SMBIOS does not change CPUID. Test both guests and every advertised CPU leaf after masking."
+      },
+      "references": [
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html"
+      ],
+      "description": "Runs the static Linux helper over adb. Counts deterministic cache subleaves, legacy descriptor bytes and AMD legacy L2 presence. Reports missing cache information conservatively; leaf 2 may include TLB descriptors."
+    },
+    {
+      "id": "android.env.cpu_descriptor_tables",
+      "technique": "cpu.descriptor_tables",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "slow",
+      "network": false,
+      "requires": [
+        "adb",
+        "native-helper"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "gdt_trick",
+          "idt_trick",
+          "ldt_trick",
+          "str_trick"
+        ],
+        "vmaware": [
+          "SYSTEM_REGISTERS",
+          "VMWARE_STR"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 5,
+        "how": "Corroborate descriptor observations against the exact OS and CPU. Preserve architectural privilege/UMIP behavior rather than spoofing arbitrary addresses; modern descriptor placement has little standalone value.",
+        "chimera": "CHIMERA: the Android-x86 mobile VM runs on the same Xen host as the Linux guest, so the linux.env.cpu_descriptor_tables fix applies unchanged. Xen and guest UMIP policy may fault or emulate these instructions. cpuidmon -s cannot alter descriptor placement. Do not modify guest tables to satisfy a historical heuristic."
+      },
+      "references": [
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html",
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiVM/Generic.cpp",
+        "https://github.com/kernelwernel/VMAware/blob/main/src/vmaware.hpp"
+      ],
+      "description": "Runs the static Linux helper over adb. Guarded SIDT/SGDT/SLDT/STR/SMSW. The historical rules (al-khaser idt_trick/gdt_trick: base high byte 0xFF; str_trick: TR = 0x4000) are applied to native 32-bit processes only. UMIP makes the instructions fault or return emulated values; on 64-bit systems discrimination is very low."
+    },
+    {
+      "id": "android.env.vmware_backdoor",
+      "technique": "cpu.vmware_backdoor",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "slow",
+      "network": false,
+      "requires": [
+        "adb",
+        "native-helper"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Restrict user-mode VMware backdoor access where supported, after checking guest-tools dependencies. An expected privilege fault is a negative response, not a probe failure.",
+        "chimera": "CHIMERA: the Android-x86 mobile VM runs on the same Xen host as the Linux guest, so the linux.env.vmware_backdoor fix applies unchanged. Xen should reject these VMware-specific I/O requests. Investigate unexpected successful signatures in nested or compatibility configurations; cpuidmon and firmware strings do not govern this port."
+      },
+      "references": [
+        "https://github.com/vmware/open-vm-tools/blob/master/open-vm-tools/lib/include/backdoor_def.h",
+        "https://evasions.checkpoint.com/src/Anti-VM/anti-vm.html"
+      ],
+      "description": "Runs the static Linux helper over adb. IN from port 0x5658 with EAX='VMXh' and commands 0x0A (get version) and 0x14 (memory size), guarded. Outside VMware the IN faults (#GP at CPL3); a 'VMXh' echo in EBX is VMware."
+    },
+    {
+      "id": "android.env.virtualpc_opcode",
+      "technique": "cpu.undefined_instruction_behaviour",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "slow",
+      "network": false,
+      "requires": [
+        "adb",
+        "native-helper"
+      ],
+      "equivalents": {
+        "vmaware": [
+          "VPC_INVALID"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Present a coherent CPU policy: match vendor, brand, feature dependencies, cache and topology to the configured vCPUs and real model. Do not advertise instructions the guest cannot execute.",
+        "chimera": "CHIMERA: the Android-x86 mobile VM runs on the same Xen host as the Linux guest, so the linux.env.virtualpc_opcode fix applies unchanged. Validate Xen CPUID policy together with cpuidmon -s. Host-derived SMBIOS does not change CPUID. Test both guests and every advertised CPU leaf after masking."
+      },
+      "references": [
+        "https://github.com/NotRequiem/VMAware/blob/main/src/vmaware.hpp"
+      ],
+      "description": "Runs the static Linux helper over adb. Guarded VirtualPC version query 0F 3F 07 0B with EAX=1 and EBX=0; records whether it returns or faults."
+    },
+    {
+      "id": "android.env.hypercall_behavior",
+      "technique": "cpu.undefined_instruction_behaviour",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "slow",
+      "network": false,
+      "requires": [
+        "adb",
+        "native-helper"
+      ],
+      "equivalents": {
+        "vmaware": [
+          "KVM_INTERCEPTION"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 5,
+        "how": "Make CPL3 VMCALL/VMMCALL raise #UD in the guest as on bare metal; this needs a hypervisor change.",
+        "chimera": "CHIMERA: the Android-x86 mobile VM runs on the same Xen host as the Linux guest, so the linux.env.hypercall_behavior fix applies unchanged. Xen 4.19 hvm_hypercall() answers CPL>0 hypercalls with -EPERM instead of injecting #UD; hiding it needs a Xen patch. cpuidmon does not affect it."
+      },
+      "references": [
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html",
+        "https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/tlfs/feature-discovery",
+        "https://xenbits.xen.org/gitweb/?p=xen.git;a=blob;f=xen/arch/x86/hvm/hypercall.c",
+        "https://github.com/torvalds/linux/blob/master/arch/x86/kvm/x86.c",
+        "https://github.com/kernelwernel/VMAware/blob/main/src/vmaware.hpp"
+      ],
+      "description": "Runs the static Linux helper over adb. VMCALL and VMMCALL at CPL3 with an invalid call number (0x0BADC0DE), guarded. Bare metal raises #UD for both; Xen and KVM return -EPERM to user mode without a fault. Records whether RAX changed."
+    },
+    {
+      "id": "android.env.cpu_emulation_quirks",
+      "technique": "cpu.emulation_quirks",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "slow",
+      "network": false,
+      "requires": [
+        "adb",
+        "native-helper"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Correct violations of defined instruction semantics in the emulator. Keep undefined flag/destination observations separate from portable detection decisions and validate against multiple physical CPUs.",
+        "chimera": "CHIMERA: the Android-x86 mobile VM runs on the same Xen host as the Linux guest, so the linux.env.cpu_emulation_quirks fix applies unchanged. Xen normally executes these integer instructions on hardware. Android-x86 under TCG needs independent validation; cpuidmon masking does not fix instruction semantics."
+      },
+      "references": [
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html"
+      ],
+      "description": "Runs the static Linux helper over adb. Records BSF/BSR zero-source destination values and ZF, plus 16-bit SHLD count 17. Only incorrect defined ZF behavior is detected; undefined output values are never treated as universal emulator signatures."
+    },
+    {
+      "id": "android.timing.rdtsc_cpuid_vmexit",
+      "technique": "timing.cpuid_vmexit",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "slow",
+      "network": false,
+      "requires": [
+        "adb",
+        "native-helper"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "rdtsc_diff_vmexit"
+        ],
+        "pafish": [
+          "cpu_rdtsc_force_vmexit"
+        ],
+        "vmaware": [
+          "TIMER"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 5,
+        "how": "Calibrate on comparable bare metal and minimize exits and host scheduling noise. TSC offsetting/scaling and exit-cost compensation require coordinated hypervisor work; a static offset cannot remove per-exit cost and clock compensation must remain consistent across vCPUs and clocks.",
+        "chimera": "CHIMERA: the Android-x86 mobile VM runs on the same Xen host as the Linux guest, so the linux.timing.rdtsc_cpuid_vmexit fix applies unchanged. Not fixable by configuration. cpuidmon -s rewrites CPUID values but turns every CPUID into a vm_event round trip to dom0 (about 35x the plain exit cost, see the G2 numbers); masking through the Xen CPUID policy instead (xl.cfg cpuid=, verify that Xen 4.19 honours clearing the bit for HVM) removes the monitor cost but not the ~2.5k-cycle exit. Hiding the exit itself needs Xen-side TSC compensation for CPUID exits, which Xen 4.19 does not have; tsc_mode, TSC scaling and vCPU pinning do not remove per-exit cost. CHIMERA G2 measurements (2026-10-29, i7-13700HX host): median RDTSC;CPUID;RDTSC 2398-3720 cycles on the Xen HVM guest without an introspection monitor and 92530-94514 cycles with DRAKVUF cpuidmon -s, which forwards every CPUID to the dom0 monitor; al-khaser's avg10 rule fired 1000/1000 in every configuration, dom0 included (1590-1964 cycles)."
+      },
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/TimingAttacks/timing.cpp",
+        "https://github.com/a0rtega/pafish/blob/master/pafish/cpu.c",
+        "https://www.itl.nist.gov/div898/handbook/eda/section3/eda35h.htm",
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html",
+        "https://github.com/kernelwernel/VMAware/blob/main/src/vmaware.hpp",
+        "https://www.itl.nist.gov/div898/handbook/prc/section2/prc262.htm"
+      ],
+      "params": [
+        {
+          "name": "timing.iterations",
+          "default": 100000,
+          "meaning": "Requested paired samples; clamped to 100..1000000 and a four-second sampling budget."
+        },
+        {
+          "name": "timing.trials",
+          "default": 10,
+          "meaning": "Independent ten-round average trials; clamped to 1..1000 with a separate four-second budget."
+        },
+        {
+          "name": "timing.vmexit_cycles",
+          "default": 1000,
+          "meaning": "Cycle threshold for the median and avg10 trials; clamped to 1..1e9. Default is al-khaser rdtsc_diff_vmexit; zero or backward counters are anomalous."
+        },
+        {
+          "name": "timing.introspection_cycles",
+          "default": 20000,
+          "meaning": "Median above which CPUID is classified as trapped to an introspection monitor; clamped to 1..1e10. Default from the CHIMERA G2 measurements (2.4-3.7k plain Xen HVM, 92-95k with DRAKVUF cpuidmon -s)."
+        }
+      ],
+      "description": "Runs the static Linux helper over adb. Pinned to one CPU, 2000 warm-up rounds, then raw RDTSC;RDTSC (floor) and RDTSC;CPUID;RDTSC pairs plus independent al-khaser ten-round integer averages. Reports the CHIMERA cpuid-timing harness statistics (min, p5, p25, median, p75, p95, p99, max, mean) plus p90, trimmed mean and MAD, alkhaser_style_detected k/n, and classifies the median as native_range, vm_exit (>= 1000 cycles) or cpuid_trapped_to_monitor (>= 20000 cycles). Replaces the separate CHIMERA cpuid-timing harness."
+    },
+    {
+      "id": "android.timing.tsc_instruction_availability",
+      "technique": "timing.tsc_stability",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "slow",
+      "network": false,
+      "requires": [
+        "adb",
+        "native-helper"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Present a coherent CPU policy: match vendor, brand, feature dependencies, cache and topology to the configured vCPUs and real model. Do not advertise instructions the guest cannot execute.",
+        "chimera": "CHIMERA: the Android-x86 mobile VM runs on the same Xen host as the Linux guest, so the linux.timing.tsc_instruction_availability fix applies unchanged. Validate Xen CPUID policy together with cpuidmon -s. Host-derived SMBIOS does not change CPUID. Test both guests and every advertised CPU leaf after masking."
+      },
+      "references": [
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html"
+      ],
+      "description": "Runs the static Linux helper over adb. Checks RDTSC and advertised RDTSCP under the fault guard. Absence of optional RDTSCP alone is not detected; OS restrictions can explain advertised-but-blocked instructions."
+    },
+    {
+      "id": "android.timing.cpuid_leaf_timing",
+      "technique": "timing.cpuid_vmexit",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "slow",
+      "network": false,
+      "requires": [
+        "adb",
+        "native-helper"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 5,
+        "how": "Calibrate on comparable bare metal and minimize exits and host scheduling noise. TSC offsetting/scaling and exit-cost compensation require coordinated hypervisor work; a static offset cannot remove per-exit cost and clock compensation must remain consistent across vCPUs and clocks.",
+        "chimera": "CHIMERA: the Android-x86 mobile VM runs on the same Xen host as the Linux guest, so the linux.timing.cpuid_leaf_timing fix applies unchanged. Not fixable by configuration. cpuidmon -s rewrites CPUID values but turns every CPUID into a vm_event round trip to dom0 (about 35x the plain exit cost, see the G2 numbers); masking through the Xen CPUID policy instead (xl.cfg cpuid=, verify that Xen 4.19 honours clearing the bit for HVM) removes the monitor cost but not the ~2.5k-cycle exit. Hiding the exit itself needs Xen-side TSC compensation for CPUID exits, which Xen 4.19 does not have; tsc_mode, TSC scaling and vCPU pinning do not remove per-exit cost. CHIMERA G2 measurements (2026-10-29, i7-13700HX host): median RDTSC;CPUID;RDTSC 2398-3720 cycles on the Xen HVM guest without an introspection monitor and 92530-94514 cycles with DRAKVUF cpuidmon -s, which forwards every CPUID to the dom0 monitor; al-khaser's avg10 rule fired 1000/1000 in every configuration, dom0 included (1590-1964 cycles)."
+      },
+      "references": [
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html",
+        "https://www.itl.nist.gov/div898/handbook/eda/section3/eda35h.htm"
+      ],
+      "params": [
+        {
+          "name": "timing.leaf_iterations",
+          "default": 2000,
+          "meaning": "Samples per leaf; clamped to 100..20000 and four seconds."
+        },
+        {
+          "name": "timing.leaf_ratio",
+          "default": 3,
+          "meaning": "Largest/smallest median ratio; local research default, clamped to 1..1000; calibrate on matched bare metal."
+        }
+      ],
+      "description": "Runs the static Linux helper over adb. Interleaved LFENCE/RDTSC latencies for leaves 0,1,7,0x40000000,0x40000100,0x80000000; compares largest and smallest medians. Research heuristic also triggered by real CPU leaf-cost differences; not VMAware CPUID_SIGNATURE."
+    },
+    {
+      "id": "android.timing.tsc_frequency_stability",
+      "technique": "timing.tsc_stability",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "slow",
+      "network": false,
+      "requires": [
+        "adb",
+        "native-helper"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 5,
+        "how": "Calibrate on comparable bare metal and minimize exits and host scheduling noise. TSC offsetting/scaling and exit-cost compensation require coordinated hypervisor work; a static offset cannot remove per-exit cost and clock compensation must remain consistent across vCPUs and clocks.",
+        "chimera": "CHIMERA: the Android-x86 mobile VM runs on the same Xen host as the Linux guest, so the linux.timing.tsc_frequency_stability fix applies unchanged. cpuidmon -s changes CPUID values, not VM-exit latency; its handling can add cost. Xen TSC mode or vCPU pinning alone cannot erase that cost. Validate any Xen/DRAKVUF compensation against raw RDTSC, RDTSCP and OS clocks; retain residual-risk reporting."
+      },
+      "references": [
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html",
+        "https://learn.microsoft.com/en-us/windows/win32/sysinfo/acquiring-high-resolution-time-stamps",
+        "https://www.itl.nist.gov/div898/handbook/eda/section3/eda35h.htm"
+      ],
+      "params": [
+        {
+          "name": "timing.tsc_windows",
+          "default": 5,
+          "meaning": "Busy calibration windows; clamped to 3..20, each capped at two million clock polls."
+        },
+        {
+          "name": "timing.tsc_drift_fraction",
+          "default": 0.1,
+          "meaning": "Relative (max-min)/median frequency tolerance; local research default, clamped to 0.001..1."
+        }
+      ],
+      "description": "Runs the static Linux helper over adb. TSC frequency against the monotonic clock in repeated bounded 20-ms busy windows; reports MHz statistics and relative range. Busy calibration avoids using a possibly accelerated sleep."
+    },
+    {
+      "id": "android.timing.sleep_acceleration",
+      "technique": "timing.sleep_acceleration",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "slow",
+      "network": false,
+      "requires": [
+        "adb",
+        "native-helper"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "accelerated_sleep",
+          "timing_NtDelayexecution",
+          "timing_WaitForSingleObject"
+        ],
+        "pafish": [
+          "gensandbox_sleep_patched"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 4,
+        "how": "Disable sleep acceleration for fidelity runs, or coordinate all wait APIs and time sources while preserving monotonicity, timeout semantics and thread scheduling. Compare accelerated and normal runs.",
+        "chimera": "CHIMERA: the Android-x86 mobile VM runs on the same Xen host as the Linux guest, so the linux.timing.sleep_acceleration fix applies unchanged. CHIMERA optional time acceleration can shorten Sleep/NtDelayExecution/waits or Linux nanosleep/select while leaving TSC or shared time unchanged. Disable it for baseline tests; coherent acceleration can still evade these comparisons."
+      },
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/TimingAttacks/timing.cpp",
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiVM/Generic.cpp",
+        "https://man7.org/linux/man-pages/man2/nanosleep.2.html",
+        "https://man7.org/linux/man-pages/man2/select.2.html",
+        "https://learn.microsoft.com/en-us/windows/win32/sysinfo/acquiring-high-resolution-time-stamps"
+      ],
+      "params": [
+        {
+          "name": "timing.sleep_ms",
+          "default": 200,
+          "meaning": "Requested milliseconds per API; clamped to 50..500. Windows uses Sleep, event WaitForSingleObject and NtDelayExecution; Linux uses nanosleep and select."
+        },
+        {
+          "name": "timing.sleep_tolerance",
+          "default": 0.2,
+          "meaning": "Fractional clock/early-wait tolerance, local policy clamped to 0.01..0.8; also adds 20 ms for Windows tick quantization."
+        }
+      ],
+      "description": "Runs the static Linux helper over adb. Measures each native wait against TSC, monotonic/QPC, wall and tick/boot clocks. Detects early completion or disagreement beyond tolerance plus 20-ms quantization slack. Clocks can share hardware; coherent acceleration remains undetectable."
+    },
+    {
+      "id": "android.timing.sleep_acceleration_long",
+      "technique": "timing.sleep_acceleration",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "slow",
+      "network": false,
+      "requires": [
+        "adb",
+        "native-helper"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "accelerated_sleep",
+          "timing_NtDelayexecution",
+          "timing_WaitForSingleObject"
+        ],
+        "pafish": [
+          "gensandbox_sleep_patched"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 4,
+        "how": "Disable sleep acceleration for fidelity runs, or coordinate all wait APIs and time sources while preserving monotonicity, timeout semantics and thread scheduling. Compare accelerated and normal runs.",
+        "chimera": "CHIMERA: the Android-x86 mobile VM runs on the same Xen host as the Linux guest, so the linux.timing.sleep_acceleration_long fix applies unchanged. CHIMERA optional time acceleration can shorten Sleep/NtDelayExecution/waits or Linux nanosleep/select while leaving TSC or shared time unchanged. Disable it for baseline tests; coherent acceleration can still evade these comparisons."
+      },
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/TimingAttacks/timing.cpp",
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiVM/Generic.cpp",
+        "https://man7.org/linux/man-pages/man2/nanosleep.2.html",
+        "https://man7.org/linux/man-pages/man2/select.2.html",
+        "https://learn.microsoft.com/en-us/windows/win32/sysinfo/acquiring-high-resolution-time-stamps"
+      ],
+      "params": [
+        {
+          "name": "timing.long_sleep_ms",
+          "default": 5000,
+          "meaning": "Requested milliseconds per API; clamped to 50..15000. Windows uses Sleep, event WaitForSingleObject and NtDelayExecution; Linux uses nanosleep and select."
+        },
+        {
+          "name": "timing.sleep_tolerance",
+          "default": 0.2,
+          "meaning": "Fractional clock/early-wait tolerance, local policy clamped to 0.01..0.8; also adds 20 ms for Windows tick quantization."
+        }
+      ],
+      "description": "Runs the static Linux helper over adb. Measures each native wait against TSC, monotonic/QPC, wall and tick/boot clocks. Detects early completion or disagreement beyond tolerance plus 20-ms quantization slack. Clocks can share hardware; coherent acceleration remains undetectable. Slow variant runs under deep or explicit selection."
+    },
+    {
+      "id": "android.timing.timer_resolution",
+      "technique": "timing.tsc_stability",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "slow",
+      "network": false,
+      "requires": [
+        "adb",
+        "native-helper"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 5,
+        "how": "Calibrate on comparable bare metal and minimize exits and host scheduling noise. TSC offsetting/scaling and exit-cost compensation require coordinated hypervisor work; a static offset cannot remove per-exit cost and clock compensation must remain consistent across vCPUs and clocks.",
+        "chimera": "CHIMERA: the Android-x86 mobile VM runs on the same Xen host as the Linux guest, so the linux.timing.timer_resolution fix applies unchanged. cpuidmon -s changes CPUID values, not VM-exit latency; its handling can add cost. Xen TSC mode or vCPU pinning alone cannot erase that cost. Validate any Xen/DRAKVUF compensation against raw RDTSC, RDTSCP and OS clocks; retain residual-risk reporting."
+      },
+      "references": [
+        "https://learn.microsoft.com/en-us/windows/win32/sysinfo/acquiring-high-resolution-time-stamps",
+        "https://man7.org/linux/man-pages/man2/clock_getres.2.html"
+      ],
+      "params": [
+        {
+          "name": "timing.resolution_ns",
+          "default": 1000000,
+          "meaning": "Warn if minimum observed positive increment exceeds this local 1-ms threshold; clamped to 1..1e9 ns."
+        }
+      ],
+      "description": "Runs the static Linux helper over adb. Declared clock resolution and 10000 observed monotonic clock increments, including API overhead and backward counts. Coarse clocks alone do not identify a sandbox."
+    },
+    {
+      "id": "android.timing.syscall_instrumentation_latency",
+      "technique": "timing.instrumentation_latency",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "slow",
+      "network": false,
+      "requires": [
+        "adb",
+        "native-helper"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 4,
+        "how": "Trace fewer calls, or only the calls an analysis needs; each traced call costs a trap. Keep in-guest filter drivers and audit rules to what the image needs.",
+        "chimera": "CHIMERA: the Android-x86 mobile VM runs on the same Xen host as the Linux guest, so the linux.timing.syscall_instrumentation_latency fix applies unchanged. Every DRAKVUF breakpoint trap (syscalls, regmon, filetracer, procmon plugins) is a VM exit plus a vm_event round trip to dom0, which costs tens of microseconds per call. Disable plugins that are not needed for a run, and prefer the syscalls plugin's filter (-S) to tracing every system call. The cost cannot be hidden from the guest."
+      },
+      "references": [
+        "https://github.com/tklengyel/drakvuf/tree/main/src/plugins/syscalls",
+        "https://github.com/winsiderss/phnt/blob/master/ntpsapi.h",
+        "https://man7.org/linux/man-pages/man2/open.2.html",
+        "https://man7.org/linux/man-pages/man2/getpid.2.html",
+        "https://www.itl.nist.gov/div898/handbook/eda/section3/eda35h.htm"
+      ],
+      "params": [
+        {
+          "name": "instrumentation.iterations",
+          "default": 2000,
+          "meaning": "Batches per series; clamped to 100..20000 and a three-second budget."
+        },
+        {
+          "name": "instrumentation.min_latency_ns",
+          "default": 15000,
+          "meaning": "Per-call median (ns) above which a call is treated as trapped; local research default (untraced failing opens cost about 0.3-5 us), calibrate per host."
+        },
+        {
+          "name": "instrumentation.latency_ratio",
+          "default": 30,
+          "meaning": "Traced-call / cheap-syscall median ratio for selective tracing; local research default."
+        }
+      ],
+      "description": "Runs the static Linux helper over adb. Research side channel. Batched (8 calls per clock read) latency of a failing call that registry/file monitors trace (Windows: NtOpenKey on a random absent key; Linux: openat of a random absent name in /), of a cheap syscall (NtQueryInformationProcess / getpid) and of a user-mode arithmetic reference. Detected when a median exceeds the traced floor or the traced call is far slower than the cheap one. Moderate confidence; cannot name a monitor."
     }
   ]
 }

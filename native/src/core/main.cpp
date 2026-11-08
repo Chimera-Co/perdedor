@@ -2,6 +2,7 @@
 //
 //   perdedor [-o FILE] [--profile quick|standard|deep] [--only PAT ...] [--skip PAT ...]
 //            [--param KEY=VALUE ...] [--no-network] [--list-checks] [--pretty] [--version]
+//            [--args-file FILE]   (one argument per line; '#' starts a comment line)
 //
 // Lists accept repeated flags or comma-separated values. The JSON report goes to
 // FILE or stdout; a one-line summary goes to stderr.
@@ -45,12 +46,51 @@ static int usage(const char* why) {
     std::fprintf(stderr,
                  "usage: perdedor [-o FILE] [--profile quick|standard|deep] [--only PATTERN ...]\n"
                  "                [--skip PATTERN ...] [--param KEY=VALUE ...] [--no-network]\n"
-                 "                [--list-checks] [--pretty] [--version]\n"
+                 "                [--list-checks] [--pretty] [--version] [--args-file FILE]\n"
                  "PATTERN: id glob (win.timing.*) or class:X, category:X, technique:X, cost:X, tag:X\n");
     return 2;
 }
 
+// Expands --args-file FILE into the arguments it lists (one per line, '#' comment lines and blank
+// lines ignored). Hosts use it to pass long selections that would not fit a guest command line.
+static bool expand_args(int argc, char** argv, std::vector<std::string>& out, std::string& err) {
+    for (int i = 1; i < argc; ++i) {
+        std::string a = argv[i];
+        if (a != "--args-file") {
+            out.push_back(a);
+            continue;
+        }
+        if (++i >= argc) {
+            err = "--args-file needs a file";
+            return false;
+        }
+        std::ifstream in(argv[i], std::ios::binary);
+        if (!in) {
+            err = std::string("cannot read args file ") + argv[i];
+            return false;
+        }
+        std::string line;
+        bool first = true;
+        while (std::getline(in, line)) {
+            if (first && line.size() >= 3 && static_cast<unsigned char>(line[0]) == 0xEF &&
+                static_cast<unsigned char>(line[1]) == 0xBB && static_cast<unsigned char>(line[2]) == 0xBF)
+                line.erase(0, 3);  // UTF-8 byte order mark
+            first = false;
+            while (!line.empty() && (line.back() == '\r' || line.back() == ' ' || line.back() == '\t')) line.pop_back();
+            size_t start = line.find_first_not_of(" \t");
+            if (start == std::string::npos || line[start] == '#') continue;
+            out.push_back(line.substr(start));
+        }
+    }
+    return true;
+}
+
 int main(int argc, char** argv) {
+    std::vector<std::string> args;
+    {
+        std::string err;
+        if (!expand_args(argc, argv, args, err)) return usage(err.c_str());
+    }
     std::string output, profile = "standard";
     std::vector<std::string> only, skip;
     std::map<std::string, std::string> params;
@@ -58,8 +98,9 @@ int main(int argc, char** argv) {
     std::vector<std::string>* current = nullptr;  // list flag consuming following values
     bool current_is_param = false;
 
-    for (int i = 1; i < argc; ++i) {
-        std::string a = argv[i];
+    const int nargs = static_cast<int>(args.size());
+    for (int i = 0; i < nargs; ++i) {
+        std::string a = args[i];
         bool is_flag = a.size() > 1 && a[0] == '-' && !(a.size() > 1 && (std::isdigit(static_cast<unsigned char>(a[1]))));
         if (!is_flag && (current || current_is_param)) {
             if (current_is_param) {
@@ -78,11 +119,11 @@ int main(int argc, char** argv) {
         current = nullptr;
         current_is_param = false;
         if (a == "-o" || a == "--output") {
-            if (++i >= argc) return usage("-o needs a file");
-            output = argv[i];
+            if (++i >= nargs) return usage("-o needs a file");
+            output = args[i];
         } else if (a == "--profile") {
-            if (++i >= argc) return usage("--profile needs a value");
-            profile = argv[i];
+            if (++i >= nargs) return usage("--profile needs a value");
+            profile = args[i];
         } else if (a == "--only") {
             current = &only;
         } else if (a == "--skip") {

@@ -23,7 +23,7 @@ WINLIBS  := -lole32 -loleaut32 -lwbemuuid -luuid -liphlpapi -lws2_32 -ladvapi32 
             -lwtsapi32 -lnetapi32 -lwintrust -lcrypt32 -lbcrypt -lntdll
 VERSION  := $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 
-.PHONY: all linux win64 win32 test clean
+.PHONY: test-linux all linux win64 win32 test clean
 all: $(if $(shell command -v $(LINUX_CXX)),linux) $(if $(shell command -v $(WIN64_CXX)),win64) $(if $(shell command -v $(WIN32_CXX)),win32)
 
 linux: $(BUILD)/perdedor-linux-x86_64
@@ -49,9 +49,44 @@ $(BUILD)/core_tests: $(CORE) tests/core_tests.cpp tests/fake_platform.cpp
 	@mkdir -p $(BUILD)
 	$(LINUX_CXX) $(CXXSTD) -O0 -g $(WARN) -pthread -o $@ $(filter-out src/core/main.cpp,$(CORE)) tests/core_tests.cpp tests/fake_platform.cpp
 
-test: $(BUILD)/core_tests linux
+test: $(BUILD)/core_tests linux test-linux test-lowlevel test-windows-logic
 	./$(BUILD)/core_tests
 	./$(BUILD)/perdedor-linux-x86_64 --list-checks > /dev/null
+
+# Low-level fixtures use the real guard and statistics, with no privileged setup.
+LOWLEVEL_TEST_SRC := tests/lowlevel_tests.cpp src/common/guard.cpp src/common/lowlevel.cpp \
+                     $(filter-out src/core/main.cpp,$(CORE)) tests/fake_platform.cpp
+LOWLEVEL_TEST_HEADERS := $(wildcard src/common/*.hpp) src/linux/lowlevel_parsers.hpp
+
+$(BUILD)/lowlevel_tests: $(LOWLEVEL_TEST_SRC) $(LOWLEVEL_TEST_HEADERS)
+	@mkdir -p $(BUILD)
+	$(LINUX_CXX) $(CXXSTD) $(OPT) $(WARN) -Werror -pthread -o $@ $(LOWLEVEL_TEST_SRC)
+
+$(BUILD)/lowlevel-tests-win64.exe: $(LOWLEVEL_TEST_SRC) $(LOWLEVEL_TEST_HEADERS)
+	@mkdir -p $(BUILD)
+	$(WIN64_CXX) $(CXXSTD) $(OPT) $(WARN) -Werror -D_WIN32_WINNT=0x0601 -static -o $@ $(LOWLEVEL_TEST_SRC)
+
+$(BUILD)/lowlevel-tests-win32.exe: $(LOWLEVEL_TEST_SRC) $(LOWLEVEL_TEST_HEADERS)
+	@mkdir -p $(BUILD)
+	$(WIN32_CXX) $(CXXSTD) $(OPT) $(WARN) -Werror -D_WIN32_WINNT=0x0601 -static -o $@ $(LOWLEVEL_TEST_SRC)
+
+.PHONY: test-lowlevel
+test-lowlevel: $(BUILD)/lowlevel_tests linux
+	./$(BUILD)/lowlevel_tests
+	python3 tests/lowlevel_smoke.py ./$(BUILD)/perdedor-linux-x86_64
+
+# Pure Windows evidence logic (SMBIOS/ACPI/EDID parsers, identity and motion rules) on the host.
+$(BUILD)/windows_logic_tests: tests/windows_logic_tests.cpp src/windows/system_logic.cpp src/windows/system_logic.hpp
+	@mkdir -p $(BUILD)
+	$(LINUX_CXX) $(CXXSTD) -O0 -g $(WARN) -Werror -o $@ tests/windows_logic_tests.cpp src/windows/system_logic.cpp
+
+.PHONY: test-windows-logic
+test-windows-logic: $(BUILD)/windows_logic_tests
+	./$(BUILD)/windows_logic_tests
+
+# Linux agent against fixture root trees (tests/fixtures/linux/*.json).
+test-linux: linux
+	python3 tests/linux_fixtures.py ./$(BUILD)/perdedor-linux-x86_64
 
 clean:
 	$(RM) -r $(BUILD)

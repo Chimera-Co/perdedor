@@ -88,7 +88,9 @@ def test_supplied_cpuid_helper_is_used_without_building(tmp_path, monkeypatch):
 
     helper = tmp_path / "helper"
     subprocess.run(
-        ["cc", "-O2", "-o", str(helper), str(cpu._NATIVE_DIR / "cpuid_rdtsc.c")], check=True, capture_output=True
+        ["cc", "-O2", "-o", str(helper), str(cpu._NATIVE_DIR / "cpuid_rdtsc.c")],
+        check=True,
+        capture_output=True,
     )
     monkeypatch.setattr(cpu, "_BINARY", tmp_path / "never-built")
     monkeypatch.setenv("PERDEDOR_CPUID_HELPER", str(helper))

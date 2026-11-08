@@ -228,7 +228,7 @@ def test_native_lifecycle(tmp_path, failure):
     if failure == "cleanup":
         fake.commands[cleanup] = adb.ShellResult(1, "")
     results = scan(fake, "tag:native", params={"native.binary": str(static_binary(tmp_path))})
-    assert len(results.findings) == 2
+    assert len(results.findings) == len(native.NATIVE_CHECKS)
     assert all(f.status.value == ("detected" if failure == "none" else "error") for f in results.findings)
     assert Counter(c for c, _ in fake.calls)[cleanup] == 1
     assert Counter(c for c, _ in fake.calls)[command] <= 1
@@ -245,10 +245,13 @@ def test_native_registry_matches_current_source():
     root = Path(__file__).resolve().parents[1]
     registered = {}
     pattern = re.compile(r'PERDEDOR_REGISTER\(\w+, "((?:cpu|timing)\.[^"]+)", "[^"]+", false, "([^"]+)"\);')
-    for folder in ("common", "linux"):
-        for path in (root / "native/src" / folder).glob("*.cpp"):
-            for technique, rel in pattern.findall(path.read_text()):
-                registered[rel] = technique
+    sources = [
+        *(root / "native/src/common").glob("*.cpp"),
+        *(root / "native/src/linux").glob("lowlevel_*.cpp"),
+    ]
+    for path in sources:
+        for technique, rel in pattern.findall(path.read_text()):
+            registered[rel] = technique
     assert registered == {rel: tech for rel, (tech, _) in native.NATIVE_CHECKS.items()}
 
 

@@ -1,0 +1,241 @@
+{
+ "trials": 120,
+ "sourced_threats": true,
+ "axioms": {
+  "A1_monotonic": {
+   "M0 severity penalty": {
+    "never_up": 1.0,
+    "strictly_down": 1.0
+   },
+   "M1 weighted pass rate": {
+    "never_up": 1.0,
+    "strictly_down": 1.0
+   },
+   "M2 points (VMAware-style)": {
+    "never_up": 1.0,
+    "strictly_down": 0.016666666666666666
+   },
+   "M3 noisy-OR exposure": {
+    "never_up": 1.0,
+    "strictly_down": 1.0
+   },
+   "M4 family survival": {
+    "never_up": 1.0,
+    "strictly_down": 0.5166666666666667
+   },
+   "M5 hybrid (point)": {
+    "never_up": 1.0,
+    "strictly_down": 0.5166666666666667
+   },
+   "M5 hybrid (coverage-imputed)": {
+    "never_up": 1.0,
+    "strictly_down": 1.0
+   },
+   "M6 weakest class": {
+    "never_up": 1.0,
+    "strictly_down": 0.03333333333333333
+   },
+   "PEM-2 production (perdedor_common.exposure)": {
+    "never_up": 1.0,
+    "strictly_down": 1.0
+   }
+  },
+  "A2_no_dilution": {
+   "M0 severity penalty": {
+    "mean_gain": 0.9123138466882097,
+    "max_gain": 2.164796554459926
+   },
+   "M1 weighted pass rate": {
+    "mean_gain": 2.4496816932206835,
+    "max_gain": 6.142997381413565
+   },
+   "M2 points (VMAware-style)": {
+    "mean_gain": 0.0,
+    "max_gain": 0.0
+   },
+   "M3 noisy-OR exposure": {
+    "mean_gain": 0.0,
+    "max_gain": 0.0
+   },
+   "M4 family survival": {
+    "mean_gain": 0.0,
+    "max_gain": 0.0
+   },
+   "M5 hybrid (point)": {
+    "mean_gain": 0.0,
+    "max_gain": 0.0
+   },
+   "M5 hybrid (coverage-imputed)": {
+    "mean_gain": 0.0,
+    "max_gain": 0.0
+   },
+   "M6 weakest class": {
+    "mean_gain": 0.0,
+    "max_gain": 0.0
+   },
+   "PEM-2 production (perdedor_common.exposure)": {
+    "mean_gain": 0.0,
+    "max_gain": 0.0
+   }
+  },
+  "A3_severity": {
+   "M0 severity penalty": {
+    "one_strong": 99.375,
+    "five_weak": 99.08653846153847,
+    "dominance": false,
+    "below_warn": false
+   },
+   "M1 weighted pass rate": {
+    "one_strong": 98.32904884318766,
+    "five_weak": 97.55784061696657,
+    "dominance": false,
+    "below_warn": false
+   },
+   "M2 points (VMAware-style)": {
+    "one_strong": 36.66666666666667,
+    "five_weak": 0.0,
+    "dominance": false,
+    "below_warn": true
+   },
+   "M3 noisy-OR exposure": {
+    "one_strong": 71.50000000000001,
+    "five_weak": 97.0356078678728,
+    "dominance": true,
+    "below_warn": true
+   },
+   "M4 family survival": {
+    "one_strong": 94.85617597292725,
+    "five_weak": 100.0,
+    "dominance": true,
+    "below_warn": false
+   },
+   "M5 hybrid (point)": {
+    "one_strong": 94.85617597292726,
+    "five_weak": 100.0,
+    "dominance": true,
+    "below_warn": false
+   },
+   "M5 hybrid (coverage-imputed)": {
+    "one_strong": 94.76421072134623,
+    "five_weak": 100.0,
+    "dominance": true,
+    "below_warn": false
+   },
+   "M6 weakest class": {
+    "one_strong": 70.55785123966943,
+    "five_weak": 98.29113924050634,
+    "dominance": true,
+    "below_warn": true
+   },
+   "PEM-2 production (perdedor_common.exposure)": {
+    "one_strong": 71.5,
+    "five_weak": 97.04,
+    "dominance": true,
+    "below_warn": true
+   }
+  },
+  "A8_coverage": {
+   "M0 severity penalty": {
+    "mean_rise": -0.0020732656120121835,
+    "p90_rise": 1.5802900107411375
+   },
+   "M1 weighted pass rate": {
+    "mean_rise": -0.12476645965233193,
+    "p90_rise": 4.57097872887347
+   },
+   "M2 points (VMAware-style)": {
+    "mean_rise": 2.611111111111111,
+    "p90_rise": 0.0
+   },
+   "M3 noisy-OR exposure": {
+    "mean_rise": 14.277443742038722,
+    "p90_rise": 26.622170034541057
+   },
+   "M4 family survival": {
+    "mean_rise": 11.099607038744447,
+    "p90_rise": 23.217865697965372
+   },
+   "M5 hybrid (point)": {
+    "mean_rise": 11.099607038744445,
+    "p90_rise": 23.217865697965365
+   },
+   "M5 hybrid (coverage-imputed)": {
+    "mean_rise": 0.032559073363579216,
+    "p90_rise": 9.542456375678576
+   },
+   "M6 weakest class": {
+    "mean_rise": -8.474475072005456,
+    "p90_rise": 11.571624087591232
+   },
+   "PEM-2 production (perdedor_common.exposure)": {
+    "mean_rise": -0.2503333333333334,
+    "p90_rise": 6.940000000000005
+   }
+  },
+  "A10_range": {
+   "M0 severity penalty": {
+    "hit_0": 100.0,
+    "hit_10": 96.8,
+    "hit_33": 89.21,
+    "hit_66": 79.63,
+    "spread_10_33": 7.6
+   },
+   "M1 weighted pass rate": {
+    "hit_0": 100.0,
+    "hit_10": 91.16,
+    "hit_33": 71.37,
+    "hit_66": 45.28,
+    "spread_10_33": 19.79
+   },
+   "M2 points (VMAware-style)": {
+    "hit_0": 100.0,
+    "hit_10": 0.0,
+    "hit_33": 0.0,
+    "hit_66": 0.0,
+    "spread_10_33": 0.0
+   },
+   "M3 noisy-OR exposure": {
+    "hit_0": 100.0,
+    "hit_10": 37.68,
+    "hit_33": 5.01,
+    "hit_66": 0.27,
+    "spread_10_33": 32.67
+   },
+   "M4 family survival": {
+    "hit_0": 100.0,
+    "hit_10": 78.58,
+    "hit_33": 44.31,
+    "hit_66": 27.59,
+    "spread_10_33": 34.27
+   },
+   "M5 hybrid (point)": {
+    "hit_0": 100.0,
+    "hit_10": 78.58,
+    "hit_33": 44.31,
+    "hit_66": 27.59,
+    "spread_10_33": 34.27
+   },
+   "M5 hybrid (coverage-imputed)": {
+    "hit_0": 99.98,
+    "hit_10": 76.84,
+    "hit_33": 44.11,
+    "hit_66": 27.54,
+    "spread_10_33": 32.74
+   },
+   "M6 weakest class": {
+    "hit_0": 100.0,
+    "hit_10": 52.5,
+    "hit_33": 26.78,
+    "hit_66": 2.0,
+    "spread_10_33": 25.72
+   },
+   "PEM-2 production (perdedor_common.exposure)": {
+    "hit_0": 99.94,
+    "hit_10": 36.85,
+    "hit_33": 5.33,
+    "hit_66": 0.47,
+    "spread_10_33": 31.52
+   }
+  }
+ }
+}
