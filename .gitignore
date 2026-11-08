@@ -77,3 +77,4 @@ agents/linux/native/cpuid_rdtsc
 
 # macOS
 .DS_Store
+native/build/

@@ -44,6 +44,35 @@ def powershell_ids() -> set[str]:
     return ids
 
 
+NATIVE_REG = re.compile(
+    r"PERDEDOR_REGISTER\(\s*\w+\s*,\s*\"([a-z_]+\.[a-z0-9_]+)\"\s*,\s*\"(fast|medium|slow)\"\s*,\s*(true|false)\s*,(.*?)\);",
+    re.S,
+)
+NATIVE_DIRS = {"common": ("win", "linux"), "windows": ("win",), "linux": ("linux",)}
+
+
+def native_registrations() -> dict[str, str]:
+    """id -> technique for every PERDEDOR_REGISTER in native/src (prefix by build)."""
+    out: dict[str, str] = {}
+    for sub, prefixes in NATIVE_DIRS.items():
+        for path in (ROOT / "native/src" / sub).rglob("*.cpp"):
+            for technique, _cost, _net, rest in NATIVE_REG.findall(path.read_text()):
+                for rel in re.findall(r'"([a-z_]+\.[a-z0-9_]+)"', rest):
+                    for prefix in prefixes:
+                        out[f"{prefix}.{rel}"] = technique
+    return out
+
+
+def test_native_checks_are_catalogued_with_matching_technique():
+    catalog = load_catalog(cache=False)
+    regs = native_registrations()
+    assert regs, "no native registrations found"
+    for check_id, technique in regs.items():
+        entry = catalog.check(check_id)
+        assert entry, f"{check_id} (native) is not in catalog/checks"
+        assert entry["technique"] == technique, f"{check_id}: native {technique} != catalog {entry['technique']}"
+
+
 def test_catalog_loads():
     catalog = load_catalog(cache=False)
     assert len(catalog.techniques) > 100
@@ -63,7 +92,11 @@ def test_python_agent_checks_are_catalogued_with_matching_technique():
 
 def test_implemented_catalog_entries_exist_in_an_agent():
     catalog = load_catalog(cache=False)
-    emitted = {i for specs in python_specs().values() for s in specs for i in s.ids} | powershell_ids()
+    emitted = (
+        {i for specs in python_specs().values() for s in specs for i in s.ids}
+        | powershell_ids()
+        | set(native_registrations())
+    )
     if not powershell_ids():
         pytest.skip("PowerShell agent has no Register-PerdedorCheck table yet")
     missing = sorted(
