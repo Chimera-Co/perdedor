@@ -49,7 +49,7 @@ $(BUILD)/core_tests: $(CORE) tests/core_tests.cpp tests/fake_platform.cpp
 	@mkdir -p $(BUILD)
 	$(LINUX_CXX) $(CXXSTD) -O0 -g $(WARN) -pthread -o $@ $(filter-out src/core/main.cpp,$(CORE)) tests/core_tests.cpp tests/fake_platform.cpp
 
-test: $(BUILD)/core_tests linux test-linux test-lowlevel
+test: $(BUILD)/core_tests linux test-linux test-lowlevel test-windows-logic
 	./$(BUILD)/core_tests
 	./$(BUILD)/perdedor-linux-x86_64 --list-checks > /dev/null
 
@@ -74,6 +74,15 @@ $(BUILD)/lowlevel-tests-win32.exe: $(LOWLEVEL_TEST_SRC) $(LOWLEVEL_TEST_HEADERS)
 test-lowlevel: $(BUILD)/lowlevel_tests linux
 	./$(BUILD)/lowlevel_tests
 	python3 tests/lowlevel_smoke.py ./$(BUILD)/perdedor-linux-x86_64
+
+# Pure Windows evidence logic (SMBIOS/ACPI/EDID parsers, identity and motion rules) on the host.
+$(BUILD)/windows_logic_tests: tests/windows_logic_tests.cpp src/windows/system_logic.cpp src/windows/system_logic.hpp
+	@mkdir -p $(BUILD)
+	$(LINUX_CXX) $(CXXSTD) -O0 -g $(WARN) -Werror -o $@ tests/windows_logic_tests.cpp src/windows/system_logic.cpp
+
+.PHONY: test-windows-logic
+test-windows-logic: $(BUILD)/windows_logic_tests
+	./$(BUILD)/windows_logic_tests
 
 # Linux agent against fixture root trees (tests/fixtures/linux/*.json).
 test-linux: linux

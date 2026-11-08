@@ -418,8 +418,12 @@ std::vector<Finding> certificates(Context &ctx) {
         HCERTSTORE store =
             CertOpenStore(CERT_STORE_PROV_SYSTEM_W, 0, 0,
                           location | CERT_STORE_OPEN_EXISTING_FLAG | CERT_STORE_READONLY_FLAG, L"ROOT");
-        if (!store)
+        if (!store) {
+            // CERT_STORE_OPEN_EXISTING_FLAG: a store that was never created holds no certificates.
+            if (GetLastError() == ERROR_FILE_NOT_FOUND)
+                continue;
             return {fail(id, name, win::last_error_message())};
+        }
         struct Store {
             HCERTSTORE h;
             ~Store() { CertCloseStore(h, 0); }

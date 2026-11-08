@@ -521,7 +521,8 @@
       ],
       "equivalents": {
         "al-khaser": [
-          "loaded_dlls"
+          "loaded_dlls",
+          "ScanForModules_EnumProcessModulesEx_All"
         ],
         "vmaware": [
           "DLL"
@@ -736,7 +737,8 @@
       ],
       "equivalents": {
         "vmaware": [
-          "CPUID_SIGNATURE"
+          "CPUID_SIGNATURE",
+          "VIRTUAL_PROCESSORS"
         ]
       },
       "fix": {
@@ -851,7 +853,11 @@
         "https://github.com/vmware/open-vm-tools/blob/master/open-vm-tools/lib/include/backdoor_def.h",
         "https://evasions.checkpoint.com/src/Anti-VM/anti-vm.html"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "invizzzible": [
+          "vmware/HypervisorPort"
+        ]
+      },
       "fix": {
         "layer": "hypervisor",
         "effort": 4,
@@ -956,7 +962,8 @@
           "rdtsc_diff_vmexit"
         ],
         "pafish": [
-          "cpu_rdtsc_force_vmexit"
+          "cpu_rdtsc_force_vmexit",
+          "cpu_rdtsc"
         ],
         "vmaware": [
           "TIMER"
@@ -1018,6 +1025,10 @@
         ],
         "pafish": [
           "gensandbox_sleep_patched"
+        ],
+        "invizzzible": [
+          "generic/PerformanceCounter",
+          "generic/DelaysAccumulation"
         ]
       },
       "fix": {
