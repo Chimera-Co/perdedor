@@ -1,60 +1,42 @@
-"""Category 2 (Ch.3.2.2): timing-based detection, Android side.
+"""Read-only guest uptime, measured on the device rather than across adb."""
 
-Genuine RDTSC-class measurement isn't meaningful here: an ARM guest under
-TCG full-system emulation has no forced-VM-exit CPUID analogue reachable
-from adb shell, and CHIMERA's own Android track has not yet reached live
-timing validation (CERT report Ch.7, "Remaining Work Plan"). This module
-covers what *is* reachable today -- boot-to-probe uptime -- and is the
-natural place to add a genuine timing probe once the on-device agent
-(CERT report Ch.8 forward plan) exists.
-"""
+import math
 
-from __future__ import annotations
+from perdedor_common.models import Severity
+from perdedor_common.registry import RunContext
 
-from perdedor_common import FindingFactory
-from perdedor_common.registry import RunContext, run_checks, spec
-from perdedor_common.models import Category, Finding, Platform, Severity
+from ..adb import Device
+from ._base import Checks, ProbeError, Verdict, need
 
-from .. import adb
-
-_PLATFORM = Platform.ANDROID
-_CATEGORY = Category.TIMING
-_f = FindingFactory(category=_CATEGORY, platform=_PLATFORM)
-_LOW_UPTIME_SECONDS = 600.0
+REG = Checks()
+# Local conservative policy, retained from v1; not a universal device boundary.
+# https://evasions.checkpoint.com/src/Evasions/techniques/timing.html
+LOW_UPTIME_SECONDS = 600.0
 
 
-def check_uptime(serial: str | None = None) -> Finding:
-    check_id, name = "android.timing.low_uptime", "System uptime"
-    description = "Low uptime suggests the emulator was booted specifically for this analysis run."
-    raw = adb.shell(serial, "cat /proc/uptime")
-    if raw is None:
-        return _f.error(
-            check_id,
-            name,
-            description,
-            Severity.LOW,
-            "adb command failed or no device reachable at the given serial",
-        )
+@REG.check(
+    "android.timing.low_uptime",
+    "timing.uptime",
+    name="System uptime",
+    description="A recently booted device can be a freshly restored analysis image.",
+    severity=Severity.LOW,
+    remediation="Let the guest boot and accumulate normal uptime before a run.",
+)
+def check_uptime(dev: Device, ctx: RunContext) -> Verdict:
+    text = need(dev.read("/proc/uptime"), "uptime")
     try:
-        uptime_seconds = float(raw.split()[0])
-    except (ValueError, IndexError):
-        return _f.error(check_id, name, description, Severity.LOW, f"unparseable /proc/uptime: {raw!r}")
-    return _f.bool_check(
-        check_id,
-        name,
-        description,
-        Severity.LOW,
-        is_detected=uptime_seconds < _LOW_UPTIME_SECONDS,
-        evidence=f"{uptime_seconds:.0f}s",
-        remediation=f"Boot the emulator and idle for >= {_LOW_UPTIME_SECONDS:.0f}s before detonating a sample.",
+        seconds = float(text.split()[0])
+    except (ValueError, IndexError) as exc:
+        raise ProbeError("unrecognized uptime") from exc
+    if not math.isfinite(seconds) or seconds < 0:
+        raise ProbeError("invalid uptime")
+    threshold = ctx.param("android.min_uptime_seconds", LOW_UPTIME_SECONDS)
+    return Verdict(
+        seconds < threshold,
+        {"seconds": seconds},
+        confidence=0.4,
+        measurement={"seconds": seconds, "min_seconds": threshold},
     )
 
 
-CHECKS = [
-    spec('android.timing.low_uptime', check_uptime, 'timing.uptime'),
-]
-
-
-def run_all(serial: str | None = None) -> list[Finding]:
-    """Every check in this module, unfiltered (v1 entry point)."""
-    return run_checks(CHECKS, RunContext(platform=_PLATFORM, target=serial))
+CHECKS = REG.specs

@@ -1,237 +1,181 @@
-"""Category 1 (Ch.3.2.1, extended by Ch.3.3 to Android): build-fingerprint
-and device-node signatures unique to emulated/virtualised Android guests."""
+"""v1 environment checks: build identity, emulator properties, goldfish device
+nodes and ARM-on-x86 translation. Ids are frozen; newer checks of the same
+classes live in emulator_props.py, emulator_files.py and kernel_cpu.py."""
 
 from __future__ import annotations
 
-from perdedor_common import FindingFactory
-from perdedor_common.registry import RunContext, run_checks, spec
-from perdedor_common.models import Category, Finding, Platform, Severity
+from perdedor_common.models import Severity
+from perdedor_common.registry import RunContext
 
-from .. import adb, signatures
+from .. import signatures as sig
+from ..adb import Device
+from ._base import Checks, Verdict, existing, props, substr_hits
 
-_PLATFORM = Platform.ANDROID
-_CATEGORY = Category.ENVIRONMENT_ARTIFACT
-_f = FindingFactory(category=_CATEGORY, platform=_PLATFORM)
-_ADB_UNREACHABLE = "adb command failed or no device reachable at the given serial"
+REG = Checks()
 
 
-def _prop_check(
-    serial: str | None,
-    check_id: str,
-    name: str,
-    prop: str,
-    signature_list: tuple[str, ...],
-    severity: Severity,
-) -> Finding:
-    description = f"getprop {prop}, checked against known emulator signatures."
-    value = adb.getprop(serial, prop)
-    if value is None:
-        return _f.error(check_id, name, description, severity, _ADB_UNREACHABLE)
-    lowered = value.lower()
-    hit = next((s for s in signature_list if s in lowered), None)
-    return _f.bool_check(
-        check_id,
-        name,
-        description,
-        severity,
-        is_detected=bool(hit),
-        evidence=f"{prop}={value!r}" + (f" (matched {hit!r})" if hit else ""),
-        remediation=f"Override {prop} to a value consistent with a real, shipped device profile.",
-    )
+def _prop_signature(dev: Device, prop: str, tokens: tuple[str, ...]) -> Verdict:
+    value = props(dev).get(prop, "")
+    hits = substr_hits(value, tokens)
+    return Verdict(bool(hits), {"property": prop, "value": value, "matched": hits or None})
 
 
-def check_build_fingerprint(serial: str | None = None) -> Finding:
-    return _prop_check(
-        serial,
-        "android.env.build_fingerprint",
-        "Build fingerprint",
-        "ro.build.fingerprint",
-        signatures.BUILD_PROP_EMULATOR_SIGNATURES,
-        Severity.CRITICAL,
-    )
+@REG.check(
+    "android.env.build_fingerprint",
+    "emulator.android_build_identity",
+    name="Build fingerprint",
+    description="ro.build.fingerprint checked against emulator build names (generic, sdk_gphone, goldfish, "
+    "ranchu, vbox86, cutf_cvm...). Shipped devices carry the vendor's product fingerprint.",
+    severity=Severity.CRITICAL,
+    remediation="Build or patch the image with a real device fingerprint (vendor/product/device:version/id/"
+    "incremental:user/release-keys) and keep the partition fingerprints consistent with it.",
+)
+def check_build_fingerprint(dev: Device, ctx: RunContext) -> Verdict:
+    return _prop_signature(dev, "ro.build.fingerprint", sig.BUILD_PROP_EMULATOR_SIGNATURES)
 
 
-def check_hardware_prop(serial: str | None = None) -> Finding:
-    return _prop_check(
-        serial,
-        "android.env.hardware_prop",
-        "Hardware property",
-        "ro.hardware",
-        signatures.BUILD_PROP_EMULATOR_SIGNATURES,
-        Severity.CRITICAL,
-    )
+@REG.check(
+    "android.env.hardware_prop",
+    "emulator.android_properties",
+    name="Hardware property (ro.hardware)",
+    description="ro.hardware names the board HAL; emulators report goldfish, ranchu, vbox86, cutf_cvm or "
+    "android_x86.",
+    severity=Severity.CRITICAL,
+    remediation="Set androidboot.hardware / ro.hardware to the real SoC name of the profile you imitate "
+    "(e.g. qcom, exynos9820, tensor) and rename the matching init.<hw>.rc files.",
+)
+def check_hardware_prop(dev: Device, ctx: RunContext) -> Verdict:
+    return _prop_signature(dev, "ro.hardware", sig.BUILD_PROP_EMULATOR_SIGNATURES)
 
 
-def check_boot_hardware(serial: str | None = None) -> Finding:
-    return _prop_check(
-        serial,
-        "android.env.boot_hardware",
-        "Boot hardware property (incl. Cuttlefish)",
-        "ro.boot.hardware",
-        signatures.BUILD_PROP_EMULATOR_SIGNATURES,
-        Severity.CRITICAL,
-    )
+@REG.check(
+    "android.env.boot_hardware",
+    "emulator.android_properties",
+    name="Boot hardware property (incl. Cuttlefish)",
+    description="ro.boot.hardware comes from the kernel command line (androidboot.hardware=) and names "
+    "the virtual board on goldfish/ranchu/Cuttlefish/Android-x86.",
+    severity=Severity.CRITICAL,
+    remediation="Change androidboot.hardware on the kernel command line (bootloader/GRUB config) to a real "
+    "SoC name.",
+)
+def check_boot_hardware(dev: Device, ctx: RunContext) -> Verdict:
+    return _prop_signature(dev, "ro.boot.hardware", sig.BUILD_PROP_EMULATOR_SIGNATURES)
 
 
-def check_product_model(serial: str | None = None) -> Finding:
-    return _prop_check(
-        serial,
-        "android.env.product_model",
-        "Product model",
-        "ro.product.model",
-        signatures.BUILD_PROP_EMULATOR_SIGNATURES,
-        Severity.HIGH,
-    )
+@REG.check(
+    "android.env.product_model",
+    "emulator.android_build_identity",
+    name="Product model",
+    description="ro.product.model checked against emulator build names (sdk_gphone, google_sdk, generic...).",
+    severity=Severity.HIGH,
+    remediation="Override ro.product.model (and every partition copy: ro.product.system/vendor/odm.model) "
+    "with a shipped device model.",
+)
+def check_product_model(dev: Device, ctx: RunContext) -> Verdict:
+    value = props(dev).get("ro.product.model", "")
+    hits = substr_hits(value, sig.BUILD_PROP_EMULATOR_SIGNATURES + sig.MODEL_SUBSTRINGS)
+    if value.strip().lower() == "sdk":
+        hits.append("sdk")
+    return Verdict(bool(hits), {"property": "ro.product.model", "value": value, "matched": hits or None})
 
 
-def check_manufacturer(serial: str | None = None) -> Finding:
-    return _prop_check(
-        serial,
-        "android.env.manufacturer",
-        "Product manufacturer/brand",
-        "ro.product.manufacturer",
-        signatures.MANUFACTURER_SIGNATURES,
-        Severity.HIGH,
-    )
+@REG.check(
+    "android.env.manufacturer",
+    "emulator.android_build_identity",
+    name="Product manufacturer",
+    description="ro.product.manufacturer is 'Genymotion' on Genymotion and 'unknown' on many emulator images.",
+    severity=Severity.HIGH,
+    remediation="Set ro.product.manufacturer (all partitions) to the vendor of the imitated device.",
+)
+def check_manufacturer(dev: Device, ctx: RunContext) -> Verdict:
+    return _prop_signature(dev, "ro.product.manufacturer", sig.MANUFACTURER_SIGNATURES)
 
 
-def check_gralloc_egl(serial: str | None = None) -> Finding:
-    check_id, name = "android.env.gralloc_egl", "Graphics HAL (gralloc/EGL) implementation"
-    description = "ro.hardware.gralloc / ro.hardware.egl -- emulators report 'goldfish'/'ranchu'/'emulation' or 'swiftshader'/'mesa'; real devices report a real GPU vendor's HAL name."
-    if not adb.device_reachable(serial):
-        return _f.error(check_id, name, description, Severity.HIGH, _ADB_UNREACHABLE)
-    gralloc = adb.getprop(serial, "ro.hardware.gralloc") or ""
-    egl = adb.getprop(serial, "ro.hardware.egl") or ""
-    combined = f"{gralloc} {egl}".lower()
-    hit = next((s for s in signatures.BUILD_PROP_EMULATOR_SIGNATURES if s in combined), None)
-    hit = hit or next((s for s in ("swiftshader", "mesa") if s in combined), None)
-    return _f.bool_check(
-        check_id,
-        name,
-        description,
-        Severity.HIGH,
-        is_detected=bool(hit),
-        evidence=f"gralloc={gralloc!r} egl={egl!r}",
-        remediation="Override the graphics HAL properties to a real-GPU-vendor identity, or accept this as a documented residual gap (software rendering is hard to fully hide).",
-    )
+@REG.check(
+    "android.env.gralloc_egl",
+    "emulator.android_properties",
+    name="Graphics HAL (gralloc/EGL) implementation",
+    description="ro.hardware.gralloc / ro.hardware.egl report goldfish, ranchu, emulation, swiftshader or "
+    "mesa under emulation; real devices name their GPU vendor's HAL (adreno, mali, img).",
+    severity=Severity.HIGH,
+    remediation="Use a GPU-vendor HAL name, or accept software rendering as a residual tell and document it.",
+)
+def check_gralloc_egl(dev: Device, ctx: RunContext) -> Verdict:
+    values = props(dev)
+    gralloc, egl = values.get("ro.hardware.gralloc", ""), values.get("ro.hardware.egl", "")
+    hits = substr_hits(f"{gralloc} {egl}", sig.BUILD_PROP_EMULATOR_SIGNATURES + sig.HAL_SIGNATURES)
+    return Verdict(bool(hits), {"gralloc": gralloc, "egl": egl, "matched": hits or None})
 
 
-def check_qemu_properties_present(serial: str | None = None) -> Finding:
-    check_id, name = "android.env.qemu_properties_present", "Any 'qemu.*' system property present"
-    description = "Dumps all system properties and checks for any 'qemu.' prefix (e.g. qemu.hw.mainkeys, qemu.sf.fake_camera) -- these are emulator-only properties with no real-device equivalent."
-    output = adb.shell(serial, "getprop")
-    if output is None:
-        return _f.error(check_id, name, description, Severity.HIGH, _ADB_UNREACHABLE)
-    qemu_props = [line for line in output.splitlines() if line.strip().startswith("[qemu.")]
-    return _f.bool_check(
-        check_id,
-        name,
-        description,
-        Severity.HIGH,
-        is_detected=bool(qemu_props),
-        evidence=qemu_props[:10] or None,
-        remediation="Strip all 'qemu.*' properties from the build's default.prop / boot config.",
-    )
+@REG.check(
+    "android.env.qemu_properties_present",
+    "emulator.android_properties",
+    name="Any 'qemu.*' system property present",
+    description="qemu.* properties (qemu.hw.mainkeys, qemu.sf.fake_camera, qemu.sf.lcd_density...) are set "
+    "only by the emulator's qemu-props service (anti-emulator known_props).",
+    severity=Severity.HIGH,
+    remediation="Remove the qemu-props service and every qemu.* property from the image.",
+)
+def check_qemu_properties_present(dev: Device, ctx: RunContext) -> Verdict:
+    found = sorted(k for k in props(dev) if k.startswith("qemu."))
+    return Verdict(bool(found), found[:20] or None)
 
 
-def check_qemu_kernel_flag(serial: str | None = None) -> Finding:
-    check_id, name = "android.env.qemu_kernel_flag", "ro.kernel.qemu flag"
-    description = "ro.kernel.qemu is set to 1 by the goldfish/ranchu kernel; absent on real hardware."
-    # getprop() collapses "device unreachable" and "property genuinely unset"
-    # to the same None -- those are not the same finding (one means no data
-    # was collected at all), so the device must be checked reachable
-    # explicitly before treating an empty value as a real "clean" result.
-    if not adb.device_reachable(serial):
-        return _f.error(check_id, name, description, Severity.CRITICAL, _ADB_UNREACHABLE)
-    value = adb.getprop(serial, "ro.kernel.qemu")
-    if value is None:
-        # Reachable device, property just isn't set -- the normal state on
-        # real hardware.
-        return _f.clean(check_id, name, description, Severity.CRITICAL, "ro.kernel.qemu unset")
-    return _f.bool_check(
-        check_id,
-        name,
-        description,
-        Severity.CRITICAL,
-        is_detected=value.strip() == "1",
-        evidence=f"ro.kernel.qemu={value!r}",
-        remediation="Clear ro.kernel.qemu in the build's default.prop / boot config.",
-    )
+@REG.check(
+    "android.env.qemu_kernel_flag",
+    "emulator.android_properties",
+    name="ro.kernel.qemu flag",
+    description="ro.kernel.qemu=1 is set by the goldfish/ranchu kernel command line; absent on real hardware.",
+    severity=Severity.CRITICAL,
+    remediation="Remove qemu=1 from the kernel command line and clear ro.kernel.qemu.",
+)
+def check_qemu_kernel_flag(dev: Device, ctx: RunContext) -> Verdict:
+    value = props(dev).get("ro.kernel.qemu", "")
+    return Verdict(value.strip() == "1", f"ro.kernel.qemu={value!r}" if value else "ro.kernel.qemu unset")
 
 
-def check_qemu_device_nodes(serial: str | None = None) -> Finding:
-    check_id, name = "android.env.qemu_device_nodes", "goldfish/ranchu device nodes"
-    description = "Checks for /dev/qemu_pipe, /dev/goldfish_pipe and similar nodes that only exist under an emulated kernel."
-    if not adb.device_reachable(serial):
-        return _f.error(check_id, name, description, Severity.CRITICAL, _ADB_UNREACHABLE)
-    found = [path for path in signatures.QEMU_DEVICE_NODES if adb.file_exists(serial, path)]
-    return _f.bool_check(
-        check_id,
-        name,
-        description,
-        Severity.CRITICAL,
-        is_detected=bool(found),
-        evidence=found or None,
-        remediation="No clean fix from userspace -- these nodes are created by the goldfish/ranchu kernel driver itself.",
-    )
+@REG.check(
+    "android.env.qemu_device_nodes",
+    "emulator.android_files",
+    name="goldfish/ranchu device nodes",
+    description="/dev/qemu_pipe, /dev/goldfish_pipe, /dev/goldfish_audio and /dev/socket/qemud exist only "
+    "under the emulator kernel (anti-emulator hasPipes).",
+    severity=Severity.CRITICAL,
+    remediation="No user-space fix: these nodes come from goldfish kernel drivers. Use a kernel without them "
+    "or a real device.",
+)
+def check_qemu_device_nodes(dev: Device, ctx: RunContext) -> Verdict:
+    found = existing(dev, sig.QEMU_DEVICE_NODES)
+    return Verdict(bool(found), found or None)
 
 
-def check_libhoudini_present(serial: str | None = None) -> Finding:
-    check_id, name = "android.env.libhoudini_present", "libhoudini ARM-translation shim"
-    description = (
-        "Presence of libhoudini means this is an x86 hypervisor translating ARM code, not a genuine ARM "
-        "execution path -- CHIMERA's own reason for choosing full-system ARM (TCG) emulation (Ch.7.2)."
-    )
-    if not adb.device_reachable(serial):
-        return _f.error(check_id, name, description, Severity.CRITICAL, _ADB_UNREACHABLE)
-    found = [path for path in signatures.LIBHOUDINI_PATHS if adb.file_exists(serial, path)]
-    return _f.bool_check(
-        check_id,
-        name,
-        description,
-        Severity.CRITICAL,
-        is_detected=bool(found),
-        evidence=found or None,
-        remediation="Use full-system ARM (qemu-system-aarch64, TCG) instead of an x86 Android VM with a translation layer.",
-    )
+@REG.check(
+    "android.env.libhoudini_present",
+    "emulator.binary_translation",
+    name="libhoudini ARM-translation shim",
+    description="libhoudini.so translates ARM code on x86 Android (BlueStacks, Nox, Android-x86, Genymotion "
+    "ARM translation); its presence means the 'phone' is an x86 machine.",
+    severity=Severity.CRITICAL,
+    remediation="Run ARM samples on ARM: a real phone, an ARM host, or full-system ARM emulation without a "
+    "translation layer.",
+)
+def check_libhoudini_present(dev: Device, ctx: RunContext) -> Verdict:
+    found = existing(dev, sig.LIBHOUDINI_PATHS)
+    return Verdict(bool(found), found or None)
 
 
-def check_cpu_abi(serial: str | None = None) -> Finding:
-    check_id, name = "android.env.cpu_abi", "CPU ABI (x86 translation-layer requirement)"
-    description = (
-        "ro.product.cpu.abi -- an x86/x86_64 ABI means any ARM-only native payload requires libhoudini or "
-        "an equivalent translation layer to run at all, which is itself a detectable tell (complements the "
-        "direct libhoudini file-presence check)."
-    )
-    value = adb.getprop(serial, "ro.product.cpu.abi")
-    if value is None:
-        return _f.error(check_id, name, description, Severity.HIGH, _ADB_UNREACHABLE)
-    return _f.bool_check(
-        check_id,
-        name,
-        description,
-        Severity.HIGH,
-        is_detected=value.strip().lower() in signatures.X86_CPU_ABIS,
-        evidence=f"ro.product.cpu.abi={value!r}",
-        remediation="Use full-system ARM (qemu-system-aarch64, TCG) so the reported ABI is genuinely ARM, not x86 running a translation layer.",
-    )
+@REG.check(
+    "android.env.cpu_abi",
+    "emulator.binary_translation",
+    name="CPU ABI (x86 translation-layer requirement)",
+    description="ro.product.cpu.abi=x86/x86_64 means ARM-only native code needs a translator; almost every "
+    "consumer phone is ARM.",
+    severity=Severity.HIGH,
+    remediation="Use an ARM target so the primary ABI is arm64-v8a.",
+)
+def check_cpu_abi(dev: Device, ctx: RunContext) -> Verdict:
+    value = props(dev).get("ro.product.cpu.abi", "")
+    return Verdict(value.strip().lower() in sig.X86_CPU_ABIS, f"ro.product.cpu.abi={value!r}")
 
 
-CHECKS = [
-    spec('android.env.build_fingerprint', check_build_fingerprint, 'emulator.android_build_identity'),
-    spec('android.env.hardware_prop', check_hardware_prop, 'emulator.android_properties'),
-    spec('android.env.boot_hardware', check_boot_hardware, 'emulator.android_properties'),
-    spec('android.env.product_model', check_product_model, 'emulator.android_build_identity'),
-    spec('android.env.manufacturer', check_manufacturer, 'emulator.android_build_identity'),
-    spec('android.env.gralloc_egl', check_gralloc_egl, 'emulator.android_properties'),
-    spec('android.env.qemu_properties_present', check_qemu_properties_present, 'emulator.android_properties'),
-    spec('android.env.qemu_kernel_flag', check_qemu_kernel_flag, 'emulator.android_properties'),
-    spec('android.env.qemu_device_nodes', check_qemu_device_nodes, 'emulator.android_files'),
-    spec('android.env.libhoudini_present', check_libhoudini_present, 'emulator.binary_translation'),
-    spec('android.env.cpu_abi', check_cpu_abi, 'emulator.binary_translation'),
-]
-
-
-def run_all(serial: str | None = None) -> list[Finding]:
-    """Every check in this module, unfiltered (v1 entry point)."""
-    return run_checks(CHECKS, RunContext(platform=_PLATFORM, target=serial))
+CHECKS = REG.specs

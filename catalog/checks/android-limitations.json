@@ -1,0 +1,98 @@
+{
+  "catalog_format": 2,
+  "platform": "android",
+  "checks": [
+    {
+      "id": "android.design.play_integrity_verdict",
+      "technique": "integrity.bootloader",
+      "status": "not_feasible",
+      "reason": "Requires an enrolled app, Google service tokens and a verifying backend; adb properties cannot prove an integrity verdict.",
+      "severity": "info",
+      "cost": "slow",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "host-hardware",
+        "effort": 5,
+        "how": "Validate using an explicitly configured test application on a physical device.",
+        "chimera": "CHIMERA Android-x86 is not a replacement for hardware-backed application attestation."
+      },
+      "references": [
+        "https://developer.android.com/google/play/integrity",
+        "https://docs.talsec.app/freerasp/wiki/threat-detection"
+      ]
+    },
+    {
+      "id": "android.design.app_tampering",
+      "technique": "instrumentation.module_integrity",
+      "status": "not_feasible",
+      "reason": "Requires a target application and trusted signing/hash baseline; no such baseline is supplied.",
+      "severity": "info",
+      "cost": "slow",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "host-hardware",
+        "effort": 5,
+        "how": "Validate using an explicitly configured test application on a physical device.",
+        "chimera": "CHIMERA Android-x86 is not a replacement for hardware-backed application attestation."
+      },
+      "references": [
+        "https://developer.android.com/google/play/integrity",
+        "https://docs.talsec.app/freerasp/wiki/threat-detection"
+      ]
+    },
+    {
+      "id": "android.design.device_binding",
+      "technique": "integrity.bootloader",
+      "status": "not_feasible",
+      "reason": "Requires app-scoped secrets and a previous binding baseline; collecting unrelated secrets would violate privacy.",
+      "severity": "info",
+      "cost": "slow",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "host-hardware",
+        "effort": 5,
+        "how": "Validate using an explicitly configured test application on a physical device.",
+        "chimera": "CHIMERA Android-x86 is not a replacement for hardware-backed application attestation."
+      },
+      "references": [
+        "https://developer.android.com/google/play/integrity",
+        "https://docs.talsec.app/freerasp/wiki/threat-detection"
+      ]
+    },
+    {
+      "id": "android.design.in_process_hook_integrity",
+      "technique": "instrumentation.inline_hooks",
+      "status": "not_feasible",
+      "reason": "Requires in-process native inspection and trusted executable bytes; the host driver only observes readable mappings and named artifacts.",
+      "severity": "info",
+      "cost": "slow",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "host-hardware",
+        "effort": 5,
+        "how": "Validate using an explicitly configured test application on a physical device.",
+        "chimera": "CHIMERA Android-x86 is not a replacement for hardware-backed application attestation."
+      },
+      "references": [
+        "https://developer.android.com/google/play/integrity",
+        "https://docs.talsec.app/freerasp/wiki/threat-detection"
+      ]
+    }
+  ]
+}
