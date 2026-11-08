@@ -1,111 +1,85 @@
-"""Category 3 (Ch.3.2.3): behavioural / interaction-based detection, Android
-side -- the same "wear and tear" absence signal as the desktop platforms,
-adapted to installed-app count and battery-state plausibility."""
+"""v1 behavioural checks (ids frozen): third-party app count and the goldfish
+battery defaults."""
 
 from __future__ import annotations
 
-import re
+from perdedor_common.models import Severity
+from perdedor_common.registry import RunContext
 
-from perdedor_common import FindingFactory
-from perdedor_common.models import Category, Finding, Platform, Severity
-from perdedor_common.registry import RunContext, run_checks, spec
+from .. import signatures as sig
+from ..adb import Device
+from ._base import Checks, ProbeError, Verdict, need, packages, to_int
+from ._parsers import parse_battery
 
-from .. import adb, signatures
+REG = Checks()
 
-_PLATFORM = Platform.ANDROID
-_CATEGORY = Category.BEHAVIOURAL_INTERACTION
-_f = FindingFactory(category=_CATEGORY, platform=_PLATFORM)
-_ADB_UNREACHABLE = "adb command failed or no device reachable at the given serial"
-_MIN_THIRD_PARTY_PACKAGES = 3
-
-
-def check_installed_packages(serial: str | None = None) -> Finding:
-    check_id, name = "android.behavioural.installed_packages", "Third-party installed package count"
-    description = (
-        "A device with zero third-party apps installed looks freshly provisioned rather than genuinely used."
-    )
-    output = adb.shell(serial, "pm list packages -3")
-    if output is None:
-        return _f.error(check_id, name, description, Severity.LOW, _ADB_UNREACHABLE)
-    count = len([line for line in output.splitlines() if line.strip().startswith("package:")])
-    return _f.bool_check(
-        check_id,
-        name,
-        description,
-        Severity.LOW,
-        is_detected=count < _MIN_THIRD_PARTY_PACKAGES,
-        evidence=f"{count} third-party packages",
-        remediation="Install a realistic mix of everyday apps on the golden image before freezing it.",
-    )
+# Numeric scarcity thresholds below are conservative local policies, not device guarantees.
+# Rationale and overrides: docs/notes/android.md; observable APIs:
+# https://source.android.com/docs/compatibility/cdd
+# https://developer.android.com/reference/android/provider/Settings.Global
 
 
-def check_battery_plausibility(serial: str | None = None) -> Finding:
-    check_id, name = "android.behavioural.battery_plausibility", "Battery state plausibility"
-    description = "Emulators commonly report a fixed, implausible battery state (e.g. permanently AC-powered at exactly 50%)."
-    output = adb.shell(serial, "dumpsys battery")
-    if output is None:
-        return _f.error(check_id, name, description, Severity.LOW, _ADB_UNREACHABLE)
-    ac_powered = re.search(r"AC powered:\s*(true|false)", output, re.IGNORECASE)
-    level = re.search(r"level:\s*(\d+)", output, re.IGNORECASE)
-    if not ac_powered or not level:
-        return _f.error(
-            check_id,
-            name,
-            description,
-            Severity.LOW,
-            f"could not parse `dumpsys battery` output: {output[:200]!r}",
-        )
-    evidence = f"AC powered={ac_powered.group(1)} level={level.group(1)}"
-    # 50% + permanently AC-powered is the AVD/goldfish default and a
-    # well-known emulator tell -- a real device's battery level varies.
-    detected = ac_powered.group(1).lower() == "true" and level.group(1) == "50"
-    return _f.bool_check(
-        check_id,
-        name,
-        description,
-        Severity.LOW,
-        is_detected=detected,
-        evidence=evidence,
-        remediation="Simulate dynamic battery drain/charge-state transitions on the golden image (CHIMERA Ch.7.4, 'Living Device Simulation').",
+# v1 threshold: a device in use carries dozens of user-installed apps;
+# fewer than 3 is a freshly provisioned image. Kept low on purpose so that
+# minimal-but-real work phones stay clean (tunable with --param).
+MIN_THIRD_PARTY_PACKAGES = 3
+
+
+@REG.check(
+    "android.behavioural.installed_packages",
+    "wear_and_tear.installed_software",
+    name="Third-party installed package count",
+    description="Fewer than three user-installed apps (`pm list packages -3`) looks freshly provisioned.",
+    severity=Severity.LOW,
+    remediation="Install a realistic mix of everyday apps on the golden image before freezing it.",
+)
+def check_installed_packages(dev: Device, ctx: RunContext) -> Verdict:
+    count = len(packages(dev, "third_party"))
+    minimum = ctx.param("android.min_third_party_packages", MIN_THIRD_PARTY_PACKAGES)
+    return Verdict(
+        count < minimum, f"{count} third-party packages", measurement={"third_party": count, "min": minimum}
     )
 
 
-def check_battery_temperature(serial: str | None = None) -> Finding:
-    check_id, name = "android.behavioural.battery_temperature", "Battery temperature plausibility"
-    description = f"goldfish's default battery simulation reports a fixed temperature (typically {signatures.GOLDFISH_DEFAULT_TEMPERATURE_TENTHS / 10:.1f}C); a real device's battery temperature drifts with use."
-    output = adb.shell(serial, "dumpsys battery")
-    if output is None:
-        return _f.error(check_id, name, description, Severity.INFO, _ADB_UNREACHABLE)
-    match = re.search(r"temperature:\s*(-?\d+)", output, re.IGNORECASE)
-    if not match:
-        return _f.error(
-            check_id,
-            name,
-            description,
-            Severity.INFO,
-            f"could not parse `dumpsys battery` output: {output[:200]!r}",
-        )
-    temperature = int(match.group(1))
-    return _f.bool_check(
-        check_id,
-        name,
-        description,
-        Severity.INFO,
-        is_detected=temperature == signatures.GOLDFISH_DEFAULT_TEMPERATURE_TENTHS or temperature == 0,
-        evidence=f"temperature={temperature / 10:.1f}C",
-        remediation="Simulate realistic, drifting battery temperature on the golden image.",
+def _battery(dev: Device) -> dict[str, str]:
+    bat = parse_battery(need(dev.dumpsys("battery"), "dumpsys battery"))
+    if "level" not in bat:
+        raise ProbeError("could not parse `dumpsys battery`")
+    return bat
+
+
+@REG.check(
+    "android.behavioural.battery_plausibility",
+    "mobile_device.battery",
+    name="Battery state plausibility",
+    description="The goldfish battery HAL reports a permanently AC-powered battery at exactly 50 %.",
+    severity=Severity.LOW,
+    remediation="Simulate battery drain and charge-state changes (`dumpsys battery set level/ac/usb` from "
+    "the host, or a battery HAL fed with a recorded profile).",
+)
+def check_battery_plausibility(dev: Device, ctx: RunContext) -> Verdict:
+    bat = _battery(dev)
+    ac = bat.get("ac powered", "").lower()
+    level = to_int(bat.get("level"))
+    return Verdict(ac == "true" and level == sig.GOLDFISH_DEFAULT_LEVEL, f"AC powered={ac} level={level}")
+
+
+@REG.check(
+    "android.behavioural.battery_temperature",
+    "mobile_device.battery",
+    name="Battery temperature plausibility",
+    description=f"The goldfish battery HAL reports a fixed "
+    f"{sig.GOLDFISH_DEFAULT_TEMPERATURE_TENTHS / 10:.1f} C (or 0); a real battery drifts with use.",
+    severity=Severity.INFO,
+    remediation="Simulate a realistic, drifting battery temperature.",
+)
+def check_battery_temperature(dev: Device, ctx: RunContext) -> Verdict:
+    temperature = to_int(_battery(dev).get("temperature"))
+    if temperature is None:
+        raise ProbeError("no temperature in dumpsys battery")
+    return Verdict(
+        temperature in (sig.GOLDFISH_DEFAULT_TEMPERATURE_TENTHS, 0), f"temperature={temperature / 10:.1f}C"
     )
 
 
-CHECKS = [
-    spec(
-        "android.behavioural.installed_packages", check_installed_packages, "wear_and_tear.installed_software"
-    ),
-    spec("android.behavioural.battery_plausibility", check_battery_plausibility, "mobile_device.battery"),
-    spec("android.behavioural.battery_temperature", check_battery_temperature, "mobile_device.battery"),
-]
-
-
-def run_all(serial: str | None = None) -> list[Finding]:
-    """Every check in this module, unfiltered (v1 entry point)."""
-    return run_checks(CHECKS, RunContext(platform=_PLATFORM, target=serial))
+CHECKS = REG.specs
