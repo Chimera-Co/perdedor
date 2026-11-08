@@ -8,7 +8,6 @@ import re
 from pathlib import Path
 
 import pytest
-
 from perdedor_common.catalog import load_catalog
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -70,7 +69,9 @@ def test_native_checks_are_catalogued_with_matching_technique():
     for check_id, technique in regs.items():
         entry = catalog.check(check_id)
         assert entry, f"{check_id} (native) is not in catalog/checks"
-        assert entry["technique"] == technique, f"{check_id}: native {technique} != catalog {entry['technique']}"
+        assert (
+            entry["technique"] == technique
+        ), f"{check_id}: native {technique} != catalog {entry['technique']}"
 
 
 def test_catalog_loads():
@@ -111,7 +112,10 @@ def test_every_technique_platform_has_a_check_or_a_reason():
     catalog = load_catalog(cache=False)
     covered = {(c["platform"], c["technique"]) for c in catalog.checks.values()}
     gaps = sorted(
-        (p, t["key"]) for t in catalog.techniques.values() for p in t["platforms"] if (p, t["key"]) not in covered
+        (p, t["key"])
+        for t in catalog.techniques.values()
+        for p in t["platforms"]
+        if (p, t["key"]) not in covered
     )
     # Reported, not failed, while the v2 catalog is being filled in.
     print(f"{len(gaps)} technique/platform pairs without a catalog entry")

@@ -6,8 +6,10 @@ from perdedor_common.discovery import discover
 from perdedor_common.models import Platform, PlatformReport
 from perdedor_common.registry import CheckSpec, RunContext, run_checks, select, selection_doc
 
-from . import adb
 from . import checks as _checks_pkg
+from .adb import Device, Transport
+from .checks._base import _DEVICE_ATTR, device_for
+from .signatures import all_paths
 
 
 def all_checks() -> list[CheckSpec]:
@@ -22,16 +24,22 @@ def run_scan(
     skip: Sequence[str] = (),
     params: dict[str, str] | None = None,
     network: bool = True,
+    transport: Transport | None = None,
 ) -> PlatformReport:
     params = dict(params or {})
     chosen = select(all_checks(), profile=profile, only=only, skip=skip, network=network)
-    ctx = RunContext(platform=Platform.ANDROID, profile=profile, params=params, network=network, target=serial)
+    ctx = RunContext(
+        platform=Platform.ANDROID, profile=profile, params=params, network=network, target=serial
+    )
+    if transport is not None:
+        setattr(ctx, _DEVICE_ATTR, Device(transport, all_paths()))
     findings = run_checks(chosen, ctx)
 
     metadata = {"adb_serial": serial or "(default device)"}
-    if adb.device_reachable(serial):
-        model = adb.getprop(serial, "ro.product.model")
-        android_version = adb.getprop(serial, "ro.build.version.release")
+    dev = device_for(ctx)
+    if dev.reachable():
+        model = dev.prop("ro.product.model")
+        android_version = dev.prop("ro.build.version.release")
         if model:
             metadata["device_model"] = model
         if android_version:

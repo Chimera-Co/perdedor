@@ -179,6 +179,14 @@ def build_parser() -> argparse.ArgumentParser:
     report.add_argument("--json", default=None, help="also write the unified aggregate as JSON to this path")
     report.set_defaults(func=_cmd_report)
 
+    from perdedor_cli import assess_cmd
+
+    assess_cmd.register(subparsers)
+
+    from perdedor_cli import upstream
+
+    upstream.register(subparsers)
+
     return parser
 
 

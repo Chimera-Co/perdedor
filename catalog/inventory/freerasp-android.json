@@ -1,0 +1,184 @@
+{
+  "source_id": "freerasp-android",
+  "revision": "v19.3.0",
+  "commit": "e105f3253e5a861812e07a813f0dcd761bc647df",
+  "fetched": "2026-11-08",
+  "techniques": [
+    {
+      "name": "onAdbEnabled",
+      "detail": "ThreatListener callback",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "onAppIntegrity",
+      "detail": "ThreatListener callback",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "onAutomation",
+      "detail": "ThreatListener callback",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "onBootloader",
+      "detail": "ThreatListener callback",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "onDebug",
+      "detail": "ThreatListener callback",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "onDevMode",
+      "detail": "ThreatListener callback",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "onDeviceBinding",
+      "detail": "ThreatListener callback",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "onHooks",
+      "detail": "ThreatListener callback",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "onLocationSpoofing",
+      "detail": "ThreatListener callback",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "onMalware",
+      "detail": "ThreatListener callback",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "onMultiInstance",
+      "detail": "ThreatListener callback",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "onObfuscationIssues",
+      "detail": "ThreatListener callback",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "onPasscode",
+      "detail": "ThreatListener callback",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "onPrivilegedAccess",
+      "detail": "ThreatListener callback",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "onScreenRecording",
+      "detail": "ThreatListener callback",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "onScreenshot",
+      "detail": "ThreatListener callback",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "onSecureHardwareNotAvailable",
+      "detail": "ThreatListener callback",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "onSimulator",
+      "detail": "ThreatListener callback",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "onSystemVpn",
+      "detail": "ThreatListener callback",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "onTimeSpoofing",
+      "detail": "ThreatListener callback",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "onUnofficialStore",
+      "detail": "ThreatListener callback",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "onUnsecureWifi",
+      "detail": "ThreatListener callback",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    }
+  ]
+}

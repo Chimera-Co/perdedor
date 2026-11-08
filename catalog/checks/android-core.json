@@ -1,227 +1,674 @@
 {
- "catalog_format": 2,
- "platform": "android",
- "source": "perdedor v0.1 checks",
- "checks": [
-  {
-   "id": "android.behavioural.battery_plausibility",
-   "technique": "mobile_device.battery",
-   "status": "implemented",
-   "fix": {
-    "layer": "vm-config",
-    "effort": 3
-   },
-   "equivalents": {}
-  },
-  {
-   "id": "android.behavioural.battery_temperature",
-   "technique": "mobile_device.battery",
-   "status": "implemented",
-   "fix": {
-    "layer": "vm-config",
-    "effort": 3
-   },
-   "equivalents": {}
-  },
-  {
-   "id": "android.behavioural.installed_packages",
-   "technique": "wear_and_tear.installed_software",
-   "status": "implemented",
-   "fix": {
-    "layer": "guest-image",
-    "effort": 2
-   },
-   "equivalents": {}
-  },
-  {
-   "id": "android.design.avd_default_subnet",
-   "technique": "network.default_subnets",
-   "status": "implemented",
-   "fix": {
-    "layer": "network",
-    "effort": 3
-   },
-   "equivalents": {}
-  },
-  {
-   "id": "android.design.build_characteristics",
-   "technique": "emulator.android_build_identity",
-   "status": "implemented",
-   "fix": {
-    "layer": "guest-image",
-    "effort": 3
-   },
-   "equivalents": {}
-  },
-  {
-   "id": "android.design.build_tags",
-   "technique": "emulator.android_build_identity",
-   "status": "implemented",
-   "fix": {
-    "layer": "guest-image",
-    "effort": 3
-   },
-   "equivalents": {}
-  },
-  {
-   "id": "android.design.camera_feature",
-   "technique": "mobile_device.camera",
-   "status": "implemented",
-   "fix": {
-    "layer": "vm-config",
-    "effort": 3
-   },
-   "equivalents": {}
-  },
-  {
-   "id": "android.design.sensor_list",
-   "technique": "mobile_device.sensors",
-   "status": "implemented",
-   "fix": {
-    "layer": "vm-config",
-    "effort": 4
-   },
-   "equivalents": {}
-  },
-  {
-   "id": "android.design.suspicious_device_name",
-   "technique": "identity.hostname",
-   "status": "implemented",
-   "fix": {
-    "layer": "guest-image",
-    "effort": 2
-   },
-   "equivalents": {}
-  },
-  {
-   "id": "android.design.telephony_signals",
-   "technique": "mobile_device.telephony",
-   "status": "implemented",
-   "fix": {
-    "layer": "vm-config",
-    "effort": 4
-   },
-   "equivalents": {}
-  },
-  {
-   "id": "android.env.boot_hardware",
-   "technique": "emulator.android_properties",
-   "status": "implemented",
-   "fix": {
-    "layer": "guest-image",
-    "effort": 3
-   },
-   "equivalents": {}
-  },
-  {
-   "id": "android.env.build_fingerprint",
-   "technique": "emulator.android_build_identity",
-   "status": "implemented",
-   "fix": {
-    "layer": "guest-image",
-    "effort": 3
-   },
-   "equivalents": {}
-  },
-  {
-   "id": "android.env.cpu_abi",
-   "technique": "emulator.binary_translation",
-   "status": "implemented",
-   "fix": {
-    "layer": "host-hardware",
-    "effort": 5
-   },
-   "equivalents": {}
-  },
-  {
-   "id": "android.env.gralloc_egl",
-   "technique": "emulator.android_properties",
-   "status": "implemented",
-   "fix": {
-    "layer": "guest-image",
-    "effort": 3
-   },
-   "equivalents": {}
-  },
-  {
-   "id": "android.env.hardware_prop",
-   "technique": "emulator.android_properties",
-   "status": "implemented",
-   "fix": {
-    "layer": "guest-image",
-    "effort": 3
-   },
-   "equivalents": {}
-  },
-  {
-   "id": "android.env.libhoudini_present",
-   "technique": "emulator.binary_translation",
-   "status": "implemented",
-   "fix": {
-    "layer": "host-hardware",
-    "effort": 5
-   },
-   "equivalents": {}
-  },
-  {
-   "id": "android.env.manufacturer",
-   "technique": "emulator.android_build_identity",
-   "status": "implemented",
-   "fix": {
-    "layer": "guest-image",
-    "effort": 3
-   },
-   "equivalents": {}
-  },
-  {
-   "id": "android.env.product_model",
-   "technique": "emulator.android_build_identity",
-   "status": "implemented",
-   "fix": {
-    "layer": "guest-image",
-    "effort": 3
-   },
-   "equivalents": {}
-  },
-  {
-   "id": "android.env.qemu_device_nodes",
-   "technique": "emulator.android_files",
-   "status": "implemented",
-   "fix": {
-    "layer": "guest-image",
-    "effort": 3
-   },
-   "equivalents": {}
-  },
-  {
-   "id": "android.env.qemu_kernel_flag",
-   "technique": "emulator.android_properties",
-   "status": "implemented",
-   "fix": {
-    "layer": "guest-image",
-    "effort": 3
-   },
-   "equivalents": {}
-  },
-  {
-   "id": "android.env.qemu_properties_present",
-   "technique": "emulator.android_properties",
-   "status": "implemented",
-   "fix": {
-    "layer": "guest-image",
-    "effort": 3
-   },
-   "equivalents": {}
-  },
-  {
-   "id": "android.timing.low_uptime",
-   "technique": "timing.uptime",
-   "status": "implemented",
-   "fix": {
-    "layer": "analysis-engine",
-    "effort": 1
-   },
-   "equivalents": {}
-  }
- ]
+  "catalog_format": 2,
+  "platform": "android",
+  "source": "Host adb driver; source mappings reviewed 2026-11-09",
+  "checks": [
+    {
+      "id": "android.behavioural.installed_packages",
+      "technique": "wear_and_tear.installed_software",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Install a realistic mix of everyday apps on the golden image before freezing it.",
+        "chimera": "CHIMERA: apply this change to the Android golden image or Android-x86 VM definition; Windows image hardening does not configure Android."
+      },
+      "references": [
+        "https://developer.android.com/tools/adb",
+        "https://developer.android.com/reference/android/provider/Settings.Global"
+      ]
+    },
+    {
+      "id": "android.behavioural.battery_plausibility",
+      "technique": "mobile_device.battery",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Simulate battery drain and charge-state changes (`dumpsys battery set level/ac/usb` from the host, or a battery HAL fed with a recorded profile).",
+        "chimera": "CHIMERA: hidsim does not synthesize mobile HAL sensors, telephony or battery state; configure these separately."
+      },
+      "references": [
+        "https://source.android.com/docs/compatibility/cdd",
+        "https://github.com/CalebFenton/AndroidEmulatorDetect/blob/d8855d8311dbe2bcaeaef0e3fc19c5f59feb4f27/app/src/main/java/org/cf/emulatordetect/Detector.java",
+        "https://www.threatfabric.com/blogs/cerberus-a-new-banking-trojan-from-the-underworld",
+        "https://www.threatfabric.com/blogs/cerberus-a-new-banking-trojan-from-the-underworld",
+        "https://www.threatfabric.com/blogs/cerberus-a-new-banking-trojan-from-the-underworld",
+        "https://www.threatfabric.com/blogs/cerberus-a-new-banking-trojan-from-the-underworld"
+      ]
+    },
+    {
+      "id": "android.behavioural.battery_temperature",
+      "technique": "mobile_device.battery",
+      "status": "implemented",
+      "reason": null,
+      "severity": "info",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Simulate a realistic, drifting battery temperature.",
+        "chimera": "CHIMERA: hidsim does not synthesize mobile HAL sensors, telephony or battery state; configure these separately."
+      },
+      "references": [
+        "https://source.android.com/docs/compatibility/cdd",
+        "https://github.com/CalebFenton/AndroidEmulatorDetect/blob/d8855d8311dbe2bcaeaef0e3fc19c5f59feb4f27/app/src/main/java/org/cf/emulatordetect/Detector.java",
+        "https://www.threatfabric.com/blogs/cerberus-a-new-banking-trojan-from-the-underworld",
+        "https://www.threatfabric.com/blogs/cerberus-a-new-banking-trojan-from-the-underworld",
+        "https://www.threatfabric.com/blogs/cerberus-a-new-banking-trojan-from-the-underworld",
+        "https://www.threatfabric.com/blogs/cerberus-a-new-banking-trojan-from-the-underworld"
+      ]
+    },
+    {
+      "id": "android.design.build_characteristics",
+      "technique": "emulator.android_build_identity",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "equivalents": {
+        "freerasp": [
+          "onSimulator",
+          "simulator"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 4,
+        "how": "Set ro.build.characteristics to a device profile value (e.g. 'nosdcard').",
+        "chimera": "CHIMERA: apply this change to the Android golden image or Android-x86 VM definition; Windows image hardening does not configure Android."
+      },
+      "references": [
+        "https://github.com/strazzere/anti-emulator/blob/master/AntiEmulator/src/diff/strazzere/anti/emulator/FindEmulator.java",
+        "https://github.com/framgia/android-emulator-detector/blob/master/library/src/main/java/com/framgia/android/emulator/EmulatorDetector.java",
+        "https://github.com/reveny/Android-Emulator-Detection/blob/294912d599756bc67aadac7fb64001981b27559c/emulatordetection/src/main/jni/Include/EmulatorData.hpp",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store"
+      ]
+    },
+    {
+      "id": "android.design.telephony_signals",
+      "technique": "mobile_device.telephony",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Provide a vendor RIL identity (and a modem simulator that answers like one).",
+        "chimera": "CHIMERA: hidsim does not synthesize mobile HAL sensors, telephony or battery state; configure these separately."
+      },
+      "references": [
+        "https://source.android.com/docs/compatibility/cdd",
+        "https://github.com/CalebFenton/AndroidEmulatorDetect/blob/d8855d8311dbe2bcaeaef0e3fc19c5f59feb4f27/app/src/main/java/org/cf/emulatordetect/Detector.java",
+        "https://www.threatfabric.com/blogs/cerberus-a-new-banking-trojan-from-the-underworld",
+        "https://www.threatfabric.com/blogs/cerberus-a-new-banking-trojan-from-the-underworld",
+        "https://www.threatfabric.com/blogs/cerberus-a-new-banking-trojan-from-the-underworld",
+        "https://www.threatfabric.com/blogs/cerberus-a-new-banking-trojan-from-the-underworld"
+      ]
+    },
+    {
+      "id": "android.design.sensor_list",
+      "technique": "mobile_device.sensors",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Expose a realistic virtual sensor set (accelerometer, gyroscope, magnetometer, proximity, light, step counter) through a sensor HAL.",
+        "chimera": "CHIMERA: hidsim does not synthesize mobile HAL sensors, telephony or battery state; configure these separately."
+      },
+      "references": [
+        "https://source.android.com/docs/compatibility/cdd",
+        "https://github.com/CalebFenton/AndroidEmulatorDetect/blob/d8855d8311dbe2bcaeaef0e3fc19c5f59feb4f27/app/src/main/java/org/cf/emulatordetect/Detector.java",
+        "https://www.threatfabric.com/blogs/cerberus-a-new-banking-trojan-from-the-underworld",
+        "https://www.threatfabric.com/blogs/cerberus-a-new-banking-trojan-from-the-underworld",
+        "https://www.threatfabric.com/blogs/cerberus-a-new-banking-trojan-from-the-underworld",
+        "https://www.threatfabric.com/blogs/cerberus-a-new-banking-trojan-from-the-underworld"
+      ]
+    },
+    {
+      "id": "android.design.camera_feature",
+      "technique": "mobile_device.camera",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Provide a virtual camera HAL (or a passthrough webcam) so the camera features are declared.",
+        "chimera": "CHIMERA: hidsim does not synthesize mobile HAL sensors, telephony or battery state; configure these separately."
+      },
+      "references": [
+        "https://source.android.com/docs/compatibility/cdd",
+        "https://github.com/CalebFenton/AndroidEmulatorDetect/blob/d8855d8311dbe2bcaeaef0e3fc19c5f59feb4f27/app/src/main/java/org/cf/emulatordetect/Detector.java",
+        "https://www.threatfabric.com/blogs/cerberus-a-new-banking-trojan-from-the-underworld",
+        "https://www.threatfabric.com/blogs/cerberus-a-new-banking-trojan-from-the-underworld",
+        "https://www.threatfabric.com/blogs/cerberus-a-new-banking-trojan-from-the-underworld",
+        "https://www.threatfabric.com/blogs/cerberus-a-new-banking-trojan-from-the-underworld"
+      ]
+    },
+    {
+      "id": "android.design.build_tags",
+      "technique": "emulator.android_build_identity",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "equivalents": {
+        "rootbeer": [
+          "detectTestKeys"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 4,
+        "how": "Sign the build with private release keys (ro.build.tags=release-keys).",
+        "chimera": "CHIMERA: apply this change to the Android golden image or Android-x86 VM definition; Windows image hardening does not configure Android."
+      },
+      "references": [
+        "https://github.com/strazzere/anti-emulator/blob/master/AntiEmulator/src/diff/strazzere/anti/emulator/FindEmulator.java",
+        "https://github.com/framgia/android-emulator-detector/blob/master/library/src/main/java/com/framgia/android/emulator/EmulatorDetector.java",
+        "https://github.com/reveny/Android-Emulator-Detection/blob/294912d599756bc67aadac7fb64001981b27559c/emulatordetection/src/main/jni/Include/EmulatorData.hpp",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store"
+      ]
+    },
+    {
+      "id": "android.design.avd_default_subnet",
+      "technique": "network.default_subnets",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "equivalents": {
+        "other": [
+          "checkIp"
+        ]
+      },
+      "fix": {
+        "layer": "network",
+        "effort": 3,
+        "how": "Use a custom network range for the analysis network instead of the emulator's user-mode NAT.",
+        "chimera": "CHIMERA: review isolated network addresses and INetSim responses; keep interception on the bridge."
+      },
+      "references": [
+        "https://developer.android.com/studio/run/emulator-networking",
+        "https://developer.android.com/privacy-and-security/security-config"
+      ]
+    },
+    {
+      "id": "android.design.suspicious_device_name",
+      "technique": "identity.hostname",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Give the image a plausible personal device name.",
+        "chimera": "CHIMERA: apply this change to the Android golden image or Android-x86 VM definition; Windows image hardening does not configure Android."
+      },
+      "references": [
+        "https://developer.android.com/reference/android/provider/Settings.System"
+      ]
+    },
+    {
+      "id": "android.env.build_fingerprint",
+      "technique": "emulator.android_build_identity",
+      "status": "implemented",
+      "reason": null,
+      "severity": "critical",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "equivalents": {
+        "anti-emulator": [
+          "hasEmulatorBuild"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 4,
+        "how": "Build or patch the image with a real device fingerprint (vendor/product/device:version/id/incremental:user/release-keys) and keep the partition fingerprints consistent with it.",
+        "chimera": "CHIMERA: apply this change to the Android golden image or Android-x86 VM definition; Windows image hardening does not configure Android."
+      },
+      "references": [
+        "https://github.com/strazzere/anti-emulator/blob/master/AntiEmulator/src/diff/strazzere/anti/emulator/FindEmulator.java",
+        "https://github.com/framgia/android-emulator-detector/blob/master/library/src/main/java/com/framgia/android/emulator/EmulatorDetector.java",
+        "https://github.com/reveny/Android-Emulator-Detection/blob/294912d599756bc67aadac7fb64001981b27559c/emulatordetection/src/main/jni/Include/EmulatorData.hpp",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store"
+      ]
+    },
+    {
+      "id": "android.env.hardware_prop",
+      "technique": "emulator.android_properties",
+      "status": "implemented",
+      "reason": null,
+      "severity": "critical",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 4,
+        "how": "Set androidboot.hardware / ro.hardware to the real SoC name of the profile you imitate (e.g. qcom, exynos9820, tensor) and rename the matching init.<hw>.rc files.",
+        "chimera": "CHIMERA: apply this change to the Android golden image or Android-x86 VM definition; Windows image hardening does not configure Android."
+      },
+      "references": [
+        "https://github.com/strazzere/anti-emulator/blob/master/AntiEmulator/src/diff/strazzere/anti/emulator/FindEmulator.java",
+        "https://github.com/framgia/android-emulator-detector/blob/master/library/src/main/java/com/framgia/android/emulator/EmulatorDetector.java",
+        "https://github.com/reveny/Android-Emulator-Detection/blob/294912d599756bc67aadac7fb64001981b27559c/emulatordetection/src/main/jni/Include/EmulatorData.hpp",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store"
+      ]
+    },
+    {
+      "id": "android.env.boot_hardware",
+      "technique": "emulator.android_properties",
+      "status": "implemented",
+      "reason": null,
+      "severity": "critical",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 4,
+        "how": "Change androidboot.hardware on the kernel command line (bootloader/GRUB config) to a real SoC name.",
+        "chimera": "CHIMERA: apply this change to the Android golden image or Android-x86 VM definition; Windows image hardening does not configure Android."
+      },
+      "references": [
+        "https://github.com/strazzere/anti-emulator/blob/master/AntiEmulator/src/diff/strazzere/anti/emulator/FindEmulator.java",
+        "https://github.com/framgia/android-emulator-detector/blob/master/library/src/main/java/com/framgia/android/emulator/EmulatorDetector.java",
+        "https://github.com/reveny/Android-Emulator-Detection/blob/294912d599756bc67aadac7fb64001981b27559c/emulatordetection/src/main/jni/Include/EmulatorData.hpp",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store"
+      ]
+    },
+    {
+      "id": "android.env.product_model",
+      "technique": "emulator.android_build_identity",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 4,
+        "how": "Override ro.product.model (and every partition copy: ro.product.system/vendor/odm.model) with a shipped device model.",
+        "chimera": "CHIMERA: apply this change to the Android golden image or Android-x86 VM definition; Windows image hardening does not configure Android."
+      },
+      "references": [
+        "https://github.com/strazzere/anti-emulator/blob/master/AntiEmulator/src/diff/strazzere/anti/emulator/FindEmulator.java",
+        "https://github.com/framgia/android-emulator-detector/blob/master/library/src/main/java/com/framgia/android/emulator/EmulatorDetector.java",
+        "https://github.com/reveny/Android-Emulator-Detection/blob/294912d599756bc67aadac7fb64001981b27559c/emulatordetection/src/main/jni/Include/EmulatorData.hpp",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store"
+      ]
+    },
+    {
+      "id": "android.env.manufacturer",
+      "technique": "emulator.android_build_identity",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 4,
+        "how": "Set ro.product.manufacturer (all partitions) to the vendor of the imitated device.",
+        "chimera": "CHIMERA: apply this change to the Android golden image or Android-x86 VM definition; Windows image hardening does not configure Android."
+      },
+      "references": [
+        "https://github.com/strazzere/anti-emulator/blob/master/AntiEmulator/src/diff/strazzere/anti/emulator/FindEmulator.java",
+        "https://github.com/framgia/android-emulator-detector/blob/master/library/src/main/java/com/framgia/android/emulator/EmulatorDetector.java",
+        "https://github.com/reveny/Android-Emulator-Detection/blob/294912d599756bc67aadac7fb64001981b27559c/emulatordetection/src/main/jni/Include/EmulatorData.hpp",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store"
+      ]
+    },
+    {
+      "id": "android.env.gralloc_egl",
+      "technique": "emulator.android_properties",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 4,
+        "how": "Use a GPU-vendor HAL name, or accept software rendering as a residual tell and document it.",
+        "chimera": "CHIMERA: apply this change to the Android golden image or Android-x86 VM definition; Windows image hardening does not configure Android."
+      },
+      "references": [
+        "https://github.com/strazzere/anti-emulator/blob/master/AntiEmulator/src/diff/strazzere/anti/emulator/FindEmulator.java",
+        "https://github.com/framgia/android-emulator-detector/blob/master/library/src/main/java/com/framgia/android/emulator/EmulatorDetector.java",
+        "https://github.com/reveny/Android-Emulator-Detection/blob/294912d599756bc67aadac7fb64001981b27559c/emulatordetection/src/main/jni/Include/EmulatorData.hpp",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store"
+      ]
+    },
+    {
+      "id": "android.env.qemu_properties_present",
+      "technique": "emulator.android_properties",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "equivalents": {
+        "freerasp": [
+          "onSimulator",
+          "simulator"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 4,
+        "how": "Remove the qemu-props service and every qemu.* property from the image.",
+        "chimera": "CHIMERA: apply this change to the Android golden image or Android-x86 VM definition; Windows image hardening does not configure Android."
+      },
+      "references": [
+        "https://github.com/strazzere/anti-emulator/blob/master/AntiEmulator/src/diff/strazzere/anti/emulator/FindEmulator.java",
+        "https://github.com/framgia/android-emulator-detector/blob/master/library/src/main/java/com/framgia/android/emulator/EmulatorDetector.java",
+        "https://github.com/reveny/Android-Emulator-Detection/blob/294912d599756bc67aadac7fb64001981b27559c/emulatordetection/src/main/jni/Include/EmulatorData.hpp",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store"
+      ]
+    },
+    {
+      "id": "android.env.qemu_kernel_flag",
+      "technique": "emulator.android_properties",
+      "status": "implemented",
+      "reason": null,
+      "severity": "critical",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 4,
+        "how": "Remove qemu=1 from the kernel command line and clear ro.kernel.qemu.",
+        "chimera": "CHIMERA: apply this change to the Android golden image or Android-x86 VM definition; Windows image hardening does not configure Android."
+      },
+      "references": [
+        "https://github.com/strazzere/anti-emulator/blob/master/AntiEmulator/src/diff/strazzere/anti/emulator/FindEmulator.java",
+        "https://github.com/framgia/android-emulator-detector/blob/master/library/src/main/java/com/framgia/android/emulator/EmulatorDetector.java",
+        "https://github.com/reveny/Android-Emulator-Detection/blob/294912d599756bc67aadac7fb64001981b27559c/emulatordetection/src/main/jni/Include/EmulatorData.hpp",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store"
+      ]
+    },
+    {
+      "id": "android.env.qemu_device_nodes",
+      "technique": "emulator.android_files",
+      "status": "implemented",
+      "reason": null,
+      "severity": "critical",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "equivalents": {
+        "anti-emulator": [
+          "hasPipes"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 4,
+        "how": "No user-space fix: these nodes come from goldfish kernel drivers. Use a kernel without them or a real device.",
+        "chimera": "CHIMERA: apply this change to the Android golden image or Android-x86 VM definition; Windows image hardening does not configure Android."
+      },
+      "references": [
+        "https://github.com/strazzere/anti-emulator/blob/master/AntiEmulator/src/diff/strazzere/anti/emulator/FindEmulator.java",
+        "https://github.com/framgia/android-emulator-detector/blob/master/library/src/main/java/com/framgia/android/emulator/EmulatorDetector.java",
+        "https://github.com/reveny/Android-Emulator-Detection/blob/294912d599756bc67aadac7fb64001981b27559c/emulatordetection/src/main/jni/Include/EmulatorData.hpp",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store"
+      ]
+    },
+    {
+      "id": "android.env.libhoudini_present",
+      "technique": "emulator.binary_translation",
+      "status": "implemented",
+      "reason": null,
+      "severity": "critical",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 4,
+        "how": "Run ARM samples on ARM: a real phone, an ARM host, or full-system ARM emulation without a translation layer.",
+        "chimera": "CHIMERA: apply this change to the Android golden image or Android-x86 VM definition; Windows image hardening does not configure Android."
+      },
+      "references": [
+        "https://github.com/strazzere/anti-emulator/blob/master/AntiEmulator/src/diff/strazzere/anti/emulator/FindEmulator.java",
+        "https://github.com/framgia/android-emulator-detector/blob/master/library/src/main/java/com/framgia/android/emulator/EmulatorDetector.java",
+        "https://github.com/reveny/Android-Emulator-Detection/blob/294912d599756bc67aadac7fb64001981b27559c/emulatordetection/src/main/jni/Include/EmulatorData.hpp",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store"
+      ]
+    },
+    {
+      "id": "android.env.cpu_abi",
+      "technique": "emulator.binary_translation",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 4,
+        "how": "Use an ARM target so the primary ABI is arm64-v8a.",
+        "chimera": "CHIMERA: apply this change to the Android golden image or Android-x86 VM definition; Windows image hardening does not configure Android."
+      },
+      "references": [
+        "https://github.com/strazzere/anti-emulator/blob/master/AntiEmulator/src/diff/strazzere/anti/emulator/FindEmulator.java",
+        "https://github.com/framgia/android-emulator-detector/blob/master/library/src/main/java/com/framgia/android/emulator/EmulatorDetector.java",
+        "https://github.com/reveny/Android-Emulator-Detection/blob/294912d599756bc67aadac7fb64001981b27559c/emulatordetection/src/main/jni/Include/EmulatorData.hpp",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+        "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store"
+      ]
+    },
+    {
+      "id": "android.timing.low_uptime",
+      "technique": "timing.uptime",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Let the guest boot and accumulate normal uptime before a run.",
+        "chimera": "CHIMERA: apply this change to the Android golden image or Android-x86 VM definition; Windows image hardening does not configure Android."
+      },
+      "references": [
+        "https://developer.android.com/tools/adb"
+      ]
+    }
+  ]
 }

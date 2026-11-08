@@ -1,0 +1,1586 @@
+{
+  "catalog_format": 2,
+  "platform": "windows",
+  "source": "Perdedor v2 native low-level probes",
+  "checks": [
+    {
+      "id": "win.design.appinit_appcert_libraries",
+      "technique": "instrumentation.injected_libraries",
+      "status": "implemented",
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Counts nonempty AppInit_DLLs and AppCertDlls values in both registry views, along with LoadAppInit_DLLs policy. Configuration does not prove injection; Secure Boot may disable AppInit.",
+      "severity": "medium",
+      "references": [
+        "https://learn.microsoft.com/en-us/windows/win32/dlls/secure-boot-and-appinit-dlls",
+        "https://learn.microsoft.com/en-us/windows/win32/sysinfo/registry-redirector"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Remove analysis-specific AppInit/AppCert registrations from the golden image, accounting for both registry views. Check load policy and legitimate dependencies before removing registered DLLs.",
+        "chimera": "Agentless DRAKVUF does not require AppInit/AppCert DLLs. Rebuild snapshots without residual in-guest injection entries; Defender state does not determine these registrations."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.debugger_exception_delivery",
+      "technique": "debugger.exception_tricks",
+      "status": "implemented",
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "INT3, INT 2D, ICEBP (F1), trap-flag single step and an executed PAGE_GUARD page, each under the vectored-exception guard. An exception that never reaches the process was consumed by a debugger. INT3/INT 2D are skipped when a kernel debugger is enabled, so a connected kernel debugger cannot stop the guest.",
+      "severity": "medium",
+      "references": [
+        "https://anti-debug.checkpoint.com/techniques/assembly.html",
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/Interrupt_3.cpp",
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/Interrupt_0x2d.cpp",
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/TrapFlag.cpp",
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/MemoryBreakpoints_PageGuard.cpp",
+        "https://anti-debug.checkpoint.com/techniques/exceptions.html"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "Interrupt_0x2d",
+          "Interrupt_3",
+          "MemoryBreakpoints_PageGuard",
+          "TrapFlag"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Detach in-guest debuggers and launch the sample normally. Remove debugger-only launch flags and verify results against an uninstrumented image; keep legitimate security settings when they explain the observation.",
+        "chimera": "Agentless DRAKVUF should not attach a Windows debugger or Linux ptrace tracer. Check launch wrappers and image troubleshooting tools; cpuidmon, hidsim and firmware overrides do not alter debugger state."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.debugger_parent",
+      "technique": "debugger.api_flags",
+      "status": "implemented",
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Immediate parent executable matches debugger/tracer names; legitimate shells are accepted and unrelated parent names are not emitted.",
+      "severity": "medium",
+      "references": [
+        "https://learn.microsoft.com/en-us/windows/win32/toolhelp/taking-a-snapshot-and-viewing-processes"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Detach in-guest debuggers and launch the sample normally. Remove debugger-only launch flags and verify results against an uninstrumented image; keep legitimate security settings when they explain the observation.",
+        "chimera": "Agentless DRAKVUF should not attach a Windows debugger or Linux ptrace tracer. Check launch wrappers and image troubleshooting tools; cpuidmon, hidsim and firmware overrides do not alter debugger state."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.etw_event_write_hook",
+      "technique": "instrumentation.inline_hooks",
+      "status": "implemented",
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "ntdll!EtwEventWrite prologue: XOR EAX,EAX; RET / RET 14h patches, INT3, early return, or a branch out of system images (ETW blinding).",
+      "severity": "medium",
+      "references": [
+        "https://learn.microsoft.com/en-us/windows/win32/debug/pe-format",
+        "https://learn.microsoft.com/en-us/windows/win32/api/evntprov/nf-evntprov-eventwrite"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Remove unnecessary in-process injection or hooks from the analysis path and compare with the same OS build without monitoring. Validate legitimate hotpatches, forwarding thunks and security products before treating byte differences as instrumentation.",
+        "chimera": "DRAKVUF normally observes through VMI instead of user DLL patches. Remove residual guest monitors from the image; invisible breakpoint views may pass byte scans yet remain visible to the latency check. Disabling Defender does not by itself fix unrelated hooks."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.hardware_breakpoints",
+      "technique": "debugger.hardware_breakpoints",
+      "status": "implemented",
+      "reason": null,
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Dr0-Dr3 and Dr7 of every thread of this process (other threads suspended only for the GetThreadContext call; the check thread is read by a helper). Detected for any nonzero Dr0-Dr3 (al-khaser rule) or DR7 enable bit.",
+      "severity": "high",
+      "references": [
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html",
+        "https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getthreadcontext",
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/HardwareBreakpoints.cpp"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "HardwareBreakpoints"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Detach in-guest debuggers and launch the sample normally. Remove debugger-only launch flags and verify results against an uninstrumented image; keep legitimate security settings when they explain the observation.",
+        "chimera": "Agentless DRAKVUF should not attach a Windows debugger or Linux ptrace tracer. Check launch wrappers and image troubleshooting tools; cpuidmon, hidsim and firmware overrides do not alter debugger state."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.heap_debug_flags",
+      "technique": "debugger.api_flags",
+      "status": "implemented",
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Classic NT heap Flags/ForceFlags of the process heap (Vista+ offsets 0x40/0x44 x86, 0x70/0x74 x64). Detected like al-khaser: Flags other than HEAP_GROWABLE, or nonzero ForceFlags. Segment heaps are skipped.",
+      "severity": "medium",
+      "references": [
+        "https://anti-debug.checkpoint.com/techniques/debug-flags.html",
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/ProcessHeap_Flags.cpp",
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/ProcessHeap_ForceFlags.cpp"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "HeapFlags",
+          "HeapForceFlags"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Detach in-guest debuggers and launch the sample normally. Remove debugger-only launch flags and verify results against an uninstrumented image; keep legitimate security settings when they explain the observation.",
+        "chimera": "Agentless DRAKVUF should not attach a Windows debugger or Linux ptrace tracer. Check launch wrappers and image troubleshooting tools; cpuidmon, hidsim and firmware overrides do not alter debugger state."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.import_export_redirection",
+      "technique": "instrumentation.module_integrity",
+      "status": "implemented",
+      "reason": null,
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Own IAT against loader-resolved exports, own/ntdll/kernelbase EAT slots against the disk image, and GetProcAddress results for non-forwarded ntdll/kernel32/kernelbase exports inside their module (al-khaser ModuleBoundsHookCheck).",
+      "severity": "high",
+      "references": [
+        "https://learn.microsoft.com/en-us/windows/win32/debug/pe-format",
+        "https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getprocaddress",
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/ModuleBoundsHookCheck.cpp"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "ModuleBoundsHookCheck"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Remove unnecessary in-process injection or hooks from the analysis path and compare with the same OS build without monitoring. Validate legitimate hotpatches, forwarding thunks and security products before treating byte differences as instrumentation.",
+        "chimera": "DRAKVUF normally observes through VMI instead of user DLL patches. Remove residual guest monitors from the image; invisible breakpoint views may pass byte scans yet remain visible to the latency check. Disabling Defender does not by itself fix unrelated hooks."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.invalid_handle_exception",
+      "technique": "debugger.exception_tricks",
+      "status": "implemented",
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "CloseHandle(NULL) and closing a HANDLE_FLAG_PROTECT_FROM_CLOSE mutex handle under the guard; both raise exceptions only under a debugger (or Application Verifier). The protection is removed and the handle closed afterwards.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/CloseHandle_InvalidHandle.cpp",
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/SetHandleInformation_API.cpp",
+        "https://anti-debug.checkpoint.com/techniques/object-handles.html"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "CloseHandle_InvalideHandle",
+          "SetHandleInformatiom_ProtectedHandle"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Detach in-guest debuggers and launch the sample normally. Remove debugger-only launch flags and verify results against an uninstrumented image; keep legitimate security settings when they explain the observation.",
+        "chimera": "Agentless DRAKVUF should not attach a Windows debugger or Linux ptrace tracer. Check launch wrappers and image troubleshooting tools; cpuidmon, hidsim and firmware overrides do not alter debugger state."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.kernel_debugger",
+      "technique": "debugger.kernel_debugger",
+      "status": "implemented",
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "NtQuerySystemInformation(SystemKernelDebuggerInformation) and KUSER_SHARED_DATA KdDebuggerEnabled (0x7FFE02D4: bit 0 enabled, bit 1 present). Detected like al-khaser when the debugger is enabled or present.",
+      "severity": "high",
+      "references": [
+        "https://anti-debug.checkpoint.com/techniques/debug-flags.html",
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/SharedUserData_KernelDebugger.cpp",
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/NtQuerySystemInformation_SystemKernelDebuggerInformation.cpp"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "SharedUserData_KernelDebugger",
+          "NtQuerySystemInformation_SystemKernelDebuggerInformation"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Detach in-guest debuggers and launch the sample normally. Remove debugger-only launch flags and verify results against an uninstrumented image; keep legitimate security settings when they explain the observation.",
+        "chimera": "Agentless DRAKVUF should not attach a Windows debugger or Linux ptrace tracer. Check launch wrappers and image troubleshooting tools; cpuidmon, hidsim and firmware overrides do not alter debugger state."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.nt_debug_objects",
+      "technique": "debugger.debug_objects",
+      "status": "implemented",
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "ProcessDebugPort, ProcessDebugObjectHandle and inverse ProcessDebugFlags. Closes any returned debug-object handle and reports each NTSTATUS.",
+      "severity": "high",
+      "references": [
+        "https://github.com/winsiderss/phnt/blob/master/ntpsapi.h",
+        "https://anti-debug.checkpoint.com/techniques/debug-flags.html",
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/NtQueryInformationProcess_ProcessDebugPort.cpp",
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/NtQueryInformationProcess_ProcessDebugObject.cpp",
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/NtQueryInformationProcess_ProcessDebugFlags.cpp"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "NtQueryInformationProcess_ProcessDebugPort",
+          "NtQueryInformationProcess_ProcessDebugObject",
+          "NtQueryInformationProcess_ProcessDebugFlags"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Detach in-guest debuggers and launch the sample normally. Remove debugger-only launch flags and verify results against an uninstrumented image; keep legitimate security settings when they explain the observation.",
+        "chimera": "Agentless DRAKVUF should not attach a Windows debugger or Linux ptrace tracer. Check launch wrappers and image troubleshooting tools; cpuidmon, hidsim and firmware overrides do not alter debugger state."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.ntdll_syscall_stubs",
+      "technique": "instrumentation.inline_hooks",
+      "status": "implemented",
+      "reason": null,
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Every executable Nt*/Zw* export of the loaded ntdll (aliases once, data exports and user-mode helpers excluded) must have a native syscall-stub shape. A stub starting with INT3 or branching (JMP/PUSH-RET/MOV-JMP, followed through pointer slots) out of system images is a hook; unrecognized shapes are reported but not detected.",
+      "severity": "high",
+      "references": [
+        "https://learn.microsoft.com/en-us/windows/win32/debug/pe-format",
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html",
+        "https://github.com/wine-mirror/wine/blob/master/dlls/ntdll/ntdll.spec"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Remove unnecessary in-process injection or hooks from the analysis path and compare with the same OS build without monitoring. Validate legitimate hotpatches, forwarding thunks and security products before treating byte differences as instrumentation.",
+        "chimera": "DRAKVUF normally observes through VMI instead of user DLL patches. Remove residual guest monitors from the image; invisible breakpoint views may pass byte scans yet remain visible to the latency check. Disabling Defender does not by itself fix unrelated hooks."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.output_debug_string",
+      "technique": "debugger.exception_tricks",
+      "status": "implemented",
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Guarded OutputDebugStringA and last-error sentinel. Observational on Vista+ because preservation is not reliable evidence of debugger attachment; never detects on this value alone.",
+      "severity": "low",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/OutputDebugStringAPI.cpp",
+        "https://github.com/a0rtega/pafish/blob/master/pafish/debuggers.c"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "OutputDebugStringAPI"
+        ],
+        "pafish": [
+          "debug_outputdebugstring"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Detach in-guest debuggers and launch the sample normally. Remove debugger-only launch flags and verify results against an uninstrumented image; keep legitimate security settings when they explain the observation.",
+        "chimera": "Agentless DRAKVUF should not attach a Windows debugger or Linux ptrace tracer. Check launch wrappers and image troubleshooting tools; cpuidmon, hidsim and firmware overrides do not alter debugger state."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.peb_debug_flags",
+      "technique": "debugger.api_flags",
+      "status": "implemented",
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Direct own-bitness PEB BeingDebugged and NtGlobalFlag 0x70 bits. GFlags may set these without attachment; the WOW64 native 64-bit PEB is not read.",
+      "severity": "high",
+      "references": [
+        "https://anti-debug.checkpoint.com/techniques/debug-flags.html",
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/BeingDebugged.cpp",
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/NtGlobalFlag.cpp"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "IsDebuggerPresentPEB",
+          "NtGlobalFlag"
+        ],
+        "pafish": [
+          "debug_beingdebugged_peb"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Detach in-guest debuggers and launch the sample normally. Remove debugger-only launch flags and verify results against an uninstrumented image; keep legitimate security settings when they explain the observation.",
+        "chimera": "Agentless DRAKVUF should not attach a Windows debugger or Linux ptrace tracer. Check launch wrappers and image troubleshooting tools; cpuidmon, hidsim and firmware overrides do not alter debugger state."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.process_instrumentation_callback",
+      "technique": "instrumentation.tracing_facilities",
+      "status": "implemented",
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Best-effort read-only NtQueryInformationProcess class 40. The public phnt declaration is set-only, so many systems correctly return skipped. No callback is installed or removed; no undocumented kernel-memory access is attempted.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/winsiderss/phnt/blob/master/ntpsapi.h"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Remove unnecessary in-process injection or hooks from the analysis path and compare with the same OS build without monitoring. Validate legitimate hotpatches, forwarding thunks and security products before treating byte differences as instrumentation.",
+        "chimera": "DRAKVUF normally observes through VMI instead of user DLL patches. Remove residual guest monitors from the image; invisible breakpoint views may pass byte scans yet remain visible to the latency check. Disabling Defender does not by itself fix unrelated hooks."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.system_export_prologues",
+      "technique": "instrumentation.inline_hooks",
+      "status": "implemented",
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Prologues of 27 commonly hooked kernel32/kernelbase/user32/shell32/ws2_32/advapi32 exports. Branches are followed; a hook is an INT3 or a branch into private memory or a non-system image. Forwarding thunks into kernelbase are normal.",
+      "severity": "high",
+      "references": [
+        "https://learn.microsoft.com/en-us/windows/win32/debug/pe-format",
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html",
+        "https://github.com/a0rtega/pafish/blob/master/pafish/hooks.c",
+        "https://unprotect.it/technique/detecting-hooked-function/"
+      ],
+      "equivalents": {
+        "pafish": [
+          "check_hook_CreateProcessA_m1",
+          "check_hook_DeleteFileW_m1",
+          "check_hook_ShellExecuteExW_m1"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Remove unnecessary in-process injection or hooks from the analysis path and compare with the same OS build without monitoring. Validate legitimate hotpatches, forwarding thunks and security products before treating byte differences as instrumentation.",
+        "chimera": "DRAKVUF normally observes through VMI instead of user DLL patches. Remove residual guest monitors from the image; invisible breakpoint views may pass byte scans yet remain visible to the latency check. Disabling Defender does not by itself fix unrelated hooks."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.system_module_text_integrity",
+      "technique": "instrumentation.module_integrity",
+      "status": "implemented",
+      "reason": null,
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Compares ntdll/kernelbase .text against matching disk PE images, excluding loader relocation slots. Reports differing bytes and nearest exported names, not exact function boundaries; hotpatches can explain differences.",
+      "severity": "high",
+      "references": [
+        "https://learn.microsoft.com/en-us/windows/win32/debug/pe-format"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Remove unnecessary in-process injection or hooks from the analysis path and compare with the same OS build without monitoring. Validate legitimate hotpatches, forwarding thunks and security products before treating byte differences as instrumentation.",
+        "chimera": "DRAKVUF normally observes through VMI instead of user DLL patches. Remove residual guest monitors from the image; invisible breakpoint views may pass byte scans yet remain visible to the latency check. Disabling Defender does not by itself fix unrelated hooks."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.thread_hide_roundtrip",
+      "technique": "debugger.debug_objects",
+      "status": "implemented",
+      "reason": null,
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "A disposable thread sets and queries ThreadHideFromDebugger; reports a success-looking call whose flag was not set. Runner threads remain visible and the worker performs no exception probes.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/winsiderss/phnt/blob/master/ntpsapi.h",
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/NtSetInformationThread_ThreadHideFromDebugger.cpp"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "NtSetInformationThread_ThreadHideFromDebugger"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Detach in-guest debuggers and launch the sample normally. Remove debugger-only launch flags and verify results against an uninstrumented image; keep legitimate security settings when they explain the observation.",
+        "chimera": "Agentless DRAKVUF should not attach a Windows debugger or Linux ptrace tracer. Check launch wrappers and image troubleshooting tools; cpuidmon, hidsim and firmware overrides do not alter debugger state."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.unexpected_loaded_modules",
+      "technique": "instrumentation.injected_libraries",
+      "status": "implemented",
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Modules in this process matching al-khaser's loaded_dlls list exactly (AVG, Avast, Sandboxie, dbghelp, iDefense, SunBelt, Virtual PC, WPE Pro, Comodo) or instrumentation frameworks (Frida, DynamoRIO, Pin, Detours, EasyHook, Cuckoo/CAPE monitors, ScyllaHide).",
+      "severity": "medium",
+      "references": [
+        "https://learn.microsoft.com/en-us/windows/win32/api/psapi/nf-psapi-enumprocessmodules",
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiVM/Generic.cpp",
+        "https://github.com/kernelwernel/VMAware/blob/main/src/vmaware.hpp"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "loaded_dlls",
+          "ScanForModules_EnumProcessModulesEx_All"
+        ],
+        "vmaware": [
+          "DLL"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Remove unnecessary in-process injection or hooks from the analysis path and compare with the same OS build without monitoring. Validate legitimate hotpatches, forwarding thunks and security products before treating byte differences as instrumentation.",
+        "chimera": "DRAKVUF normally observes through VMI instead of user DLL patches. Remove residual guest monitors from the image; invisible breakpoint views may pass byte scans yet remain visible to the latency check. Disabling Defender does not by itself fix unrelated hooks."
+      },
+      "params": []
+    },
+    {
+      "id": "win.env.cpu_cache_descriptors",
+      "technique": "cpu.feature_consistency",
+      "status": "implemented",
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Counts deterministic cache subleaves, legacy descriptor bytes and AMD legacy L2 presence. Reports missing cache information conservatively; leaf 2 may include TLB descriptors.",
+      "severity": "low",
+      "references": [
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Present a coherent CPU policy: match vendor, brand, feature dependencies, cache and topology to the configured vCPUs and real model. Do not advertise instructions the guest cannot execute.",
+        "chimera": "Validate Xen CPUID policy together with cpuidmon -s. Host-derived SMBIOS does not change CPUID. Test both guests and every advertised CPU leaf after masking."
+      },
+      "params": []
+    },
+    {
+      "id": "win.env.cpu_descriptor_tables",
+      "technique": "cpu.descriptor_tables",
+      "status": "implemented",
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Guarded SIDT/SGDT/SLDT/STR/SMSW. The historical rules (al-khaser idt_trick/gdt_trick: base high byte 0xFF; str_trick: TR = 0x4000) are applied to native 32-bit processes only. UMIP makes the instructions fault or return emulated values; on 64-bit systems discrimination is very low.",
+      "severity": "low",
+      "references": [
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html",
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiVM/Generic.cpp",
+        "https://github.com/kernelwernel/VMAware/blob/main/src/vmaware.hpp"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "gdt_trick",
+          "idt_trick",
+          "ldt_trick",
+          "str_trick"
+        ],
+        "vmaware": [
+          "SYSTEM_REGISTERS",
+          "VMWARE_STR"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 5,
+        "how": "Corroborate descriptor observations against the exact OS and CPU. Preserve architectural privilege/UMIP behavior rather than spoofing arbitrary addresses; modern descriptor placement has little standalone value.",
+        "chimera": "Xen and guest UMIP policy may fault or emulate these instructions. cpuidmon -s cannot alter descriptor placement. Do not modify guest tables to satisfy a historical heuristic."
+      },
+      "params": []
+    },
+    {
+      "id": "win.env.cpu_emulation_quirks",
+      "technique": "cpu.emulation_quirks",
+      "status": "implemented",
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Records BSF/BSR zero-source destination values and ZF, plus 16-bit SHLD count 17. Only incorrect defined ZF behavior is detected; undefined output values are never treated as universal emulator signatures.",
+      "severity": "low",
+      "references": [
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Correct violations of defined instruction semantics in the emulator. Keep undefined flag/destination observations separate from portable detection decisions and validate against multiple physical CPUs.",
+        "chimera": "Xen normally executes these integer instructions on hardware. Android-x86 under TCG needs independent validation; cpuidmon masking does not fix instruction semantics."
+      },
+      "params": []
+    },
+    {
+      "id": "win.env.cpu_feature_consistency",
+      "technique": "cpu.feature_consistency",
+      "status": "implemented",
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Checks hypervisor bit versus leaf ranges, OSXSAVE/XSAVE/AVX dependencies, VMX/SVM vendor contradictions and missing features on three named models. Missing model features have low confidence because firmware and policy may hide them.",
+      "severity": "medium",
+      "references": [
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html",
+        "https://github.com/xen-project/xen/blob/RELEASE-4.19.0/xen/include/public/arch-x86/cpuid.h",
+        "https://www.intel.com/content/www/us/en/products/sku/97128/intel-core-i77700-processor-8m-cache-up-to-4-20-ghz/specifications.html",
+        "https://www.intel.com/content/www/us/en/products/sku/81709/intel-xeon-processor-e52670-v3-30m-cache-2-30-ghz/specifications.html",
+        "https://www.amd.com/en/support/downloads/drivers.html/processors/ryzen/ryzen-3000-series/amd-ryzen-5-3600.html"
+      ],
+      "equivalents": {
+        "vmaware": [
+          "CPU_HEURISTIC"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Present a coherent CPU policy: match vendor, brand, feature dependencies, cache and topology to the configured vCPUs and real model. Do not advertise instructions the guest cannot execute.",
+        "chimera": "Validate Xen CPUID policy together with cpuidmon -s. Host-derived SMBIOS does not change CPUID. Test both guests and every advertised CPU leaf after masking."
+      },
+      "params": []
+    },
+    {
+      "id": "win.env.cpu_topology_consistency",
+      "technique": "cpu.topology_consistency",
+      "status": "implemented",
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "CPUID leaf 0xB/0x1F package thread count and leaf 4 core count against each other, the OS online-CPU count and a sourced table of real models (Intel ARK / AMD specifications). An OS count above the listed model's threads is a contradiction; other mismatches are cautions because affinity, hotplug and SMT settings explain them.",
+      "severity": "medium",
+      "references": [
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html",
+        "https://www.intel.com/content/www/us/en/products/sku/97128/intel-core-i77700-processor-8m-cache-up-to-4-20-ghz/specifications.html",
+        "https://www.intel.com/content/www/us/en/products/sku/81709/intel-xeon-processor-e52670-v3-30m-cache-2-30-ghz/specifications.html",
+        "https://www.amd.com/en/support/downloads/drivers.html/processors/ryzen/ryzen-3000-series/amd-ryzen-5-3600.html",
+        "https://ark.intel.com",
+        "https://www.amd.com/en/products/specifications"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Present a coherent CPU policy: match vendor, brand, feature dependencies, cache and topology to the configured vCPUs and real model. Do not advertise instructions the guest cannot execute.",
+        "chimera": "Validate Xen CPUID policy together with cpuidmon -s. Host-derived SMBIOS does not change CPUID. Test both guests and every advertised CPU leaf after masking."
+      },
+      "params": []
+    },
+    {
+      "id": "win.env.cpu_vendor_brand_consistency",
+      "technique": "cpu.feature_consistency",
+      "status": "implemented",
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Leaf-0 vendor against the brand string (Intel vs AMD), and the raw untrimmed brand strings only Bochs reports (Pafish bochs_cpu_amd1/intel1). The AMD 0x8FFFFFFF easter-egg leaf (bochs_cpu_amd2) is recorded only: current AMD parts also return zeros there.",
+      "severity": "medium",
+      "references": [
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html",
+        "https://github.com/a0rtega/pafish/blob/master/pafish/bochs.c",
+        "https://github.com/kernelwernel/VMAware/blob/main/src/vmaware.hpp"
+      ],
+      "equivalents": {
+        "pafish": [
+          "bochs_cpu_amd1",
+          "bochs_cpu_amd2",
+          "bochs_cpu_intel1"
+        ],
+        "vmaware": [
+          "BOCHS_CPU"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Present a coherent CPU policy: match vendor, brand, feature dependencies, cache and topology to the configured vCPUs and real model. Do not advertise instructions the guest cannot execute.",
+        "chimera": "Validate Xen CPUID policy together with cpuidmon -s. Host-derived SMBIOS does not change CPUID. Test both guests and every advertised CPU leaf after masking."
+      },
+      "params": []
+    },
+    {
+      "id": "win.env.cpuid_enlightenments",
+      "technique": "cpu.hypervisor_leaf_range",
+      "status": "implemented",
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Looks for the Hyper-V TLFS interface signature 'Hv#1' (or SimpleVisor 'Shv') at base+1 of every hypervisor leaf base and records the feature, recommendation and limit leaves.",
+      "severity": "high",
+      "references": [
+        "https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/tlfs/feature-discovery",
+        "https://github.com/xen-project/xen/blob/RELEASE-4.19.0/xen/include/public/arch-x86/cpuid.h",
+        "https://github.com/NotRequiem/VMAware/blob/main/src/vmaware.hpp",
+        "https://github.com/tklengyel/drakvuf/blob/main/src/plugins/cpuidmon/cpuidmon.cpp"
+      ],
+      "equivalents": {
+        "vmaware": [
+          "CPUID_SIGNATURE",
+          "VIRTUAL_PROCESSORS"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 4,
+        "how": "Mask exposed hypervisor interfaces consistently, including relocated ranges and interface signatures. Remove dependent guest enlightenments only after checking boot, clock and interrupt behavior.",
+        "chimera": "The reviewed upstream cpuidmon stealth path clears leaf 1 ECX[31] and 0x40000000 through 0x40000004. Audit the deployed build for relocated Xen 0x40000100 and Viridian/Hyper-V leaves; do not assume -s covers them. Xen defines relocation in arch-x86/cpuid.h."
+      },
+      "params": []
+    },
+    {
+      "id": "win.env.cpuid_hypervisor_leaf_range",
+      "technique": "cpu.hypervisor_leaf_range",
+      "status": "implemented",
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Scans the 512 0x100-aligned bases 0x40000000-0x4001FF00 for a hypervisor leaf range (max leaf inside the base's window plus a nonzero signature). Xen moves its leaves to 0x40000100 when Viridian is enabled; KVM can sit behind Hyper-V leaves.",
+      "severity": "high",
+      "references": [
+        "https://github.com/xen-project/xen/blob/RELEASE-4.19.0/xen/include/public/arch-x86/cpuid.h",
+        "https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/tlfs/feature-discovery",
+        "https://github.com/tklengyel/drakvuf/blob/main/src/plugins/cpuidmon/cpuidmon.cpp",
+        "https://xenbits.xen.org/gitweb/?p=xen.git;a=blob;f=xen/include/public/arch-x86/cpuid.h",
+        "https://www.kernel.org/doc/html/latest/virt/kvm/x86/cpuid.html"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 4,
+        "how": "Mask exposed hypervisor interfaces consistently, including relocated ranges and interface signatures. Remove dependent guest enlightenments only after checking boot, clock and interrupt behavior.",
+        "chimera": "The reviewed upstream cpuidmon stealth path clears leaf 1 ECX[31] and 0x40000000 through 0x40000004. Audit the deployed build for relocated Xen 0x40000100 and Viridian/Hyper-V leaves; do not assume -s covers them. Xen defines relocation in arch-x86/cpuid.h."
+      },
+      "params": []
+    },
+    {
+      "id": "win.env.hypercall_behavior",
+      "technique": "cpu.undefined_instruction_behaviour",
+      "status": "implemented",
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "VMCALL and VMMCALL at CPL3 with an invalid call number (0x0BADC0DE), guarded. Bare metal raises #UD for both; Xen and KVM return -EPERM to user mode without a fault. Records whether RAX changed.",
+      "severity": "medium",
+      "references": [
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html",
+        "https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/tlfs/feature-discovery",
+        "https://xenbits.xen.org/gitweb/?p=xen.git;a=blob;f=xen/arch/x86/hvm/hypercall.c",
+        "https://github.com/torvalds/linux/blob/master/arch/x86/kvm/x86.c",
+        "https://github.com/kernelwernel/VMAware/blob/main/src/vmaware.hpp"
+      ],
+      "equivalents": {
+        "vmaware": [
+          "KVM_INTERCEPTION"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 5,
+        "how": "Make CPL3 VMCALL/VMMCALL raise #UD in the guest as on bare metal; this needs a hypervisor change.",
+        "chimera": "Xen 4.19 hvm_hypercall() answers CPL>0 hypercalls with -EPERM instead of injecting #UD; hiding it needs a Xen patch. cpuidmon does not affect it."
+      },
+      "params": []
+    },
+    {
+      "id": "win.env.virtualpc_opcode",
+      "technique": "cpu.undefined_instruction_behaviour",
+      "status": "implemented",
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Guarded VirtualPC version query 0F 3F 07 0B with EAX=1 and EBX=0; records whether it returns or faults.",
+      "severity": "high",
+      "references": [
+        "https://github.com/NotRequiem/VMAware/blob/main/src/vmaware.hpp"
+      ],
+      "equivalents": {
+        "vmaware": [
+          "VPC_INVALID"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Present a coherent CPU policy: match vendor, brand, feature dependencies, cache and topology to the configured vCPUs and real model. Do not advertise instructions the guest cannot execute.",
+        "chimera": "Validate Xen CPUID policy together with cpuidmon -s. Host-derived SMBIOS does not change CPUID. Test both guests and every advertised CPU leaf after masking."
+      },
+      "params": []
+    },
+    {
+      "id": "win.env.vmware_backdoor",
+      "technique": "cpu.vmware_backdoor",
+      "status": "implemented",
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "IN from port 0x5658 with EAX='VMXh' and commands 0x0A (get version) and 0x14 (memory size), guarded. Outside VMware the IN faults (#GP at CPL3); a 'VMXh' echo in EBX is VMware.",
+      "severity": "high",
+      "references": [
+        "https://github.com/vmware/open-vm-tools/blob/master/open-vm-tools/lib/include/backdoor_def.h",
+        "https://evasions.checkpoint.com/src/Anti-VM/anti-vm.html"
+      ],
+      "equivalents": {
+        "invizzzible": [
+          "vmware/HypervisorPort"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Restrict user-mode VMware backdoor access where supported, after checking guest-tools dependencies. An expected privilege fault is a negative response, not a probe failure.",
+        "chimera": "Xen should reject these VMware-specific I/O requests. Investigate unexpected successful signatures in nested or compatibility configurations; cpuidmon and firmware strings do not govern this port."
+      },
+      "params": []
+    },
+    {
+      "id": "win.timing.cpuid_leaf_timing",
+      "technique": "timing.cpuid_vmexit",
+      "status": "implemented",
+      "reason": null,
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Interleaved LFENCE/RDTSC latencies for leaves 0,1,7,0x40000000,0x40000100,0x80000000; compares largest and smallest medians. Research heuristic also triggered by real CPU leaf-cost differences; not VMAware CPUID_SIGNATURE.",
+      "severity": "low",
+      "references": [
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html",
+        "https://www.itl.nist.gov/div898/handbook/eda/section3/eda35h.htm"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 5,
+        "how": "Calibrate on comparable bare metal and minimize exits and host scheduling noise. TSC offsetting/scaling and exit-cost compensation require coordinated hypervisor work; a static offset cannot remove per-exit cost and clock compensation must remain consistent across vCPUs and clocks.",
+        "chimera": "Not fixable by configuration. cpuidmon -s rewrites CPUID values but turns every CPUID into a vm_event round trip to dom0 (about 35x the plain exit cost, see the G2 numbers); masking through the Xen CPUID policy instead (xl.cfg cpuid=, verify that Xen 4.19 honours clearing the bit for HVM) removes the monitor cost but not the ~2.5k-cycle exit. Hiding the exit itself needs Xen-side TSC compensation for CPUID exits, which Xen 4.19 does not have; tsc_mode, TSC scaling and vCPU pinning do not remove per-exit cost. CHIMERA G2 measurements (2026-10-29, i7-13700HX host): median RDTSC;CPUID;RDTSC 2398-3720 cycles on the Xen HVM guest without an introspection monitor and 92530-94514 cycles with DRAKVUF cpuidmon -s, which forwards every CPUID to the dom0 monitor; al-khaser's avg10 rule fired 1000/1000 in every configuration, dom0 included (1590-1964 cycles)."
+      },
+      "params": [
+        {
+          "name": "timing.leaf_iterations",
+          "default": 2000,
+          "meaning": "Samples per leaf; clamped to 100..20000 and four seconds."
+        },
+        {
+          "name": "timing.leaf_ratio",
+          "default": 3,
+          "meaning": "Largest/smallest median ratio; local research default, clamped to 1..1000; calibrate on matched bare metal."
+        }
+      ],
+      "tier": "research"
+    },
+    {
+      "id": "win.timing.locky_api_ratio",
+      "technique": "timing.rdtsc_api_ratio",
+      "status": "implemented",
+      "reason": null,
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Ten raw RDTSC measurements around GetProcessHeap and invalid CloseHandle; detection requires every CloseHandle/heap ratio below the historical threshold. Modern CPUs, API changes and Wine limit discrimination.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/TimingAttacks/timing.cpp"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "rdtsc_diff_locky"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 5,
+        "how": "Calibrate on comparable bare metal and minimize exits and host scheduling noise. TSC offsetting/scaling and exit-cost compensation require coordinated hypervisor work; a static offset cannot remove per-exit cost and clock compensation must remain consistent across vCPUs and clocks.",
+        "chimera": "cpuidmon -s changes CPUID values, not VM-exit latency; its handling can add cost. Xen TSC mode or vCPU pinning alone cannot erase that cost. Validate any Xen/DRAKVUF compensation against raw RDTSC, RDTSCP and OS clocks; retain residual-risk reporting."
+      },
+      "params": [
+        {
+          "name": "timing.locky_ratio",
+          "default": 10,
+          "meaning": "Historical all-ten ratio boundary; clamped to 1..10000. Guarded invalid CloseHandle exceptions cause a skip."
+        }
+      ]
+    },
+    {
+      "id": "win.timing.rdtsc_cpuid_vmexit",
+      "technique": "timing.cpuid_vmexit",
+      "status": "implemented",
+      "reason": null,
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Pinned to one CPU, 2000 warm-up rounds, then raw RDTSC;RDTSC (floor) and RDTSC;CPUID;RDTSC pairs plus independent al-khaser ten-round integer averages. Reports the CHIMERA cpuid-timing harness statistics (min, p5, p25, median, p75, p95, p99, max, mean) plus p90, trimmed mean and MAD, alkhaser_style_detected k/n, and classifies the median as native_range, vm_exit (>= 1000 cycles) or cpuid_trapped_to_monitor (>= 20000 cycles). Replaces the separate CHIMERA cpuid-timing harness.",
+      "severity": "high",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/TimingAttacks/timing.cpp",
+        "https://github.com/a0rtega/pafish/blob/master/pafish/cpu.c",
+        "https://www.itl.nist.gov/div898/handbook/eda/section3/eda35h.htm",
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html",
+        "https://github.com/kernelwernel/VMAware/blob/main/src/vmaware.hpp",
+        "https://www.itl.nist.gov/div898/handbook/prc/section2/prc262.htm"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "rdtsc_diff_vmexit"
+        ],
+        "pafish": [
+          "cpu_rdtsc_force_vmexit",
+          "cpu_rdtsc"
+        ],
+        "vmaware": [
+          "TIMER"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 5,
+        "how": "Calibrate on comparable bare metal and minimize exits and host scheduling noise. TSC offsetting/scaling and exit-cost compensation require coordinated hypervisor work; a static offset cannot remove per-exit cost and clock compensation must remain consistent across vCPUs and clocks.",
+        "chimera": "Not fixable by configuration. cpuidmon -s rewrites CPUID values but turns every CPUID into a vm_event round trip to dom0 (about 35x the plain exit cost, see the G2 numbers); masking through the Xen CPUID policy instead (xl.cfg cpuid=, verify that Xen 4.19 honours clearing the bit for HVM) removes the monitor cost but not the ~2.5k-cycle exit. Hiding the exit itself needs Xen-side TSC compensation for CPUID exits, which Xen 4.19 does not have; tsc_mode, TSC scaling and vCPU pinning do not remove per-exit cost. CHIMERA G2 measurements (2026-10-29, i7-13700HX host): median RDTSC;CPUID;RDTSC 2398-3720 cycles on the Xen HVM guest without an introspection monitor and 92530-94514 cycles with DRAKVUF cpuidmon -s, which forwards every CPUID to the dom0 monitor; al-khaser's avg10 rule fired 1000/1000 in every configuration, dom0 included (1590-1964 cycles)."
+      },
+      "params": [
+        {
+          "name": "timing.iterations",
+          "default": 100000,
+          "meaning": "Requested paired samples; clamped to 100..1000000 and a four-second sampling budget."
+        },
+        {
+          "name": "timing.trials",
+          "default": 10,
+          "meaning": "Independent ten-round average trials; clamped to 1..1000 with a separate four-second budget."
+        },
+        {
+          "name": "timing.vmexit_cycles",
+          "default": 1000,
+          "meaning": "Cycle threshold for the median and avg10 trials; clamped to 1..1e9. Default is al-khaser rdtsc_diff_vmexit; zero or backward counters are anomalous."
+        },
+        {
+          "name": "timing.introspection_cycles",
+          "default": 20000,
+          "meaning": "Median above which CPUID is classified as trapped to an introspection monitor; clamped to 1..1e10. Default from the CHIMERA G2 measurements (2.4-3.7k plain Xen HVM, 92-95k with DRAKVUF cpuidmon -s)."
+        }
+      ]
+    },
+    {
+      "id": "win.timing.sleep_acceleration",
+      "technique": "timing.sleep_acceleration",
+      "status": "implemented",
+      "reason": null,
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Measures each native wait against TSC, monotonic/QPC, wall and tick/boot clocks. Detects early completion or disagreement beyond tolerance plus 20-ms quantization slack. Clocks can share hardware; coherent acceleration remains undetectable.",
+      "severity": "high",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/TimingAttacks/timing.cpp",
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiVM/Generic.cpp",
+        "https://man7.org/linux/man-pages/man2/nanosleep.2.html",
+        "https://man7.org/linux/man-pages/man2/select.2.html",
+        "https://learn.microsoft.com/en-us/windows/win32/sysinfo/acquiring-high-resolution-time-stamps"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "accelerated_sleep",
+          "timing_NtDelayexecution",
+          "timing_WaitForSingleObject"
+        ],
+        "pafish": [
+          "gensandbox_sleep_patched"
+        ],
+        "invizzzible": [
+          "generic/PerformanceCounter",
+          "generic/DelaysAccumulation"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 4,
+        "how": "Disable sleep acceleration for fidelity runs, or coordinate all wait APIs and time sources while preserving monotonicity, timeout semantics and thread scheduling. Compare accelerated and normal runs.",
+        "chimera": "CHIMERA optional time acceleration can shorten Sleep/NtDelayExecution/waits or Linux nanosleep/select while leaving TSC or shared time unchanged. Disable it for baseline tests; coherent acceleration can still evade these comparisons."
+      },
+      "params": [
+        {
+          "name": "timing.sleep_ms",
+          "default": 200,
+          "meaning": "Requested milliseconds per API; clamped to 50..500. Windows uses Sleep, event WaitForSingleObject and NtDelayExecution; Linux uses nanosleep and select."
+        },
+        {
+          "name": "timing.sleep_tolerance",
+          "default": 0.2,
+          "meaning": "Fractional clock/early-wait tolerance, local policy clamped to 0.01..0.8; also adds 20 ms for Windows tick quantization."
+        }
+      ]
+    },
+    {
+      "id": "win.timing.sleep_acceleration_long",
+      "technique": "timing.sleep_acceleration",
+      "status": "implemented",
+      "reason": null,
+      "cost": "slow",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Measures each native wait against TSC, monotonic/QPC, wall and tick/boot clocks. Detects early completion or disagreement beyond tolerance plus 20-ms quantization slack. Clocks can share hardware; coherent acceleration remains undetectable. Slow variant runs under deep or explicit selection.",
+      "severity": "high",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/TimingAttacks/timing.cpp",
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiVM/Generic.cpp",
+        "https://man7.org/linux/man-pages/man2/nanosleep.2.html",
+        "https://man7.org/linux/man-pages/man2/select.2.html",
+        "https://learn.microsoft.com/en-us/windows/win32/sysinfo/acquiring-high-resolution-time-stamps"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "accelerated_sleep",
+          "timing_NtDelayexecution",
+          "timing_WaitForSingleObject"
+        ],
+        "pafish": [
+          "gensandbox_sleep_patched"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 4,
+        "how": "Disable sleep acceleration for fidelity runs, or coordinate all wait APIs and time sources while preserving monotonicity, timeout semantics and thread scheduling. Compare accelerated and normal runs.",
+        "chimera": "CHIMERA optional time acceleration can shorten Sleep/NtDelayExecution/waits or Linux nanosleep/select while leaving TSC or shared time unchanged. Disable it for baseline tests; coherent acceleration can still evade these comparisons."
+      },
+      "params": [
+        {
+          "name": "timing.long_sleep_ms",
+          "default": 5000,
+          "meaning": "Requested milliseconds per API; clamped to 50..15000. Windows uses Sleep, event WaitForSingleObject and NtDelayExecution; Linux uses nanosleep and select."
+        },
+        {
+          "name": "timing.sleep_tolerance",
+          "default": 0.2,
+          "meaning": "Fractional clock/early-wait tolerance, local policy clamped to 0.01..0.8; also adds 20 ms for Windows tick quantization."
+        }
+      ]
+    },
+    {
+      "id": "win.timing.syscall_instrumentation_latency",
+      "technique": "timing.instrumentation_latency",
+      "status": "implemented",
+      "reason": null,
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Research side channel. Batched (8 calls per clock read) latency of a failing call that registry/file monitors trace (Windows: NtOpenKey on a random absent key; Linux: openat of a random absent name in /), of a cheap syscall (NtQueryInformationProcess / getpid) and of a user-mode arithmetic reference. Detected when a median exceeds the traced floor or the traced call is far slower than the cheap one. Moderate confidence; cannot name a monitor.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/tklengyel/drakvuf/tree/main/src/plugins/syscalls",
+        "https://github.com/winsiderss/phnt/blob/master/ntpsapi.h",
+        "https://man7.org/linux/man-pages/man2/open.2.html",
+        "https://man7.org/linux/man-pages/man2/getpid.2.html",
+        "https://www.itl.nist.gov/div898/handbook/eda/section3/eda35h.htm"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 4,
+        "how": "Trace fewer calls, or only the calls an analysis needs; each traced call costs a trap. Keep in-guest filter drivers and audit rules to what the image needs.",
+        "chimera": "Every DRAKVUF breakpoint trap (syscalls, regmon, filetracer, procmon plugins) is a VM exit plus a vm_event round trip to dom0, which costs tens of microseconds per call. Disable plugins that are not needed for a run, and prefer the syscalls plugin's filter (-S) to tracing every system call. The cost cannot be hidden from the guest."
+      },
+      "params": [
+        {
+          "name": "instrumentation.iterations",
+          "default": 2000,
+          "meaning": "Batches per series; clamped to 100..20000 and a three-second budget."
+        },
+        {
+          "name": "instrumentation.min_latency_ns",
+          "default": 15000,
+          "meaning": "Per-call median (ns) above which a call is treated as trapped; local research default (untraced failing opens cost about 0.3-5 us), calibrate per host."
+        },
+        {
+          "name": "instrumentation.latency_ratio",
+          "default": 30,
+          "meaning": "Traced-call / cheap-syscall median ratio for selective tracing; local research default."
+        }
+      ],
+      "tier": "research"
+    },
+    {
+      "id": "win.timing.timer_resolution",
+      "technique": "timing.tsc_stability",
+      "status": "implemented",
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Declared clock resolution and 10000 observed monotonic clock increments, including API overhead and backward counts. Coarse clocks alone do not identify a sandbox.",
+      "severity": "low",
+      "references": [
+        "https://learn.microsoft.com/en-us/windows/win32/sysinfo/acquiring-high-resolution-time-stamps",
+        "https://man7.org/linux/man-pages/man2/clock_getres.2.html"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 5,
+        "how": "Calibrate on comparable bare metal and minimize exits and host scheduling noise. TSC offsetting/scaling and exit-cost compensation require coordinated hypervisor work; a static offset cannot remove per-exit cost and clock compensation must remain consistent across vCPUs and clocks.",
+        "chimera": "cpuidmon -s changes CPUID values, not VM-exit latency; its handling can add cost. Xen TSC mode or vCPU pinning alone cannot erase that cost. Validate any Xen/DRAKVUF compensation against raw RDTSC, RDTSCP and OS clocks; retain residual-risk reporting."
+      },
+      "params": [
+        {
+          "name": "timing.resolution_ns",
+          "default": 1000000,
+          "meaning": "Warn if minimum observed positive increment exceeds this local 1-ms threshold; clamped to 1..1e9 ns."
+        }
+      ]
+    },
+    {
+      "id": "win.timing.tsc_frequency_stability",
+      "technique": "timing.tsc_stability",
+      "status": "implemented",
+      "reason": null,
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "TSC frequency against the monotonic clock in repeated bounded 20-ms busy windows; reports MHz statistics and relative range. Busy calibration avoids using a possibly accelerated sleep.",
+      "severity": "medium",
+      "references": [
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html",
+        "https://learn.microsoft.com/en-us/windows/win32/sysinfo/acquiring-high-resolution-time-stamps",
+        "https://www.itl.nist.gov/div898/handbook/eda/section3/eda35h.htm"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 5,
+        "how": "Calibrate on comparable bare metal and minimize exits and host scheduling noise. TSC offsetting/scaling and exit-cost compensation require coordinated hypervisor work; a static offset cannot remove per-exit cost and clock compensation must remain consistent across vCPUs and clocks.",
+        "chimera": "cpuidmon -s changes CPUID values, not VM-exit latency; its handling can add cost. Xen TSC mode or vCPU pinning alone cannot erase that cost. Validate any Xen/DRAKVUF compensation against raw RDTSC, RDTSCP and OS clocks; retain residual-risk reporting."
+      },
+      "params": [
+        {
+          "name": "timing.tsc_windows",
+          "default": 5,
+          "meaning": "Busy calibration windows; clamped to 3..20, each capped at two million clock polls."
+        },
+        {
+          "name": "timing.tsc_drift_fraction",
+          "default": 0.1,
+          "meaning": "Relative (max-min)/median frequency tolerance; local research default, clamped to 0.001..1."
+        }
+      ]
+    },
+    {
+      "id": "win.timing.tsc_instruction_availability",
+      "technique": "timing.tsc_stability",
+      "status": "implemented",
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Checks RDTSC and advertised RDTSCP under the fault guard. Absence of optional RDTSCP alone is not detected; OS restrictions can explain advertised-but-blocked instructions.",
+      "severity": "low",
+      "references": [
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Present a coherent CPU policy: match vendor, brand, feature dependencies, cache and topology to the configured vCPUs and real model. Do not advertise instructions the guest cannot execute.",
+        "chimera": "Validate Xen CPUID policy together with cpuidmon -s. Host-derived SMBIOS does not change CPUID. Test both guests and every advertised CPU leaf after masking."
+      },
+      "params": []
+    },
+    {
+      "id": "win.env.eip_overflow",
+      "technique": "cpu.emulation_quirks",
+      "status": "not_feasible",
+      "reason": "Unsafe: the EIP_OVERFLOW probe can crash Xen guests. Never executed, even under deep profile.",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "equivalents": {
+        "vmaware": [
+          "EIP_OVERFLOW"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 5,
+        "how": "Do not run this destabilizing probe. Use safe guarded instruction and timing observations and review the hypervisor separately.",
+        "chimera": "Excluded because Xen guest stability is a binding requirement. A process-level signal/exception guard cannot recover a guest/kernel crash."
+      },
+      "references": [
+        "https://github.com/NotRequiem/VMAware"
+      ],
+      "params": []
+    },
+    {
+      "id": "win.design.software_breakpoint_entry",
+      "technique": "debugger.exception_tricks",
+      "status": "implemented",
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Reads the code of a small compiled function (entry to RET) for INT3 encodings (0xCC, CD 03) without executing it. Hidden EPT/altp2m breakpoints read as the original bytes.",
+      "severity": "high",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/SoftwareBreakpoints.cpp",
+        "https://anti-debug.checkpoint.com/techniques/process-memory.html"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "SoftwareBreakpoints"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Do not set software breakpoints in the sample from inside the guest; use hardware or hypervisor breakpoints.",
+        "chimera": "DRAKVUF breakpoints are hidden through altp2m shadow views, so they read as original bytes; a detection here means an in-guest debugger patched the code."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.debug_object_count",
+      "technique": "debugger.debug_objects",
+      "status": "implemented",
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "NtQueryObject(ObjectTypesInformation): the DebugObject type's object/handle count is nonzero while any user-mode debugging session exists in the guest.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/NtQueryObject_AllTypesInformation.cpp",
+        "https://anti-debug.checkpoint.com/techniques/object-handles.html",
+        "https://github.com/winsiderss/phnt/blob/master/ntobapi.h"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "NtQueryObject_ObjectAllTypesInformation"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Do not attach a user-mode debugger to the sample or to other processes in the analysis guest; launch samples normally and observe from outside the guest.",
+        "chimera": "DRAKVUF is agentless and attaches no Windows debugger, so this should be clean on CHIMERA. A detection means a debugger or troubleshooting tool was left in the golden image or the launcher."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.debug_privilege",
+      "technique": "debugger.api_flags",
+      "status": "implemented",
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "SeDebugPrivilege enabled in the own token, or csrss.exe (CsrGetProcessId) openable for PROCESS_QUERY_INFORMATION. al-khaser CanOpenCsrss asks for PROCESS_ALL_ACCESS; query access keeps the probe read-only. Elevated administrative launchers can also enable the privilege.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/SeDebugPrivilege.cpp",
+        "https://anti-debug.checkpoint.com/techniques/object-handles.html"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "CanOpenCsrss"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Launch the sample with a normal user or filtered admin token; do not enable SeDebugPrivilege for it.",
+        "chimera": "Check the CHIMERA launcher: a sample started from an elevated service context with SeDebugPrivilege enabled looks debugged."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.unhandled_exception_filter",
+      "technique": "debugger.exception_tricks",
+      "status": "planned",
+      "reason": "Needs a process-wide SetUnhandledExceptionFilter and a truly unhandled exception while other checks run on concurrent threads; not safe in the multi-threaded runner without a separate child process.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser UnhandledExcepFilterTest: raise an exception with a top-level filter installed; a debugger receives it instead.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/UnhandledExceptionFilter_Handler.cpp"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "UnhandledExcepFilterTest"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Do not attach a user-mode debugger to the sample or to other processes in the analysis guest; launch samples normally and observe from outside the guest.",
+        "chimera": "DRAKVUF is agentless and attaches no Windows debugger, so this should be clean on CHIMERA. A detection means a debugger or troubleshooting tool was left in the golden image or the launcher."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.write_watch",
+      "technique": "debugger.api_flags",
+      "status": "planned",
+      "reason": "Implementable read-only; deferred until it is validated against hypervisor-level memory introspection, which does not write guest pages.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser VirtualAlloc_WriteWatch_*: MEM_WRITE_WATCH pages show writes made by a debugger or sandbox that inspects the process.",
+      "severity": "low",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/WriteWatch.cpp"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "VirtualAlloc_WriteWatch_BufferOnly",
+          "VirtualAlloc_WriteWatch_APICalls",
+          "VirtualAlloc_WriteWatch_IsDebuggerPresent",
+          "VirtualAlloc_WriteWatch_CodeWrite"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Do not attach a user-mode debugger to the sample or to other processes in the analysis guest; launch samples normally and observe from outside the guest.",
+        "chimera": "DRAKVUF is agentless and attaches no Windows debugger, so this should be clean on CHIMERA. A detection means a debugger or troubleshooting tool was left in the golden image or the launcher."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.wudf_debugger_present",
+      "technique": "debugger.api_flags",
+      "status": "not_feasible",
+      "reason": "Requires loading the WUDF platform DLL into the agent; the same kernel/user debugger state is already read directly by design.kernel_debugger and the debug-object checks.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser WUDF_IsAnyDebuggerPresent / IsKernelDebuggerPresent / IsUserDebuggerPresent.",
+      "severity": "low",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/WUDF_IsDebuggerPresent.cpp"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "WUDF_IsAnyDebuggerPresent",
+          "WUDF_IsKernelDebuggerPresent",
+          "WUDF_IsUserDebuggerPresent"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Do not attach a user-mode debugger to the sample or to other processes in the analysis guest; launch samples normally and observe from outside the guest.",
+        "chimera": "DRAKVUF is agentless and attaches no Windows debugger, so this should be clean on CHIMERA. A detection means a debugger or troubleshooting tool was left in the golden image or the launcher."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.nt_system_debug_control",
+      "technique": "debugger.kernel_debugger",
+      "status": "not_feasible",
+      "reason": "The result depends on SeDebugPrivilege and on kernel-debugger configuration rather than on a debugger being present; design.kernel_debugger reads the same state without a privileged call.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser NtSystemDebugControl_Command.",
+      "severity": "low",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/NtSystemDebugControl.cpp"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "NtSystemDebugControl_Command"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Do not attach a user-mode debugger to the sample or to other processes in the analysis guest; launch samples normally and observe from outside the guest.",
+        "chimera": "DRAKVUF is agentless and attaches no Windows debugger, so this should be clean on CHIMERA. A detection means a debugger or troubleshooting tool was left in the golden image or the launcher."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.tls_callbacks",
+      "technique": "debugger.exception_tricks",
+      "status": "not_feasible",
+      "reason": "Tests whether a debugger breaks before TLS callbacks at process start; an agent that is already running cannot observe its own start.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser TLSCallbackProcess / TLSCallbackThread.",
+      "severity": "low",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/TLS_callbacks.cpp"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "TLSCallbackProcess",
+          "TLSCallbackThread"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Do not attach a user-mode debugger to the sample or to other processes in the analysis guest; launch samples normally and observe from outside the guest.",
+        "chimera": "DRAKVUF is agentless and attaches no Windows debugger, so this should be clean on CHIMERA. A detection means a debugger or troubleshooting tool was left in the golden image or the launcher."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.low_fragmentation_heap",
+      "technique": "debugger.api_flags",
+      "status": "not_feasible",
+      "reason": "Relies on undocumented, build-specific heap front-end offsets; reading them reliably across Windows 7-11 is not possible without symbols.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser LowFragmentationHeap.",
+      "severity": "low",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiDebug/LowFragmentationHeap.cpp"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "LowFragmentationHeap"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Do not attach a user-mode debugger to the sample or to other processes in the analysis guest; launch samples normally and observe from outside the guest.",
+        "chimera": "DRAKVUF is agentless and attaches no Windows debugger, so this should be clean on CHIMERA. A detection means a debugger or troubleshooting tool was left in the golden image or the launcher."
+      },
+      "params": []
+    },
+    {
+      "id": "win.env.hypervisor_exception_quirks",
+      "technique": "cpu.undefined_instruction_behaviour",
+      "status": "planned",
+      "reason": "Needs multi-trap instruction sequences whose mishandling on a buggy hypervisor can wedge a vCPU; deferred until validated on the CHIMERA Xen guest under the guard.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "VMAware TRAP, SINGLE_STEP and INTERRUPT_SHADOW: how a hypervisor delivers stacked traps, trap flags over exiting instructions and the interrupt shadow after a VM exit.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/kernelwernel/VMAware/blob/main/src/vmaware.hpp"
+      ],
+      "equivalents": {
+        "vmaware": [
+          "TRAP",
+          "SINGLE_STEP",
+          "INTERRUPT_SHADOW"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 5,
+        "how": "Fix exception and interruptibility-state emulation in the hypervisor.",
+        "chimera": "Unvalidated on Xen 4.19 + DRAKVUF; altp2m single-stepping interacts with the trap flag."
+      },
+      "params": []
+    },
+    {
+      "id": "win.env.ept_hook_timing",
+      "technique": "instrumentation.vmi_side_channel",
+      "status": "planned",
+      "reason": "Research probe; needs calibration on the CHIMERA host before it can carry a threshold.",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "VMAware HYPERVISOR_HOOK: timing differences between reading and executing the same page reveal EPT/NPT split views (the altp2m mechanism DRAKVUF uses for hidden breakpoints).",
+      "severity": "medium",
+      "references": [
+        "https://github.com/kernelwernel/VMAware/blob/main/src/vmaware.hpp"
+      ],
+      "equivalents": {
+        "vmaware": [
+          "HYPERVISOR_HOOK"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 5,
+        "how": "Minimise split-view pages and their access traps.",
+        "chimera": "DRAKVUF altp2m execute-only shadow pages trap reads; the residual timing cannot be hidden."
+      },
+      "params": []
+    }
+  ]
+}

@@ -1,0 +1,1304 @@
+{
+  "source_id": "invizzzible",
+  "revision": "d6fa72cb4d51",
+  "commit": "d6fa72cb4d51d4ab51c5d4c76b63e7bf9179bdbe",
+  "fetched": "2026-11-08",
+  "techniques": [
+    {
+      "name": "bochs/BOCHS SystemBiosVersion Registry Key",
+      "detail": "Check if `HKLM\\HARDWARE\\Description\\System' Registry Key has value `SystemBiosVersion'=`BOCHS'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "bochs/BOCHS VideoBiosVersion Registry Key",
+      "detail": "Check if `HKLM\\HARDWARE\\Description\\System' Registry Key has value `VideoBiosVersion'=`BOCHS'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "cuckoo/AgentArtifacts",
+      "detail": "Check if agent artifacts are present in the system.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "cuckoo/AgentListener",
+      "detail": "Check if agent.py is present in the system.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "cuckoo/CuckoomonConfiguration",
+      "detail": "Check if cuckoomon configuration files are present in the system.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "cuckoo/DeadAnalyzer",
+      "detail": "Kill Analyzer process and check if created process is not tracked.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 6
+    },
+    {
+      "name": "cuckoo/DelayInterval",
+      "detail": "Check if DelayInterval value has changed after querying NtDelayExecution service.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 3
+    },
+    {
+      "name": "cuckoo/DelaysAccumulation",
+      "detail": "Check if delays accumulation is valid using get time functions.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 3
+    },
+    {
+      "name": "cuckoo/EventName",
+      "detail": "Check if specific event name is present in the system (Relevant for CuckooMon).",
+      "platforms": [
+        "windows"
+      ],
+      "score": 3
+    },
+    {
+      "name": "cuckoo/FunctionHooks",
+      "detail": "Check if functions are hooked.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "cuckoo/InfiniteDelay",
+      "detail": "Check if INFINITE delay is skipped due to sleep skipping.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 6
+    },
+    {
+      "name": "cuckoo/InvalidHook",
+      "detail": "Call NtLoadKeyEx and check if ESP value is correct.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 3
+    },
+    {
+      "name": "cuckoo/LackOfArgumentChecks",
+      "detail": "Call NtDelayExecution with invalid arguments and check if it returns the expected status code.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 3
+    },
+    {
+      "name": "cuckoo/PidReuse",
+      "detail": "Check if reused pid for the process is not tracked.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 4
+    },
+    {
+      "name": "cuckoo/RaisedExceptions",
+      "detail": "Check if after raising specified number of exceptions, process exits with specific error code.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 3
+    },
+    {
+      "name": "cuckoo/ResultserverConnection",
+      "detail": "Check if there is an active TCP connection with the destination port 2042.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 3
+    },
+    {
+      "name": "cuckoo/SocketTimeout",
+      "detail": "Check if socket timeout takes the same amount of time as sleep delay.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 3
+    },
+    {
+      "name": "cuckoo/SuspendedThread",
+      "detail": "Check if helper thread, created in suspended process is not monitored.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 9
+    },
+    {
+      "name": "cuckoo/TaskSchedulerProcess",
+      "detail": "Check if process started using Task Scheduler is not tracked. Currently there is no support for Windows XP and older.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 9
+    },
+    {
+      "name": "cuckoo/TickCount",
+      "detail": "Check if Tick Count value returned from the function is the same as in KUSER_SHARED_DATA.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 3
+    },
+    {
+      "name": "cuckoo/UnbalancedStack",
+      "detail": "Check if canaries at the top of the stack remains the same after function call.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 3
+    },
+    {
+      "name": "cuckoo/WMIProcess",
+      "detail": "Check if process started using WMI is not tracked.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 9
+    },
+    {
+      "name": "cuckoo/WhitelistedProcess",
+      "detail": "Check if whitelisted process is not tracked.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "generic/AV and Research tools Processes",
+      "detail": "Check if one of the following processes is running: `avgui.exe', `avastsvc.exe', `avastui.exe', `procmon.exe', `procmon64.exe', `procexp.exe', `procexp64.exe', `ollydbg.exe', `windbg.exe', `avp.exe', `bdagent.exe', `bdwtxag.exe', `dwengine.exe'",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "generic/AudioDeviceAbsence",
+      "detail": "Check if an audio device is absent",
+      "platforms": [
+        "windows"
+      ],
+      "score": 3
+    },
+    {
+      "name": "generic/BigRamAlloc",
+      "detail": "Allocate big amount of memory.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 4
+    },
+    {
+      "name": "generic/DeviceNPF_NDIS",
+      "detail": "Check if access to `\\\\.\\NPF_NdisWanIp' device returns specific error code.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 8
+    },
+    {
+      "name": "generic/DiskEnum Registry Key",
+      "detail": "Check if `System\\CurrentControlSet\\Services\\Disk\\Enum' Registry Key has value `0'=`*virtual*'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "generic/DiskSize",
+      "detail": "Check if C: disk size is large enough.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 9
+    },
+    {
+      "name": "generic/DnsResponse",
+      "detail": "Check DNS response for specific domains.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 3
+    },
+    {
+      "name": "generic/DriveSize",
+      "detail": "Check if drive size is large enough.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 9
+    },
+    {
+      "name": "generic/Existence of a process with long name",
+      "detail": "Check if there is at least one running process with long name (some sandboxes give SHA256 hash name to the running file)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 3
+    },
+    {
+      "name": "generic/Max Processes number",
+      "detail": "Check if there are more than N processes running",
+      "platforms": [
+        "windows"
+      ],
+      "score": 3
+    },
+    {
+      "name": "generic/MouseActive",
+      "detail": "Check if there is some mouse activity.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 6
+    },
+    {
+      "name": "generic/MouseRawActive",
+      "detail": "Check if there is mouse raw activity.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 6
+    },
+    {
+      "name": "generic/PerformanceCounter",
+      "detail": "Check if delays are consistent with performance counter.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "generic/ProcessorsCount",
+      "detail": "Check if number of processors/cores is larger than 1.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 6
+    },
+    {
+      "name": "generic/RAM",
+      "detail": "Check size of physical memory is large enough.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 5
+    },
+    {
+      "name": "generic/Sandbox-like named file",
+      "detail": "Checks if the current file has any of the following patterns in its path: `C:\\SELF.EXE', `.*self\\.*', `.*sample.*', `.*sandbox.*', `.*virus.*', `.*malware.*'",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "generic/SleepDummyPatch",
+      "detail": "Check if Sleep-family functions are patched in dummy way.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 4
+    },
+    {
+      "name": "generic/SystemUptime",
+      "detail": "Check if system uptime is large enough.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "generic/TimeTampering",
+      "detail": "Check if delays are handled correctly comparing to web page time.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 3
+    },
+    {
+      "name": "generic/UserInputActivity",
+      "detail": "Check if there is a user input activity.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 6
+    },
+    {
+      "name": "hyperv/Hyper-V CPU HypervisorID",
+      "detail": "Check if processor HypervisorID does not equal to: `Microsoft Hv'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "hyperv/Hyper-V Directory Device Object",
+      "detail": "Check if specific directory object `\\Device' contains the following object: `VmGenerationCounter'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "hyperv/Hyper-V HKLM Registry Keys",
+      "detail": "Check if `HKLM\\SOFTWARE\\Microsoft\\Hyper-V' or `HKLM\\SOFTWARE\\Microsoft\\VirtualMachine' Registry Keys are present.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "hyperv/Hyper-V Services Registry Keys",
+      "detail": "Check if `HKLM\\SYSTEM\\ControlSet001\\Services\\vmic*' Registry Keys are present.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 8
+    },
+    {
+      "name": "joebox/JoeBox Processes",
+      "detail": "Check if one of the following processes is running: `joeboxserver.exe', `joeboxcontrol.exe'",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "joebox/JoeBox Windows NT Product ID Registry Key",
+      "detail": "Check if `HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion' has value `ProductID'=`55274-640-2673064-23950'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "joebox/JoeBox Windows Product ID Registry Key",
+      "detail": "Check if `HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion' has value `ProductID'=`55274-640-2673064-23950'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "kvm/KVM CPU HypervisorID",
+      "detail": "Check if processor HypervisorID does not equal to: `KVMKVMKVM'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "kvm/KVM CPU VendorID",
+      "detail": "Check if processor VendorID does not equal to: `KVMKVMKVMKVM'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "misc/Sandbox Computer Names",
+      "detail": "Check if computer name is one of the following: `TEQUILABOOMBOOM', `KLONE_X64-PC'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "misc/Sandbox Host Names",
+      "detail": "Check if host name is the following: `SystemIT'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "misc/Sandbox Registry Keys",
+      "detail": "Check if `HKLM\\Software\\Classes\\Folder\\shell\\sandbox' Registry Key is present.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "misc/Sandbox Specific Files",
+      "detail": "Check if the following directory is present: `c:\\analysis\\'. Check if any of the following files are present: `C:\\Symbols\\aagmmc.pdb', `C:\\take_screenshot.ps1', `C:\\loaddll.exe', `C:\\email.doc', `C:\\email.htm', `C:\\123\\email.doc', `C:\\123\\email.docx', `C:\\a\\foobar.bmp', `C:\\a\\foobar.doc', `C:\\a\\foobar.gif'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "misc/Sandbox User Names",
+      "detail": "Check if user name is one of the following: `Wilbert', `admin', `John Doe', `John'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "misc/Side Processes",
+      "detail": "Check if one of the following processe is running: `WPE Pro.exe'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "parallels/Directory Device Object",
+      "detail": "Check if specific directory object `\\Device' contains one of the following objects: `prl_pv', `prl_tg', `prl_time'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 8
+    },
+    {
+      "name": "parallels/EnumPCI Registry SubKey",
+      "detail": "Check if `HKLM\\SYSTEM\\CurrentControlSet\\Enum\\PCI' Registry Key has SubKey that contains `VEN_1AB8'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "parallels/FirmwareRaw Table",
+      "detail": "Check if raw firmware table content contains the following identifier: `Parallels(R)'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "parallels/FirmwareSMBIOS Table",
+      "detail": "Check if SMBIOS firmware table content contains the following identifier: `Parallels Software International'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "parallels/Parallels CPU HypervisorID",
+      "detail": "Check if processor HypervisorID does not equal to any of these names: `prl hyperv  ' or ` lrpepyh vr'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "parallels/Parallels Driver Files",
+      "detail": "Check if specific files are present in the `C:\\WINDOWS\\system32' folder or subfolders.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "parallels/Parallels Processes",
+      "detail": "Check if one of the following processes is running: `prl_cc.exe', `prl_tools.exe'",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "parallels/Parallels SystemBiosVersion Registry Key",
+      "detail": "Check if `HKLM\\HARDWARE\\Description\\System' Registry Key has value `SystemBiosVersion'=`PARALLELS'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "parallels/Parallels VideoBiosVersion Registry Key",
+      "detail": "Check if `HKLM\\HARDWARE\\Description\\System' Registry Key has value `VideoBiosVersion'=`PARALLELS'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "qemu/QEMU BIOS Description",
+      "detail": "Check if `HKLM\\HARDWARE\\Description\\System\\BIOS' Registry Key has value `SystemManufacturer'=`QEMU'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "qemu/QEMU Disk Name",
+      "detail": "Check if disk name does not contain the following identifier: `QEMU'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 8
+    },
+    {
+      "name": "qemu/QEMU DiskEnum Registry Key",
+      "detail": "Check if `System\\CurrentControlSet\\Services\\Disk\\Enum' Registry Key has value `0'=`*qemu*'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "qemu/QEMU ScsiPort0 Registry Key",
+      "detail": "Check if `HKLM\\HARDWARE\\DEVICEMAP\\Scsi\\Scsi Port 0\\Scsi Bus 0\\Target Id 0\\Logical Unit Id 0' Registry Key has value `Identifier'=`QEMU'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "qemu/QEMU ScsiPort1 Registry Key",
+      "detail": "Check if `HKLM\\HARDWARE\\DEVICEMAP\\Scsi\\Scsi Port 1\\Scsi Bus 0\\Target Id 0\\Logical Unit Id 0' Registry Key has value `Identifier'=`QEMU'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "qemu/QEMU ScsiPort2 Registry Key",
+      "detail": "Check if `HKLM\\HARDWARE\\DEVICEMAP\\Scsi\\Scsi Port 2\\Scsi Bus 0\\Target Id 0\\Logical Unit Id 0' Registry Key has value `Identifier'=`QEMU'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "qemu/QEMU SystemBiosVersion Registry Key",
+      "detail": "Check if `HKLM\\HARDWARE\\Description\\System' Registry Key has value `SystemBiosVersion'=`QEMU'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "qemu/QEMU VideoBiosVersion Registry Key",
+      "detail": "Check if `HKLM\\HARDWARE\\Description\\System' Registry Key has value `VideoBiosVersion'=`QEMU'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "sandboxie/Directory Device Object",
+      "detail": "Check if specific directory object `\\Device' contains the following object: `SanboxieDriverApi'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 8
+    },
+    {
+      "name": "sandboxie/Directory Driver Object",
+      "detail": "Check if specific directory object `\\Driver' contains the following object: `SbieDrv'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 8
+    },
+    {
+      "name": "sandboxie/Directory RPC Control Object",
+      "detail": "Check if specific directory object `\\RPC Control' contains the following object: `SbieSvcPort'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 8
+    },
+    {
+      "name": "sandboxie/Injected sbiedll module",
+      "detail": "Check if there is `sbiedll.dll' injected into the process",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "sandboxie/Sandboxie Services Registry Keys",
+      "detail": "Check if `HKLM\\SYSTEM\\CurrentControlSet\\Services\\SbieDrv' Registry Key is present.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "sandboxie/Sandboxie Uninstall Registry Keys",
+      "detail": "Check if `HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Sandboxie' Registry Key is present.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "vbox/ControlSet001 Registry Key",
+      "detail": "Check if `HKLM\\SYSTEM\\ControlSet001\\Enum' Registry Key has values `DeviceDesc'=`VBOX' and/or `FriendlyName'=`VBOX' recursively.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "vbox/ControlSet002 Registry Key",
+      "detail": "Check if `HKLM\\SYSTEM\\ControlSet002\\Enum' Registry Key has values `DeviceDesc'=`VBOX' and/or `FriendlyName'=`VBOX' recursively.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "vbox/ControlSet003 Registry Key",
+      "detail": "Check if `HKLM\\SYSTEM\\ControlSet003\\Enum' Registry Key has values `DeviceDesc'=`VBOX' and/or `FriendlyName'=`VBOX' recursively.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "vbox/Directory Device Object",
+      "detail": "Check if specific directory object `\\Device' contains one of the following objects: `VBoxGuest', `VBoxMiniRdr'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 8
+    },
+    {
+      "name": "vbox/Directory Driver Object",
+      "detail": "Check if specific directory object `\\Driver' contains one of the following objects: `VBoxVideo', `VBoxMouse'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 8
+    },
+    {
+      "name": "vbox/FirmwareRaw Table",
+      "detail": "Check if raw firmware table content contains one of the following identifiers: `VirtualBox', `Oracle', `innotek'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "vbox/FirmwareSMBIOS Table",
+      "detail": "Check if SMBIOS firmware table content contains one of the following identifiers: `VirtualBox', `Oracle', `innotek'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "vbox/Forbidden MACs",
+      "detail": "Check if MAC vendor is the following: `080027'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 6
+    },
+    {
+      "name": "vbox/Hardware Device Registry Keys",
+      "detail": "Check if `HKLM\\HARDWARE\\ACPI\\*\\VBOX__' Registry Keys are present.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "vbox/ScsiPort0 Registry Key",
+      "detail": "Check if `HKLM\\HARDWARE\\DEVICEMAP\\Scsi\\Scsi Port 0\\Scsi Bus 0\\Target Id 0\\Logical Unit Id 0' Registry Key has value `Identifier'=`VBOX'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "vbox/ScsiPort1 Registry Key",
+      "detail": "Check if `HKLM\\HARDWARE\\DEVICEMAP\\Scsi\\Scsi Port 1\\Scsi Bus 0\\Target Id 0\\Logical Unit Id 0' Registry Key has value `Identifier'=`VBOX'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "vbox/ScsiPort2 Registry Key",
+      "detail": "Check if `HKLM\\HARDWARE\\DEVICEMAP\\Scsi\\Scsi Port 2\\Scsi Bus 0\\Target Id 0\\Logical Unit Id 0' Registry Key has value `Identifier'=`VBOX'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "vbox/SystemBiosDate Registry Key",
+      "detail": "Check if `HKLM\\HARDWARE\\DESCRIPTION\\System' Registry Key has value `SystemBiosDate'=`06/29/99'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "vbox/SystemBiosVersion Registry Key",
+      "detail": "Check if `HKLM\\HARDWARE\\Description\\System' Registry Key has value `SystemBiosVersion'=`VBOX'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 9
+    },
+    {
+      "name": "vbox/VBox Devices",
+      "detail": "Check if one of the following devices is present: `\\\\.\\VBoxMiniRdr', `\\\\.\\VBoxMiniRdDN', `\\\\.\\VBoxMiniRdrDN', `\\\\.\\VBoxGuest', `\\\\.\\VBoxTrayIPC', `\\\\.\\VBoxMouse', `\\\\.\\VBoxVideo', `\\\\.\\pipe\\VBoxMiniRdDN', `\\\\.\\pipe\\VBoxTrayIPC'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "vbox/VBox Disk Name",
+      "detail": "Check if disk name does not contain the following identifier: `VBOX'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 8
+    },
+    {
+      "name": "vbox/VBox Drive Model",
+      "detail": "Check if drive model does not contain the following identifier: `VBox'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 8
+    },
+    {
+      "name": "vbox/VBox Driver Files",
+      "detail": "Check if specific files are present in the `C:\\WINDOWS\\system32' folder or subfolders. Check if specific directories are present.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "vbox/VBox EnumPCI Registry SubKey",
+      "detail": "Check if `HKLM\\SYSTEM\\CurrentControlSet\\Enum\\PCI' Registry Key has SubKey that contains `VEN_80EE'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "vbox/VBox Guest Additions Registry Key",
+      "detail": "Check if `HKLM\\SOFTWARE\\Oracle\\VirtualBox Guest Additions' Registry Key is present.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "vbox/VBox Processes",
+      "detail": "Check if one of the following processes is running: `vboxservice.exe', `vboxtray.exe'",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "vbox/VBox Services Registry Keys",
+      "detail": "Check if `HKLM\\SYSTEM\\ControlSet001\\Services\\VBox*' Registry Keys are present.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "vbox/VBox Shared Folders",
+      "detail": "Check if shared folder with `VirtualBox Shared Folders' is present.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 6
+    },
+    {
+      "name": "vbox/VideoBiosVersion Registry Key",
+      "detail": "Check if `HKLM\\HARDWARE\\Description\\System' Registry Key has value `VideoBiosVersion'=`VIRTUALBOX'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 9
+    },
+    {
+      "name": "vbox/Window Class Name",
+      "detail": "Check if window with the `VBoxTrayToolWndClass' class name is present.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "vbox/Window Name",
+      "detail": "Check if window with the `VBoxTrayToolWnd' name is present.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "virtualpc/Directory Device Object",
+      "detail": "Check if specific directory object `\\Device' contains the following object: `VirtualMachineServices'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "virtualpc/Directory Driver Object",
+      "detail": "Check if specific directory object `\\Driver' contains the following object: `1-driver-vmsrvc'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "virtualpc/FirmwareRaw Table",
+      "detail": "Check if raw firmware table content contains the following identifier: `S3 Corp.'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "virtualpc/FirmwareSMBIOS Table",
+      "detail": "Check if SMBIOS firmware table content contains the following identifier: `VS2005R2'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "virtualpc/VirtualPC Disk Name",
+      "detail": "Check if disk name does not contain the following identifier: `VIRTUAL HD'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 8
+    },
+    {
+      "name": "virtualpc/VirtualPC Driver Files",
+      "detail": "Check if specific files are present in the `C:\\WINDOWS\\system32' folder or subfolders. Check if specific directories are present.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "virtualpc/VirtualPC EnumPCI Registry SubKey",
+      "detail": "Check if `HKLM\\SYSTEM\\CurrentControlSet\\Enum\\PCI' Registry Key has SubKey that contains `VEN_5333'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "virtualpc/VirtualPC Processes",
+      "detail": "Check if one of the following processes is running: `vmsrvc.exe', `vmusrvc.exe'",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "virtualpc/VirtualPC Services Registry Keys",
+      "detail": "Check if `HKLM\\SYSTEM\\ControlSet001\\Services\\vpc*' and `HKLM\\SYSTEM\\ControlSet001\\Services\\msvmmouf' Registry Keys are present.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "vmware/Adapter",
+      "detail": "Check if adapter name contains the following identifier: `VMWare'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 6
+    },
+    {
+      "name": "vmware/ControlSet001 Registry Key",
+      "detail": "Check if `HKLM\\SYSTEM\\ControlSet001\\Enum' Registry Key has values `DeviceDesc'=`VMware' and/or `FriendlyName'=`VMware' recursively.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "vmware/ControlSet002 Registry Key",
+      "detail": "Check if `HKLM\\SYSTEM\\ControlSet002\\Enum' Registry Key has values `DeviceDesc'=`VMware' and/or `FriendlyName'=`VMware' recursively.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "vmware/ControlSet003 Registry Key",
+      "detail": "Check if `HKLM\\SYSTEM\\ControlSet003\\Enum' Registry Key has values `DeviceDesc'=`VMware' and/or `FriendlyName'=`VMware' recursively.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "vmware/Directory Device Object",
+      "detail": "Check if specific directory object `\\Device' contains the following object: `vmmemctl'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 8
+    },
+    {
+      "name": "vmware/DiskIdentifier Registry Key",
+      "detail": "Check if `HKLM\\SYSTEM\\ControlSet001\\Services\\Disk\\Enum' Registry Key has values `0'=`VMware' and/or `1'=`VMware'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "vmware/Driver Description Registry Keys",
+      "detail": "Check if `SYSTEM\\ControlSet001\\Control\\Class\\{4D36E968-E325-11CE-BFC1-08002BE10318}\\0000' Registry Keys contain values `VMware' and/or `vmx' in registry items `CoInstallers32', `DriverDesc', `InfSection', `ProviderName'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 4
+    },
+    {
+      "name": "vmware/EnumIDE Registry SubKey",
+      "detail": "Check if `HKLM\\SYSTEM\\CurrentControlSet\\Enum\\IDE' Registry Key has SubKey that contains `CdRomNECVMWar' or `DiskVMware'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 6
+    },
+    {
+      "name": "vmware/EnumPCI Registry SubKey",
+      "detail": "Check if `HKLM\\SYSTEM\\CurrentControlSet\\Enum\\PCI' Registry Key has SubKey that contains `VEN_15AD'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 4
+    },
+    {
+      "name": "vmware/FirmwareRaw Table",
+      "detail": "Check if raw firmware table content contains the following identifier: `VMware'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "vmware/FirmwareSMBIOS Table",
+      "detail": "Check if SMBIOS firmware table content contains the following identifier: `VMware'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "vmware/Forbidden MACs",
+      "detail": "Check if MAC vendor is one of the following ones: `000569', `000C29', `001C14', `005056'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 6
+    },
+    {
+      "name": "vmware/HypervisorBit",
+      "detail": "Check if hypervisor bit is enabled.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "vmware/HypervisorPort",
+      "detail": "Check if hypervisor port returns specific value.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "vmware/HypervisorPortEnum",
+      "detail": "Enum hypervisor port commands and check if #GP exception is not raised.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 5
+    },
+    {
+      "name": "vmware/ProductsInstaller Registry Key",
+      "detail": "Check if `HKCR\\Installer\\Products' Registry Key has value `ProductName'=`vmware tools' recursively.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 4
+    },
+    {
+      "name": "vmware/ProductsUninstaller Registry Key (CurrentUser)",
+      "detail": "Check if `HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall' Registry Key has value `DisplayName'=`vmware tools' recursively.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 4
+    },
+    {
+      "name": "vmware/ProductsUninstaller Registry Key (LocalMachine)",
+      "detail": "Check if `HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall' Registry Key has value `DisplayName'=`vmware tools' recursively.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 4
+    },
+    {
+      "name": "vmware/ScsiPort0 Registry Key",
+      "detail": "Check if `HKLM\\HARDWARE\\DEVICEMAP\\Scsi\\Scsi Port 0\\Scsi Bus 0\\Target Id 0\\Logical Unit Id 0' Registry Key has value `Identifier'=`VMWARE'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "vmware/ScsiPort1 Registry Key",
+      "detail": "Check if `HKLM\\HARDWARE\\DEVICEMAP\\Scsi\\Scsi Port 1\\Scsi Bus 0\\Target Id 0\\Logical Unit Id 0' Registry Key has value `Identifier'=`VMWARE'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "vmware/ScsiPort2 Registry Key",
+      "detail": "Check if `HKLM\\HARDWARE\\DEVICEMAP\\Scsi\\Scsi Port 2\\Scsi Bus 0\\Target Id 0\\Logical Unit Id 0' Registry Key has value `Identifier'=`VMWARE'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "vmware/SystemBiosVersion Registry Key",
+      "detail": "Check if `HKLM\\HARDWARE\\Description\\System' Registry Key has value `SystemBiosVersion'=`VMWARE' or `SystemBiosVersion'=`INTEL  - 6040000'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 9
+    },
+    {
+      "name": "vmware/VMWare Device HGFS",
+      "detail": "Check if the following devices is present: `\\\\.\\HGFS'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 8
+    },
+    {
+      "name": "vmware/VMWare Device vmci",
+      "detail": "Check if the following devices is present: `\\\\.\\vmci'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 8
+    },
+    {
+      "name": "vmware/VMWare Disk Name",
+      "detail": "Check if disk name does not contain the following identifiers: `VMware'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 8
+    },
+    {
+      "name": "vmware/VMWare DiskEnum Registry Key",
+      "detail": "Check if `System\\CurrentControlSet\\Services\\Disk\\Enum' Registry Key has value `0'=`*vmware*'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "vmware/VMWare Drive Model",
+      "detail": "Check if drive model does not contain the following identifiers: `VMware'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 5
+    },
+    {
+      "name": "vmware/VMWare Files",
+      "detail": "Check if the following files are present in the `C:\\WINDOWS\\system32' folder: `hgfs.sys', `vmhgfs.sys'. Check if the following files are present in the `C:\\WINDOWS\\system32\\drivers' folder: `vmmouse.sys', `vmnet.sys', `vmxnet.sys', `vmhgfs.sys', `vmx86.sys'. Check if `C:\\program files\\VMware\\' directory is present.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "vmware/VMWare HypervisorID",
+      "detail": "Check if processor HypervisorID does not equal to: `VMwareVMware'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "vmware/VMWare Physical Display Adapter Description",
+      "detail": "Check if description of physical display adapter matches the one used in VMWare.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "vmware/VMWare Physical Display Adapter DeviceId",
+      "detail": "Check if device ID of physical display adapter matches the one used in VMWare (must be used in combination with VendorId check).",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "vmware/VMWare Physical Display Adapter Driver",
+      "detail": "Check if driver for physical display adapter matches one of used in VMWare.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "vmware/VMWare Physical Display Adapter VendorId",
+      "detail": "Check if vendor ID of physical display adapter matches the one used in VMWare.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "vmware/VMWare Processes",
+      "detail": "Check if one of the following processes is running: `vmtoolsd.exe', `vmacthlp.exe', `vmwaretray.exe', `vmwareuser.exe', `vmware.exe', `vmount2.exe'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "vmware/VMWare Service Registry Key",
+      "detail": "Check if one of the following SubKeys are present under `HKLM\\SYSTEM\\ControlSet001\\Services\\' Key: `vmdebug', `vmmouse', `VMTools', `VMMEMCTL', `vmware', `vmci', `vmx86', `vmxnet', `vmx_svga'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "vmware/VMWare Tools Registry Machine Key",
+      "detail": "Check if `HKLM\\SOFTWARE\\VMware, Inc.\\VMware Tools' Registry Key is present.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "vmware/VMWare Tools Registry User Key",
+      "detail": "Check if `HKCU\\SOFTWARE\\VMware, Inc.\\VMware Tools' Registry Key is present.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "vmware/VideoBiosVersion Registry Key",
+      "detail": "Check if `HKLM\\HARDWARE\\Description\\System' Registry Key has value `VideoBiosVersion'=`VMWARE'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 9
+    },
+    {
+      "name": "wine/Wine HKCU Registry Keys",
+      "detail": "Check if HKCU Wine Specific Registry Key is present.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "wine/Wine HKLM Registry Keys",
+      "detail": "Check if HKLM Wine Specific Registry Key is present.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "xen/Xen CPU HypervisorID",
+      "detail": "Check if processor HypervisorID does not equal to: `XenVMMXenVMM'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "xen/Xen CPU VendorID",
+      "detail": "Check if processor VendorID does not equal to: `XenVMMXenVMM'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "xen/Xen DiskEnum Registry Key",
+      "detail": "Check if `System\\CurrentControlSet\\Services\\Disk\\Enum' Registry Key has value `0'=`*xen*'.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "xen/Xen Hardware Device Registry Keys",
+      "detail": "Check if `HKLM\\HARDWARE\\ACPI\\*\\xen' Registry Keys are present.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 7
+    },
+    {
+      "name": "xen/Xen Processes",
+      "detail": "Check if one of the following processes is running: `xenservice.exe', `xsvc_depriv.exe'",
+      "platforms": [
+        "windows"
+      ],
+      "score": 10
+    },
+    {
+      "name": "xen/Xen Services Registry Keys",
+      "detail": "Check if `HKLM\\SYSTEM\\ControlSet001\\Services\\xen*' Registry Keys are present.",
+      "platforms": [
+        "windows"
+      ],
+      "score": 8
+    }
+  ]
+}

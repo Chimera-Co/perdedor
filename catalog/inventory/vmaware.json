@@ -1,0 +1,681 @@
+{
+  "source_id": "vmaware",
+  "revision": "v2.8.2",
+  "commit": "a3cc54f7da798819d305fd1415daf1b8cd140c70",
+  "fetched": "2026-11-08",
+  "techniques": [
+    {
+      "name": "ACPI_SIGNATURE",
+      "detail": "VMAware technique (windows)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 100
+    },
+    {
+      "name": "AMD_SEV_MSR",
+      "detail": "VMAware technique (linux)",
+      "platforms": [
+        "linux"
+      ],
+      "score": 50
+    },
+    {
+      "name": "AZURE",
+      "detail": "VMAware technique (linux, windows)",
+      "platforms": [
+        "linux",
+        "windows"
+      ],
+      "score": 30
+    },
+    {
+      "name": "BLUESTACKS_FOLDERS",
+      "detail": "VMAware technique (linux)",
+      "platforms": [
+        "linux"
+      ],
+      "score": 5
+    },
+    {
+      "name": "BOCHS_CPU",
+      "detail": "VMAware technique (windows, linux, macos)",
+      "platforms": [
+        "linux",
+        "macos",
+        "windows"
+      ],
+      "score": 100
+    },
+    {
+      "name": "BOOT_LOGO",
+      "detail": "VMAware technique (linux, windows)",
+      "platforms": [
+        "linux",
+        "windows"
+      ],
+      "score": 90
+    },
+    {
+      "name": "CGROUP",
+      "detail": "VMAware technique (linux)",
+      "platforms": [
+        "linux"
+      ],
+      "score": 70
+    },
+    {
+      "name": "CLOCK",
+      "detail": "VMAware technique (windows)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 45
+    },
+    {
+      "name": "CONTAINER_PID",
+      "detail": "VMAware technique (linux)",
+      "platforms": [
+        "linux"
+      ],
+      "score": 75
+    },
+    {
+      "name": "CPUID_SIGNATURE",
+      "detail": "VMAware technique (windows, linux, macos)",
+      "platforms": [
+        "linux",
+        "macos",
+        "windows"
+      ],
+      "score": 95
+    },
+    {
+      "name": "CPU_BRAND",
+      "detail": "VMAware technique (windows, linux, macos)",
+      "platforms": [
+        "linux",
+        "macos",
+        "windows"
+      ],
+      "score": 95
+    },
+    {
+      "name": "CPU_HEURISTIC",
+      "detail": "VMAware technique (windows)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 90
+    },
+    {
+      "name": "CTYPE",
+      "detail": "VMAware technique (linux)",
+      "platforms": [
+        "linux"
+      ],
+      "score": 20
+    },
+    {
+      "name": "CUCKOO",
+      "detail": "VMAware technique (windows)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 30
+    },
+    {
+      "name": "CVENDOR",
+      "detail": "VMAware technique (linux)",
+      "platforms": [
+        "linux"
+      ],
+      "score": 65
+    },
+    {
+      "name": "DBVM",
+      "detail": "VMAware technique (windows)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 150
+    },
+    {
+      "name": "DEVICES",
+      "detail": "VMAware technique (linux, windows)",
+      "platforms": [
+        "linux",
+        "windows"
+      ],
+      "score": 95
+    },
+    {
+      "name": "DISK",
+      "detail": "VMAware technique (linux, windows)",
+      "platforms": [
+        "linux",
+        "windows"
+      ],
+      "score": 150
+    },
+    {
+      "name": "DISPLAY",
+      "detail": "VMAware technique (windows)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 25
+    },
+    {
+      "name": "DLL",
+      "detail": "VMAware technique (windows)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 50
+    },
+    {
+      "name": "DMESG",
+      "detail": "VMAware technique (linux)",
+      "platforms": [
+        "linux"
+      ],
+      "score": 55
+    },
+    {
+      "name": "DMIDECODE",
+      "detail": "VMAware technique (linux)",
+      "platforms": [
+        "linux"
+      ],
+      "score": 55
+    },
+    {
+      "name": "DMI_SCAN",
+      "detail": "VMAware technique (linux)",
+      "platforms": [
+        "linux"
+      ],
+      "score": 50
+    },
+    {
+      "name": "DOCKERENV",
+      "detail": "VMAware technique (linux)",
+      "platforms": [
+        "linux"
+      ],
+      "score": 100
+    },
+    {
+      "name": "DRIVERS",
+      "detail": "VMAware technique (windows)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 100
+    },
+    {
+      "name": "EIP_OVERFLOW",
+      "detail": "VMAware technique (windows)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 150
+    },
+    {
+      "name": "FILE_ACCESS_HISTORY",
+      "detail": "VMAware technique (linux)",
+      "platforms": [
+        "linux"
+      ],
+      "score": 15
+    },
+    {
+      "name": "FIRMWARE",
+      "detail": "VMAware technique (linux, windows)",
+      "platforms": [
+        "linux",
+        "windows"
+      ],
+      "score": 100
+    },
+    {
+      "name": "GAMARUE",
+      "detail": "VMAware technique (windows)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 30
+    },
+    {
+      "name": "GPU_CAPABILITIES",
+      "detail": "VMAware technique (windows)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 20
+    },
+    {
+      "name": "HANDLES",
+      "detail": "VMAware technique (windows)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 100
+    },
+    {
+      "name": "HWMODEL",
+      "detail": "VMAware technique (macos)",
+      "platforms": [
+        "macos"
+      ],
+      "score": 100
+    },
+    {
+      "name": "HWMON",
+      "detail": "VMAware technique (linux)",
+      "platforms": [
+        "linux"
+      ],
+      "score": 35
+    },
+    {
+      "name": "HYPERVISOR_BIT",
+      "detail": "VMAware technique (windows, linux, macos)",
+      "platforms": [
+        "linux",
+        "macos",
+        "windows"
+      ],
+      "score": 150
+    },
+    {
+      "name": "HYPERVISOR_DIR",
+      "detail": "VMAware technique (linux)",
+      "platforms": [
+        "linux"
+      ],
+      "score": 20
+    },
+    {
+      "name": "HYPERVISOR_HOOK",
+      "detail": "VMAware technique (windows)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 150
+    },
+    {
+      "name": "HYPERVISOR_STR",
+      "detail": "VMAware technique (windows, linux, macos)",
+      "platforms": [
+        "linux",
+        "macos",
+        "windows"
+      ],
+      "score": 150
+    },
+    {
+      "name": "INTERRUPT_SHADOW",
+      "detail": "VMAware technique (windows)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 150
+    },
+    {
+      "name": "IOREG_GREP",
+      "detail": "VMAware technique (macos)",
+      "platforms": [
+        "macos"
+      ],
+      "score": 100
+    },
+    {
+      "name": "KERNEL_OBJECTS",
+      "detail": "VMAware technique (windows)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 100
+    },
+    {
+      "name": "KGT_SIGNATURE",
+      "detail": "VMAware technique (windows, linux, macos)",
+      "platforms": [
+        "linux",
+        "macos",
+        "windows"
+      ],
+      "score": 80
+    },
+    {
+      "name": "KMSG",
+      "detail": "VMAware technique (linux)",
+      "platforms": [
+        "linux"
+      ],
+      "score": 5
+    },
+    {
+      "name": "KVM_INTERCEPTION",
+      "detail": "VMAware technique (windows)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 150
+    },
+    {
+      "name": "LINUX_USER_HOST",
+      "detail": "VMAware technique (linux)",
+      "platforms": [
+        "linux"
+      ],
+      "score": 10
+    },
+    {
+      "name": "MAC",
+      "detail": "VMAware technique (linux)",
+      "platforms": [
+        "linux"
+      ],
+      "score": 20
+    },
+    {
+      "name": "MAC_IOKIT",
+      "detail": "VMAware technique (macos)",
+      "platforms": [
+        "macos"
+      ],
+      "score": 100
+    },
+    {
+      "name": "MAC_MEMSIZE",
+      "detail": "VMAware technique (macos)",
+      "platforms": [
+        "macos"
+      ],
+      "score": 15
+    },
+    {
+      "name": "MAC_SIP",
+      "detail": "VMAware technique (macos)",
+      "platforms": [
+        "macos"
+      ],
+      "score": 100
+    },
+    {
+      "name": "MAC_SYS",
+      "detail": "VMAware technique (macos)",
+      "platforms": [
+        "macos"
+      ],
+      "score": 100
+    },
+    {
+      "name": "MEASURED_BOOT",
+      "detail": "VMAware technique (windows)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 150
+    },
+    {
+      "name": "MSR",
+      "detail": "VMAware technique (windows)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 100
+    },
+    {
+      "name": "MUTEX",
+      "detail": "VMAware technique (windows)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 100
+    },
+    {
+      "name": "NVRAM",
+      "detail": "VMAware technique (windows)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 100
+    },
+    {
+      "name": "PODMAN_FILE",
+      "detail": "VMAware technique (linux)",
+      "platforms": [
+        "linux"
+      ],
+      "score": 5
+    },
+    {
+      "name": "POWER_CAPABILITIES",
+      "detail": "VMAware technique (windows)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 25
+    },
+    {
+      "name": "PROCESSES",
+      "detail": "VMAware technique (linux)",
+      "platforms": [
+        "linux"
+      ],
+      "score": 40
+    },
+    {
+      "name": "QEMU_FW_CFG",
+      "detail": "VMAware technique (linux)",
+      "platforms": [
+        "linux"
+      ],
+      "score": 70
+    },
+    {
+      "name": "QEMU_USB",
+      "detail": "VMAware technique (linux)",
+      "platforms": [
+        "linux"
+      ],
+      "score": 20
+    },
+    {
+      "name": "QEMU_VIRTUAL_DMI",
+      "detail": "VMAware technique (linux)",
+      "platforms": [
+        "linux"
+      ],
+      "score": 40
+    },
+    {
+      "name": "SINGLE_STEP",
+      "detail": "VMAware technique (windows)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 150
+    },
+    {
+      "name": "SMBIOS_VM_BIT",
+      "detail": "VMAware technique (linux)",
+      "platforms": [
+        "linux"
+      ],
+      "score": 50
+    },
+    {
+      "name": "SVM_EXCEPTIONS",
+      "detail": "VMAware technique (windows)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 35
+    },
+    {
+      "name": "SYSINFO_PROC",
+      "detail": "VMAware technique (linux)",
+      "platforms": [
+        "linux"
+      ],
+      "score": 15
+    },
+    {
+      "name": "SYSTEMD",
+      "detail": "VMAware technique (linux)",
+      "platforms": [
+        "linux"
+      ],
+      "score": 35
+    },
+    {
+      "name": "SYSTEM_REGISTERS",
+      "detail": "VMAware technique (linux, windows)",
+      "platforms": [
+        "linux",
+        "windows"
+      ],
+      "score": 50
+    },
+    {
+      "name": "TEMPERATURE",
+      "detail": "VMAware technique (linux)",
+      "platforms": [
+        "linux"
+      ],
+      "score": 20
+    },
+    {
+      "name": "THREAD_COUNT",
+      "detail": "VMAware technique (linux, macos)",
+      "platforms": [
+        "linux",
+        "macos"
+      ],
+      "score": 35
+    },
+    {
+      "name": "THREAD_MISMATCH",
+      "detail": "VMAware technique (windows, linux, macos)",
+      "platforms": [
+        "linux",
+        "macos",
+        "windows"
+      ],
+      "score": 45
+    },
+    {
+      "name": "TIMER",
+      "detail": "VMAware technique (windows, linux, macos)",
+      "platforms": [
+        "linux",
+        "macos",
+        "windows"
+      ],
+      "score": 45
+    },
+    {
+      "name": "TPM",
+      "detail": "VMAware technique (windows)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 45
+    },
+    {
+      "name": "TRAP",
+      "detail": "VMAware technique (windows)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 150
+    },
+    {
+      "name": "UD",
+      "detail": "VMAware technique (windows)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 100
+    },
+    {
+      "name": "UML_CPU",
+      "detail": "VMAware technique (linux)",
+      "platforms": [
+        "linux"
+      ],
+      "score": 80
+    },
+    {
+      "name": "VBOX_MODULE",
+      "detail": "VMAware technique (linux)",
+      "platforms": [
+        "linux"
+      ],
+      "score": 15
+    },
+    {
+      "name": "VIRTUAL_PROCESSORS",
+      "detail": "VMAware technique (windows)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 100
+    },
+    {
+      "name": "VIRTUAL_REGISTRY",
+      "detail": "VMAware technique (windows)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 90
+    },
+    {
+      "name": "VMID",
+      "detail": "VMAware technique (windows, linux, macos)",
+      "platforms": [
+        "linux",
+        "macos",
+        "windows"
+      ],
+      "score": 100
+    },
+    {
+      "name": "VMWARE_STR",
+      "detail": "VMAware technique (windows)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 35
+    },
+    {
+      "name": "VPC_INVALID",
+      "detail": "VMAware technique (windows)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 75
+    },
+    {
+      "name": "WINE",
+      "detail": "VMAware technique (windows)",
+      "platforms": [
+        "windows"
+      ],
+      "score": 150
+    },
+    {
+      "name": "WSL_PROC",
+      "detail": "VMAware technique (linux)",
+      "platforms": [
+        "linux"
+      ],
+      "score": 30
+    }
+  ]
+}

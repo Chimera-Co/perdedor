@@ -1,0 +1,206 @@
+{
+  "source_id": "freerasp-flutter",
+  "revision": "v8.2.4",
+  "commit": "48c6fc061ac22bcf3986421ee109dba67969d47d",
+  "fetched": "2026-11-08",
+  "techniques": [
+    {
+      "name": "adbEnabled",
+      "detail": "Threat enum",
+      "platforms": [
+        "android",
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "appIntegrity",
+      "detail": "Threat enum",
+      "platforms": [
+        "android",
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "automation",
+      "detail": "Threat enum",
+      "platforms": [
+        "android",
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "bootloader",
+      "detail": "Threat enum",
+      "platforms": [
+        "android",
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "debug",
+      "detail": "Threat enum",
+      "platforms": [
+        "android",
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "devMode",
+      "detail": "Threat enum",
+      "platforms": [
+        "android",
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "deviceBinding",
+      "detail": "Threat enum",
+      "platforms": [
+        "android",
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "deviceId",
+      "detail": "Threat enum",
+      "platforms": [
+        "android",
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "hooks",
+      "detail": "Threat enum",
+      "platforms": [
+        "android",
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "locationSpoofing",
+      "detail": "Threat enum",
+      "platforms": [
+        "android",
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "multiInstance",
+      "detail": "Threat enum",
+      "platforms": [
+        "android",
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "obfuscationIssues",
+      "detail": "Threat enum",
+      "platforms": [
+        "android",
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "passcode",
+      "detail": "Threat enum",
+      "platforms": [
+        "android",
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "privilegedAccess",
+      "detail": "Threat enum",
+      "platforms": [
+        "android",
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "screenRecording",
+      "detail": "Threat enum",
+      "platforms": [
+        "android",
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "screenshot",
+      "detail": "Threat enum",
+      "platforms": [
+        "android",
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "secureHardwareNotAvailable",
+      "detail": "Threat enum",
+      "platforms": [
+        "android",
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "simulator",
+      "detail": "Threat enum",
+      "platforms": [
+        "android",
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "systemVPN",
+      "detail": "Threat enum",
+      "platforms": [
+        "android",
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "timeSpoofing",
+      "detail": "Threat enum",
+      "platforms": [
+        "android",
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "unofficialStore",
+      "detail": "Threat enum",
+      "platforms": [
+        "android",
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "unsecureWiFi",
+      "detail": "Threat enum",
+      "platforms": [
+        "android",
+        "ios"
+      ],
+      "score": null
+    }
+  ]
+}

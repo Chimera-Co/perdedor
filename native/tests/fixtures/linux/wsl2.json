@@ -1,0 +1,24 @@
+{
+ "files": {
+  "/proc/version": "Linux version 5.15.167.4-microsoft-standard-WSL2 (root@1d2a3b) (gcc (GCC) 11.2.0) #1 SMP Tue Nov 5 00:21:55 UTC 2024\n",
+  "/proc/sys/kernel/osrelease": "5.15.167.4-microsoft-standard-WSL2\n",
+  "/proc/sys/fs/binfmt_misc/WSLInterop": "enabled\ninterpreter /init\n",
+  "/etc/os-release": "NAME=\"Ubuntu\"\nID=ubuntu\nVERSION_ID=\"24.04\"\n"
+ },
+ "dirs": [
+  "/run/WSL"
+ ],
+ "expect": {
+  "detected": [
+   "env.container_or_wsl",
+   "env.virtualisation_self_report",
+   "env.wsl_interop",
+   "env.wsl_kernel"
+  ],
+  "not_detected": [
+   "env.dockerenv",
+   "env.proc_xen",
+   "env.sys_hypervisor"
+  ]
+ }
+}

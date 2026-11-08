@@ -1,0 +1,5 @@
+[
+  {"key":"integrity.app_install_source","class":"integrity","title":"Application installer provenance","attack":["T1633.001"],"mbc":["B0007"],"discrimination":0.3,"tier":"occasional","platforms":["android","ios"],"why":"Installer provenance is currently mapped to developer_settings; it deserves an application-specific technique."},
+  {"key":"integrity.screen_lock","class":"integrity","title":"Screen lock configuration","attack":["T1633.001"],"mbc":["B0007"],"discrimination":0.2,"tier":"occasional","platforms":["android","ios"],"why":"Passcode availability is different from developer options; the current mapping is approximate."},
+  {"key":"network.active_vpn","class":"network","title":"Active or always-on VPN","attack":["T1633.001"],"mbc":["B0007"],"discrimination":0.3,"tier":"occasional","platforms":["android","ios","macos"],"why":"A VPN is not necessarily interception; proxy_mitm is only the closest existing key."}
+]

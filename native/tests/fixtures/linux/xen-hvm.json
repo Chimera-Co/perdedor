@@ -1,0 +1,53 @@
+{
+ "files": {
+  "/sys/class/dmi/id/sys_vendor": "Xen\n",
+  "/sys/class/dmi/id/product_name": "HVM domU\n",
+  "/sys/class/dmi/id/bios_vendor": "Xen\n",
+  "/sys/class/dmi/id/bios_version": "4.19.1\n",
+  "/sys/class/dmi/id/bios_date": "03/14/2023\n",
+  "/sys/class/dmi/id/board_vendor": "\n",
+  "/sys/class/dmi/id/board_name": "\n",
+  "/sys/class/dmi/id/board_version": "\n",
+  "/sys/class/dmi/id/chassis_vendor": "Xen\n",
+  "/sys/class/dmi/id/chassis_type": "1\n",
+  "/sys/class/dmi/id/chassis_version": "\n",
+  "/sys/class/dmi/id/product_serial": "\n",
+  "/sys/class/dmi/id/product_uuid": "9f2c1e7a-aaaa-bbbb-cccc-ddddeeeeffff\n",
+  "/sys/class/dmi/id/product_version": "\n",
+  "/sys/class/dmi/id/board_asset_tag": "\n",
+  "/proc/cpuinfo": "processor\t: 0\nvendor_id\t: GenuineIntel\nmodel name\t: Intel(R) Core(TM) i7-11700 @ 2.50GHz\nflags\t\t: fpu vme de pse tsc msr pae mce cx8 apic sep hypervisor lahf_lm\n\n",
+  "/sys/devices/system/clocksource/clocksource0/current_clocksource": "xen\n",
+  "/sys/devices/system/clocksource/clocksource0/available_clocksource": "xen tsc hpet acpi_pm\n",
+  "/sys/hypervisor/type": "xen\n",
+  "/sys/hypervisor/version/major": "4\n",
+  "/sys/hypervisor/uuid": "9f2c1e7a-aaaa-bbbb-cccc-ddddeeeeffff\n",
+  "/proc/xen/capabilities": "\n",
+  "/proc/modules": "xen_netfront 45056 0 - Live 0x0\nxen_blkfront 49152 2 - Live 0x0\n",
+  "/proc/cmdline": "BOOT_IMAGE=/vmlinuz root=/dev/xvda1 ro console=hvc0\n",
+  "/etc/os-release": "NAME=\"Debian GNU/Linux\"\nID=debian\nVERSION_ID=\"12\"\n",
+  "/proc/version": "Linux version 6.1.0-27-amd64 (debian-kernel@lists.debian.org) (gcc-12 (Debian 12.2.0-14) 12.2.0) #1 SMP PREEMPT_DYNAMIC Debian 6.1.115-1 (2024-11-01)\n"
+ },
+ "dirs": [
+  "/dev/xen"
+ ],
+ "expect": {
+  "detected": [
+   "env.cpuinfo_hypervisor_flag",
+   "env.dmi_bios_vendor",
+   "env.dmi_chassis_type",
+   "env.dmi_sys_vendor",
+   "env.guest_kernel_modules",
+   "env.kernel_cmdline",
+   "env.proc_xen",
+   "env.sys_hypervisor",
+   "env.virtualisation_self_report",
+   "timing.clock_source"
+  ],
+  "not_detected": [
+   "env.cgroup_container",
+   "env.dockerenv",
+   "env.qemu_fw_cfg",
+   "env.wsl_kernel"
+  ]
+ }
+}

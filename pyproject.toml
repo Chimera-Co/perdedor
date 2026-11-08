@@ -1,6 +1,6 @@
 [project]
 name = "perdedor"
-version = "0.1.0"
+version = "2.0.0"
 description = "PERDEDOR: cross-platform sandbox-evasion self-test suite for CHIMERA (Windows, Linux, Android)"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -8,7 +8,7 @@ license = { text = "MIT" }
 dependencies = []
 
 [project.optional-dependencies]
-dev = ["pytest>=7", "black", "isort", "ruff"]
+dev = ["pytest==9.2.0", "black==26.10.1", "isort==9.0.2", "ruff==0.17.4"]
 
 [project.scripts]
 perdedor = "perdedor_cli.__main__:main"
@@ -23,6 +23,10 @@ build-backend = "setuptools.build_meta"
 package-dir = { "perdedor_common" = "common/python/perdedor_common", "perdedor_linux" = "agents/linux/perdedor_linux", "perdedor_android" = "agents/android/perdedor_android", "perdedor_cli" = "cli/perdedor_cli", "perdedor_macos" = "agents/macos/perdedor_macos", "perdedor_ios" = "agents/ios/perdedor_ios" }
 packages = ["perdedor_common", "perdedor_linux", "perdedor_android", "perdedor_cli", "perdedor_macos", "perdedor_macos.checks", "perdedor_ios", "perdedor_ios.checks"]
 
+[tool.setuptools.package-data]
+# Filled by scripts/build_dist.sh just before building; absent in a checkout.
+perdedor_common = ["_catalog/**/*.json"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 
@@ -36,3 +40,8 @@ line_length = 110
 
 [tool.ruff]
 line-length = 110
+target-version = "py310"
+
+[tool.ruff.lint]
+# Correctness rules only: pyflakes, syntax/statement errors and bugbear.
+select = ["E4", "E7", "E9", "F", "B"]
