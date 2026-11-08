@@ -1,0 +1,104 @@
+{
+  "source_id": "iossecuritysuite",
+  "revision": "2.3.0",
+  "commit": "7436aea705a6c7ad6013edaaeaf051667cdd4beb",
+  "fetched": "2026-11-08",
+  "techniques": [
+    {
+      "name": "amIDebugged",
+      "detail": "IOSSecuritySuite public API",
+      "platforms": [
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "amIInLockdownMode",
+      "detail": "IOSSecuritySuite public API",
+      "platforms": [
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "amIJailbroken",
+      "detail": "IOSSecuritySuite public API",
+      "platforms": [
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "amIJailbrokenWithFailMessage",
+      "detail": "IOSSecuritySuite public API",
+      "platforms": [
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "amIJailbrokenWithFailedChecks",
+      "detail": "IOSSecuritySuite public API",
+      "platforms": [
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "amIProxied",
+      "detail": "IOSSecuritySuite public API",
+      "platforms": [
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "amIReverseEngineered",
+      "detail": "IOSSecuritySuite public API",
+      "platforms": [
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "amIReverseEngineeredWithFailedChecks",
+      "detail": "IOSSecuritySuite public API",
+      "platforms": [
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "amIRunInEmulator",
+      "detail": "IOSSecuritySuite public API",
+      "platforms": [
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "amIRuntimeHooked",
+      "detail": "IOSSecuritySuite public API",
+      "platforms": [
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "amITampered",
+      "detail": "IOSSecuritySuite public API",
+      "platforms": [
+        "ios"
+      ],
+      "score": null
+    },
+    {
+      "name": "isParentPidUnexpected",
+      "detail": "IOSSecuritySuite public API",
+      "platforms": [
+        "ios"
+      ],
+      "score": null
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+ "files": {
+  "/.dockerenv": "",
+  "/proc/self/cgroup": "0::/\n",
+  "/proc/1/cgroup": "0::/\n",
+  "/proc/self/mountinfo": "611 520 0:52 / / rw,relatime master:250 - overlay overlay rw,lowerdir=/var/lib/docker/overlay2/l/ABC:/var/lib/docker/overlay2/l/DEF,upperdir=/var/lib/docker/overlay2/x/diff,workdir=/var/lib/docker/overlay2/x/work\n",
+  "/etc/os-release": "NAME=\"Debian GNU/Linux\"\nID=debian\nVERSION_ID=\"12\"\n",
+  "/proc/version": "Linux version 6.1.0-27-amd64 (debian-kernel@lists.debian.org) (gcc-12 (Debian 12.2.0-14) 12.2.0) #1 SMP PREEMPT_DYNAMIC Debian 6.1.115-1 (2024-11-01)\n"
+ },
+ "expect": {
+  "detected": [
+   "env.cgroup_container",
+   "env.container_or_wsl",
+   "env.dockerenv",
+   "env.overlay_root"
+  ],
+  "not_detected": [
+   "env.proc_xen",
+   "env.sys_hypervisor",
+   "env.wsl_kernel"
+  ]
+ },
+ "dirs": []
+}

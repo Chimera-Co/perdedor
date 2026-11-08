@@ -40,7 +40,9 @@ def main(argv: list[str] | None = None) -> int:
     except ValueError as exc:
         parser.error(str(exc))
     if args.list_checks:
-        chosen = select(all_checks(), profile=args.profile, only=args.only, skip=args.skip, network=not args.no_network)
+        chosen = select(
+            all_checks(), profile=args.profile, only=args.only, skip=args.skip, network=not args.no_network
+        )
         print(json.dumps(list_doc(chosen), indent=2))
         return 0
 

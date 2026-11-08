@@ -1,5 +1,4356 @@
 {
   "catalog_format": 2,
   "description": "Malware families, tools and threat actors with the evasion techniques public reporting attributes to them. Every entry cites its sources; 'weight' is the family's share of the reference population used by the threat-survival score.",
-  "threats": []
+  "threats": [
+    {
+      "name": "GuLoader",
+      "aliases": [
+        "CloudEye",
+        "vbdropper"
+      ],
+      "type": "loader",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2019,
+      "last_reported": 2025,
+      "techniques": [
+        "timing.cpuid_vmexit",
+        "cpu.hypervisor_bit",
+        "human.foreground_activity",
+        "guest_tools.drivers_modules",
+        "artifacts.window_classes",
+        "artifacts.files",
+        "instrumentation.inline_hooks"
+      ],
+      "evidence": [
+        {
+          "technique": "timing.cpuid_vmexit",
+          "detail": "Measures RDTSC deltas around CPUID(EAX=1) 100000 times (0x186A0) and loops forever if the sum exceeds 0x68E7780, i.e. if VM exits make CPUID slow.",
+          "source": "https://outpost24.com/blog/playing-with-guloader-anti-vm-techniques-malware/",
+          "published": "2020-08-05"
+        },
+        {
+          "technique": "cpu.hypervisor_bit",
+          "detail": "Executes CPUID leaf 1 and tests ECX bit 31; when set it shows 'The program cannot be run under virtual Environment or debugging software!' and exits.",
+          "source": "https://labs.k7computing.com/index.php/guloader-snowballs-via-malspam-campaigns/",
+          "published": "2021-02-17"
+        },
+        {
+          "technique": "human.foreground_activity",
+          "detail": "Counts top-level windows with EnumWindows and terminates if fewer than 12 are open.",
+          "source": "https://www.crowdstrike.com/en-us/blog/guloader-dissection-reveals-new-anti-analysis-techniques-and-code-injection-redundancy/",
+          "published": "2022-12-19"
+        },
+        {
+          "technique": "guest_tools.drivers_modules",
+          "detail": "Enumerates loaded device drivers (EnumDeviceDrivers/GetDeviceDriverBaseName) and compares DJB2 hashes of their names with VM driver names.",
+          "source": "https://www.crowdstrike.com/en-us/blog/guloader-dissection-reveals-new-anti-analysis-techniques-and-code-injection-redundancy/",
+          "published": "2022-12-19"
+        },
+        {
+          "technique": "artifacts.window_classes",
+          "detail": "Scans its process memory with NtQueryVirtualMemory for DJB2 hashes of VMware/Hyper-V window-class strings (vmtoolsdControlWndClass, VMSwitchUserControlClass, VM3DService Hidden Window).",
+          "source": "https://www.crowdstrike.com/en-us/blog/guloader-dissection-reveals-new-anti-analysis-techniques-and-code-injection-redundancy/",
+          "published": "2022-12-19"
+        },
+        {
+          "technique": "artifacts.files",
+          "detail": "Tries to open C:\\Program Files\\Qemu-ga\\qemu-ga.exe and C:\\Program Files\\qga\\qga.exe (QEMU guest agent).",
+          "source": "https://labs.k7computing.com/index.php/guloader-snowballs-via-malspam-campaigns/",
+          "published": "2021-02-17"
+        },
+        {
+          "technique": "instrumentation.inline_hooks",
+          "detail": "Detects user-mode hooks placed by sandboxes on ntdll functions before using them.",
+          "source": "https://outpost24.com/blog/playing-with-guloader-anti-vm-techniques-malware/",
+          "published": "2020-08-05"
+        }
+      ],
+      "weight_basis": "ANY.RUN lists GuLoader among the most active loaders in its quarterly trend reports; CrowdStrike (2022) calls it one of the most evasive commodity downloaders. Placed one step below the ANY.RUN 2025 top-10 families.",
+      "weight": 2.0
+    },
+    {
+      "name": "Raspberry Robin",
+      "aliases": [
+        "QNAP worm",
+        "Roshtyak"
+      ],
+      "type": "loader",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "Storm-0856"
+      ],
+      "first_seen": 2021,
+      "last_reported": 2025,
+      "techniques": [
+        "debugger.api_flags",
+        "debugger.kernel_debugger",
+        "resources.cpu_count",
+        "resources.memory_size",
+        "identity.username",
+        "identity.sample_path",
+        "analysis_tools.loaded_modules",
+        "cpu.brand_string",
+        "cpu.hypervisor_vendor_leaf",
+        "cpu.hypervisor_bit",
+        "artifacts.files",
+        "hardware.disk_identity",
+        "hardware.monitor_edid",
+        "network.mac_oui",
+        "analysis_tools.processes",
+        "firmware.smbios_raw_table",
+        "artifacts.named_objects",
+        "os_config.script_policies",
+        "instrumentation.inline_hooks",
+        "cpu.emulation_quirks",
+        "timing.uptime",
+        "hardware.thermal_sensors"
+      ],
+      "evidence": [
+        {
+          "technique": "debugger.api_flags",
+          "detail": "Reads PEB BeingDebugged, NtGlobalFlag and heap ForceFlags.",
+          "source": "https://www.zscaler.com/blogs/security-research/unraveling-raspberry-robin-s-layers-analyzing-obfuscation-techniques-and",
+          "published": "2024-11-19"
+        },
+        {
+          "technique": "debugger.kernel_debugger",
+          "detail": "Reads KdDebuggerEnabled from KUSER_SHARED_DATA.",
+          "source": "https://www.zscaler.com/blogs/security-research/unraveling-raspberry-robin-s-layers-analyzing-obfuscation-techniques-and",
+          "published": "2024-11-19"
+        },
+        {
+          "technique": "resources.cpu_count",
+          "detail": "Fails if fewer than two active processors.",
+          "source": "https://www.zscaler.com/blogs/security-research/unraveling-raspberry-robin-s-layers-analyzing-obfuscation-techniques-and",
+          "published": "2024-11-19"
+        },
+        {
+          "technique": "resources.memory_size",
+          "detail": "Reads NumberOfPhysicalPages from KUSER_SHARED_DATA and fails under 800 MB.",
+          "source": "https://www.zscaler.com/blogs/security-research/unraveling-raspberry-robin-s-layers-analyzing-obfuscation-techniques-and",
+          "published": "2024-11-19"
+        },
+        {
+          "technique": "identity.username",
+          "detail": "Compares the user name with an embedded blocklist.",
+          "source": "https://www.zscaler.com/blogs/security-research/unraveling-raspberry-robin-s-layers-analyzing-obfuscation-techniques-and",
+          "published": "2024-11-19"
+        },
+        {
+          "technique": "identity.sample_path",
+          "detail": "Compares its own executable name with a blocklist (including 'loaddll').",
+          "source": "https://www.zscaler.com/blogs/security-research/unraveling-raspberry-robin-s-layers-analyzing-obfuscation-techniques-and",
+          "published": "2024-11-19"
+        },
+        {
+          "technique": "analysis_tools.loaded_modules",
+          "detail": "Compares loaded module names with a blocklist.",
+          "source": "https://www.zscaler.com/blogs/security-research/unraveling-raspberry-robin-s-layers-analyzing-obfuscation-techniques-and",
+          "published": "2024-11-19"
+        },
+        {
+          "technique": "cpu.brand_string",
+          "detail": "Compares the CPU name with a blocklist.",
+          "source": "https://www.zscaler.com/blogs/security-research/unraveling-raspberry-robin-s-layers-analyzing-obfuscation-techniques-and",
+          "published": "2024-11-19"
+        },
+        {
+          "technique": "cpu.hypervisor_vendor_leaf",
+          "detail": "Compares the CPUID hypervisor vendor string with default IDs such as 'Microsoft hv' and 'VMwareVMware'.",
+          "source": "https://research.checkpoint.com/2023/raspberry-robin-anti-evasion-how-to-exploit-analysis/",
+          "published": "2023-04-18"
+        },
+        {
+          "technique": "cpu.hypervisor_bit",
+          "detail": "Uses CPUID hypervisor detection; if the hypervisor leaf is hidden it checks further whether the machine is a hypervisor.",
+          "source": "https://www.zscaler.com/blogs/security-research/unraveling-raspberry-robin-s-layers-analyzing-obfuscation-techniques-and",
+          "published": "2024-11-19"
+        },
+        {
+          "technique": "artifacts.files",
+          "detail": "Looks for files common in sandbox and analysis environments.",
+          "source": "https://www.zscaler.com/blogs/security-research/unraveling-raspberry-robin-s-layers-analyzing-obfuscation-techniques-and",
+          "published": "2024-11-19"
+        },
+        {
+          "technique": "hardware.disk_identity",
+          "detail": "Checks the product ID of PhysicalDrive0.",
+          "source": "https://www.zscaler.com/blogs/security-research/unraveling-raspberry-robin-s-layers-analyzing-obfuscation-techniques-and",
+          "published": "2024-11-19"
+        },
+        {
+          "technique": "hardware.monitor_edid",
+          "detail": "Compares the monitor display name with a blocklist.",
+          "source": "https://www.zscaler.com/blogs/security-research/unraveling-raspberry-robin-s-layers-analyzing-obfuscation-techniques-and",
+          "published": "2024-11-19"
+        },
+        {
+          "technique": "network.mac_oui",
+          "detail": "Compares host MAC addresses with a blocklist.",
+          "source": "https://www.zscaler.com/blogs/security-research/unraveling-raspberry-robin-s-layers-analyzing-obfuscation-techniques-and",
+          "published": "2024-11-19"
+        },
+        {
+          "technique": "analysis_tools.processes",
+          "detail": "Compares running process names with a blocklist.",
+          "source": "https://www.zscaler.com/blogs/security-research/unraveling-raspberry-robin-s-layers-analyzing-obfuscation-techniques-and",
+          "published": "2024-11-19"
+        },
+        {
+          "technique": "firmware.smbios_raw_table",
+          "detail": "Reads the firmware table through SystemFirmwareTableInformation and checks it against a blocklist.",
+          "source": "https://www.zscaler.com/blogs/security-research/unraveling-raspberry-robin-s-layers-analyzing-obfuscation-techniques-and",
+          "published": "2024-11-19"
+        },
+        {
+          "technique": "artifacts.named_objects",
+          "detail": "Looks for session named objects such as HGFSMUTEX and HGFSMEMORY (VMware shared folders).",
+          "source": "https://www.zscaler.com/blogs/security-research/unraveling-raspberry-robin-s-layers-analyzing-obfuscation-techniques-and",
+          "published": "2024-11-19"
+        },
+        {
+          "technique": "os_config.script_policies",
+          "detail": "Treats Office VBAWarnings set to enable all macros as an analysis-machine sign.",
+          "source": "https://www.zscaler.com/blogs/security-research/unraveling-raspberry-robin-s-layers-analyzing-obfuscation-techniques-and",
+          "published": "2024-11-19"
+        },
+        {
+          "technique": "instrumentation.inline_hooks",
+          "detail": "Checks Windows APIs for inline hooks.",
+          "source": "https://www.zscaler.com/blogs/security-research/unraveling-raspberry-robin-s-layers-analyzing-obfuscation-techniques-and",
+          "published": "2024-11-19"
+        },
+        {
+          "technique": "cpu.emulation_quirks",
+          "detail": "First layer uses GS/CS segment-register behaviour to detect code emulation.",
+          "source": "https://www.zscaler.com/blogs/security-research/unraveling-raspberry-robin-s-layers-analyzing-obfuscation-techniques-and",
+          "published": "2024-11-19"
+        },
+        {
+          "technique": "timing.uptime",
+          "detail": "The decoy payload requires uptime above 13 minutes.",
+          "source": "https://www.zscaler.com/blogs/security-research/unraveling-raspberry-robin-s-layers-analyzing-obfuscation-techniques-and",
+          "published": "2024-11-19"
+        },
+        {
+          "technique": "hardware.thermal_sensors",
+          "detail": "Queries CPU temperature information (ATT&CK S1130, citing HP Wolf Security, 10 Apr 2024).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2024-04-10"
+        }
+      ],
+      "weight_basis": "Widely reported USB-worm/initial-access loader (ATT&CK S1130; Check Point 2023; Zscaler 2024) but absent from the ANY.RUN 2024/2025 top-10 tables: second-tier commodity weight.",
+      "weight": 1.2
+    },
+    {
+      "name": "Lumma Stealer",
+      "aliases": [
+        "LummaC2"
+      ],
+      "type": "stealer",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "Storm-2477 (developer per Microsoft)"
+      ],
+      "first_seen": 2022,
+      "last_reported": 2025,
+      "techniques": [
+        "human.mouse_activity",
+        "analysis_tools.windows",
+        "analysis_tools.loaded_modules",
+        "emulator.wine",
+        "identity.username",
+        "firmware.smbios_strings",
+        "artifacts.files",
+        "guest_tools.services",
+        "guest_tools.processes",
+        "hardware.gpu_identity"
+      ],
+      "evidence": [
+        {
+          "technique": "human.mouse_activity",
+          "detail": "LummaC2 v4.0 waits for cursor movement, samples five positions 50 ms apart and only runs if the angles between successive movement vectors stay below 45 degrees.",
+          "source": "https://outpost24.com/blog/lummac2-anti-sandbox-technique-trigonometry-human-detection/",
+          "published": "2023-11-20"
+        },
+        {
+          "technique": "analysis_tools.windows",
+          "detail": "Loader checks the foreground window title for x32dbg, x64dbg, windbg, ollydbg, dnspy, ida and similar strings.",
+          "source": "https://www.fortinet.com/blog/threat-research/lumma-variant-on-youtube",
+          "published": "2024-01-08"
+        },
+        {
+          "technique": "analysis_tools.loaded_modules",
+          "detail": "Loader checks for SbieDll.dll, cmdvrt64.dll, cuckoomon.dll and SxIn.dll.",
+          "source": "https://www.fortinet.com/blog/threat-research/lumma-variant-on-youtube",
+          "published": "2024-01-08"
+        },
+        {
+          "technique": "emulator.wine",
+          "detail": "Loader looks up wine_get_unix_file_name to detect Wine.",
+          "source": "https://www.fortinet.com/blog/threat-research/lumma-variant-on-youtube",
+          "published": "2024-01-08"
+        },
+        {
+          "technique": "identity.username",
+          "detail": "Loader compares the user name with Johnson, Miller, malware, maltest, CurrentUser, Sandbox, virus, John Doe, test user, sand box, WDAGUtilityAccount.",
+          "source": "https://www.fortinet.com/blog/threat-research/lumma-variant-on-youtube",
+          "published": "2024-01-08"
+        },
+        {
+          "technique": "firmware.smbios_strings",
+          "detail": "Loader queries Win32_ComputerSystem manufacturer/model for innotek GmbH, Microsoft Corporation, VirtualBox, VMware.",
+          "source": "https://www.fortinet.com/blog/threat-research/lumma-variant-on-youtube",
+          "published": "2024-01-08"
+        },
+        {
+          "technique": "artifacts.files",
+          "detail": "Loader checks C:\\Program Files\\VMware, VirtualBox Guest Additions and driver files such as balloon.sys, netkvm.sys, VBoxGuest.sys, vmmouse.sys in System32.",
+          "source": "https://www.fortinet.com/blog/threat-research/lumma-variant-on-youtube",
+          "published": "2024-01-08"
+        },
+        {
+          "technique": "guest_tools.services",
+          "detail": "Loader checks for the vmbus, VMBusHID and hyperkbd services.",
+          "source": "https://www.fortinet.com/blog/threat-research/lumma-variant-on-youtube",
+          "published": "2024-01-08"
+        },
+        {
+          "technique": "guest_tools.processes",
+          "detail": "Loader checks for vboxservice, VGAuthService, vmusrvc and qemu-ga processes.",
+          "source": "https://www.fortinet.com/blog/threat-research/lumma-variant-on-youtube",
+          "published": "2024-01-08"
+        },
+        {
+          "technique": "hardware.gpu_identity",
+          "detail": "Checks GPU configuration for sandbox detection (ATT&CK S1213, citing Trend Micro, 30 Jan 2025).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2025-01-30"
+        }
+      ],
+      "weight_basis": "ANY.RUN 2025 annual report: #1 family with 31,111 detections (2024: #1 with 12,655).",
+      "weight": 3.0
+    },
+    {
+      "name": "Pikabot",
+      "aliases": [],
+      "type": "loader",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "TA577",
+        "Water Curupira"
+      ],
+      "first_seen": 2023,
+      "last_reported": 2024,
+      "techniques": [
+        "debugger.exception_tricks",
+        "debugger.api_flags",
+        "debugger.debug_objects",
+        "debugger.hardware_breakpoints",
+        "resources.cpu_count",
+        "resources.memory_size",
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "debugger.exception_tricks",
+          "detail": "Raises INT 2D and INT 3 exceptions and reads the trap flag via __readeflags.",
+          "source": "https://www.zscaler.com/blogs/security-research/technical-analysis-pikabot",
+          "published": "2023-05-24"
+        },
+        {
+          "technique": "debugger.api_flags",
+          "detail": "Reads PEB BeingDebugged and NtGlobalFlag, calls IsDebuggerPresent/CheckRemoteDebuggerPresent and OutputDebugString.",
+          "source": "https://www.zscaler.com/blogs/security-research/technical-analysis-pikabot",
+          "published": "2023-05-24"
+        },
+        {
+          "technique": "debugger.debug_objects",
+          "detail": "Calls NtQueryInformationProcess with ProcessDebugPort and ProcessDebugFlags.",
+          "source": "https://www.zscaler.com/blogs/security-research/technical-analysis-pikabot",
+          "published": "2023-05-24"
+        },
+        {
+          "technique": "debugger.hardware_breakpoints",
+          "detail": "Detects hardware breakpoints.",
+          "source": "https://www.zscaler.com/blogs/security-research/technical-analysis-pikabot",
+          "published": "2023-05-24"
+        },
+        {
+          "technique": "resources.cpu_count",
+          "detail": "Requires at least two processors.",
+          "source": "https://www.zscaler.com/blogs/security-research/technical-analysis-pikabot",
+          "published": "2023-05-24"
+        },
+        {
+          "technique": "resources.memory_size",
+          "detail": "Requires more than 2 GB of RAM.",
+          "source": "https://www.zscaler.com/blogs/security-research/technical-analysis-pikabot",
+          "published": "2023-05-24"
+        },
+        {
+          "technique": "identity.locale",
+          "detail": "Stops if the system language is Georgian, Kazakh, Uzbek, Tajik, Russian, Ukrainian, Belarusian or Slovenian (ATT&CK S1145, citing Zscaler 2023 and Elastic 2024).",
+          "source": "https://attack.mitre.org/techniques/T1480/001/",
+          "published": "2023-05-24"
+        }
+      ],
+      "weight_basis": "Distributed by TA577 at QakBot-replacement scale in late 2023 (Zscaler, Elastic); disrupted by Operation Endgame in May 2024, so weighted below current top families.",
+      "weight": 0.8
+    },
+    {
+      "name": "DarkGate",
+      "aliases": [],
+      "type": "loader",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2018,
+      "last_reported": 2024,
+      "techniques": [
+        "hardware.gpu_identity",
+        "resources.disk_size",
+        "resources.memory_size",
+        "cpu.brand_string",
+        "debugger.api_flags"
+      ],
+      "evidence": [
+        {
+          "technique": "hardware.gpu_identity",
+          "detail": "'antivm' option checks the display information for VirtualBox, VMware or Hyper-V.",
+          "source": "https://www.trellix.com/blogs/research/the-continued-evolution-of-the-darkgate-malware-as-a-service/",
+          "published": "2023-11-21"
+        },
+        {
+          "technique": "resources.disk_size",
+          "detail": "'antidisk' option refuses to run below a configured amount of free disk space.",
+          "source": "https://www.trellix.com/blogs/research/the-continued-evolution-of-the-darkgate-malware-as-a-service/",
+          "published": "2023-11-21"
+        },
+        {
+          "technique": "resources.memory_size",
+          "detail": "'antiram' option refuses to run below a configured amount of RAM.",
+          "source": "https://www.trellix.com/blogs/research/the-continued-evolution-of-the-darkgate-malware-as-a-service/",
+          "published": "2023-11-21"
+        },
+        {
+          "technique": "cpu.brand_string",
+          "detail": "'antienv' option checks processor information, including whether the CPU is an Intel Xeon.",
+          "source": "https://www.trellix.com/blogs/research/the-continued-evolution-of-the-darkgate-malware-as-a-service/",
+          "published": "2023-11-21"
+        },
+        {
+          "technique": "debugger.api_flags",
+          "detail": "Checks the PEB BeingDebugged flag.",
+          "source": "https://www.trellix.com/blogs/research/the-continued-evolution-of-the-darkgate-malware-as-a-service/",
+          "published": "2023-11-21"
+        }
+      ],
+      "weight_basis": "Malware-as-a-service sold on Russian-language forums since 2023 with large phishing/Teams campaigns (Trellix 2023); not in ANY.RUN 2024/2025 top-10.",
+      "weight": 1.0
+    },
+    {
+      "name": "Latrodectus",
+      "aliases": [
+        "BlackWidow",
+        "Lotus"
+      ],
+      "type": "loader",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "TA577",
+        "TA578",
+        "LUNAR SPIDER"
+      ],
+      "first_seen": 2023,
+      "last_reported": 2025,
+      "techniques": [
+        "debugger.api_flags",
+        "wear_and_tear.process_count",
+        "network.adapter_count"
+      ],
+      "evidence": [
+        {
+          "technique": "debugger.api_flags",
+          "detail": "Exits if the PEB BeingDebugged flag is set.",
+          "source": "https://www.elastic.co/security-labs/threat-command/spring-cleaning-with-latrodectus",
+          "published": "2024-05-16"
+        },
+        {
+          "technique": "wear_and_tear.process_count",
+          "detail": "Exits if fewer than 75 processes run on Windows 10/11/Server 2016, or fewer than 50 on older Windows.",
+          "source": "https://www.elastic.co/security-labs/threat-command/spring-cleaning-with-latrodectus",
+          "published": "2024-05-16"
+        },
+        {
+          "technique": "network.adapter_count",
+          "detail": "Calls GetAdaptersInfo and exits if the host has no valid MAC address.",
+          "source": "https://www.proofpoint.com/us/blog/threat-insight/latrodectus-spider-bytes-ice",
+          "published": "2024-04-04"
+        }
+      ],
+      "weight_basis": "IcedID successor distributed by TA577/TA578 initial-access brokers (Proofpoint 2024); mid-tier loader, not in ANY.RUN top-10.",
+      "weight": 0.8
+    },
+    {
+      "name": "Bumblebee",
+      "aliases": [],
+      "type": "loader",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "EXOTIC LILY",
+        "TA578"
+      ],
+      "first_seen": 2022,
+      "last_reported": 2024,
+      "techniques": [
+        "artifacts.files",
+        "artifacts.registry",
+        "network.mac_oui",
+        "firmware.acpi_tables",
+        "firmware.smbios_raw_table",
+        "firmware.smbios_strings",
+        "hardware.pci_vendor_ids",
+        "hardware.disk_identity",
+        "resources.disk_size",
+        "resources.memory_size",
+        "hardware.thermal_sensors",
+        "identity.username",
+        "identity.sample_path",
+        "guest_tools.processes",
+        "guest_tools.services",
+        "artifacts.window_classes",
+        "artifacts.named_objects",
+        "emulator.wine",
+        "human.mouse_activity",
+        "analysis_tools.processes"
+      ],
+      "evidence": [
+        {
+          "technique": "artifacts.files",
+          "detail": "al-khaser vbox_files/vmware_files/kvm_files: checks for driver files such as System32\\drivers\\VBoxMouse.sys.",
+          "source": "https://www.vmray.com/understanding-bumblebee-the-malicious-behavior-of-bumblebee/",
+          "published": "2023-08-18"
+        },
+        {
+          "technique": "artifacts.registry",
+          "detail": "al-khaser vbox_reg_keys, vmware_reg_keys, kvm_reg_keys, qemu_reg_key_value, virtual_pc_reg_keys.",
+          "source": "https://www.vmray.com/understanding-bumblebee-the-malicious-behavior-of-bumblebee/",
+          "published": "2023-08-18"
+        },
+        {
+          "technique": "network.mac_oui",
+          "detail": "al-khaser check_mac_addr, vmware_mac, xen_check_mac, vbox_mac_wmi.",
+          "source": "https://www.vmray.com/understanding-bumblebee-the-malicious-behavior-of-bumblebee/",
+          "published": "2023-08-18"
+        },
+        {
+          "technique": "firmware.acpi_tables",
+          "detail": "al-khaser vbox_firmware_ACPI, vmware_firmware_ACPI, qemu_firmware_ACPI.",
+          "source": "https://www.vmray.com/understanding-bumblebee-the-malicious-behavior-of-bumblebee/",
+          "published": "2023-08-18"
+        },
+        {
+          "technique": "firmware.smbios_raw_table",
+          "detail": "al-khaser vbox_firmware_SMBIOS, vmware_firmware_SMBIOS, qemu_firmware_SMBIOS, get_system_firmware.",
+          "source": "https://www.vmray.com/understanding-bumblebee-the-malicious-behavior-of-bumblebee/",
+          "published": "2023-08-18"
+        },
+        {
+          "technique": "firmware.smbios_strings",
+          "detail": "al-khaser vbox_baseboard_wmi and model_computer_system_wmi.",
+          "source": "https://www.vmray.com/understanding-bumblebee-the-malicious-behavior-of-bumblebee/",
+          "published": "2023-08-18"
+        },
+        {
+          "technique": "hardware.pci_vendor_ids",
+          "detail": "al-khaser vbox_pnpentity_pcideviceid_wmi (PCI vendor ID 80EE).",
+          "source": "https://www.vmray.com/understanding-bumblebee-the-malicious-behavior-of-bumblebee/",
+          "published": "2023-08-18"
+        },
+        {
+          "technique": "hardware.disk_identity",
+          "detail": "al-khaser registry_services_disk_enum (disk enum names in the registry).",
+          "source": "https://www.vmray.com/understanding-bumblebee-the-malicious-behavior-of-bumblebee/",
+          "published": "2023-08-18"
+        },
+        {
+          "technique": "resources.disk_size",
+          "detail": "al-khaser disk_size_wmi.",
+          "source": "https://www.vmray.com/understanding-bumblebee-the-malicious-behavior-of-bumblebee/",
+          "published": "2023-08-18"
+        },
+        {
+          "technique": "resources.memory_size",
+          "detail": "al-khaser memory_space: RAM above a threshold.",
+          "source": "https://www.vmray.com/understanding-bumblebee-the-malicious-behavior-of-bumblebee/",
+          "published": "2023-08-18"
+        },
+        {
+          "technique": "hardware.thermal_sensors",
+          "detail": "al-khaser cpu_fan_wmi: Win32_Fan must return data.",
+          "source": "https://www.vmray.com/understanding-bumblebee-the-malicious-behavior-of-bumblebee/",
+          "published": "2023-08-18"
+        },
+        {
+          "technique": "identity.username",
+          "detail": "al-khaser known_usernames.",
+          "source": "https://www.vmray.com/understanding-bumblebee-the-malicious-behavior-of-bumblebee/",
+          "published": "2023-08-18"
+        },
+        {
+          "technique": "identity.sample_path",
+          "detail": "al-khaser known_file_names (e.g. sample.exe).",
+          "source": "https://www.vmray.com/understanding-bumblebee-the-malicious-behavior-of-bumblebee/",
+          "published": "2023-08-18"
+        },
+        {
+          "technique": "guest_tools.processes",
+          "detail": "al-khaser vbox_processes, qemu_processes, parallels_process, virtual_pc_process.",
+          "source": "https://www.vmray.com/understanding-bumblebee-the-malicious-behavior-of-bumblebee/",
+          "published": "2023-08-18"
+        },
+        {
+          "technique": "guest_tools.services",
+          "detail": "al-khaser get_services.",
+          "source": "https://www.vmray.com/understanding-bumblebee-the-malicious-behavior-of-bumblebee/",
+          "published": "2023-08-18"
+        },
+        {
+          "technique": "artifacts.window_classes",
+          "detail": "al-khaser vbox_window_class.",
+          "source": "https://www.vmray.com/understanding-bumblebee-the-malicious-behavior-of-bumblebee/",
+          "published": "2023-08-18"
+        },
+        {
+          "technique": "artifacts.named_objects",
+          "detail": "al-khaser vbox_devices and vmware_devices (\\\\.\\VBoxGuest, \\\\.\\HGFS...).",
+          "source": "https://www.vmray.com/understanding-bumblebee-the-malicious-behavior-of-bumblebee/",
+          "published": "2023-08-18"
+        },
+        {
+          "technique": "emulator.wine",
+          "detail": "al-khaser wine_reg_key and wine_exports.",
+          "source": "https://www.vmray.com/understanding-bumblebee-the-malicious-behavior-of-bumblebee/",
+          "published": "2023-08-18"
+        },
+        {
+          "technique": "human.mouse_activity",
+          "detail": "al-khaser mouse_movement.",
+          "source": "https://www.vmray.com/understanding-bumblebee-the-malicious-behavior-of-bumblebee/",
+          "published": "2023-08-18"
+        },
+        {
+          "technique": "analysis_tools.processes",
+          "detail": "Identifies analysis tools from running processes (ATT&CK S1039, citing Kaspersky 'The chronicles of Bumblebee', 27 Apr 2022).",
+          "source": "https://attack.mitre.org/techniques/T1518/001/",
+          "published": "2022-04-27"
+        }
+      ],
+      "weight_basis": "Conti/TrickBot-linked loader targeted by Operation Endgame (Europol, 30 May 2024); mid-tier loader weight.",
+      "weight": 0.8
+    },
+    {
+      "name": "IcedID",
+      "aliases": [
+        "BokBot"
+      ],
+      "type": "loader",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "LUNAR SPIDER"
+      ],
+      "first_seen": 2017,
+      "last_reported": 2024,
+      "techniques": [
+        "timing.cpuid_vmexit",
+        "cpu.hypervisor_vendor_leaf"
+      ],
+      "evidence": [
+        {
+          "technique": "timing.cpuid_vmexit",
+          "detail": "Loader runs 255 iterations of RDTSC / CPUID(1) / RDTSC and buckets the deltas; the counts go to the C2, which decides whether to deliver the core module.",
+          "source": "https://www.ibm.com/think/x-force/breaking-the-ice-a-deep-dive-into-the-icedid-banking-trojans-new-major-version-release",
+          "published": "2025-03-27"
+        },
+        {
+          "technique": "cpu.hypervisor_vendor_leaf",
+          "detail": "Calls CPUID 0x40000000 and compares the vendor registers with Xen, Hyper-V, VMware and KVM signatures.",
+          "source": "https://www.ibm.com/think/x-force/breaking-the-ice-a-deep-dive-into-the-icedid-banking-trojans-new-major-version-release",
+          "published": "2025-03-27"
+        }
+      ],
+      "weight_basis": "Major banking trojan/loader feeding ransomware; one of the droppers taken down by Operation Endgame (Europol, 30 May 2024). Activity fell afterwards, so weighted mid-tier.",
+      "weight": 0.8
+    },
+    {
+      "name": "QakBot",
+      "aliases": [
+        "Qbot",
+        "Pinkslipbot",
+        "Quakbot"
+      ],
+      "type": "loader",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "TA570",
+        "TA577"
+      ],
+      "first_seen": 2007,
+      "last_reported": 2024,
+      "techniques": [
+        "analysis_tools.processes",
+        "guest_tools.processes",
+        "cpu.vmware_backdoor",
+        "hardware.pci_vendor_ids",
+        "identity.sample_path"
+      ],
+      "evidence": [
+        {
+          "technique": "analysis_tools.processes",
+          "detail": "Exits if processes such as Fiddler.exe, Procmon.exe, ProcessHacker.exe, Wireshark.exe, dumpcap.exe, idaq.exe, x32dbg.exe, OLLYDBG.EXE, windbg.exe, Tcpview.exe or samp1e.exe/sample.exe/runsample.exe run.",
+          "source": "https://lab52.io/blog/bypassing-qakbot-anti-analysis-tactics/",
+          "published": "2023-03-24"
+        },
+        {
+          "technique": "guest_tools.processes",
+          "detail": "Exits if VBoxTray.exe, VBoxService.exe, vmtoolsd.exe, vm3dservice.exe, VGAuthService.exe, TPAutoConnect.exe or vmacthlp.exe run.",
+          "source": "https://lab52.io/blog/bypassing-qakbot-anti-analysis-tactics/",
+          "published": "2023-03-24"
+        },
+        {
+          "technique": "cpu.vmware_backdoor",
+          "detail": "Executes IN on I/O port 0x5658 with EAX='VMXh' and command 0x0A (get version) to detect VMware.",
+          "source": "https://lab52.io/blog/bypassing-qakbot-anti-analysis-tactics/",
+          "published": "2023-03-24"
+        },
+        {
+          "technique": "hardware.pci_vendor_ids",
+          "detail": "Enumerates the device list for VMware SVGA/SCSI/Pointing, VBoxVideo, VBoxGuest, QEMU, Red Hat VirtIO, Virtual HD and similar device names.",
+          "source": "https://malwareandstuff.com/an-old-enemy-diving-into-qbot-part-2/",
+          "published": "2020-04-26"
+        },
+        {
+          "technique": "identity.sample_path",
+          "detail": "Checks whether its own file name is a default analysis name such as sample.exe or malware.exe.",
+          "source": "https://hatching.io/blog/reversing-qakbot/",
+          "published": "2019-11-12"
+        }
+      ],
+      "weight_basis": "Named in the CISA/ACSC list of top malware strains of 2021 (AA22-216A); not in the ANY.RUN 2024/2025 top-10, so weight 1.0.",
+      "weight": 1.0
+    },
+    {
+      "name": "SmokeLoader",
+      "aliases": [
+        "Dofoil",
+        "Sharik"
+      ],
+      "type": "loader",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2011,
+      "last_reported": 2025,
+      "techniques": [
+        "identity.locale",
+        "debugger.api_flags",
+        "hardware.disk_identity",
+        "os_config.boot_debug_flags",
+        "analysis_tools.loaded_modules",
+        "guest_tools.processes",
+        "guest_tools.drivers_modules",
+        "identity.sample_path"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.locale",
+          "detail": "Calls GetKeyboardLayout and stops on Russian/Ukrainian layouts.",
+          "source": "https://sysopfb.github.io/malware,/buer,/smokeloader/2020/03/18/SmokeLoader.html",
+          "published": "2020-03-18"
+        },
+        {
+          "technique": "debugger.api_flags",
+          "detail": "Checks the PEB BeingDebugged flag and NtGlobalFlag.",
+          "source": "https://sysopfb.github.io/malware,/buer,/smokeloader/2020/03/18/SmokeLoader.html",
+          "published": "2020-03-18"
+        },
+        {
+          "technique": "hardware.disk_identity",
+          "detail": "Reads disk device names under System\\CurrentControlSet\\Enum\\IDE and \\SCSI and looks for qemu, virtio, vmware, vbox.",
+          "source": "https://sysopfb.github.io/malware,/buer,/smokeloader/2020/03/18/SmokeLoader.html",
+          "published": "2020-03-18"
+        },
+        {
+          "technique": "os_config.boot_debug_flags",
+          "detail": "Calls NtQuerySystemInformation(SystemCodeIntegrityInformation) to detect test-signing/unsigned-driver policy, common on sandboxes.",
+          "source": "https://hatching.io/blog/tt-2020-08-27/",
+          "published": "2020-08-27"
+        },
+        {
+          "technique": "analysis_tools.loaded_modules",
+          "detail": "Checks for loaded sbiedll, aswhook and snxhk modules.",
+          "source": "https://hatching.io/blog/tt-2020-08-27/",
+          "published": "2020-08-27"
+        },
+        {
+          "technique": "guest_tools.processes",
+          "detail": "Looks for qemu-ga.exe, qga.exe, windanr.exe, vboxservice.exe, vboxtray.exe, vmtoolsd.exe, prl_tools.exe.",
+          "source": "https://hatching.io/blog/tt-2020-08-27/",
+          "published": "2020-08-27"
+        },
+        {
+          "technique": "guest_tools.drivers_modules",
+          "detail": "Enumerates loaded kernel modules for vmci.s, vmusbm, vmmous, vm3dmp, vboxgu, vboxsf, vioser and others.",
+          "source": "https://hatching.io/blog/tt-2020-08-27/",
+          "published": "2020-08-27"
+        },
+        {
+          "technique": "identity.sample_path",
+          "detail": "Checks whether the executable path matches [A-F0-9]{4}.vmt.",
+          "source": "https://hatching.io/blog/tt-2020-08-27/",
+          "published": "2020-08-27"
+        }
+      ],
+      "weight_basis": "ANY.RUN 2025 annual report names Smoke Loader first among the widespread loaders; also targeted by Operation Endgame (Europol 2024).",
+      "weight": 1.5
+    },
+    {
+      "name": "AsyncRAT",
+      "aliases": [],
+      "type": "rat",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "many; open-source builder"
+      ],
+      "first_seen": 2019,
+      "last_reported": 2025,
+      "techniques": [
+        "firmware.smbios_strings",
+        "debugger.api_flags",
+        "analysis_tools.loaded_modules",
+        "resources.disk_size"
+      ],
+      "evidence": [
+        {
+          "technique": "firmware.smbios_strings",
+          "detail": "Anti_Analysis.DetectManufacturer (builder option): Win32_ComputerSystem Manufacturer 'microsoft corporation' with a VIRTUAL model, 'vmware', or Model 'VirtualBox' -> Environment.FailFast.",
+          "source": "https://github.com/NYAN-x-CAT/AsyncRAT-C-Sharp/blob/master/AsyncRAT-C%23/Client/Helper/Anti_Analysis.cs",
+          "published": "2019"
+        },
+        {
+          "technique": "debugger.api_flags",
+          "detail": "DetectDebugger: CheckRemoteDebuggerPresent.",
+          "source": "https://github.com/NYAN-x-CAT/AsyncRAT-C-Sharp/blob/master/AsyncRAT-C%23/Client/Helper/Anti_Analysis.cs",
+          "published": "2019"
+        },
+        {
+          "technique": "analysis_tools.loaded_modules",
+          "detail": "DetectSandboxie: GetModuleHandle('SbieDll.dll').",
+          "source": "https://github.com/NYAN-x-CAT/AsyncRAT-C-Sharp/blob/master/AsyncRAT-C%23/Client/Helper/Anti_Analysis.cs",
+          "published": "2019"
+        },
+        {
+          "technique": "resources.disk_size",
+          "detail": "IsSmallDisk: exits when the system drive is 61,000,000,000 bytes or smaller.",
+          "source": "https://github.com/NYAN-x-CAT/AsyncRAT-C-Sharp/blob/master/AsyncRAT-C%23/Client/Helper/Anti_Analysis.cs",
+          "published": "2019"
+        }
+      ],
+      "weight_basis": "ANY.RUN 2025 annual report: #3 family with 16,372 detections (2024: #3, 8,257).",
+      "weight": 2.5
+    },
+    {
+      "name": "XWorm",
+      "aliases": [],
+      "type": "rat",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "EvilCoder (developer)"
+      ],
+      "first_seen": 2022,
+      "last_reported": 2026,
+      "techniques": [
+        "firmware.smbios_strings",
+        "debugger.api_flags",
+        "analysis_tools.loaded_modules",
+        "network.public_ip_reputation"
+      ],
+      "evidence": [
+        {
+          "technique": "firmware.smbios_strings",
+          "detail": "WMI 'Select * from Win32_ComputerSystem' checked for VMware or VirtualBox.",
+          "source": "https://any.run/cybersecurity-blog/xworm-technical-analysis-of-a-new-malware-version/",
+          "published": "2023-08-24"
+        },
+        {
+          "technique": "debugger.api_flags",
+          "detail": "CheckRemoteDebuggerPresent.",
+          "source": "https://any.run/cybersecurity-blog/xworm-technical-analysis-of-a-new-malware-version/",
+          "published": "2023-08-24"
+        },
+        {
+          "technique": "analysis_tools.loaded_modules",
+          "detail": "Checks whether SbieDll.dll (Sandboxie) is loaded.",
+          "source": "https://any.run/cybersecurity-blog/xworm-technical-analysis-of-a-new-malware-version/",
+          "published": "2023-08-24"
+        },
+        {
+          "technique": "network.public_ip_reputation",
+          "detail": "Queries whether the machine's public IP is hosted or in a data centre (ip-api.com ?fields=hosting) and exits if so.",
+          "source": "https://any.run/cybersecurity-blog/xworm-technical-analysis-of-a-new-malware-version/",
+          "published": "2023-08-24"
+        }
+      ],
+      "weight_basis": "ANY.RUN 2025 annual report: #2 family with 31,093 detections (2024 top-10: #6, 7,237).",
+      "weight": 3.0
+    },
+    {
+      "name": "Agent Tesla",
+      "aliases": [],
+      "type": "stealer",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2014,
+      "last_reported": 2026,
+      "techniques": [
+        "firmware.smbios_strings",
+        "analysis_tools.loaded_modules",
+        "network.public_ip_reputation",
+        "hardware.gpu_identity",
+        "timing.sleep_acceleration",
+        "debugger.api_flags"
+      ],
+      "evidence": [
+        {
+          "technique": "firmware.smbios_strings",
+          "detail": "Queries WMI for a manufacturer of VMware, VirtualBox or Microsoft Corporation (Hyper-V).",
+          "source": "https://www.fortinet.com/uk/blog/threat-research/unmasking-agent-tesla-deep-dive-into-multi-stage-campaign",
+          "published": "2026-02-25"
+        },
+        {
+          "technique": "analysis_tools.loaded_modules",
+          "detail": "Looks for snxhk.dll (Avast), SbieDll.dll (Sandboxie) and cmdvrt32.dll (Comodo) in its process.",
+          "source": "https://www.fortinet.com/uk/blog/threat-research/unmasking-agent-tesla-deep-dive-into-multi-stage-campaign",
+          "published": "2026-02-25"
+        },
+        {
+          "technique": "network.public_ip_reputation",
+          "detail": "Queries ip-api.com for the 'hosting' field and stops on hosting/data-centre addresses.",
+          "source": "https://infosecwriteups.com/malware-analysis-payloadfinal-bin-agent-tesla-c38cb9bc8c88",
+          "published": "2026-02-24"
+        },
+        {
+          "technique": "hardware.gpu_identity",
+          "detail": "Checks Win32_VideoController names for VMware/VBox adapters.",
+          "source": "https://infosecwriteups.com/malware-analysis-payloadfinal-bin-agent-tesla-c38cb9bc8c88",
+          "published": "2026-02-24"
+        },
+        {
+          "technique": "timing.sleep_acceleration",
+          "detail": "Records the tick count, sleeps 10 ms and flags an emulator/sandbox if less time elapsed than slept.",
+          "source": "https://infosecwriteups.com/malware-analysis-payloadfinal-bin-agent-tesla-c38cb9bc8c88",
+          "published": "2026-02-24"
+        },
+        {
+          "technique": "debugger.api_flags",
+          "detail": "CheckRemoteDebuggerPresent.",
+          "source": "https://infosecwriteups.com/malware-analysis-payloadfinal-bin-agent-tesla-c38cb9bc8c88",
+          "published": "2026-02-24"
+        }
+      ],
+      "weight_basis": "ANY.RUN 2025 annual report: #5 with 14,584 detections (2024: #2, 8,443); CISA AA22-216A top malware strain of 2021.",
+      "weight": 2.4
+    },
+    {
+      "name": "Remcos",
+      "aliases": [],
+      "type": "rat",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "Breaking Security (vendor)",
+        "Gamaredon (user)"
+      ],
+      "first_seen": 2016,
+      "last_reported": 2025,
+      "techniques": [
+        "analysis_tools.loaded_modules",
+        "artifacts.registry",
+        "debugger.hardware_breakpoints",
+        "debugger.debug_objects"
+      ],
+      "evidence": [
+        {
+          "technique": "analysis_tools.loaded_modules",
+          "detail": "Checks for SbieDll.dll (Sandboxie).",
+          "source": "https://blog.talosintelligence.com/picking-apart-remcos/",
+          "published": "2018-08-22"
+        },
+        {
+          "technique": "artifacts.registry",
+          "detail": "Checks the registry key created by VirtualBox Guest Additions.",
+          "source": "https://dissectingmalwa.re/malicious-ratatouille.html",
+          "published": "2019-09-07"
+        },
+        {
+          "technique": "debugger.hardware_breakpoints",
+          "detail": "Loader's vectored exception handler reads Dr0-Dr7 and treats non-zero values as a debugger.",
+          "source": "https://www.fortinet.com/uk/blog/threat-research/new-campaign-uses-remcos-rat-to-exploit-victims",
+          "published": "2024-11-08"
+        },
+        {
+          "technique": "debugger.debug_objects",
+          "detail": "Loader calls ZwQueryInformationProcess(ProcessDebugPort).",
+          "source": "https://www.fortinet.com/uk/blog/threat-research/new-campaign-uses-remcos-rat-to-exploit-victims",
+          "published": "2024-11-08"
+        }
+      ],
+      "weight_basis": "ANY.RUN 2025 annual report: #4 with 16,002 detections (2024: #4, 8,004); CISA AA22-216A top malware strain of 2021.",
+      "weight": 2.5
+    },
+    {
+      "name": "StealC",
+      "aliases": [
+        "Stealc"
+      ],
+      "type": "stealer",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2023,
+      "last_reported": 2025,
+      "techniques": [
+        "identity.username",
+        "identity.hostname",
+        "identity.locale",
+        "resources.cpu_count",
+        "resources.memory_size",
+        "resources.screen"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.username",
+          "detail": "Exits if the user name is JohnDoe (Microsoft Defender emulator default).",
+          "source": "https://www.elastic.co/security-labs/threat-command/globally-distributed-stealers",
+          "published": "2024-05-24"
+        },
+        {
+          "technique": "identity.hostname",
+          "detail": "Exits if the computer name is HAL9TH (Microsoft Defender emulator default).",
+          "source": "https://www.elastic.co/security-labs/threat-command/globally-distributed-stealers",
+          "published": "2024-05-24"
+        },
+        {
+          "technique": "identity.locale",
+          "detail": "Exits on language IDs 0x419 ru-RU, 0x422 uk-UA, 0x423 be-BY, 0x43F kk-KZ, 0x443 uz-UZ.",
+          "source": "https://www.elastic.co/security-labs/threat-command/globally-distributed-stealers",
+          "published": "2024-05-24"
+        },
+        {
+          "technique": "resources.cpu_count",
+          "detail": "Terminates if fewer than two active processors.",
+          "source": "https://www.elastic.co/security-labs/threat-command/globally-distributed-stealers",
+          "published": "2024-05-24"
+        },
+        {
+          "technique": "resources.memory_size",
+          "detail": "Terminates if GlobalMemoryStatusEx reports too little memory (below about 1 GB).",
+          "source": "https://www.sekoia.com/blog/stealc-a-copycat-of-vidar-and-raccoon-infostealers-gaining-in-popularity-part-2",
+          "published": "2023-02-27"
+        },
+        {
+          "technique": "resources.screen",
+          "detail": "Exits if no display is configured.",
+          "source": "https://www.sekoia.com/blog/stealc-a-copycat-of-vidar-and-raccoon-infostealers-gaining-in-popularity-part-2",
+          "published": "2023-02-27"
+        }
+      ],
+      "weight_basis": "ANY.RUN 2025 annual report: #9 with 9,927 detections (2024: #5, 7,653).",
+      "weight": 2.0
+    },
+    {
+      "name": "Vidar",
+      "aliases": [],
+      "type": "stealer",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2018,
+      "last_reported": 2026,
+      "techniques": [
+        "debugger.debug_objects",
+        "debugger.api_flags"
+      ],
+      "evidence": [
+        {
+          "technique": "debugger.debug_objects",
+          "detail": "Calls ZwQueryInformationProcess for ProcessDebugPort and ProcessDebugFlags (ATT&CK S9050, citing Joshi 2026 and Quorum Cyber).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2026-05-07"
+        },
+        {
+          "technique": "debugger.api_flags",
+          "detail": "Calls IsDebuggerPresent (ATT&CK S9050, citing CYFIRMA, 3 Jun 2024).",
+          "source": "https://attack.mitre.org/techniques/T1622/",
+          "published": "2024-06-03"
+        }
+      ],
+      "weight_basis": "ANY.RUN 2025 annual report: #8 with 10,303 detections.",
+      "weight": 2.0
+    },
+    {
+      "name": "RedLine Stealer",
+      "aliases": [
+        "RedLine"
+      ],
+      "type": "stealer",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2020,
+      "last_reported": 2024,
+      "techniques": [
+        "network.connectivity"
+      ],
+      "evidence": [
+        {
+          "technique": "network.connectivity",
+          "detail": "Anti-sandbox: keeps checking in with its C2 and does not continue if the connection fails (ATT&CK S1240, citing Splunk Threat Research, 1 Jun 2023).",
+          "source": "https://attack.mitre.org/techniques/T1497/",
+          "published": "2023-06-01"
+        }
+      ],
+      "weight_basis": "ANY.RUN 2024 annual report: #7 with 7,189 detections (2023: #1, 9,205).",
+      "weight": 2.0
+    },
+    {
+      "name": "FormBook / XLoader (Windows)",
+      "aliases": [
+        "FormBook",
+        "XLoader",
+        "Formbook"
+      ],
+      "type": "stealer",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2016,
+      "last_reported": 2025,
+      "techniques": [
+        "analysis_tools.loaded_modules",
+        "analysis_tools.processes",
+        "guest_tools.processes",
+        "debugger.debug_objects",
+        "debugger.kernel_debugger",
+        "instrumentation.inline_hooks",
+        "identity.sample_path",
+        "identity.username"
+      ],
+      "evidence": [
+        {
+          "technique": "analysis_tools.loaded_modules",
+          "detail": "Walks the PEB for sbiedll.dll and for module paths containing \\cuckoo\\, \\sandcastle\\, \\aswsnx\\, \\smpdir\\, \\avctestsuite\\.",
+          "source": "https://www.antiy.net/p/special-series-analysis-on-popular-malicious-loader-families-part-one-xloader/",
+          "published": "2025-01-23"
+        },
+        {
+          "technique": "analysis_tools.processes",
+          "detail": "Exits if procmon.exe, filemon.exe, regmon.exe, wireshark.exe, netmon.exe or Sandboxie service processes run.",
+          "source": "https://www.antiy.net/p/special-series-analysis-on-popular-malicious-loader-families-part-one-xloader/",
+          "published": "2025-01-23"
+        },
+        {
+          "technique": "guest_tools.processes",
+          "detail": "Exits if vmwareuser.exe, vmwareservice.exe, vboxservice.exe, vboxtray.exe, vmsrvc.exe, vmusrvc.exe or SharedIntApp.exe run.",
+          "source": "https://www.antiy.net/p/special-series-analysis-on-popular-malicious-loader-families-part-one-xloader/",
+          "published": "2025-01-23"
+        },
+        {
+          "technique": "debugger.debug_objects",
+          "detail": "Calls NtQueryInformationProcess to detect a debug port.",
+          "source": "https://www.antiy.net/p/special-series-analysis-on-popular-malicious-loader-families-part-one-xloader/",
+          "published": "2025-01-23"
+        },
+        {
+          "technique": "debugger.kernel_debugger",
+          "detail": "Calls NtQuerySystemInformation to detect a kernel debugger.",
+          "source": "https://www.antiy.net/p/special-series-analysis-on-popular-malicious-loader-families-part-one-xloader/",
+          "published": "2025-01-23"
+        },
+        {
+          "technique": "instrumentation.inline_hooks",
+          "detail": "Checks whether the WOW32Reserved transition (Wow64cpu.dll) has been hooked.",
+          "source": "https://www.antiy.net/p/special-series-analysis-on-popular-malicious-loader-families-part-one-xloader/",
+          "published": "2025-01-23"
+        },
+        {
+          "technique": "identity.sample_path",
+          "detail": "Stops if its own process name matches a hash or is longer than 31 characters without spaces (hash-style sample names).",
+          "source": "https://www.antiy.net/p/special-series-analysis-on-popular-malicious-loader-families-part-one-xloader/",
+          "published": "2025-01-23"
+        },
+        {
+          "technique": "identity.username",
+          "detail": "Stops on user names cuckoo, sandbox-, nmsdbox-, xxxx-ox-, cwsx-, wilbert-sc, xpamast-sc.",
+          "source": "https://www.botconf.eu/wp-content/uploads/formidable/2/2018-R-Jullian-In-depth-Formbook-Malware-Analysis-1.pdf",
+          "published": "2018"
+        }
+      ],
+      "weight_basis": "CISA AA22-216A lists FormBook among the top malware strains of 2021; XLoader is its MaaS successor. Not in the ANY.RUN 2024/2025 top-10.",
+      "weight": 1.5
+    },
+    {
+      "name": "Astaroth",
+      "aliases": [
+        "Guildma"
+      ],
+      "type": "banker",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2017,
+      "last_reported": 2024,
+      "techniques": [
+        "identity.username",
+        "hardware.disk_identity"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.username",
+          "detail": "Checks user names associated with analyst environments (ATT&CK S0373, citing Kaspersky GReAT, 'The Tetrade', 14 Jul 2020).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2020-07-14"
+        },
+        {
+          "technique": "hardware.disk_identity",
+          "detail": "Checks disk serial numbers associated with analyst environments (ATT&CK S0373).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2020-07-14"
+        }
+      ],
+      "weight_basis": "Brazilian banking trojan (Kaspersky 'Tetrade', 2020); regional commodity family: 0.5.",
+      "weight": 0.5
+    },
+    {
+      "name": "Attor",
+      "aliases": [],
+      "type": "apt-tool",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2013,
+      "last_reported": 2019,
+      "techniques": [
+        "cpu.vmware_backdoor",
+        "cpu.undefined_instruction_behaviour"
+      ],
+      "evidence": [
+        {
+          "technique": "cpu.vmware_backdoor",
+          "detail": "Detects virtualised environments by communicating with hypervisor I/O ports (ATT&CK S0438, citing ESET, Oct 2019).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2019-10"
+        },
+        {
+          "technique": "cpu.undefined_instruction_behaviour",
+          "detail": "Uses VM-specific instructions to detect virtual or emulated environments (ATT&CK S0438).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2019-10"
+        }
+      ],
+      "weight_basis": "Espionage platform seen in a few targeted attacks in Eastern Europe (ESET 2019): 0.2.",
+      "weight": 0.2
+    },
+    {
+      "name": "BadPatch",
+      "aliases": [],
+      "type": "apt-tool",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "Molerats"
+      ],
+      "first_seen": 2017,
+      "last_reported": 2017,
+      "techniques": [
+        "hardware.disk_identity",
+        "firmware.smbios_strings"
+      ],
+      "evidence": [
+        {
+          "technique": "hardware.disk_identity",
+          "detail": "WMI query for the disk drive name (ATT&CK S0337, citing Unit 42, 20 Oct 2017).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2017-10-20"
+        },
+        {
+          "technique": "firmware.smbios_strings",
+          "detail": "WMI query for BIOS and motherboard information (ATT&CK S0337).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2017-10-20"
+        }
+      ],
+      "weight_basis": "Gaza-cybergang-linked espionage tool (Unit 42, 2017): 0.2.",
+      "weight": 0.2
+    },
+    {
+      "name": "BlackByte",
+      "aliases": [],
+      "type": "ransomware",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2021,
+      "last_reported": 2024,
+      "techniques": [
+        "artifacts.files",
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "artifacts.files",
+          "detail": "Checks for files related to known sandboxes (ATT&CK S1180, citing Trustwave, 15 Oct 2021).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2021-10-15"
+        },
+        {
+          "technique": "identity.locale",
+          "detail": "Terminates if the system language matches a hard-coded list (Russian and former Soviet languages) (ATT&CK S1180).",
+          "source": "https://attack.mitre.org/techniques/T1614/001/",
+          "published": "2021-10-15"
+        }
+      ],
+      "weight_basis": "Ransomware-as-a-service brand active 2021-2024; judgement weight for a mid-sized brand: 0.6.",
+      "weight": 0.6
+    },
+    {
+      "name": "BLUELIGHT",
+      "aliases": [],
+      "type": "apt-tool",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "APT37"
+      ],
+      "first_seen": 2021,
+      "last_reported": 2021,
+      "techniques": [
+        "guest_tools.processes"
+      ],
+      "evidence": [
+        {
+          "technique": "guest_tools.processes",
+          "detail": "Checks whether VM tools are running (ATT&CK S0657, citing Volexity, 17 Aug 2021).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2021-08-17"
+        }
+      ],
+      "weight_basis": "APT37/InkySquid backdoor from targeted watering-hole attacks (Volexity 2021): 0.2.",
+      "weight": 0.2
+    },
+    {
+      "name": "CSPY Downloader",
+      "aliases": [],
+      "type": "apt-tool",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "Kimsuky"
+      ],
+      "first_seen": 2020,
+      "last_reported": 2020,
+      "techniques": [
+        "analysis_tools.loaded_modules",
+        "debugger.api_flags",
+        "artifacts.files",
+        "artifacts.registry"
+      ],
+      "evidence": [
+        {
+          "technique": "analysis_tools.loaded_modules",
+          "detail": "Searches loaded modules for analysis DLLs (ATT&CK S0527, citing Cybereason, 2 Nov 2020).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2020-11-02"
+        },
+        {
+          "technique": "debugger.api_flags",
+          "detail": "Inspects the PEB to determine whether it is being debugged (ATT&CK S0527).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2020-11-02"
+        },
+        {
+          "technique": "artifacts.files",
+          "detail": "Searches file paths of virtualisation software (ATT&CK S0527).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2020-11-02"
+        },
+        {
+          "technique": "artifacts.registry",
+          "detail": "Searches registry keys of virtualisation software (ATT&CK S0527).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2020-11-02"
+        }
+      ],
+      "weight_basis": "Kimsuky downloader (Cybereason 2020): APT tooling 0.3.",
+      "weight": 0.3
+    },
+    {
+      "name": "Darkhotel tooling",
+      "aliases": [
+        "DUBNIUM"
+      ],
+      "type": "apt-tool",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "Darkhotel"
+      ],
+      "first_seen": 2007,
+      "last_reported": 2016,
+      "techniques": [
+        "identity.sample_path",
+        "analysis_tools.loaded_modules",
+        "human.mouse_activity"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.sample_path",
+          "detail": "Checks the length of the executable name, a name ending in .Md5.exe, and execution from the root of C:\\ (ATT&CK G0012, citing Lastline, 5 Nov 2015, and Microsoft 'DUBNIUM', 9 Jun 2016).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2015-11-05"
+        },
+        {
+          "technique": "analysis_tools.loaded_modules",
+          "detail": "Checks for sandbox-related libraries (ATT&CK G0012).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2016-06-09"
+        },
+        {
+          "technique": "human.mouse_activity",
+          "detail": "Repeatedly checks the mouse cursor position to decide whether a real user is present (ATT&CK G0012, citing Lastline 2015).",
+          "source": "https://attack.mitre.org/techniques/T1497/002/",
+          "published": "2015-11-05"
+        }
+      ],
+      "weight_basis": "Long-running espionage actor; APT tooling 0.3.",
+      "weight": 0.3
+    },
+    {
+      "name": "DarkTortilla",
+      "aliases": [],
+      "type": "crypter",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2015,
+      "last_reported": 2022,
+      "techniques": [
+        "guest_tools.processes",
+        "guest_tools.services",
+        "container.app_sandbox",
+        "debugger.api_flags",
+        "identity.environment_variables"
+      ],
+      "evidence": [
+        {
+          "technique": "guest_tools.processes",
+          "detail": "Searches running processes for Hyper-V, QEMU, Virtual PC, VirtualBox and VMware (ATT&CK S1066, citing Secureworks CTU, 17 Aug 2022).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2022-08-17"
+        },
+        {
+          "technique": "guest_tools.services",
+          "detail": "Searches services for the same hypervisors (ATT&CK S1066).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2022-08-17"
+        },
+        {
+          "technique": "container.app_sandbox",
+          "detail": "Detects Sandboxie (ATT&CK S1066).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2022-08-17"
+        },
+        {
+          "technique": "debugger.api_flags",
+          "detail": "Uses Debugger.IsAttached and Debugger.IsLogging (ATT&CK S1066).",
+          "source": "https://attack.mitre.org/techniques/T1622/",
+          "published": "2022-08-17"
+        },
+        {
+          "technique": "identity.environment_variables",
+          "detail": "Detects profilers through the COR_ENABLE_PROFILING environment variable (ATT&CK S1066).",
+          "source": "https://attack.mitre.org/techniques/T1622/",
+          "published": "2022-08-17"
+        }
+      ],
+      "weight_basis": "Commodity .NET crypter used to wrap infostealers and RATs; judgement weight for a mid-tier wrapper: 0.8.",
+      "weight": 0.8
+    },
+    {
+      "name": "Dyre",
+      "aliases": [
+        "Dyreza"
+      ],
+      "type": "banker",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2014,
+      "last_reported": 2016,
+      "techniques": [
+        "analysis_tools.processes",
+        "artifacts.registry"
+      ],
+      "evidence": [
+        {
+          "technique": "analysis_tools.processes",
+          "detail": "Inspects the process list to detect sandbox analysis (ATT&CK S0024, citing Symantec 23 Jun 2015 and hasherezade 4 Nov 2015).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2015-06-23"
+        },
+        {
+          "technique": "artifacts.registry",
+          "detail": "Inspects the registry for sandbox artifacts (ATT&CK S0024).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2015-06-23"
+        }
+      ],
+      "weight_basis": "Historic banking trojan (Symantec 2015), inactive since 2016: 0.3.",
+      "weight": 0.3
+    },
+    {
+      "name": "EvilBunny",
+      "aliases": [],
+      "type": "apt-tool",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "Animal Farm"
+      ],
+      "first_seen": 2011,
+      "last_reported": 2014,
+      "techniques": [
+        "wear_and_tear.process_count",
+        "identity.sample_path",
+        "timing.sleep_acceleration"
+      ],
+      "evidence": [
+        {
+          "technique": "wear_and_tear.process_count",
+          "detail": "Dropper checks the number of running processes (ATT&CK S0396, citing Marschalek, 16 Dec 2014).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2014-12-16"
+        },
+        {
+          "technique": "identity.sample_path",
+          "detail": "Dropper checks the length and strings of its own file name (ATT&CK S0396).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2014-12-16"
+        },
+        {
+          "technique": "timing.sleep_acceleration",
+          "detail": "Takes time measurements from three APIs before and after sleeping and aborts on a mismatch (ATT&CK S0396).",
+          "source": "https://attack.mitre.org/techniques/T1497/003/",
+          "published": "2014-12-16"
+        }
+      ],
+      "weight_basis": "Animal Farm espionage implant (Marschalek 2014): 0.2.",
+      "weight": 0.2
+    },
+    {
+      "name": "Ferocious",
+      "aliases": [],
+      "type": "apt-tool",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "WIRTE"
+      ],
+      "first_seen": 2019,
+      "last_reported": 2021,
+      "techniques": [
+        "hardware.input_devices",
+        "hardware.audio_devices"
+      ],
+      "evidence": [
+        {
+          "technique": "hardware.input_devices",
+          "detail": "Excel 4.0 GET.WORKSPACE checks whether a mouse is present (ATT&CK S0679, citing Kaspersky, 29 Nov 2021).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2021-11-29"
+        },
+        {
+          "technique": "hardware.audio_devices",
+          "detail": "GET.WORKSPACE checks whether the host can play sounds (ATT&CK S0679).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2021-11-29"
+        }
+      ],
+      "weight_basis": "WIRTE Excel 4.0 dropper (Kaspersky 2021): 0.2.",
+      "weight": 0.2
+    },
+    {
+      "name": "FinFisher",
+      "aliases": [
+        "FinSpy"
+      ],
+      "type": "spyware",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2011,
+      "last_reported": 2018,
+      "techniques": [
+        "hardware.pci_vendor_ids"
+      ],
+      "evidence": [
+        {
+          "technique": "hardware.pci_vendor_ids",
+          "detail": "Gets the hardware device list and compares MD5 hashes of vendor IDs with a predefined list (ATT&CK S0182, citing Microsoft, 1 Mar 2018).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2018-03-01"
+        }
+      ],
+      "weight_basis": "Commercial surveillance kit (Microsoft 2018): 0.3.",
+      "weight": 0.3
+    },
+    {
+      "name": "Frankenstein campaign tooling",
+      "aliases": [],
+      "type": "apt-tool",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2019,
+      "last_reported": 2019,
+      "techniques": [
+        "resources.cpu_count",
+        "analysis_tools.processes"
+      ],
+      "evidence": [
+        {
+          "technique": "resources.cpu_count",
+          "detail": "WMI query of the number of cores; stops if fewer than two (ATT&CK C0001, citing Talos, 4 Jun 2019).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2019-06-04"
+        },
+        {
+          "technique": "analysis_tools.processes",
+          "detail": "WMI queries to determine whether analysis tools are running (ATT&CK C0001).",
+          "source": "https://attack.mitre.org/techniques/T1518/001/",
+          "published": "2019-06-04"
+        }
+      ],
+      "weight_basis": "Single campaign built from open-source pieces (Talos 2019): 0.2.",
+      "weight": 0.2
+    },
+    {
+      "name": "GoldMax",
+      "aliases": [
+        "SUNSHUTTLE"
+      ],
+      "type": "apt-tool",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "APT29"
+      ],
+      "first_seen": 2020,
+      "last_reported": 2021,
+      "techniques": [
+        "network.mac_oui"
+      ],
+      "evidence": [
+        {
+          "technique": "network.mac_oui",
+          "detail": "Compares the collected MAC address with c8:27:cc:c2:37:5a to detect a virtualised environment (ATT&CK S0588, citing Microsoft, 4 Mar 2021).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2021-03-04"
+        }
+      ],
+      "weight_basis": "APT29 second-stage backdoor (Microsoft/Mandiant 2021): 0.3.",
+      "weight": 0.3
+    },
+    {
+      "name": "Grandoreiro",
+      "aliases": [],
+      "type": "banker",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2016,
+      "last_reported": 2024,
+      "techniques": [
+        "cpu.vmware_backdoor",
+        "cpu.undefined_instruction_behaviour"
+      ],
+      "evidence": [
+        {
+          "technique": "cpu.vmware_backdoor",
+          "detail": "Detects VMware through its I/O port (ATT&CK S0531, citing ESET, 28 Apr 2020).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2020-04-28"
+        },
+        {
+          "technique": "cpu.undefined_instruction_behaviour",
+          "detail": "Detects Virtual PC with the vpcext instruction (ATT&CK S0531).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2020-04-28"
+        }
+      ],
+      "weight_basis": "Latin-American banking trojan family; judgement weight: 0.6.",
+      "weight": 0.6
+    },
+    {
+      "name": "GravityRAT",
+      "aliases": [],
+      "type": "apt-tool",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2016,
+      "last_reported": 2020,
+      "techniques": [
+        "firmware.smbios_strings",
+        "hardware.thermal_sensors"
+      ],
+      "evidence": [
+        {
+          "technique": "firmware.smbios_strings",
+          "detail": "WMI BIOS and manufacturer information checked for VMWare, Virtual and XEN (ATT&CK S0237, citing Talos, 26 Apr 2018).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2018-04-26"
+        },
+        {
+          "technique": "hardware.thermal_sensors",
+          "detail": "WMI request for the hardware temperature; no reading means a VM (ATT&CK S0237).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2018-04-26"
+        }
+      ],
+      "weight_basis": "Espionage RAT targeting India (Talos 2018): 0.3.",
+      "weight": 0.3
+    },
+    {
+      "name": "Kimsuky PowerShell tooling",
+      "aliases": [],
+      "type": "apt-tool",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "Kimsuky"
+      ],
+      "first_seen": 2012,
+      "last_reported": 2025,
+      "techniques": [
+        "firmware.smbios_strings"
+      ],
+      "evidence": [
+        {
+          "technique": "firmware.smbios_strings",
+          "detail": "Get-CimInstance Win32_ComputerSystem; exits if Manufacturer matches VMware, Microsoft or VirtualBox (ATT&CK G0094, citing Krishnasamy & Sood, 29 Jul 2025).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2025-07-29"
+        }
+      ],
+      "weight_basis": "North Korean espionage actor: APT tooling 0.3.",
+      "weight": 0.3
+    },
+    {
+      "name": "Lucifer",
+      "aliases": [],
+      "type": "miner",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2020,
+      "last_reported": 2020,
+      "techniques": [
+        "identity.username",
+        "identity.hostname",
+        "guest_tools.drivers_modules",
+        "analysis_tools.loaded_modules"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.username",
+          "detail": "Checks user names associated with sandboxes (ATT&CK S0532, citing Unit 42, 24 Jun 2020).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2020-06-24"
+        },
+        {
+          "technique": "identity.hostname",
+          "detail": "Checks computer names associated with sandboxes (ATT&CK S0532).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2020-06-24"
+        },
+        {
+          "technique": "guest_tools.drivers_modules",
+          "detail": "Checks device drivers and virtual devices of VMs (ATT&CK S0532).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2020-06-24"
+        },
+        {
+          "technique": "analysis_tools.loaded_modules",
+          "detail": "Checks DLLs associated with sandboxes (ATT&CK S0532).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2020-06-24"
+        }
+      ],
+      "weight_basis": "Cryptojacking/DDoS hybrid (Unit 42 2020): 0.3.",
+      "weight": 0.3
+    },
+    {
+      "name": "MegaCortex",
+      "aliases": [],
+      "type": "ransomware",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2019,
+      "last_reported": 2020,
+      "techniques": [
+        "resources.cpu_count"
+      ],
+      "evidence": [
+        {
+          "technique": "resources.cpu_count",
+          "detail": "Checks the number of CPUs to avoid sandboxes and emulators (ATT&CK S0576, citing IBM X-Force, 8 Jan 2020).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2020-01-08"
+        }
+      ],
+      "weight_basis": "Targeted ransomware 2019-2020 (IBM 2020): 0.3.",
+      "weight": 0.3
+    },
+    {
+      "name": "MiniBus",
+      "aliases": [],
+      "type": "apt-tool",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "UNC1549"
+      ],
+      "first_seen": 2023,
+      "last_reported": 2024,
+      "techniques": [
+        "guest_tools.processes"
+      ],
+      "evidence": [
+        {
+          "technique": "guest_tools.processes",
+          "detail": "Detects processes associated with virtual machines (ATT&CK S9060, citing Mandiant, 27 Feb 2024).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2024-02-27"
+        }
+      ],
+      "weight_basis": "UNC1549 backdoor (Mandiant 2024): 0.2.",
+      "weight": 0.2
+    },
+    {
+      "name": "Mispadu",
+      "aliases": [
+        "URSA"
+      ],
+      "type": "banker",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "Malteiro"
+      ],
+      "first_seen": 2019,
+      "last_reported": 2024,
+      "techniques": [
+        "identity.hostname",
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.hostname",
+          "detail": "Terminates if the computer name is JOHN-PC (ATT&CK S1122, citing ESET, 19 Nov 2019).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2019-11-19"
+        },
+        {
+          "technique": "identity.locale",
+          "detail": "Terminates if the language ID is not Spanish or Portuguese (ATT&CK S1122, citing SCILabs, 23 Dec 2021).",
+          "source": "https://attack.mitre.org/techniques/T1614/001/",
+          "published": "2021-12-23"
+        }
+      ],
+      "weight_basis": "Latin-American banking trojan (ESET 2019): 0.5.",
+      "weight": 0.5
+    },
+    {
+      "name": "ObliqueRAT",
+      "aliases": [],
+      "type": "apt-tool",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "Transparent Tribe"
+      ],
+      "first_seen": 2020,
+      "last_reported": 2021,
+      "techniques": [
+        "guest_tools.processes",
+        "analysis_tools.processes"
+      ],
+      "evidence": [
+        {
+          "technique": "guest_tools.processes",
+          "detail": "Halts if processes of virtual-machine software run (ATT&CK S0644, citing Talos, 2 Mar 2021).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2021-03-02"
+        },
+        {
+          "technique": "analysis_tools.processes",
+          "detail": "Halts if processes of analysis tools run (ATT&CK S0644).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2021-03-02"
+        }
+      ],
+      "weight_basis": "Transparent Tribe RAT (Talos 2021): 0.3.",
+      "weight": 0.3
+    },
+    {
+      "name": "OilRig macro and OopsIE tooling",
+      "aliases": [
+        "OopsIE"
+      ],
+      "type": "apt-tool",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "OilRig",
+        "APT34"
+      ],
+      "first_seen": 2016,
+      "last_reported": 2021,
+      "techniques": [
+        "hardware.thermal_sensors",
+        "hardware.input_devices"
+      ],
+      "evidence": [
+        {
+          "technique": "hardware.thermal_sensors",
+          "detail": "OopsIE runs WMI SELECT * FROM MSAcpi_ThermalZoneTemperature; no reading means a VM (ATT&CK S0264, citing Unit 42, 4 Sep 2018).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2018-09-04"
+        },
+        {
+          "technique": "hardware.input_devices",
+          "detail": "Macros verify that a mouse is connected (ATT&CK G0049, citing Check Point, 8 Apr 2021).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2021-04-08"
+        }
+      ],
+      "weight_basis": "Iranian APT34 tooling: 0.3.",
+      "weight": 0.3
+    },
+    {
+      "name": "Okrum",
+      "aliases": [],
+      "type": "apt-tool",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "Ke3chang"
+      ],
+      "first_seen": 2016,
+      "last_reported": 2019,
+      "techniques": [
+        "resources.memory_size",
+        "human.clicks_keyboard",
+        "timing.sleep_acceleration"
+      ],
+      "evidence": [
+        {
+          "technique": "resources.memory_size",
+          "detail": "Loader terminates if the host has less than 1.5 GB of physical memory (ATT&CK S0439, citing ESET, Jul 2019).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2019-07"
+        },
+        {
+          "technique": "human.clicks_keyboard",
+          "detail": "Loader runs the payload only after the left mouse button has been pressed at least three times (ATT&CK S0439).",
+          "source": "https://attack.mitre.org/techniques/T1497/002/",
+          "published": "2019-07"
+        },
+        {
+          "technique": "timing.sleep_acceleration",
+          "detail": "Loader calls GetTickCount twice around a delay to detect accelerated time (ATT&CK S0439).",
+          "source": "https://attack.mitre.org/techniques/T1497/003/",
+          "published": "2019-07"
+        }
+      ],
+      "weight_basis": "Ke3chang backdoor (ESET 2019): 0.3.",
+      "weight": 0.3
+    },
+    {
+      "name": "Operation Dream Job tooling",
+      "aliases": [
+        "DRATzarus"
+      ],
+      "type": "apt-tool",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "Lazarus Group"
+      ],
+      "first_seen": 2019,
+      "last_reported": 2023,
+      "techniques": [
+        "guest_tools.services",
+        "debugger.api_flags",
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "guest_tools.services",
+          "detail": "Tools check for VMware services (ATT&CK C0022, citing ClearSky, 13 Aug 2020).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2020-08-13"
+        },
+        {
+          "technique": "debugger.api_flags",
+          "detail": "DRATzarus uses IsDebuggerPresent (ATT&CK S0694).",
+          "source": "https://attack.mitre.org/techniques/T1622/",
+          "published": "2020-08-13"
+        },
+        {
+          "technique": "identity.locale",
+          "detail": "Malware designed not to run on systems set to Korean, Japanese or Chinese (ATT&CK C0022).",
+          "source": "https://attack.mitre.org/techniques/T1614/001/",
+          "published": "2020-08-13"
+        }
+      ],
+      "weight_basis": "Lazarus long-running campaign (ClearSky 2020); APT tooling with broad reach: 0.4.",
+      "weight": 0.4
+    },
+    {
+      "name": "P8RAT",
+      "aliases": [],
+      "type": "apt-tool",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "APT10"
+      ],
+      "first_seen": 2020,
+      "last_reported": 2021,
+      "techniques": [
+        "guest_tools.processes"
+      ],
+      "evidence": [
+        {
+          "technique": "guest_tools.processes",
+          "detail": "Checks for VMware or VirtualBox processes (ATT&CK S0626, citing Kaspersky, 30 Mar 2021).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2021-03-30"
+        }
+      ],
+      "weight_basis": "APT10 A41APT backdoor (Kaspersky 2021): 0.2.",
+      "weight": 0.2
+    },
+    {
+      "name": "SodaMaster",
+      "aliases": [],
+      "type": "apt-tool",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "APT10"
+      ],
+      "first_seen": 2020,
+      "last_reported": 2021,
+      "techniques": [
+        "artifacts.registry"
+      ],
+      "evidence": [
+        {
+          "technique": "artifacts.registry",
+          "detail": "Checks for HKCR\\Applications\\VMwareHostOpen.exe before running (ATT&CK S0627, citing Kaspersky, 30 Mar 2021).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2021-03-30"
+        }
+      ],
+      "weight_basis": "APT10 A41APT backdoor (Kaspersky 2021): 0.2.",
+      "weight": 0.2
+    },
+    {
+      "name": "PlugX",
+      "aliases": [
+        "Korplug",
+        "Sogu"
+      ],
+      "type": "apt-tool",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "Mustang Panda",
+        "APT41",
+        "many China-nexus actors"
+      ],
+      "first_seen": 2008,
+      "last_reported": 2025,
+      "techniques": [
+        "guest_tools.processes",
+        "debugger.api_flags"
+      ],
+      "evidence": [
+        {
+          "technique": "guest_tools.processes",
+          "detail": "Searches for a process named vmtoolsd (ATT&CK S0013, citing Unit 42 'Paranoid PlugX', 27 Jun 2017).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2017-06-27"
+        },
+        {
+          "technique": "debugger.api_flags",
+          "detail": "Calls CheckRemoteDebuggerPresent and exits if a debugger is found (ATT&CK S0013, citing Talos, 5 May 2022).",
+          "source": "https://attack.mitre.org/techniques/T1622/",
+          "published": "2022-05-05"
+        }
+      ],
+      "weight_basis": "Shared by many China-nexus actors for over 15 years; the most widespread APT RAT, so above other APT tooling: 0.6.",
+      "weight": 0.6
+    },
+    {
+      "name": "PoetRAT",
+      "aliases": [],
+      "type": "apt-tool",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2020,
+      "last_reported": 2020,
+      "techniques": [
+        "resources.disk_size"
+      ],
+      "evidence": [
+        {
+          "technique": "resources.disk_size",
+          "detail": "Checks the hard-drive size to detect a sandbox, then deletes itself (ATT&CK S0428, citing Talos, 16 Apr 2020).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2020-04-16"
+        }
+      ],
+      "weight_basis": "Python RAT in a targeted campaign (Talos 2020): 0.2.",
+      "weight": 0.2
+    },
+    {
+      "name": "RogueRobin",
+      "aliases": [],
+      "type": "apt-tool",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "DarkHydrus"
+      ],
+      "first_seen": 2018,
+      "last_reported": 2019,
+      "techniques": [
+        "firmware.bios_metadata",
+        "analysis_tools.processes"
+      ],
+      "evidence": [
+        {
+          "technique": "firmware.bios_metadata",
+          "detail": "WMI check of the BIOS version for VBOX, bochs, qemu, virtualbox and vm (ATT&CK S0270, citing Unit 42, 27 Jul 2018).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2018-07-27"
+        },
+        {
+          "technique": "analysis_tools.processes",
+          "detail": "Searches running processes for Wireshark and the Sysinternals suite (ATT&CK S0270).",
+          "source": "https://attack.mitre.org/techniques/T1518/001/",
+          "published": "2019-01-18"
+        }
+      ],
+      "weight_basis": "DarkHydrus trojan (Unit 42 2018/2019): 0.2.",
+      "weight": 0.2
+    },
+    {
+      "name": "ROKRAT",
+      "aliases": [
+        "RokRat"
+      ],
+      "type": "apt-tool",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "APT37"
+      ],
+      "first_seen": 2016,
+      "last_reported": 2024,
+      "techniques": [
+        "artifacts.files",
+        "analysis_tools.loaded_modules",
+        "analysis_tools.processes"
+      ],
+      "evidence": [
+        {
+          "technique": "artifacts.files",
+          "detail": "Checks for VMware-related files (ATT&CK S0240, citing Talos 16 Jan 2018 and NCC Group 8 Nov 2018).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2018-01-16"
+        },
+        {
+          "technique": "analysis_tools.loaded_modules",
+          "detail": "Checks for DLLs related to sandboxes (ATT&CK S0240).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2018-11-08"
+        },
+        {
+          "technique": "analysis_tools.processes",
+          "detail": "Checks for debugging tools (ATT&CK S0240).",
+          "source": "https://attack.mitre.org/techniques/T1622/",
+          "published": "2018-01-16"
+        }
+      ],
+      "weight_basis": "APT37's main implant, used in many campaigns: 0.4.",
+      "weight": 0.4
+    },
+    {
+      "name": "Saint Bot",
+      "aliases": [],
+      "type": "loader",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "Saint Bear"
+      ],
+      "first_seen": 2021,
+      "last_reported": 2022,
+      "techniques": [
+        "analysis_tools.loaded_modules",
+        "identity.hostname",
+        "identity.username",
+        "firmware.bios_metadata",
+        "debugger.api_flags"
+      ],
+      "evidence": [
+        {
+          "technique": "analysis_tools.loaded_modules",
+          "detail": "Checks for Sbiedll.dll among loaded modules (ATT&CK S1018, citing Unit 42, 25 Feb 2022).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2022-02-25"
+        },
+        {
+          "technique": "identity.hostname",
+          "detail": "Compares the machine name with HAL9TH (Defender emulator) (ATT&CK S1018).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2022-02-25"
+        },
+        {
+          "technique": "identity.username",
+          "detail": "Compares the user name with JohnDoe (ATT&CK S1018).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2022-02-25"
+        },
+        {
+          "technique": "firmware.bios_metadata",
+          "detail": "Checks the BIOS version for virtual-machine identifiers (ATT&CK S1018).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2022-02-25"
+        },
+        {
+          "technique": "debugger.api_flags",
+          "detail": "Uses is_debugger_present (ATT&CK S1018, citing hasherezade, 6 Apr 2021).",
+          "source": "https://attack.mitre.org/techniques/T1622/",
+          "published": "2021-04-06"
+        }
+      ],
+      "weight_basis": "Downloader used against Ukraine (Unit 42 2022; Malwarebytes 2021): 0.3.",
+      "weight": 0.3
+    },
+    {
+      "name": "Shark",
+      "aliases": [],
+      "type": "apt-tool",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "Lyceum"
+      ],
+      "first_seen": 2021,
+      "last_reported": 2021,
+      "techniques": [
+        "resources.screen"
+      ],
+      "evidence": [
+        {
+          "technique": "resources.screen",
+          "detail": "Stops if the screen width is not over 600 pixels (ATT&CK S1019, citing ClearSky, Aug 2021).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2021-08"
+        }
+      ],
+      "weight_basis": "Lyceum backdoor (ClearSky 2021): 0.2.",
+      "weight": 0.2
+    },
+    {
+      "name": "Snip3",
+      "aliases": [],
+      "type": "crypter",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2021,
+      "last_reported": 2023,
+      "techniques": [
+        "firmware.smbios_strings",
+        "container.app_sandbox"
+      ],
+      "evidence": [
+        {
+          "technique": "firmware.smbios_strings",
+          "detail": "Queries Win32_ComputerSystem Manufacturer to detect VMware or VirtualBox (ATT&CK S1086, citing Morphisec, 7 May 2021).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2021-05-07"
+        },
+        {
+          "technique": "container.app_sandbox",
+          "detail": "Detects Windows Sandbox from the same Manufacturer string (ATT&CK S1086).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2021-05-07"
+        }
+      ],
+      "weight_basis": "Crypter-as-a-service used to deliver RATs; judgement weight: 0.6.",
+      "weight": 0.6
+    },
+    {
+      "name": "SynAck",
+      "aliases": [],
+      "type": "ransomware",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2017,
+      "last_reported": 2021,
+      "techniques": [
+        "identity.sample_path",
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.sample_path",
+          "detail": "Checks its directory location to avoid sandboxes (ATT&CK S0242, citing Kaspersky, 7 May 2018).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2018-05-07"
+        },
+        {
+          "technique": "identity.locale",
+          "detail": "Lists keyboard layouts with GetKeyboardLayoutList and exits on a hard-coded list (ATT&CK S0242).",
+          "source": "https://attack.mitre.org/techniques/T1614/001/",
+          "published": "2018-05-07"
+        }
+      ],
+      "weight_basis": "Targeted ransomware (Kaspersky 2018): 0.3.",
+      "weight": 0.3
+    },
+    {
+      "name": "Trojan.Karagany",
+      "aliases": [],
+      "type": "apt-tool",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "Dragonfly"
+      ],
+      "first_seen": 2010,
+      "last_reported": 2019,
+      "techniques": [
+        "guest_tools.drivers_modules",
+        "artifacts.files"
+      ],
+      "evidence": [
+        {
+          "technique": "guest_tools.drivers_modules",
+          "detail": "Detects virtualisation platforms by their drivers (ATT&CK S0094, citing Secureworks, 24 Jul 2019).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2019-07-24"
+        },
+        {
+          "technique": "artifacts.files",
+          "detail": "Detects virtualisation platforms by file paths (ATT&CK S0094).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2019-07-24"
+        }
+      ],
+      "weight_basis": "Dragonfly tooling (Secureworks 2019): 0.2.",
+      "weight": 0.2
+    },
+    {
+      "name": "WhisperGate",
+      "aliases": [],
+      "type": "apt-tool",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "Ember Bear"
+      ],
+      "first_seen": 2022,
+      "last_reported": 2022,
+      "techniques": [
+        "analysis_tools.processes"
+      ],
+      "evidence": [
+        {
+          "technique": "analysis_tools.processes",
+          "detail": "Stops when it recognises monitoring tools (ATT&CK S0689, citing Unit 42, 20 Jan 2022).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2022-01-20"
+        }
+      ],
+      "weight_basis": "Destructive malware used against Ukraine (Unit 42 2022): 0.2.",
+      "weight": 0.2
+    },
+    {
+      "name": "Spark",
+      "aliases": [],
+      "type": "apt-tool",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "Molerats"
+      ],
+      "first_seen": 2020,
+      "last_reported": 2020,
+      "techniques": [
+        "human.clicks_keyboard",
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "human.clicks_keyboard",
+          "detail": "Shows a splash screen and waits for the user to click before running (ATT&CK S0543, citing Unit 42, 3 Mar 2020).",
+          "source": "https://attack.mitre.org/techniques/T1497/002/",
+          "published": "2020-03-03"
+        },
+        {
+          "technique": "identity.locale",
+          "detail": "Requires GetKeyboardLayoutList/GetLocaleInfoA to contain 'Arabic' (ATT&CK S0543).",
+          "source": "https://attack.mitre.org/techniques/T1614/001/",
+          "published": "2020-03-03"
+        }
+      ],
+      "weight_basis": "Molerats backdoor (Unit 42 2020): 0.2.",
+      "weight": 0.2
+    },
+    {
+      "name": "TONESHELL",
+      "aliases": [],
+      "type": "apt-tool",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "Mustang Panda"
+      ],
+      "first_seen": 2022,
+      "last_reported": 2025,
+      "techniques": [
+        "human.foreground_activity"
+      ],
+      "evidence": [
+        {
+          "technique": "human.foreground_activity",
+          "detail": "Calls GetForegroundWindow twice and compares the handles to detect sandboxes (ATT&CK S1239, citing Trend Micro, 18 Nov 2022).",
+          "source": "https://attack.mitre.org/techniques/T1497/002/",
+          "published": "2022-11-18"
+        }
+      ],
+      "weight_basis": "Mustang Panda backdoor in many 2022-2025 campaigns: 0.3.",
+      "weight": 0.3
+    },
+    {
+      "name": "ROAMINGHOUSE",
+      "aliases": [],
+      "type": "apt-tool",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "Earth Kasha"
+      ],
+      "first_seen": 2024,
+      "last_reported": 2024,
+      "techniques": [
+        "human.mouse_activity"
+      ],
+      "evidence": [
+        {
+          "technique": "human.mouse_activity",
+          "detail": "Checks for specific mouse movements and user activity before starting (ATT&CK S9026, citing Trend Micro, 26 Nov 2024).",
+          "source": "https://attack.mitre.org/techniques/T1497/002/",
+          "published": "2024-11-26"
+        }
+      ],
+      "weight_basis": "Earth Kasha (APT10) loader (Trend Micro 2024): 0.2.",
+      "weight": 0.2
+    },
+    {
+      "name": "Cobalt Strike loaders",
+      "aliases": [],
+      "type": "loader",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2012,
+      "last_reported": 2025,
+      "techniques": [
+        "human.clicks_keyboard"
+      ],
+      "evidence": [
+        {
+          "technique": "human.clicks_keyboard",
+          "detail": "Loader calls MessageBoxA and waits for the user to answer before continuing (ATT&CK S0154, citing Takeda et al., 26 Oct 2025, Qilin cases).",
+          "source": "https://attack.mitre.org/techniques/T1497/002/",
+          "published": "2025-10-26"
+        }
+      ],
+      "weight_basis": "Cobalt Strike is a widely abused post-exploitation framework; only its loaders' documented gate is listed; judgement weight: 1.0.",
+      "weight": 1.0
+    },
+    {
+      "name": "LockBit",
+      "aliases": [
+        "LockBit 2.0",
+        "LockBit 3.0",
+        "LockBit Black"
+      ],
+      "type": "ransomware",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2019,
+      "last_reported": 2025,
+      "techniques": [
+        "identity.locale",
+        "debugger.api_flags"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.locale",
+          "detail": "LockBit 2.0 and 3.0 do not run when the system language is on an exclusion list of mainly Eastern European languages (ATT&CK S1199/S1202, citing FBI 4 Feb 2022 and FBI/CISA 16 Mar 2023).",
+          "source": "https://attack.mitre.org/techniques/T1614/001/",
+          "published": "2023-03-16"
+        },
+        {
+          "technique": "debugger.api_flags",
+          "detail": "LockBit 3.0 checks heap memory parameters (heap flags) for signs of a debugger (ATT&CK S1202, citing SentinelOne, 21 Jul 2022).",
+          "source": "https://attack.mitre.org/techniques/T1622/",
+          "published": "2022-07-21"
+        }
+      ],
+      "weight_basis": "Most prolific RaaS brand of 2022-2023 per the joint CISA/FBI LockBit advisories cited by ATT&CK; ransomware samples are rarer in sandboxes than stealers: 1.0.",
+      "weight": 1.0
+    },
+    {
+      "name": "StealBit",
+      "aliases": [],
+      "type": "stealer",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2021,
+      "last_reported": 2024,
+      "techniques": [
+        "debugger.api_flags",
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "debugger.api_flags",
+          "detail": "Detects when it runs under a debugger and then spins in an empty loop (ATT&CK S1200, citing an undated Cybereason report).",
+          "source": "https://attack.mitre.org/techniques/T1622/",
+          "published": null
+        },
+        {
+          "technique": "identity.locale",
+          "detail": "Does not run when the default language is that of a former Soviet country (ATT&CK S1200, citing an undated Cybereason report).",
+          "source": "https://attack.mitre.org/techniques/T1614/001/",
+          "published": null
+        }
+      ],
+      "weight_basis": "LockBit's exfiltration tool: 0.3.",
+      "weight": 0.3
+    },
+    {
+      "name": "REvil",
+      "aliases": [
+        "Sodinokibi"
+      ],
+      "type": "ransomware",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2019,
+      "last_reported": 2022,
+      "techniques": [
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.locale",
+          "detail": "Calls GetUserDefaultUILanguage/GetSystemDefaultUILanguage and terminates on a language list (ATT&CK S0496, citing Kaspersky, 3 Jul 2019).",
+          "source": "https://attack.mitre.org/techniques/T1614/001/",
+          "published": "2019-07-03"
+        }
+      ],
+      "weight_basis": "Major RaaS 2019-2021, dormant since 2022: 0.6.",
+      "weight": 0.6
+    },
+    {
+      "name": "Ryuk",
+      "aliases": [],
+      "type": "ransomware",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "Wizard Spider"
+      ],
+      "first_seen": 2018,
+      "last_reported": 2021,
+      "techniques": [
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.locale",
+          "detail": "Reads HKLM\\SYSTEM\\CurrentControlSet\\Control\\Nls\\Language InstallLanguage and stops on 0x419, 0x422, 0x423 (ATT&CK S0446, citing CrowdStrike, 10 Jan 2019).",
+          "source": "https://attack.mitre.org/techniques/T1614/001/",
+          "published": "2019-01-10"
+        }
+      ],
+      "weight_basis": "Big-game-hunting ransomware 2018-2021 (CrowdStrike 2019): 0.5.",
+      "weight": 0.5
+    },
+    {
+      "name": "Maze",
+      "aliases": [],
+      "type": "ransomware",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2019,
+      "last_reported": 2020,
+      "techniques": [
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.locale",
+          "detail": "Calls GetUserDefaultUILanguage and terminates on a predefined language list (ATT&CK S0449, citing McAfee, 26 Mar 2020).",
+          "source": "https://attack.mitre.org/techniques/T1614/001/",
+          "published": "2020-03-26"
+        }
+      ],
+      "weight_basis": "Major ransomware of 2019-2020, retired 2020: 0.4.",
+      "weight": 0.4
+    },
+    {
+      "name": "Clop",
+      "aliases": [
+        "Cl0p"
+      ],
+      "type": "ransomware",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "FIN11",
+        "TA505"
+      ],
+      "first_seen": 2019,
+      "last_reported": 2025,
+      "techniques": [
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.locale",
+          "detail": "Checks the keyboard layout with GetKeyboardLayout (and GetTextCharset) to avoid Russian/CIS machines (ATT&CK S0611, citing McAfee, 1 Aug 2019).",
+          "source": "https://attack.mitre.org/techniques/T1614/001/",
+          "published": "2019-08-01"
+        }
+      ],
+      "weight_basis": "Clop's mass-exploitation campaigns made it a top extortion brand: 0.7.",
+      "weight": 0.7
+    },
+    {
+      "name": "Cuba",
+      "aliases": [],
+      "type": "ransomware",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2019,
+      "last_reported": 2023,
+      "techniques": [
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.locale",
+          "detail": "Checks whether Russian is installed using GetKeyboardLayoutList (ATT&CK S0625, citing McAfee, Apr 2021).",
+          "source": "https://attack.mitre.org/techniques/T1614/001/",
+          "published": "2021-04"
+        }
+      ],
+      "weight_basis": "Mid-sized ransomware brand: 0.4.",
+      "weight": 0.4
+    },
+    {
+      "name": "Avaddon",
+      "aliases": [],
+      "type": "ransomware",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2020,
+      "last_reported": 2021,
+      "techniques": [
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.locale",
+          "detail": "Checks keyboard layouts and OS languages to avoid CIS targets (ATT&CK S0640, citing Yuste & Pastrana, 9 Feb 2021).",
+          "source": "https://attack.mitre.org/techniques/T1614/001/",
+          "published": "2021-02-09"
+        }
+      ],
+      "weight_basis": "RaaS active 2020-2021: 0.3.",
+      "weight": 0.3
+    },
+    {
+      "name": "DEATHRANSOM",
+      "aliases": [],
+      "type": "ransomware",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "UNC2447"
+      ],
+      "first_seen": 2019,
+      "last_reported": 2021,
+      "techniques": [
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.locale",
+          "detail": "Some versions exit if the language ID or keyboard layout is Russian, Kazakh, Belarusian, Ukrainian or Tatar (ATT&CK S0616, citing Mandiant, 29 Apr 2021).",
+          "source": "https://attack.mitre.org/techniques/T1614/001/",
+          "published": "2021-04-29"
+        }
+      ],
+      "weight_basis": "Small ransomware used by UNC2447 (Mandiant 2021): 0.2.",
+      "weight": 0.2
+    },
+    {
+      "name": "Zeus Panda",
+      "aliases": [],
+      "type": "banker",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2016,
+      "last_reported": 2018,
+      "techniques": [
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.locale",
+          "detail": "Queries the keyboard mapping and terminates on LANG_RUSSIAN, LANG_BELARUSIAN, LANG_KAZAK, LANG_UKRAINIAN (ATT&CK S0330, citing Talos, 2 Nov 2017).",
+          "source": "https://attack.mitre.org/techniques/T1614/001/",
+          "published": "2017-11-02"
+        }
+      ],
+      "weight_basis": "Zeus-derived banker (Talos 2017): 0.3.",
+      "weight": 0.3
+    },
+    {
+      "name": "StrelaStealer",
+      "aliases": [],
+      "type": "stealer",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2022,
+      "last_reported": 2025,
+      "techniques": [
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.locale",
+          "detail": "Only runs if the keyboard layout or language matches a configured list (ATT&CK S1183, citing Fortgale 18 Sep 2023 and IBM X-Force 12 Nov 2024).",
+          "source": "https://attack.mitre.org/techniques/T1614/001/",
+          "published": "2024-11-12"
+        }
+      ],
+      "weight_basis": "Email-credential stealer in large European spam waves (Unit 42 2024, IBM 2024): 0.5.",
+      "weight": 0.5
+    },
+    {
+      "name": "BazarLoader",
+      "aliases": [
+        "Bazar",
+        "Team9"
+      ],
+      "type": "loader",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "Wizard Spider"
+      ],
+      "first_seen": 2020,
+      "last_reported": 2022,
+      "techniques": [
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.locale",
+          "detail": "Checks that the keyboard and language settings are not Russian (ATT&CK S0534, citing NCC Group, 2 Jun 2020).",
+          "source": "https://attack.mitre.org/techniques/T1614/001/",
+          "published": "2020-06-02"
+        }
+      ],
+      "weight_basis": "TrickBot-gang loader 2020-2022 (NCC Group 2020): 0.5.",
+      "weight": 0.5
+    },
+    {
+      "name": "PureCrypter",
+      "aliases": [],
+      "type": "crypter",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2021,
+      "last_reported": 2025,
+      "techniques": [
+        "debugger.api_flags",
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "debugger.api_flags",
+          "detail": "Calls CheckRemoteDebuggerPresent (ATT&CK S9019, citing Zscaler/Dumont, 13 Jun 2022).",
+          "source": "https://attack.mitre.org/techniques/T1622/",
+          "published": "2022-06-13"
+        },
+        {
+          "technique": "identity.locale",
+          "detail": "ExclusionRegionNames option compares kernel32!GetGeoInfo results with a list of regions (ATT&CK S9019).",
+          "source": "https://attack.mitre.org/techniques/T1480/",
+          "published": "2022-06-13"
+        }
+      ],
+      "weight_basis": "ANY.RUN 2025 annual report names PureCrypter among the widespread loaders.",
+      "weight": 1.5
+    },
+    {
+      "name": "Tsundere botnet",
+      "aliases": [],
+      "type": "botnet",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2025,
+      "last_reported": 2025,
+      "techniques": [
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.locale",
+          "detail": "Checks the machine location to avoid CIS countries (ATT&CK S9034, citing Kaspersky, 20 Nov 2025).",
+          "source": "https://attack.mitre.org/techniques/T1480/",
+          "published": "2025-11-20"
+        }
+      ],
+      "weight_basis": "New Node.js botnet (Kaspersky 2025): 0.3.",
+      "weight": 0.3
+    },
+    {
+      "name": "GlassWorm",
+      "aliases": [],
+      "type": "stealer",
+      "platforms": [
+        "windows",
+        "linux",
+        "macos"
+      ],
+      "actors": [],
+      "first_seen": 2025,
+      "last_reported": 2026,
+      "techniques": [
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.locale",
+          "detail": "Checks for ru_RU, ru-RU, ru and Russian locale settings and does not run on them (ATT&CK S9010, citing Socket, 31 Jan 2026).",
+          "source": "https://attack.mitre.org/techniques/T1614/001/",
+          "published": "2026-01-31"
+        }
+      ],
+      "weight_basis": "Self-spreading malicious VS Code/Open VSX extension campaign (Socket 2026): 0.3.",
+      "weight": 0.3
+    },
+    {
+      "name": "MarkiRAT",
+      "aliases": [],
+      "type": "apt-tool",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "Ferocious Kitten"
+      ],
+      "first_seen": 2015,
+      "last_reported": 2021,
+      "techniques": [
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.locale",
+          "detail": "Uses GetKeyboardLayout to check whether the keyboard is set to Persian (ATT&CK S0652, citing Kaspersky, 16 Jun 2021).",
+          "source": "https://attack.mitre.org/techniques/T1614/001/",
+          "published": "2021-06-16"
+        }
+      ],
+      "weight_basis": "Ferocious Kitten surveillance RAT (Kaspersky 2021): 0.2.",
+      "weight": 0.2
+    },
+    {
+      "name": "Mini Shai-Hulud",
+      "aliases": [],
+      "type": "stealer",
+      "platforms": [
+        "linux",
+        "macos",
+        "windows"
+      ],
+      "actors": [
+        "TeamPCP"
+      ],
+      "first_seen": 2026,
+      "last_reported": 2026,
+      "techniques": [
+        "resources.cpu_count",
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "resources.cpu_count",
+          "detail": "Exits when fewer than four (in other versions two) CPUs are present (ATT&CK S9043, citing McCarthy et al. 12 May 2026 and Hunt.io 14 May 2026).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2026-05-12"
+        },
+        {
+          "technique": "identity.locale",
+          "detail": "Terminates when the system is configured for Russian (ATT&CK S9043).",
+          "source": "https://attack.mitre.org/techniques/T1614/001/",
+          "published": "2026-05-12"
+        }
+      ],
+      "weight_basis": "npm/PyPI supply-chain worm that runs on developer machines and CI runners (ATT&CK S9043): 0.4.",
+      "weight": 0.4
+    },
+    {
+      "name": "Cuckoo Stealer",
+      "aliases": [],
+      "type": "stealer",
+      "platforms": [
+        "macos"
+      ],
+      "actors": [],
+      "first_seen": 2024,
+      "last_reported": 2024,
+      "techniques": [
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.locale",
+          "detail": "Reads LANG and does not infect hy_AM, be_BY, kk_KZ, ru_RU, uk_UA systems (ATT&CK S1153, citing Kandji, 30 Apr 2024).",
+          "source": "https://attack.mitre.org/techniques/T1614/001/",
+          "published": "2024-04-30"
+        }
+      ],
+      "weight_basis": "macOS infostealer/spyware (Kandji 2024): 0.4.",
+      "weight": 0.4
+    },
+    {
+      "name": "ThiefQuest",
+      "aliases": [
+        "EvilQuest",
+        "OSX.EvilQuest"
+      ],
+      "type": "ransomware",
+      "platforms": [
+        "macos"
+      ],
+      "actors": [],
+      "first_seen": 2020,
+      "last_reported": 2020,
+      "techniques": [
+        "timing.sleep_acceleration",
+        "debugger.tracer"
+      ],
+      "evidence": [
+        {
+          "technique": "timing.sleep_acceleration",
+          "detail": "Calls time, sleeps, calls time again and compares the difference with the time slept to detect a sandbox (ATT&CK S0595, citing Wardle, 29 Jun 2020).",
+          "source": "https://attack.mitre.org/techniques/T1497/003/",
+          "published": "2020-06-29"
+        },
+        {
+          "technique": "debugger.tracer",
+          "detail": "is_debugging() uses sysctl to test P_TRACED; also calls ptrace(PT_DENY_ATTACH) (ATT&CK S0595, citing Wardle, 3 Jul 2020).",
+          "source": "https://attack.mitre.org/techniques/T1622/",
+          "published": "2020-07-03"
+        }
+      ],
+      "weight_basis": "macOS ransomware/wiper (Wardle 2020): 0.3.",
+      "weight": 0.3
+    },
+    {
+      "name": "OceanLotus macOS backdoor",
+      "aliases": [
+        "OSX_OCEANLOTUS.D"
+      ],
+      "type": "apt-tool",
+      "platforms": [
+        "macos"
+      ],
+      "actors": [
+        "APT32"
+      ],
+      "first_seen": 2017,
+      "last_reported": 2020,
+      "techniques": [
+        "emulator.macos_virtual_model",
+        "timing.uptime"
+      ],
+      "evidence": [
+        {
+          "technique": "emulator.macos_virtual_model",
+          "detail": "Checks sysctl hw.model to tell real hardware from a virtual machine (ATT&CK S0352, citing ESET, 9 Apr 2019).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2019-04-09"
+        },
+        {
+          "technique": "timing.uptime",
+          "detail": "Checks the kernel boot time (ATT&CK S0352).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2019-04-09"
+        }
+      ],
+      "weight_basis": "APT32 macOS backdoor (Unit 42 2017, ESET 2019): 0.3.",
+      "weight": 0.3
+    },
+    {
+      "name": "OSAMiner",
+      "aliases": [
+        "macOS.OSAMiner"
+      ],
+      "type": "miner",
+      "platforms": [
+        "macos"
+      ],
+      "actors": [],
+      "first_seen": 2015,
+      "last_reported": 2021,
+      "techniques": [
+        "resources.cpu_count"
+      ],
+      "evidence": [
+        {
+          "technique": "resources.cpu_count",
+          "detail": "Parses system_profiler output to check whether the machine has 4 cores (ATT&CK S1048, citing SentinelOne, 11 Jan 2021).",
+          "source": "https://attack.mitre.org/techniques/T1497/001/",
+          "published": "2021-01-11"
+        }
+      ],
+      "weight_basis": "macOS cryptominer spread via pirated games (SentinelOne 2021): 0.3.",
+      "weight": 0.3
+    },
+    {
+      "name": "SUNBURST",
+      "aliases": [],
+      "type": "backdoor",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "UNC2452",
+        "APT29"
+      ],
+      "first_seen": 2020,
+      "last_reported": 2021,
+      "techniques": [
+        "identity.domain_membership",
+        "analysis_tools.processes",
+        "analysis_tools.drivers_services"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.domain_membership",
+          "detail": "Stops if the host is not joined to an AD domain, and if the domain matches a blocklist (swdev.local, lab.local, test, ...).",
+          "source": "https://www.fireeyesolution.com/blog/threat-research/2020/12/sunburst-additional-technical-details.html",
+          "published": "2020-12-24"
+        },
+        {
+          "technique": "analysis_tools.processes",
+          "detail": "Hashes running process names against a blocklist of analysis and security tools and pauses if one matches.",
+          "source": "https://www.fireeyesolution.com/blog/threat-research/2020/12/sunburst-additional-technical-details.html",
+          "published": "2020-12-24"
+        },
+        {
+          "technique": "analysis_tools.drivers_services",
+          "detail": "Hashes driver filenames from Win32_SystemDriver and services against blocklists; a match halts or postpones it.",
+          "source": "https://www.sophos.com/en-us/blog/how-sunburst-malware-does-defense-evasion",
+          "published": "2020-12-21"
+        }
+      ],
+      "weight_basis": "Single supply-chain operation with high impact but a narrow population: 0.3.",
+      "weight": 0.3
+    },
+    {
+      "name": "Kazuar",
+      "aliases": [],
+      "type": "backdoor",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "Turla"
+      ],
+      "first_seen": 2017,
+      "last_reported": 2023,
+      "techniques": [
+        "analysis_tools.processes",
+        "analysis_tools.loaded_modules",
+        "artifacts.files"
+      ],
+      "evidence": [
+        {
+          "technique": "analysis_tools.processes",
+          "detail": "Idles if processes such as Process Monitor, x32dbg, dnSpy or Wireshark run.",
+          "source": "https://unit42.paloaltonetworks.com/pensive-ursa-uses-upgraded-kazuar-backdoor/",
+          "published": "2023-10-31"
+        },
+        {
+          "technique": "analysis_tools.loaded_modules",
+          "detail": "Checks for sandbox DLLs dir_watch.dll, cmdvrt32.dll, sbiedll.dll, api_log.dll, pstorec.dll, sxin.dll.",
+          "source": "https://github.com/PaloAltoNetworks/Unit42-Threat-Intelligence-Article-Information/blob/main/Appendix-for-article-on-Pensive-Ursa-using-Kazuar.md",
+          "published": "2023-10-31"
+        },
+        {
+          "technique": "artifacts.files",
+          "detail": "Flags a Kaspersky honeypot if more than five decoy files (Financial_report.xls, Passwords.txt, ...) or processes exist.",
+          "source": "https://github.com/PaloAltoNetworks/Unit42-Threat-Intelligence-Article-Information/blob/main/Appendix-for-article-on-Pensive-Ursa-using-Kazuar.md",
+          "published": "2023-10-31"
+        }
+      ],
+      "weight_basis": "Turla espionage backdoor, targeted use only: 0.3.",
+      "weight": 0.3
+    },
+    {
+      "name": "Rhadamanthys",
+      "aliases": [],
+      "type": "stealer",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2022,
+      "last_reported": 2025,
+      "techniques": [
+        "analysis_tools.processes",
+        "artifacts.files",
+        "identity.username",
+        "network.mac_oui",
+        "firmware.smbios_serials_uuid"
+      ],
+      "evidence": [
+        {
+          "technique": "analysis_tools.processes",
+          "detail": "The 'Strategy' module compares running processes with a forbidden list before contacting C2.",
+          "source": "https://research.checkpoint.com/2025/rhadamanthys-0-9-x-walk-through-the-updates/",
+          "published": "2025-10-01"
+        },
+        {
+          "technique": "artifacts.files",
+          "detail": "Looks for sandbox sample files foobar.jpg/.mp3/.txt/.wri and waller.dat, and identical keys.txt/passwords.txt.",
+          "source": "https://research.checkpoint.com/2025/rhadamanthys-0-9-x-walk-through-the-updates/",
+          "published": "2025-10-01"
+        },
+        {
+          "technique": "identity.username",
+          "detail": "Compares the user name with JohnDeo, HAL9TH, JOHN, JOHN-PC, MUELLER-PC, george, DESKTOP-B0T.",
+          "source": "https://research.checkpoint.com/2025/rhadamanthys-0-9-x-walk-through-the-updates/",
+          "published": "2025-10-01"
+        },
+        {
+          "technique": "network.mac_oui",
+          "detail": "Gets the MAC through UuidCreateSequential (UUIDv1 node) and compares it with a list of virtual interfaces.",
+          "source": "https://research.checkpoint.com/2025/rhadamanthys-0-9-x-walk-through-the-updates/",
+          "published": "2025-10-01"
+        },
+        {
+          "technique": "firmware.smbios_serials_uuid",
+          "detail": "Compares Win32_ComputerSystemProduct UUID with a list of known sandbox HWIDs.",
+          "source": "https://research.checkpoint.com/2025/rhadamanthys-0-9-x-walk-through-the-updates/",
+          "published": "2025-10-01"
+        }
+      ],
+      "weight_basis": "MaaS stealer with major releases through 2025 (Check Point): 1.0.",
+      "weight": 1.0
+    },
+    {
+      "name": "Locky",
+      "aliases": [],
+      "type": "ransomware",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2016,
+      "last_reported": 2017,
+      "techniques": [
+        "timing.rdtsc_api_ratio",
+        "human.foreground_activity"
+      ],
+      "evidence": [
+        {
+          "technique": "timing.rdtsc_api_ratio",
+          "detail": "Calls RDTSC three times and exits if the ratio of the two deltas exceeds 10, taken as emulation overhead.",
+          "source": "https://www.cyberbit.com/endpoint-security/locky-ransomware-new-evasion-techniques-discovered/",
+          "published": "2016-06-30"
+        },
+        {
+          "technique": "human.foreground_activity",
+          "detail": "Polls GetForegroundWindow and only unpacks after the foreground window has changed enough times.",
+          "source": "https://www.cyberbit.com/endpoint-security/locky-ransomware-new-evasion-techniques-discovered/",
+          "published": "2016-06-30"
+        }
+      ],
+      "weight_basis": "One of the most distributed ransomware families of 2016 (Cyberbit calls it 'one of the most dominant'); inactive since 2017: 0.6.",
+      "weight": 0.6
+    },
+    {
+      "name": "WannaCry",
+      "aliases": [
+        "WanaCrypt0r"
+      ],
+      "type": "ransomware",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "Lazarus Group"
+      ],
+      "first_seen": 2017,
+      "last_reported": 2017,
+      "techniques": [
+        "network.dns_sinkhole"
+      ],
+      "evidence": [
+        {
+          "technique": "network.dns_sinkhole",
+          "detail": "Connects to a hard-coded unregistered domain and exits if it answers, which happens in sandboxes that answer every lookup.",
+          "source": "https://malwaretech.com/2017/05/how-to-accidentally-stop-a-global-cyber-attacks.html",
+          "published": "2017-05-13"
+        }
+      ],
+      "weight_basis": "Global worm outbreak of May 2017, halted by the kill-switch domain; little activity since: 0.4.",
+      "weight": 0.4
+    },
+    {
+      "name": "Meduza Stealer",
+      "aliases": [],
+      "type": "stealer",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2023,
+      "last_reported": 2024,
+      "techniques": [
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.locale",
+          "detail": "Terminates if the GeoID is RU, KZ, BY, GE, TM, UZ, AM, KG, MD or TJ.",
+          "source": "https://www.splunk.com/en_us/blog/security/meduza-stealer-analysis.html",
+          "published": "2024-12-23"
+        }
+      ],
+      "weight_basis": "MaaS stealer sold on Russian-speaking forums from June 2023: 0.5.",
+      "weight": 0.5
+    },
+    {
+      "name": "Mars Stealer",
+      "aliases": [],
+      "type": "stealer",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2021,
+      "last_reported": 2022,
+      "techniques": [
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.locale",
+          "detail": "Anti-CIS: exits if GetUserDefaultLangID returns Russian, Belarusian, Kazakh, Uzbek or Azerbaijani.",
+          "source": "https://archive.orkl.eu/be18c0274fcb6b343911c3f631f51e6a409e0ede.pdf",
+          "published": null
+        }
+      ],
+      "weight_basis": "Oski-derived stealer widely sold in 2021-2022: 0.5.",
+      "weight": 0.5
+    },
+    {
+      "name": "DropBook",
+      "aliases": [],
+      "type": "backdoor",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "Molerats"
+      ],
+      "first_seen": 2020,
+      "last_reported": 2020,
+      "techniques": [
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.locale",
+          "detail": "Checks for Arabic in the machine's language settings (ATT&CK S0547, citing Cybereason, 2020).",
+          "source": "https://attack.mitre.org/techniques/T1614/001/",
+          "published": "2020"
+        }
+      ],
+      "weight_basis": "Molerats espionage backdoor, targeted use: 0.2.",
+      "weight": 0.2
+    },
+    {
+      "name": "SharpStage",
+      "aliases": [],
+      "type": "backdoor",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "Molerats"
+      ],
+      "first_seen": 2020,
+      "last_reported": 2020,
+      "techniques": [
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.locale",
+          "detail": "Runs only if the Arabic language is installed (ATT&CK S0546, citing Cybereason, 2020).",
+          "source": "https://attack.mitre.org/techniques/T1614/001/",
+          "published": "2020"
+        }
+      ],
+      "weight_basis": "Molerats espionage backdoor, targeted use: 0.2.",
+      "weight": 0.2
+    },
+    {
+      "name": "Flagpro",
+      "aliases": [],
+      "type": "loader",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "BlackTech"
+      ],
+      "first_seen": 2021,
+      "last_reported": 2021,
+      "techniques": [
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.locale",
+          "detail": "Checks whether the system uses Japanese, Taiwanese or English by looking for specific localised dialogs (ATT&CK S0696, citing NTT Security, 2021).",
+          "source": "https://attack.mitre.org/techniques/T1614/001/",
+          "published": "2021"
+        }
+      ],
+      "weight_basis": "BlackTech downloader, targeted use against Japan: 0.2.",
+      "weight": 0.2
+    },
+    {
+      "name": "Misdat",
+      "aliases": [],
+      "type": "backdoor",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "Dust Storm"
+      ],
+      "first_seen": 2010,
+      "last_reported": 2016,
+      "techniques": [
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.locale",
+          "detail": "Calls GetKeyboardType to detect a Japanese keyboard (ATT&CK S0083, citing Cylance, 2016).",
+          "source": "https://attack.mitre.org/techniques/T1614/001/",
+          "published": "2016"
+        }
+      ],
+      "weight_basis": "Operation Dust Storm tooling, targeted use: 0.2.",
+      "weight": 0.2
+    },
+    {
+      "name": "S-Type",
+      "aliases": [],
+      "type": "backdoor",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "Dust Storm"
+      ],
+      "first_seen": 2013,
+      "last_reported": 2016,
+      "techniques": [
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.locale",
+          "detail": "Calls GetKeyboardType to detect a Japanese keyboard (ATT&CK S0085, citing Cylance, 2016).",
+          "source": "https://attack.mitre.org/techniques/T1614/001/",
+          "published": "2016"
+        }
+      ],
+      "weight_basis": "Operation Dust Storm tooling, targeted use: 0.2.",
+      "weight": 0.2
+    },
+    {
+      "name": "LODEINFO",
+      "aliases": [],
+      "type": "backdoor",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [
+        "APT10"
+      ],
+      "first_seen": 2019,
+      "last_reported": 2024,
+      "techniques": [
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.locale",
+          "detail": "Looks for the en_US locale on the victim (ATT&CK S9020).",
+          "source": "https://attack.mitre.org/techniques/T1614/001/",
+          "published": null
+        }
+      ],
+      "weight_basis": "APT10-linked backdoor targeting Japan: 0.2.",
+      "weight": 0.2
+    },
+    {
+      "name": "Gootloader",
+      "aliases": [],
+      "type": "loader",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2020,
+      "last_reported": 2025,
+      "techniques": [
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.locale",
+          "detail": "Checks whether the OS has specific language preferences before continuing (ATT&CK S1138).",
+          "source": "https://attack.mitre.org/techniques/T1614/001/",
+          "published": null
+        }
+      ],
+      "weight_basis": "Named among the 2021 top strains in CISA AA22-216A: 1.0.",
+      "weight": 1.0
+    },
+    {
+      "name": "Necurs",
+      "aliases": [],
+      "type": "botnet",
+      "platforms": [
+        "windows"
+      ],
+      "actors": [],
+      "first_seen": 2012,
+      "last_reported": 2020,
+      "techniques": [
+        "network.dns_sinkhole"
+      ],
+      "evidence": [
+        {
+          "technique": "network.dns_sinkhole",
+          "detail": "Resolves five random domains and exits if they all return the same IP, the signature of a sandbox's catch-all DNS (described by MalwareTech).",
+          "source": "https://malwaretech.com/2017/05/how-to-accidentally-stop-a-global-cyber-attacks.html",
+          "published": "2017-05-13"
+        }
+      ],
+      "weight_basis": "Large spam botnet until its 2020 disruption; judgement weight: 0.4.",
+      "weight": 0.4
+    },
+    {
+      "name": "Mirai and derivatives",
+      "aliases": [],
+      "type": "botnet",
+      "platforms": [
+        "linux"
+      ],
+      "actors": [],
+      "first_seen": 2016,
+      "last_reported": 2026,
+      "techniques": [
+        "debugger.exception_tricks"
+      ],
+      "evidence": [
+        {
+          "technique": "debugger.exception_tricks",
+          "detail": "main() installs anti_gdb_entry as the SIGTRAP handler and raises SIGTRAP; under gdb the signal is swallowed and the real C2 resolver is never installed.",
+          "source": "https://github.com/jgamblin/Mirai-Source-Code/blob/master/mirai/bot/main.c",
+          "published": "2016-10"
+        },
+        {
+          "technique": "debugger.exception_tricks",
+          "detail": "Samples in the wild keep the SIGTRAP trick and move the C2 address into the handler's resolve_cnc_addr.",
+          "source": "https://fernandodoming.github.io/posts/mirai-config-extraction/",
+          "published": "2022-09-26"
+        }
+      ],
+      "weight_basis": "Judgement weight: Mirai derivatives are the most frequently reported Linux/IoT botnet code base in vendor reporting since the 2016 source leak (e.g. GorillaBot, ANY.RUN 2025); no census-grade share is published.",
+      "weight": 2.5
+    },
+    {
+      "name": "GorillaBot",
+      "aliases": [],
+      "type": "botnet",
+      "platforms": [
+        "linux"
+      ],
+      "actors": [],
+      "first_seen": 2024,
+      "last_reported": 2025,
+      "techniques": [
+        "debugger.tracer",
+        "debugger.exception_tricks",
+        "container.container_runtime"
+      ],
+      "evidence": [
+        {
+          "technique": "debugger.tracer",
+          "detail": "Reads TracerPid from /proc/self/status and exits if non-zero.",
+          "source": "https://medium.com/@anyrun/gorillabot-technical-analysis-and-code-similarities-with-mirai-cf8d40386870",
+          "published": "2025-03-26"
+        },
+        {
+          "technique": "debugger.exception_tricks",
+          "detail": "Registers a SIGTRAP callback that pauses and exits.",
+          "source": "https://medium.com/@anyrun/gorillabot-technical-analysis-and-code-similarities-with-mirai-cf8d40386870",
+          "published": "2025-03-26"
+        },
+        {
+          "technique": "container.container_runtime",
+          "detail": "Reads /proc/1/cgroup and exits if it contains 'kubepods'; also exits if /proc is missing (honeypot).",
+          "source": "https://medium.com/@anyrun/gorillabot-technical-analysis-and-code-similarities-with-mirai-cf8d40386870",
+          "published": "2025-03-26"
+        }
+      ],
+      "weight_basis": "Mirai-derived botnet active 2024-2025 (ANY.RUN 2025): 0.6.",
+      "weight": 0.6
+    },
+    {
+      "name": "P2Pinfect",
+      "aliases": [],
+      "type": "botnet",
+      "platforms": [
+        "linux"
+      ],
+      "actors": [],
+      "first_seen": 2023,
+      "last_reported": 2024,
+      "techniques": [
+        "debugger.tracer"
+      ],
+      "evidence": [
+        {
+          "technique": "debugger.tracer",
+          "detail": "MIPS variant forks, reads /proc/<pid>/status and kills parent and child if TracerPid is non-zero.",
+          "source": "https://www.darktrace.com/blog/p2pinfect-new-variant-targets-mips-devices",
+          "published": "2023-12-04"
+        }
+      ],
+      "weight_basis": "Rust P2P worm against Redis/SSH (Cado/Darktrace 2023): 0.5.",
+      "weight": 0.5
+    },
+    {
+      "name": "QuimaRAT",
+      "aliases": [],
+      "type": "rat",
+      "platforms": [
+        "linux"
+      ],
+      "actors": [],
+      "first_seen": 2026,
+      "last_reported": 2026,
+      "techniques": [
+        "firmware.smbios_strings",
+        "cpu.hypervisor_bit",
+        "artifacts.files",
+        "hardware.disk_identity"
+      ],
+      "evidence": [
+        {
+          "technique": "firmware.smbios_strings",
+          "detail": "Reads /sys/class/dmi/id/product_name and sys_vendor for virtualbox, vmware, kvm, qemu, xen, parallels, bhyve, innotek, microsoft.",
+          "source": "https://www.levelblue.com/hubfs/Web/Library/Documents_pdf/Threat_Spotlight_An_In_Depth_Analysis_of_QuimaRAT.pdf",
+          "published": "2026-06"
+        },
+        {
+          "technique": "cpu.hypervisor_bit",
+          "detail": "Counts 'hypervisor' in /proc/cpuinfo flags.",
+          "source": "https://www.levelblue.com/hubfs/Web/Library/Documents_pdf/Threat_Spotlight_An_In_Depth_Analysis_of_QuimaRAT.pdf",
+          "published": "2026-06"
+        },
+        {
+          "technique": "artifacts.files",
+          "detail": "Checks for /usr/bin/qemu-ga, /usr/sbin/VBoxService and /usr/bin/vmtoolsd.",
+          "source": "https://www.levelblue.com/hubfs/Web/Library/Documents_pdf/Threat_Spotlight_An_In_Depth_Analysis_of_QuimaRAT.pdf",
+          "published": "2026-06"
+        },
+        {
+          "technique": "hardware.disk_identity",
+          "detail": "Reads /proc/scsi/scsi for vbox or vmware.",
+          "source": "https://www.levelblue.com/hubfs/Web/Library/Documents_pdf/Threat_Spotlight_An_In_Depth_Analysis_of_QuimaRAT.pdf",
+          "published": "2026-06"
+        }
+      ],
+      "weight_basis": "Java cross-platform RAT (LevelBlue 2026); only its Linux checks are listed: 0.3.",
+      "weight": 0.3
+    },
+    {
+      "name": "CanisterWorm",
+      "aliases": [],
+      "type": "apt-tool",
+      "platforms": [
+        "linux"
+      ],
+      "actors": [
+        "TeamPCP"
+      ],
+      "first_seen": 2026,
+      "last_reported": 2026,
+      "techniques": [
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.locale",
+          "detail": "Checks /etc/timezone and timedatectl for Asia/Tehran or Iran and LANG for fa_IR before running the wiper (ATT&CK S9042, citing Unit 42 31 Mar 2026 and Eriksen 22 Mar 2026).",
+          "source": "https://attack.mitre.org/techniques/T1614/001/",
+          "published": "2026-03-22"
+        }
+      ],
+      "weight_basis": "TeamPCP supply-chain worm with a geofenced Kubernetes wiper (ATT&CK S9042): 0.2.",
+      "weight": 0.2
+    },
+    {
+      "name": "Atomic macOS Stealer",
+      "aliases": [
+        "AMOS"
+      ],
+      "type": "stealer",
+      "platforms": [
+        "macos"
+      ],
+      "actors": [],
+      "first_seen": 2023,
+      "last_reported": 2026,
+      "techniques": [
+        "emulator.macos_virtual_model",
+        "hardware.memory_modules"
+      ],
+      "evidence": [
+        {
+          "technique": "emulator.macos_virtual_model",
+          "detail": "Runs system_profiler SPHardwareDataType and exits (code 0x1b) if the output contains 'VMware' or 'Apple Virtual Machine'.",
+          "source": "https://www.virusbulletin.com/uploads/pdf/conference/vb2024/papers/Byteing-back-detection-dissection-and-protection-against-macOS-stealers.pdf",
+          "published": "2024-10"
+        },
+        {
+          "technique": "hardware.memory_modules",
+          "detail": "Newer builds run system_profiler SPMemoryDataType through osascript and exit 42 if it mentions QEMU or VMware.",
+          "source": "https://www.knowyouradversary.ru/2025/03/078-detecting-amos-stealers-virtual.html",
+          "published": "2025-03-19"
+        }
+      ],
+      "weight_basis": "Unit 42 (4 Feb 2025) names Atomic, Poseidon and Cthulhu as the three most prevalent macOS infostealers in its telemetry; Atomic is the most widely reported of them: top macOS weight.",
+      "weight": 3.0
+    },
+    {
+      "name": "Banshee Stealer",
+      "aliases": [],
+      "type": "stealer",
+      "platforms": [
+        "macos"
+      ],
+      "actors": [],
+      "first_seen": 2024,
+      "last_reported": 2025,
+      "techniques": [
+        "debugger.tracer",
+        "emulator.macos_virtual_model",
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "debugger.tracer",
+          "detail": "Uses sysctl to test whether a debugger is attached (P_TRACED).",
+          "source": "https://www.elastic.co/security-labs/threat-command/beyond-the-wail",
+          "published": "2024-08-15"
+        },
+        {
+          "technique": "emulator.macos_virtual_model",
+          "detail": "Runs system_profiler SPHardwareDataType | grep 'Model Identifier' and stops if it contains 'Virtual'.",
+          "source": "https://www.elastic.co/security-labs/threat-command/beyond-the-wail",
+          "published": "2024-08-15"
+        },
+        {
+          "technique": "identity.locale",
+          "detail": "Reads CFLocaleCopyPreferredLanguages and stops if the language is 'ru'.",
+          "source": "https://www.elastic.co/security-labs/threat-command/beyond-the-wail",
+          "published": "2024-08-15"
+        }
+      ],
+      "weight_basis": "macOS MaaS stealer (Elastic 2024); Iru (2025) analyses a rewrite based on its leaked source: 1.0.",
+      "weight": 1.0
+    },
+    {
+      "name": "XLoader (macOS)",
+      "aliases": [],
+      "type": "stealer",
+      "platforms": [
+        "macos"
+      ],
+      "actors": [],
+      "first_seen": 2021,
+      "last_reported": 2025,
+      "techniques": [
+        "debugger.tracer"
+      ],
+      "evidence": [
+        {
+          "technique": "debugger.tracer",
+          "detail": "Uses a ptrace-based anti-debugging check at initialisation.",
+          "source": "https://research.checkpoint.com/2021/time-proven-tricks-in-a-new-environment-the-macos-evolution-of-formbook/",
+          "published": "2021-07-27"
+        }
+      ],
+      "weight_basis": "macOS build of the FormBook successor (Check Point 2021): 0.6.",
+      "weight": 0.6
+    },
+    {
+      "name": "Amnesia",
+      "aliases": [],
+      "type": "botnet",
+      "platforms": [
+        "linux"
+      ],
+      "actors": [],
+      "first_seen": 2017,
+      "last_reported": 2017,
+      "techniques": [
+        "firmware.smbios_strings"
+      ],
+      "evidence": [
+        {
+          "technique": "firmware.smbios_strings",
+          "detail": "Searches /sys/class/dmi/id/product_name and sys_vendor for 'VirtualBox' and 'QEMU' (as described by Kedrowitsch et al., citing Palo Alto Networks).",
+          "source": "https://gangw.cs.illinois.edu/SafeConfig17.pdf",
+          "published": "2017"
+        },
+        {
+          "technique": "firmware.smbios_strings",
+          "detail": "Detects VirtualBox, VMware or QEMU virtual machines and, if found, wipes the file system (Palo Alto Networks, quoted).",
+          "source": "https://www.securityweek.com/iot-botnet-amnesia-hijacks-dvrs-unpatched-flaw/",
+          "published": "2017-04-07"
+        }
+      ],
+      "weight_basis": "Tsunami-derived DVR botnet; Palo Alto Networks called it the first Linux malware to try to evade sandboxes (2017): 0.3.",
+      "weight": 0.3
+    },
+    {
+      "name": "Decoy Dog",
+      "aliases": [],
+      "type": "backdoor",
+      "platforms": [
+        "linux"
+      ],
+      "actors": [
+        "Hellhounds"
+      ],
+      "first_seen": 2023,
+      "last_reported": 2024,
+      "techniques": [
+        "debugger.tracer"
+      ],
+      "evidence": [
+        {
+          "technique": "debugger.tracer",
+          "detail": "The loader reads TracerPid from /proc/self/status and replaces itself with /bin/sh via execve if it is non-zero.",
+          "source": "https://global.ptsecurity.com/en/research/pt-esc-threat-intelligence/hellhounds-operation-lahat/",
+          "published": "2024-08-19"
+        }
+      ],
+      "weight_basis": "Pupy-based backdoor of the Hellhounds group, at least 48 Russian victims by Q2 2024 (PT ESC): 0.2.",
+      "weight": 0.2
+    },
+    {
+      "name": "LockBit Linux-ESXi Locker",
+      "aliases": [],
+      "type": "ransomware",
+      "platforms": [
+        "linux"
+      ],
+      "actors": [],
+      "first_seen": 2021,
+      "last_reported": 2022,
+      "techniques": [
+        "debugger.tracer"
+      ],
+      "evidence": [
+        {
+          "technique": "debugger.tracer",
+          "detail": "Calls PTRACE_ATTACH on its own parent process and exits with status 1 if that fails, which happens when gdb or strace is already tracing it.",
+          "source": "https://hackandcheese.com/posts/blog1_lockbit/",
+          "published": "2025-08-14"
+        }
+      ],
+      "weight_basis": "Linux/ESXi build of LockBit, announced October 2021 (Trend Micro 2022); LockBit was the most-reported ransomware brand of 2022-2023 but no Linux-only share is published: 0.6.",
+      "weight": 0.6
+    },
+    {
+      "name": "Payload ESXi locker",
+      "aliases": [],
+      "type": "ransomware",
+      "platforms": [
+        "linux"
+      ],
+      "actors": [],
+      "first_seen": 2025,
+      "last_reported": 2026,
+      "techniques": [
+        "debugger.tracer"
+      ],
+      "evidence": [
+        {
+          "technique": "debugger.tracer",
+          "detail": "First step of main reads TracerPid from /proc/self/status and exits if it is non-zero.",
+          "source": "https://www.ransomlook.io/group/payload/analysis/esxi",
+          "published": null
+        }
+      ],
+      "weight_basis": "ESXi encryptor of the 'payload' ransomware group, low-volume: 0.2.",
+      "weight": 0.2
+    },
+    {
+      "name": "Anubis",
+      "aliases": [],
+      "type": "banker",
+      "platforms": [
+        "android"
+      ],
+      "actors": [],
+      "first_seen": 2017,
+      "last_reported": 2022,
+      "techniques": [
+        "mobile_device.sensor_activity"
+      ],
+      "evidence": [
+        {
+          "technique": "mobile_device.sensor_activity",
+          "detail": "Google Play droppers only fetch the payload once the motion sensor reports the user moving; an emulator's static accelerometer never triggers it.",
+          "source": "https://www.trendmicro.com/en/research/19/a/google-play-apps-drop-anubis-banking-malware-use-motion-based-evasion-tactics.html",
+          "published": "2019-01-17"
+        }
+      ],
+      "weight_basis": "No public census of Android family prevalence was found; judgement weight anchored on the cited report: Trend Micro (Jan 2019) reports the payload targeting 377 financial app variants in 93 countries: 1.0.",
+      "weight": 1.0
+    },
+    {
+      "name": "Cerberus",
+      "aliases": [],
+      "type": "banker",
+      "platforms": [
+        "android"
+      ],
+      "actors": [],
+      "first_seen": 2019,
+      "last_reported": 2021,
+      "techniques": [
+        "mobile_device.sensor_activity"
+      ],
+      "evidence": [
+        {
+          "technique": "mobile_device.sensor_activity",
+          "detail": "Uses the accelerometer as a pedometer and only continues once the step count passes a configured threshold.",
+          "source": "https://www.threatfabric.com/blogs/cerberus-a-new-banking-trojan-from-the-underworld",
+          "published": "2019-08"
+        }
+      ],
+      "weight_basis": "No public census of Android family prevalence was found; judgement weight anchored on the cited report: rented MaaS banker (ThreatFabric 2019) whose leaked code seeded later families such as Alien and ERMAC: 1.0.",
+      "weight": 1.0
+    },
+    {
+      "name": "Mandrake",
+      "aliases": [],
+      "type": "spyware",
+      "platforms": [
+        "android"
+      ],
+      "actors": [],
+      "first_seen": 2016,
+      "last_reported": 2024,
+      "techniques": [
+        "instrumentation.hooking_frameworks",
+        "integrity.root",
+        "integrity.developer_settings",
+        "wear_and_tear.personal_data"
+      ],
+      "evidence": [
+        {
+          "technique": "instrumentation.hooking_frameworks",
+          "detail": "Looks for Frida threads and named pipes and for Xposed and Substrate before continuing.",
+          "source": "https://securelist.com/mandrake-apps-return-to-google-play/113147/",
+          "published": "2024-07-29"
+        },
+        {
+          "technique": "integrity.root",
+          "detail": "Checks for su, SuperUser.apk, Busybox and Magisk.",
+          "source": "https://securelist.com/mandrake-apps-return-to-google-play/113147/",
+          "published": "2024-07-29"
+        },
+        {
+          "technique": "integrity.developer_settings",
+          "detail": "Checks whether developer settings and ADB are enabled.",
+          "source": "https://securelist.com/mandrake-apps-return-to-google-play/113147/",
+          "published": "2024-07-29"
+        },
+        {
+          "technique": "wear_and_tear.personal_data",
+          "detail": "Checks that a Google account is configured on the device.",
+          "source": "https://securelist.com/mandrake-apps-return-to-google-play/113147/",
+          "published": "2024-07-29"
+        }
+      ],
+      "weight_basis": "No public census of Android family prevalence was found; judgement weight anchored on the cited report: Google Play spyware platform that returned in 2024 (Securelist): 0.5.",
+      "weight": 0.5
+    },
+    {
+      "name": "Godfather",
+      "aliases": [],
+      "type": "banker",
+      "platforms": [
+        "android"
+      ],
+      "actors": [],
+      "first_seen": 2021,
+      "last_reported": 2025,
+      "techniques": [
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.locale",
+          "detail": "Stops if the system language is one of ru, az, hy, be, kk, ky, mo, uz or tg (CIS guardrail).",
+          "source": "https://www.group-ib.com/media-center/press-releases/godfather-trojan/",
+          "published": "2022-12-21"
+        }
+      ],
+      "weight_basis": "No public census of Android family prevalence was found; judgement weight anchored on the cited report: Android banker with a large overlay target list (Group-IB 2022): 0.8.",
+      "weight": 0.8
+    },
+    {
+      "name": "Anatsa",
+      "aliases": [
+        "TeaBot",
+        "Toddler"
+      ],
+      "type": "banker",
+      "platforms": [
+        "android"
+      ],
+      "actors": [],
+      "first_seen": 2021,
+      "last_reported": 2025,
+      "techniques": [
+        "emulator.android_build_identity",
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "emulator.android_build_identity",
+          "detail": "The dropper's second stage checks the device environment and device model before fetching the final payload.",
+          "source": "https://www.zscaler.com/blogs/security-research/technical-analysis-anatsa-campaigns-android-banking-malware-active-google",
+          "published": "2024-05-27"
+        },
+        {
+          "technique": "emulator.android_build_identity",
+          "detail": "2025 droppers still run emulation checks and verify device models.",
+          "source": "https://www.zscaler.com/blogs/security-research/android-document-readers-and-deception-tracking-latest-updates-anatsa",
+          "published": "2025-08-21"
+        },
+        {
+          "technique": "emulator.android_build_identity",
+          "detail": "Downloaded dex checks model and manufacturer for emulator values before the APK is fetched.",
+          "source": "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+          "published": "2024-02-21"
+        },
+        {
+          "technique": "identity.locale",
+          "detail": "Continues only if the registered operator's ISO-3166 country code is in a target list (es, sk, cz, gb, fi and others).",
+          "source": "https://www.cleafy.com/cleafy-labs/a-stealthy-threat-uncovered-teabot-on-google-play-store",
+          "published": "2024-02-21"
+        },
+        {
+          "technique": "emulator.android_build_identity",
+          "detail": "Code compares Build.MANUFACTURER/MODEL/HARDWARE/PRODUCT/FINGERPRINT with Genymotion, google_sdk, goldfish, vbox86, Nox and generic values.",
+          "source": "https://bloo.io/blog/anatsa-malware-campaign-a-stealthy-banking-trojan-inside-google-play",
+          "published": "2025-08-25"
+        }
+      ],
+      "weight_basis": "No public census of Android family prevalence was found; judgement weight anchored on the cited report: repeatedly reported Google Play dropper campaigns 2021-2025 (Zscaler 2024 and 2025, Cleafy 2024): 1.5.",
+      "weight": 1.5
+    },
+    {
+      "name": "AbstractEmu",
+      "aliases": [],
+      "type": "rat",
+      "platforms": [
+        "android"
+      ],
+      "actors": [],
+      "first_seen": 2021,
+      "last_reported": 2021,
+      "techniques": [
+        "emulator.android_properties"
+      ],
+      "evidence": [
+        {
+          "technique": "emulator.android_properties",
+          "detail": "Checks system properties for emulator values before running (ATT&CK S1061, citing Lookout, 2021-10-28).",
+          "source": "https://attack.mitre.org/techniques/T1633/001/",
+          "published": "2021-10-28"
+        }
+      ],
+      "weight_basis": "No public census of Android family prevalence was found; judgement weight anchored on the cited report: rooting malware found in 19 apps (Lookout 2021): 0.3.",
+      "weight": 0.3
+    },
+    {
+      "name": "Android/AdDisplay.Ashas",
+      "aliases": [],
+      "type": "loader",
+      "platforms": [
+        "android"
+      ],
+      "actors": [],
+      "first_seen": 2019,
+      "last_reported": 2019,
+      "techniques": [
+        "network.public_ip_reputation"
+      ],
+      "evidence": [
+        {
+          "technique": "network.public_ip_reputation",
+          "detail": "Stays dormant if the device's IP address falls in Google's ranges, the ones used by Play review (ATT&CK S0525, citing ESET, 2019-10-24).",
+          "source": "https://attack.mitre.org/techniques/T1633/001/",
+          "published": "2019-10-24"
+        }
+      ],
+      "weight_basis": "No public census of Android family prevalence was found; judgement weight anchored on the cited report: adware family in 42 Google Play apps (ESET 2019): 0.3.",
+      "weight": 0.3
+    },
+    {
+      "name": "Chameleon",
+      "aliases": [],
+      "type": "banker",
+      "platforms": [
+        "android"
+      ],
+      "actors": [],
+      "first_seen": 2023,
+      "last_reported": 2024,
+      "techniques": [
+        "integrity.root",
+        "integrity.developer_settings"
+      ],
+      "evidence": [
+        {
+          "technique": "integrity.root",
+          "detail": "Terminates if the device is rooted.",
+          "source": "https://cyble.com/blog/chameleon-a-new-android-malware-spotted-in-the-wild/",
+          "published": "2023-04-13"
+        },
+        {
+          "technique": "integrity.developer_settings",
+          "detail": "Terminates if debugging (ADB) is enabled.",
+          "source": "https://cyble.com/blog/chameleon-a-new-android-malware-spotted-in-the-wild/",
+          "published": "2023-04-13"
+        }
+      ],
+      "weight_basis": "No public census of Android family prevalence was found; judgement weight anchored on the cited report: banker targeting Australia and Poland, later Europe (Cyble 2023): 0.5.",
+      "weight": 0.5
+    },
+    {
+      "name": "TrickMo",
+      "aliases": [],
+      "type": "banker",
+      "platforms": [
+        "android"
+      ],
+      "actors": [],
+      "first_seen": 2019,
+      "last_reported": 2024,
+      "techniques": [
+        "integrity.root"
+      ],
+      "evidence": [
+        {
+          "technique": "integrity.root",
+          "detail": "Checks whether the device is rooted before activating (ATT&CK S0558, citing IBM X-Force, 2020-03-24).",
+          "source": "https://attack.mitre.org/techniques/T1633/001/",
+          "published": "2020-03-24"
+        }
+      ],
+      "weight_basis": "No public census of Android family prevalence was found; judgement weight anchored on the cited report: TrickBot's Android companion (IBM X-Force 2020), still reported in 2024: 0.5.",
+      "weight": 0.5
+    },
+    {
+      "name": "Rotexy",
+      "aliases": [],
+      "type": "banker",
+      "platforms": [
+        "android"
+      ],
+      "actors": [],
+      "first_seen": 2014,
+      "last_reported": 2018,
+      "techniques": [
+        "identity.locale"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.locale",
+          "detail": "On first launch shows only a stub page if the device is located outside Russia (it also checks for an emulator; the check is not described).",
+          "source": "https://securelist.com/the-rotexy-mobile-trojan-banker-and-ransomware/88893/",
+          "published": "2018-11-22"
+        }
+      ],
+      "weight_basis": "No public census of Android family prevalence was found; judgement weight anchored on the cited report: Securelist counted over 70,000 attacks between August and October 2018: 0.6.",
+      "weight": 0.6
+    },
+    {
+      "name": "Hydra",
+      "aliases": [
+        "BianLian"
+      ],
+      "type": "banker",
+      "platforms": [
+        "android"
+      ],
+      "actors": [],
+      "first_seen": 2018,
+      "last_reported": 2022,
+      "techniques": [
+        "emulator.android_build_identity"
+      ],
+      "evidence": [
+        {
+          "technique": "emulator.android_build_identity",
+          "detail": "isEmulator() matches Build BRAND/DEVICE/FINGERPRINT 'generic', HARDWARE goldfish/ranchu, MODEL google_sdk/Emulator, Genymotion and sdk/vbox86p products; the bot then never contacts C2.",
+          "source": "https://muha2xmad.github.io/malware-analysis/hydra/",
+          "published": "2022-09-20"
+        }
+      ],
+      "weight_basis": "No public census of Android family prevalence was found; judgement weight anchored on the cited report: MaaS banker active since 2018; Fortinet found 20+ C2 panels in 2022 (VB2022): 0.8.",
+      "weight": 0.8
+    },
+    {
+      "name": "SharkBot",
+      "aliases": [],
+      "type": "banker",
+      "platforms": [
+        "android"
+      ],
+      "actors": [],
+      "first_seen": 2021,
+      "last_reported": 2022,
+      "techniques": [
+        "identity.locale",
+        "wear_and_tear.installed_software"
+      ],
+      "evidence": [
+        {
+          "technique": "identity.locale",
+          "detail": "Droppers only proceed if the SIM ISO country is IT or GB.",
+          "source": "https://www.bitdefender.com/en-us/blog/labs/android-sharkbot-droppers-on-google-play-underlines-platforms-security-needs",
+          "published": "2022-11-21"
+        },
+        {
+          "technique": "wear_and_tear.installed_software",
+          "detail": "Droppers also require at least one targeted banking app to be installed.",
+          "source": "https://www.bitdefender.com/en-us/blog/labs/android-sharkbot-droppers-on-google-play-underlines-platforms-security-needs",
+          "published": "2022-11-21"
+        }
+      ],
+      "weight_basis": "No public census of Android family prevalence was found; judgement weight anchored on the cited report: ATS banker distributed through Google Play droppers (Cleafy 2021, Bitdefender 2022): 0.6.",
+      "weight": 0.6
+    },
+    {
+      "name": "SpinOk",
+      "aliases": [
+        "Android.Spy.SpinOk"
+      ],
+      "type": "spyware",
+      "platforms": [
+        "android"
+      ],
+      "actors": [],
+      "first_seen": 2023,
+      "last_reported": 2023,
+      "techniques": [
+        "mobile_device.sensors"
+      ],
+      "evidence": [
+        {
+          "technique": "mobile_device.sensors",
+          "detail": "Collects gyroscope and magnetometer data to recognise emulators and change behaviour (Doctor Web finding).",
+          "source": "https://www.infosecurity-magazine.com/news/spinok-trojan-compromises-421m/",
+          "published": "2023-05-31"
+        }
+      ],
+      "weight_basis": "No public census of Android family prevalence was found; judgement weight anchored on the cited report: Doctor Web found the SDK in 101 apps with 421 million downloads: 0.8.",
+      "weight": 0.8
+    }
+  ]
 }

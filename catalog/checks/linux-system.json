@@ -1,0 +1,3083 @@
+{
+  "catalog_format": 2,
+  "platform": "linux",
+  "source": "native agent (native/src/linux)",
+  "checks": [
+    {
+      "id": "linux.env.dockerenv",
+      "technique": "container.container_runtime",
+      "status": "implemented",
+      "reason": null,
+      "title": "Docker marker files",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "DOCKERENV"
+        ],
+        "systemd-detect-virt": [
+          "VIRTUALIZATION_DOCKER"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 1,
+        "how": "Run samples in a full VM guest, not a Docker container.",
+        "chimera": "Not applicable to CHIMERA's Xen HVM guest; the check guards against someone running PERDEDOR (or a sample) in a container on the host by mistake."
+      },
+      "references": [
+        "https://github.com/systemd/systemd/blob/main/src/basic/virt.c",
+        "https://man7.org/linux/man-pages/man7/namespaces.7.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.podman_containerenv",
+      "technique": "container.container_runtime",
+      "status": "implemented",
+      "reason": null,
+      "title": "Podman/Buildah marker file",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "PODMAN_FILE"
+        ],
+        "systemd-detect-virt": [
+          "VIRTUALIZATION_PODMAN"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 1,
+        "how": "Run samples in a full VM guest, not a Podman or Buildah container.",
+        "chimera": "Not applicable to CHIMERA's Xen HVM guest; the check guards against someone running PERDEDOR (or a sample) in a container on the host by mistake."
+      },
+      "references": [
+        "https://github.com/systemd/systemd/blob/main/src/basic/virt.c",
+        "https://man7.org/linux/man-pages/man7/namespaces.7.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.cgroup_container",
+      "technique": "container.container_runtime",
+      "status": "implemented",
+      "reason": null,
+      "title": "Container cgroup path",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "CGROUP"
+        ],
+        "systemd-detect-virt": [
+          "VIRTUALIZATION_DOCKER",
+          "VIRTUALIZATION_LXC",
+          "VIRTUALIZATION_CONTAINER_OTHER"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 1,
+        "how": "Run samples in a full VM guest, not a container.",
+        "chimera": "Not applicable to CHIMERA's Xen HVM guest; the check guards against someone running PERDEDOR (or a sample) in a container on the host by mistake."
+      },
+      "references": [
+        "https://github.com/systemd/systemd/blob/main/src/basic/virt.c",
+        "https://man7.org/linux/man-pages/man7/namespaces.7.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.container_pid1",
+      "technique": "container.container_runtime",
+      "status": "implemented",
+      "reason": null,
+      "title": "PID 1 is not an init system",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "CONTAINER_PID"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 1,
+        "how": "Run samples on a full OS with a normal init.",
+        "chimera": "Not applicable to CHIMERA's Xen HVM guest; the check guards against someone running PERDEDOR (or a sample) in a container on the host by mistake."
+      },
+      "references": [
+        "https://github.com/systemd/systemd/blob/main/src/basic/virt.c",
+        "https://man7.org/linux/man-pages/man7/namespaces.7.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.container_manager_marker",
+      "technique": "container.container_runtime",
+      "status": "implemented",
+      "reason": null,
+      "title": "Container manager declaration",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "systemd-detect-virt": [
+          "VIRTUALIZATION_SYSTEMD_NSPAWN",
+          "VIRTUALIZATION_LXC_LIBVIRT",
+          "VIRTUALIZATION_RKT",
+          "VIRTUALIZATION_POUCH"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 1,
+        "how": "Run samples on a full OS, not in a container.",
+        "chimera": "Not applicable to CHIMERA's Xen HVM guest; the check guards against someone running PERDEDOR (or a sample) in a container on the host by mistake."
+      },
+      "references": [
+        "https://github.com/systemd/systemd/blob/main/src/basic/virt.c",
+        "https://man7.org/linux/man-pages/man7/namespaces.7.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.overlay_root",
+      "technique": "container.container_runtime",
+      "status": "implemented",
+      "reason": null,
+      "title": "Container root filesystem",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 1,
+        "how": "Run samples from a real disk-backed root.",
+        "chimera": "Not applicable to CHIMERA's Xen HVM guest; the check guards against someone running PERDEDOR (or a sample) in a container on the host by mistake."
+      },
+      "references": [
+        "https://github.com/systemd/systemd/blob/main/src/basic/virt.c",
+        "https://man7.org/linux/man-pages/man7/namespaces.7.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.pid_namespace",
+      "technique": "container.container_runtime",
+      "status": "implemented",
+      "reason": null,
+      "title": "Non-initial PID namespace",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 1,
+        "how": "Run samples in the initial PID namespace of a full OS (no container, sandbox or unshare wrapper).",
+        "chimera": "Not applicable to CHIMERA's Xen HVM guest; the check guards against someone running PERDEDOR (or a sample) in a container on the host by mistake."
+      },
+      "references": [
+        "https://github.com/systemd/systemd/blob/main/src/basic/virt.c",
+        "https://man7.org/linux/man-pages/man7/namespaces.7.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.user_namespace",
+      "technique": "container.app_sandbox",
+      "status": "implemented",
+      "reason": null,
+      "title": "Non-initial user namespace",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 1,
+        "how": "Run samples in the initial user namespace (no rootless container or user-namespace sandbox).",
+        "chimera": "Not applicable to CHIMERA's Xen HVM guest; the check guards against someone running PERDEDOR (or a sample) in a container on the host by mistake."
+      },
+      "references": [
+        "https://github.com/systemd/systemd/blob/main/src/basic/virt.c",
+        "https://man7.org/linux/man-pages/man7/namespaces.7.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.uts_ipc_cgroup_namespace",
+      "technique": "container.container_runtime",
+      "status": "implemented",
+      "reason": null,
+      "title": "Non-initial UTS/IPC/cgroup namespaces",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 1,
+        "how": "Run samples in the initial UTS, IPC and cgroup namespaces of a full OS.",
+        "chimera": "Not applicable to CHIMERA's Xen HVM guest; the check guards against someone running PERDEDOR (or a sample) in a container on the host by mistake."
+      },
+      "references": [
+        "https://github.com/systemd/systemd/blob/main/src/basic/virt.c",
+        "https://man7.org/linux/man-pages/man7/namespaces.7.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.capability_bounding_set",
+      "technique": "container.container_runtime",
+      "status": "implemented",
+      "reason": null,
+      "title": "Reduced capability bounding set",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 1,
+        "how": "Run samples with the full bounding set of an ordinary login session.",
+        "chimera": "Not applicable to CHIMERA's Xen HVM guest; the check guards against someone running PERDEDOR (or a sample) in a container on the host by mistake."
+      },
+      "references": [
+        "https://man7.org/linux/man-pages/man7/capabilities.7.html",
+        "https://github.com/systemd/systemd/blob/main/src/basic/virt.c",
+        "https://man7.org/linux/man-pages/man7/namespaces.7.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.seccomp_filter",
+      "technique": "container.app_sandbox",
+      "status": "implemented",
+      "reason": null,
+      "title": "Seccomp filter on the process",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 1,
+        "how": "Start samples from a normal session without a seccomp filter.",
+        "chimera": "Not applicable to CHIMERA's Xen HVM guest; the check guards against someone running PERDEDOR (or a sample) in a container on the host by mistake."
+      },
+      "references": [
+        "https://man7.org/linux/man-pages/man2/seccomp.2.html",
+        "https://github.com/systemd/systemd/blob/main/src/basic/virt.c",
+        "https://man7.org/linux/man-pages/man7/namespaces.7.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.wsl_kernel",
+      "technique": "container.wsl",
+      "status": "implemented",
+      "reason": null,
+      "title": "WSL kernel",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "WSL_PROC"
+        ],
+        "systemd-detect-virt": [
+          "VIRTUALIZATION_WSL"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 1,
+        "how": "Analyse Linux samples in a Linux VM, not WSL.",
+        "chimera": "Not applicable to CHIMERA's Xen HVM guest; the check guards against someone running PERDEDOR (or a sample) in a container on the host by mistake."
+      },
+      "references": [
+        "https://learn.microsoft.com/windows/wsl/",
+        "https://github.com/systemd/systemd/blob/main/src/basic/virt.c",
+        "https://man7.org/linux/man-pages/man7/namespaces.7.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.wsl_interop",
+      "technique": "container.wsl",
+      "status": "implemented",
+      "reason": null,
+      "title": "WSL interop artifacts",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "systemd-detect-virt": [
+          "VIRTUALIZATION_WSL"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 1,
+        "how": "Analyse Linux samples in a Linux VM, not WSL.",
+        "chimera": "Not applicable to CHIMERA's Xen HVM guest; the check guards against someone running PERDEDOR (or a sample) in a container on the host by mistake."
+      },
+      "references": [
+        "https://learn.microsoft.com/windows/wsl/",
+        "https://github.com/systemd/systemd/blob/main/src/basic/virt.c",
+        "https://man7.org/linux/man-pages/man7/namespaces.7.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.gvisor",
+      "technique": "container.app_sandbox",
+      "status": "implemented",
+      "reason": null,
+      "title": "gVisor sandbox kernel",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 1,
+        "how": "Do not use gVisor as the detonation environment.",
+        "chimera": "Not applicable to CHIMERA's Xen HVM guest; the check guards against someone running PERDEDOR (or a sample) in a container on the host by mistake."
+      },
+      "references": [
+        "https://gvisor.dev/docs/",
+        "https://github.com/systemd/systemd/blob/main/src/basic/virt.c",
+        "https://man7.org/linux/man-pages/man7/namespaces.7.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.app_sandbox_markers",
+      "technique": "container.app_sandbox",
+      "status": "implemented",
+      "reason": null,
+      "title": "Application sandbox markers",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "systemd-detect-virt": [
+          "VIRTUALIZATION_PROOT"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 1,
+        "how": "Start samples outside application sandboxes.",
+        "chimera": "Not applicable to CHIMERA's Xen HVM guest; the check guards against someone running PERDEDOR (or a sample) in a container on the host by mistake."
+      },
+      "references": [
+        "https://github.com/systemd/systemd/blob/main/src/basic/virt.c",
+        "https://man7.org/linux/man-pages/man7/namespaces.7.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.kubernetes_pod",
+      "technique": "container.container_runtime",
+      "status": "implemented",
+      "reason": null,
+      "title": "Kubernetes pod",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 1,
+        "how": "Do not detonate in Kubernetes pods.",
+        "chimera": "Not applicable to CHIMERA's Xen HVM guest; the check guards against someone running PERDEDOR (or a sample) in a container on the host by mistake."
+      },
+      "references": [
+        "https://github.com/systemd/systemd/blob/main/src/basic/virt.c",
+        "https://man7.org/linux/man-pages/man7/namespaces.7.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.openvz",
+      "technique": "container.container_runtime",
+      "status": "implemented",
+      "reason": null,
+      "title": "OpenVZ/Virtuozzo container",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "systemd-detect-virt": [
+          "VIRTUALIZATION_OPENVZ"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 1,
+        "how": "Do not detonate in OpenVZ containers.",
+        "chimera": "Not applicable to CHIMERA's Xen HVM guest; the check guards against someone running PERDEDOR (or a sample) in a container on the host by mistake."
+      },
+      "references": [
+        "https://github.com/systemd/systemd/blob/main/src/basic/virt.c",
+        "https://man7.org/linux/man-pages/man7/namespaces.7.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.chroot",
+      "technique": "container.app_sandbox",
+      "status": "implemented",
+      "reason": null,
+      "title": "Running in a chroot",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 1,
+        "how": "Run samples in the system root, not a chroot.",
+        "chimera": "Not applicable to CHIMERA's Xen HVM guest; the check guards against someone running PERDEDOR (or a sample) in a container on the host by mistake."
+      },
+      "references": [
+        "https://github.com/systemd/systemd/blob/main/src/basic/virt.c",
+        "https://man7.org/linux/man-pages/man7/namespaces.7.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.virtualisation_self_report",
+      "technique": "container.virtualisation_report",
+      "status": "implemented",
+      "reason": null,
+      "title": "OS-level virtualisation verdict",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "systemd-detect-virt": [
+          "VIRTUALIZATION_*"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 1,
+        "how": "Fix the source named in the evidence; systemd and many samples apply the same order.",
+        "chimera": "Not applicable to CHIMERA's Xen HVM guest; the check guards against someone running PERDEDOR (or a sample) in a container on the host by mistake."
+      },
+      "references": [
+        "https://github.com/systemd/systemd/blob/main/src/basic/virt.c",
+        "https://man7.org/linux/man-pages/man7/namespaces.7.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.dmi_board_version",
+      "technique": "firmware.smbios_strings",
+      "status": "implemented",
+      "reason": null,
+      "title": "DMI 'board_version'",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "DMI_SCAN"
+        ]
+      },
+      "fix": {
+        "layer": "firmware",
+        "effort": 3,
+        "how": "Replace the SMBIOS type 2 board version with the value of a real board (host-derived tables).",
+        "chimera": "CHIMERA's patched hvmloader firmware_override presents host-derived SMBIOS and ACPI tables; re-run this check after each firmware change because any table left at Xen's defaults is visible here."
+      },
+      "references": [
+        "https://www.dmtf.org/standards/smbios",
+        "https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-firmware-dmi-tables",
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.dmi_chassis_version",
+      "technique": "firmware.smbios_strings",
+      "status": "implemented",
+      "reason": null,
+      "title": "DMI 'chassis_version'",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "DMI_SCAN",
+          "CVENDOR"
+        ]
+      },
+      "fix": {
+        "layer": "firmware",
+        "effort": 3,
+        "how": "Replace the SMBIOS type 3 chassis version with the value of a real machine (host-derived tables).",
+        "chimera": "CHIMERA's patched hvmloader firmware_override presents host-derived SMBIOS and ACPI tables; re-run this check after each firmware change because any table left at Xen's defaults is visible here."
+      },
+      "references": [
+        "https://www.dmtf.org/standards/smbios",
+        "https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-firmware-dmi-tables",
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.dmi_board_asset_tag",
+      "technique": "firmware.smbios_strings",
+      "status": "implemented",
+      "reason": null,
+      "title": "DMI 'board_asset_tag'",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "DMI_SCAN"
+        ]
+      },
+      "fix": {
+        "layer": "firmware",
+        "effort": 3,
+        "how": "Replace the SMBIOS type 2 asset tag with a real or empty vendor value (host-derived tables).",
+        "chimera": "CHIMERA's patched hvmloader firmware_override presents host-derived SMBIOS and ACPI tables; re-run this check after each firmware change because any table left at Xen's defaults is visible here."
+      },
+      "references": [
+        "https://www.dmtf.org/standards/smbios",
+        "https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-firmware-dmi-tables",
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.dmi_modalias",
+      "technique": "firmware.smbios_strings",
+      "status": "implemented",
+      "reason": null,
+      "title": "DMI modalias names a hypervisor",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "DMI_SCAN"
+        ],
+        "systemd-detect-virt": [
+          "VIRTUALIZATION_*"
+        ]
+      },
+      "fix": {
+        "layer": "firmware",
+        "effort": 3,
+        "how": "Replace the SMBIOS type 0/1/2/3 strings with a real machine's identity.",
+        "chimera": "CHIMERA's patched hvmloader firmware_override presents host-derived SMBIOS and ACPI tables; re-run this check after each firmware change because any table left at Xen's defaults is visible here."
+      },
+      "references": [
+        "https://www.dmtf.org/standards/smbios",
+        "https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-firmware-dmi-tables",
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.dmi_chassis_type",
+      "technique": "firmware.smbios_strings",
+      "status": "implemented",
+      "reason": null,
+      "title": "SMBIOS chassis type 'Other'",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "CTYPE"
+        ]
+      },
+      "fix": {
+        "layer": "firmware",
+        "effort": 2,
+        "how": "Report a real chassis type (3 Desktop, 10 Notebook) in SMBIOS type 3.",
+        "chimera": "CHIMERA's patched hvmloader firmware_override presents host-derived SMBIOS and ACPI tables; re-run this check after each firmware change because any table left at Xen's defaults is visible here."
+      },
+      "references": [
+        "https://www.dmtf.org/standards/smbios",
+        "https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-firmware-dmi-tables",
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.dmi_serials_uuid",
+      "technique": "firmware.smbios_serials_uuid",
+      "status": "implemented",
+      "reason": null,
+      "title": "SMBIOS serial numbers and system UUID",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "root"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "firmware",
+        "effort": 3,
+        "how": "Set realistic, vendor-formatted serials and a random UUID (Xen: xenstore bios-strings/system-serial-number or a host-derived SMBIOS table).",
+        "chimera": "CHIMERA's patched hvmloader firmware_override presents host-derived SMBIOS and ACPI tables; re-run this check after each firmware change because any table left at Xen's defaults is visible here."
+      },
+      "references": [
+        "https://www.dmtf.org/standards/smbios",
+        "https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-firmware-dmi-tables",
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.smbios_raw_strings",
+      "technique": "firmware.smbios_raw_table",
+      "status": "implemented",
+      "reason": null,
+      "title": "Raw SMBIOS table strings",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "root"
+      ],
+      "equivalents": {
+        "vmaware": [
+          "DMIDECODE",
+          "QEMU_VIRTUAL_DMI"
+        ]
+      },
+      "fix": {
+        "layer": "firmware",
+        "effort": 3,
+        "how": "Use host-derived SMBIOS tables for every structure type, not only types 0-3.",
+        "chimera": "CHIMERA's patched hvmloader firmware_override presents host-derived SMBIOS and ACPI tables; re-run this check after each firmware change because any table left at Xen's defaults is visible here."
+      },
+      "references": [
+        "https://www.dmtf.org/standards/smbios",
+        "https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-firmware-dmi-tables",
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.smbios_vm_bit",
+      "technique": "firmware.bios_metadata",
+      "status": "implemented",
+      "reason": null,
+      "title": "SMBIOS 'virtual machine' BIOS characteristic",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "SMBIOS_VM_BIT"
+        ]
+      },
+      "fix": {
+        "layer": "firmware",
+        "effort": 3,
+        "how": "Clear bit 4 of BIOS characteristics extension byte 2 in the SMBIOS type 0 table.",
+        "chimera": "CHIMERA's patched hvmloader firmware_override presents host-derived SMBIOS and ACPI tables; re-run this check after each firmware change because any table left at Xen's defaults is visible here."
+      },
+      "references": [
+        "https://www.dmtf.org/standards/smbios",
+        "https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-firmware-dmi-tables",
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.bios_signature",
+      "technique": "firmware.bios_metadata",
+      "status": "implemented",
+      "reason": null,
+      "title": "BIOS vendor, version and date",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "FIRMWARE"
+        ]
+      },
+      "fix": {
+        "layer": "firmware",
+        "effort": 3,
+        "how": "Present the host's BIOS vendor/version/date in SMBIOS type 0.",
+        "chimera": "CHIMERA's patched hvmloader firmware_override presents host-derived SMBIOS and ACPI tables; re-run this check after each firmware change because any table left at Xen's defaults is visible here."
+      },
+      "references": [
+        "https://www.dmtf.org/standards/smbios",
+        "https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-firmware-dmi-tables",
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.acpi_table_names",
+      "technique": "firmware.acpi_tables",
+      "status": "implemented",
+      "reason": null,
+      "title": "ACPI table set",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "firmware",
+        "effort": 3,
+        "how": "Drop emulator-only ACPI tables (WAET) or pass through the host's table set.",
+        "chimera": "CHIMERA's patched hvmloader firmware_override presents host-derived SMBIOS and ACPI tables; re-run this check after each firmware change because any table left at Xen's defaults is visible here."
+      },
+      "references": [
+        "https://www.dmtf.org/standards/smbios",
+        "https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-firmware-dmi-tables",
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.acpi_table_oem",
+      "technique": "firmware.acpi_tables",
+      "status": "implemented",
+      "reason": null,
+      "title": "ACPI table OEM ids and AML strings",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "root"
+      ],
+      "equivalents": {
+        "vmaware": [
+          "FIRMWARE"
+        ]
+      },
+      "fix": {
+        "layer": "firmware",
+        "effort": 3,
+        "how": "Present host-derived ACPI tables (Xen: hvmloader acpi_firmware / firmware_override) and patch OEM ids in generated tables.",
+        "chimera": "CHIMERA's patched hvmloader firmware_override presents host-derived SMBIOS and ACPI tables; re-run this check after each firmware change because any table left at Xen's defaults is visible here."
+      },
+      "references": [
+        "https://www.dmtf.org/standards/smbios",
+        "https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-firmware-dmi-tables",
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.acpi_device_ids",
+      "technique": "firmware.acpi_tables",
+      "status": "implemented",
+      "reason": null,
+      "title": "Hypervisor ACPI device ids",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "firmware",
+        "effort": 3,
+        "how": "Remove paravirtual ACPI devices from the DSDT/SSDT presented to the guest.",
+        "chimera": "CHIMERA's patched hvmloader firmware_override presents host-derived SMBIOS and ACPI tables; re-run this check after each firmware change because any table left at Xen's defaults is visible here."
+      },
+      "references": [
+        "https://www.dmtf.org/standards/smbios",
+        "https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-firmware-dmi-tables",
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.legacy_bios_boot",
+      "technique": "firmware.boot_mode",
+      "status": "implemented",
+      "reason": null,
+      "title": "Legacy BIOS boot",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 2,
+        "how": "Boot the guest with UEFI firmware (Xen: bios='ovmf' in xl.cfg).",
+        "chimera": "CHIMERA's patched hvmloader firmware_override presents host-derived SMBIOS and ACPI tables; re-run this check after each firmware change because any table left at Xen's defaults is visible here."
+      },
+      "references": [
+        "https://www.dmtf.org/standards/smbios",
+        "https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-firmware-dmi-tables",
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.secure_boot_disabled",
+      "technique": "firmware.boot_mode",
+      "status": "implemented",
+      "reason": null,
+      "title": "UEFI Secure Boot disabled",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 3,
+        "how": "Enrol keys and enable Secure Boot in the guest firmware.",
+        "chimera": "CHIMERA's patched hvmloader firmware_override presents host-derived SMBIOS and ACPI tables; re-run this check after each firmware change because any table left at Xen's defaults is visible here."
+      },
+      "references": [
+        "https://www.dmtf.org/standards/smbios",
+        "https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-firmware-dmi-tables",
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.tpm_absent",
+      "technique": "firmware.boot_mode",
+      "status": "implemented",
+      "reason": null,
+      "title": "No TPM",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Attach a virtual TPM 2.0 (swtpm) to the guest.",
+        "chimera": "Needs a vTPM device model for the Xen HVM guest (swtpm behind QEMU); engineering work on CHIMERA."
+      },
+      "references": [
+        "https://www.dmtf.org/standards/smbios",
+        "https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-firmware-dmi-tables",
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.memory_modules",
+      "technique": "hardware.memory_modules",
+      "status": "implemented",
+      "reason": null,
+      "title": "SMBIOS memory devices",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "root"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "firmware",
+        "effort": 3,
+        "how": "Provide SMBIOS type 17 entries copied from the host.",
+        "chimera": "Choose emulated devices in xl.cfg (model=e1000, emulated AHCI disks, HDA audio, no vkb/vfb) and override their ids where QEMU allows it; xen_platform_pci=0 removes the Xen platform device."
+      },
+      "references": [
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.device_tree_hypervisor",
+      "technique": "artifacts.hypervisor_interfaces",
+      "status": "implemented",
+      "reason": null,
+      "title": "Device tree hypervisor node",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "firmware",
+        "effort": 3,
+        "how": "Use a machine model that mirrors real hardware's device tree.",
+        "chimera": "Not applicable on x86 HVM (no device tree); relevant on ARM guests."
+      },
+      "references": [
+        "https://github.com/systemd/systemd/blob/main/src/basic/virt.c",
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.guest_driver_buses",
+      "technique": "guest_tools.drivers_modules",
+      "status": "implemented",
+      "reason": null,
+      "title": "Paravirtual device buses",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "VBOX_MODULE"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 2,
+        "how": "Do not expose paravirtual buses to the guest (Xen: xen_platform_pci=0, no vif/vbd frontends).",
+        "chimera": "Do not install xe-guest-utilities, qemu-guest-agent, open-vm-tools or cloud-init in the Linux image; DRAKVUF needs no in-guest agent."
+      },
+      "references": [
+        "https://people.redhat.com/~rjones/virt-what/",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.guest_tool_processes",
+      "technique": "guest_tools.processes",
+      "status": "implemented",
+      "reason": null,
+      "title": "Guest-tool processes",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "PROCESSES"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Remove guest agents from the image; do not start them.",
+        "chimera": "Do not install xe-guest-utilities, qemu-guest-agent, open-vm-tools or cloud-init in the Linux image; DRAKVUF needs no in-guest agent."
+      },
+      "references": [
+        "https://people.redhat.com/~rjones/virt-what/",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.guest_tool_services",
+      "technique": "guest_tools.services",
+      "status": "implemented",
+      "reason": null,
+      "title": "Guest-integration services installed",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Remove guest-agent and cloud-init units from the image.",
+        "chimera": "Do not install xe-guest-utilities, qemu-guest-agent, open-vm-tools or cloud-init in the Linux image; DRAKVUF needs no in-guest agent."
+      },
+      "references": [
+        "https://people.redhat.com/~rjones/virt-what/",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.guest_tool_packages",
+      "technique": "guest_tools.services",
+      "status": "implemented",
+      "reason": null,
+      "title": "Guest-integration packages installed",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Purge guest-tool packages before freezing the image.",
+        "chimera": "Do not install xe-guest-utilities, qemu-guest-agent, open-vm-tools or cloud-init in the Linux image; DRAKVUF needs no in-guest agent."
+      },
+      "references": [
+        "https://people.redhat.com/~rjones/virt-what/",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.kernel_log_hypervisor",
+      "technique": "artifacts.kernel_messages",
+      "status": "implemented",
+      "reason": null,
+      "title": "Kernel log names a hypervisor",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "root"
+      ],
+      "equivalents": {
+        "vmaware": [
+          "DMESG",
+          "KMSG"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 3,
+        "how": "Hide the hypervisor from the guest kernel (Xen + DRAKVUF: cpuidmon -s, no PV clock); set kernel.dmesg_restrict=1 so unprivileged code cannot read the log.",
+        "chimera": "Xen exposes itself through xen_* drivers, /sys/hypervisor and boot messages; cpuidmon -s hides the CPUID leaves, and the guest kernel must be built or configured without Xen guest support (CONFIG_XEN off or xen_nopv) so it never binds the PV interfaces."
+      },
+      "references": [
+        "https://github.com/systemd/systemd/blob/main/src/basic/virt.c",
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.boot_log_hypervisor",
+      "technique": "artifacts.kernel_messages",
+      "status": "implemented",
+      "reason": null,
+      "title": "Boot logs name a hypervisor",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "DMESG"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Rotate and clear boot logs in the golden image after hardening.",
+        "chimera": "Xen exposes itself through xen_* drivers, /sys/hypervisor and boot messages; cpuidmon -s hides the CPUID leaves, and the guest kernel must be built or configured without Xen guest support (CONFIG_XEN off or xen_nopv) so it never binds the PV interfaces."
+      },
+      "references": [
+        "https://github.com/systemd/systemd/blob/main/src/basic/virt.c",
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.kernel_cmdline",
+      "technique": "artifacts.kernel_messages",
+      "status": "implemented",
+      "reason": null,
+      "title": "Kernel command line of a VM",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 1,
+        "how": "Boot the image with a desktop-style command line (no serial console, root by UUID).",
+        "chimera": "Drop console=hvc0/ttyS0 and Xen-specific options from the guest kernel command line."
+      },
+      "references": [
+        "https://github.com/systemd/systemd/blob/main/src/basic/virt.c",
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.sysinfo_proc",
+      "technique": "artifacts.hypervisor_interfaces",
+      "status": "implemented",
+      "reason": null,
+      "title": "/proc/sysinfo VM levels",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "SYSINFO_PROC"
+        ],
+        "systemd-detect-virt": [
+          "VIRTUALIZATION_ZVM"
+        ]
+      },
+      "fix": {
+        "layer": "host-hardware",
+        "effort": 5,
+        "how": "Run the analysis in an LPAR rather than a z/VM or KVM guest.",
+        "chimera": "Not applicable: CHIMERA runs x86-64 guests; the check matters only on IBM Z."
+      },
+      "references": [
+        "https://github.com/systemd/systemd/blob/main/src/basic/virt.c",
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.sys_hypervisor",
+      "technique": "artifacts.hypervisor_interfaces",
+      "status": "implemented",
+      "reason": null,
+      "title": "/sys/hypervisor",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "HYPERVISOR_DIR"
+        ],
+        "systemd-detect-virt": [
+          "VIRTUALIZATION_XEN"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 3,
+        "how": "Unload xen_sys / do not expose the hypervisor sysfs node.",
+        "chimera": "Xen exposes itself through xen_* drivers, /sys/hypervisor and boot messages; cpuidmon -s hides the CPUID leaves, and the guest kernel must be built or configured without Xen guest support (CONFIG_XEN off or xen_nopv) so it never binds the PV interfaces."
+      },
+      "references": [
+        "https://github.com/systemd/systemd/blob/main/src/basic/virt.c",
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.proc_xen",
+      "technique": "artifacts.hypervisor_interfaces",
+      "status": "implemented",
+      "reason": null,
+      "title": "/proc/xen",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "systemd-detect-virt": [
+          "VIRTUALIZATION_XEN"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Do not mount xenfs in the guest; blacklist xenfs.",
+        "chimera": "Blacklist xenfs and do not mount /proc/xen in the Linux golden image."
+      },
+      "references": [
+        "https://github.com/systemd/systemd/blob/main/src/basic/virt.c",
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.hypervisor_device_nodes",
+      "technique": "artifacts.hypervisor_interfaces",
+      "status": "implemented",
+      "reason": null,
+      "title": "Hypervisor device nodes",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Remove the guest drivers that create these nodes.",
+        "chimera": "Xen exposes itself through xen_* drivers, /sys/hypervisor and boot messages; cpuidmon -s hides the CPUID leaves, and the guest kernel must be built or configured without Xen guest support (CONFIG_XEN off or xen_nopv) so it never binds the PV interfaces."
+      },
+      "references": [
+        "https://github.com/systemd/systemd/blob/main/src/basic/virt.c",
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.qemu_fw_cfg",
+      "technique": "artifacts.hypervisor_interfaces",
+      "status": "implemented",
+      "reason": null,
+      "title": "QEMU fw_cfg interface",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "QEMU_FW_CFG"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 3,
+        "how": "Blacklist qemu_fw_cfg; hide the fw_cfg ACPI device.",
+        "chimera": "Xen exposes itself through xen_* drivers, /sys/hypervisor and boot messages; cpuidmon -s hides the CPUID leaves, and the guest kernel must be built or configured without Xen guest support (CONFIG_XEN off or xen_nopv) so it never binds the PV interfaces."
+      },
+      "references": [
+        "https://github.com/systemd/systemd/blob/main/src/basic/virt.c",
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.ioports_iomem",
+      "technique": "artifacts.hypervisor_interfaces",
+      "status": "implemented",
+      "reason": null,
+      "title": "Hypervisor resources in /proc/ioports and /proc/iomem",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 3,
+        "how": "Remove the paravirtual devices that claim these ranges.",
+        "chimera": "Xen exposes itself through xen_* drivers, /sys/hypervisor and boot messages; cpuidmon -s hides the CPUID leaves, and the guest kernel must be built or configured without Xen guest support (CONFIG_XEN off or xen_nopv) so it never binds the PV interfaces."
+      },
+      "references": [
+        "https://github.com/systemd/systemd/blob/main/src/basic/virt.c",
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.hypervisor_files",
+      "technique": "artifacts.files",
+      "status": "implemented",
+      "reason": null,
+      "title": "Files left by virtualisation software",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Delete guest-tool leftovers from the golden image.",
+        "chimera": "Xen exposes itself through xen_* drivers, /sys/hypervisor and boot messages; cpuidmon -s hides the CPUID leaves, and the guest kernel must be built or configured without Xen guest support (CONFIG_XEN off or xen_nopv) so it never binds the PV interfaces."
+      },
+      "references": [
+        "https://github.com/systemd/systemd/blob/main/src/basic/virt.c",
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.bluestacks_folders",
+      "technique": "emulator.android_vendor_emulators",
+      "status": "implemented",
+      "reason": null,
+      "title": "BlueStacks shared folders",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "BLUESTACKS_FOLDERS"
+        ]
+      },
+      "fix": {
+        "layer": "host-hardware",
+        "effort": 5,
+        "how": "Do not use BlueStacks for analysis.",
+        "chimera": "Not applicable: CHIMERA does not use Android emulators for Linux analysis."
+      },
+      "references": [
+        "https://github.com/NotRequiem/VMAware"
+      ]
+    },
+    {
+      "id": "linux.env.pci_device_ids",
+      "technique": "hardware.pci_vendor_ids",
+      "status": "implemented",
+      "reason": null,
+      "title": "Virtual PCI device ids",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "DEVICES"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 3,
+        "how": "Remove or replace paravirtual and emulator-specific PCI devices.",
+        "chimera": "Choose emulated devices in xl.cfg (model=e1000, emulated AHCI disks, HDA audio, no vkb/vfb) and override their ids where QEMU allows it; xen_platform_pci=0 removes the Xen platform device."
+      },
+      "references": [
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.pci_subsystem_ids",
+      "technique": "hardware.pci_vendor_ids",
+      "status": "implemented",
+      "reason": null,
+      "title": "Virtual PCI subsystem ids",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "DEVICES"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Override subsystem vendor/device ids of emulated devices with the host's values.",
+        "chimera": "Choose emulated devices in xl.cfg (model=e1000, emulated AHCI disks, HDA audio, no vkb/vfb) and override their ids where QEMU allows it; xen_platform_pci=0 removes the Xen platform device."
+      },
+      "references": [
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.usb_devices",
+      "technique": "hardware.usb_devices",
+      "status": "implemented",
+      "reason": null,
+      "title": "Virtual USB devices",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 2,
+        "how": "Do not attach emulated tablets; pass through or emulate a vendor HID (Xen: drop usbdevice=['tablet'] and inject input with hidsim instead).",
+        "chimera": "Choose emulated devices in xl.cfg (model=e1000, emulated AHCI disks, HDA audio, no vkb/vfb) and override their ids where QEMU allows it; xen_platform_pci=0 removes the Xen platform device."
+      },
+      "references": [
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.qemu_usb_debugfs",
+      "technique": "hardware.usb_devices",
+      "status": "implemented",
+      "reason": null,
+      "title": "QEMU in USB debugfs",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "root"
+      ],
+      "equivalents": {
+        "vmaware": [
+          "QEMU_USB"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 2,
+        "how": "Do not attach QEMU-branded USB devices.",
+        "chimera": "Choose emulated devices in xl.cfg (model=e1000, emulated AHCI disks, HDA audio, no vkb/vfb) and override their ids where QEMU allows it; xen_platform_pci=0 removes the Xen platform device."
+      },
+      "references": [
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.input_devices",
+      "technique": "hardware.input_devices",
+      "status": "implemented",
+      "reason": null,
+      "title": "Virtual input devices",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 2,
+        "how": "Remove paravirtual keyboards/tablets (Xen: vkb/vfb devices, usbdevice tablet).",
+        "chimera": "Choose emulated devices in xl.cfg (model=e1000, emulated AHCI disks, HDA audio, no vkb/vfb) and override their ids where QEMU allows it; xen_platform_pci=0 removes the Xen platform device."
+      },
+      "references": [
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.disk_by_id",
+      "technique": "hardware.disk_identity",
+      "status": "implemented",
+      "reason": null,
+      "title": "Disk ids in /dev/disk/by-id",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "DISK"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 3,
+        "how": "Give virtual disks a real model and serial (QEMU: -device ide-hd,model=...,serial=...).",
+        "chimera": "Choose emulated devices in xl.cfg (model=e1000, emulated AHCI disks, HDA audio, no vkb/vfb) and override their ids where QEMU allows it; xen_platform_pci=0 removes the Xen platform device."
+      },
+      "references": [
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.disk_serial_pattern",
+      "technique": "hardware.disk_identity",
+      "status": "implemented",
+      "reason": null,
+      "title": "Hypervisor disk serial pattern",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "DISK"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 3,
+        "how": "Set disk serials in the host vendor's format.",
+        "chimera": "Choose emulated devices in xl.cfg (model=e1000, emulated AHCI disks, HDA audio, no vkb/vfb) and override their ids where QEMU allows it; xen_platform_pci=0 removes the Xen platform device."
+      },
+      "references": [
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.virtual_disk_driver",
+      "technique": "hardware.disk_identity",
+      "status": "implemented",
+      "reason": null,
+      "title": "Paravirtual disk driver",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 2,
+        "how": "Attach system disks through an emulated AHCI/NVMe controller.",
+        "chimera": "Choose emulated devices in xl.cfg (model=e1000, emulated AHCI disks, HDA audio, no vkb/vfb) and override their ids where QEMU allows it; xen_platform_pci=0 removes the Xen platform device."
+      },
+      "references": [
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.nic_driver",
+      "technique": "hardware.nic_identity",
+      "status": "implemented",
+      "reason": null,
+      "title": "Virtual network adapter driver",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 2,
+        "how": "Use an emulated NIC with the host's subsystem ids (Xen: model=e1000 and type=ioemu; no PV vif frontend in the guest).",
+        "chimera": "Choose emulated devices in xl.cfg (model=e1000, emulated AHCI disks, HDA audio, no vkb/vfb) and override their ids where QEMU allows it; xen_platform_pci=0 removes the Xen platform device."
+      },
+      "references": [
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.gpu_driver",
+      "technique": "hardware.gpu_identity",
+      "status": "implemented",
+      "reason": null,
+      "title": "Virtual display adapter",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 3,
+        "how": "Pass through a GPU or emulate a vendor adapter.",
+        "chimera": "Choose emulated devices in xl.cfg (model=e1000, emulated AHCI disks, HDA audio, no vkb/vfb) and override their ids where QEMU allows it; xen_platform_pci=0 removes the Xen platform device."
+      },
+      "references": [
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.no_display_adapter",
+      "technique": "hardware.gpu_identity",
+      "status": "implemented",
+      "reason": null,
+      "title": "No display adapter",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 1,
+        "how": "Give the guest a display adapter.",
+        "chimera": "Choose emulated devices in xl.cfg (model=e1000, emulated AHCI disks, HDA audio, no vkb/vfb) and override their ids where QEMU allows it; xen_platform_pci=0 removes the Xen platform device."
+      },
+      "references": [
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.monitor_edid",
+      "technique": "hardware.monitor_edid",
+      "status": "implemented",
+      "reason": null,
+      "title": "Monitor EDID",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Provide a real monitor EDID to the virtual display.",
+        "chimera": "Choose emulated devices in xl.cfg (model=e1000, emulated AHCI disks, HDA audio, no vkb/vfb) and override their ids where QEMU allows it; xen_platform_pci=0 removes the Xen platform device."
+      },
+      "references": [
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.sound_cards",
+      "technique": "hardware.audio_devices",
+      "status": "implemented",
+      "reason": null,
+      "title": "Sound hardware",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 2,
+        "how": "Emulate Intel HD Audio rather than AC'97/ES1370.",
+        "chimera": "Choose emulated devices in xl.cfg (model=e1000, emulated AHCI disks, HDA audio, no vkb/vfb) and override their ids where QEMU allows it; xen_platform_pci=0 removes the Xen platform device."
+      },
+      "references": [
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.hwmon_absent",
+      "technique": "hardware.thermal_sensors",
+      "status": "implemented",
+      "reason": null,
+      "title": "No hardware monitoring sensors",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "HWMON"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 5,
+        "how": "Not fixable by configuration alone; a sensor-emulating device model is needed.",
+        "chimera": "Choose emulated devices in xl.cfg (model=e1000, emulated AHCI disks, HDA audio, no vkb/vfb) and override their ids where QEMU allows it; xen_platform_pci=0 removes the Xen platform device."
+      },
+      "references": [
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.thermal_zones",
+      "technique": "hardware.thermal_sensors",
+      "status": "implemented",
+      "reason": null,
+      "title": "No thermal zones or cooling devices",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "TEMPERATURE"
+        ]
+      },
+      "fix": {
+        "layer": "firmware",
+        "effort": 3,
+        "how": "Expose ACPI thermal zones (_TZ) in the guest DSDT.",
+        "chimera": "Choose emulated devices in xl.cfg (model=e1000, emulated AHCI disks, HDA audio, no vkb/vfb) and override their ids where QEMU allows it; xen_platform_pci=0 removes the Xen platform device."
+      },
+      "references": [
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.power_supply",
+      "technique": "hardware.battery_power",
+      "status": "implemented",
+      "reason": null,
+      "title": "Battery and AC adapter",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "firmware",
+        "effort": 3,
+        "how": "Expose an ACPI battery/AC adapter consistent with the chassis type (Xen: acpi_s3/battery emulation or a laptop identity with a battery device).",
+        "chimera": "Choose emulated devices in xl.cfg (model=e1000, emulated AHCI disks, HDA audio, no vkb/vfb) and override their ids where QEMU allows it; xen_platform_pci=0 removes the Xen platform device."
+      },
+      "references": [
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.cpu_frequency_scaling",
+      "technique": "hardware.cpu_cache_clock",
+      "status": "implemented",
+      "reason": null,
+      "title": "No CPU frequency scaling",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Expose CPU performance states (Xen: cpufreq=dom0-kernel is host-side only; accept or pass _PSS through ACPI).",
+        "chimera": "Choose emulated devices in xl.cfg (model=e1000, emulated AHCI disks, HDA audio, no vkb/vfb) and override their ids where QEMU allows it; xen_platform_pci=0 removes the Xen platform device."
+      },
+      "references": [
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.cpu_cache_topology",
+      "technique": "hardware.cpu_cache_clock",
+      "status": "implemented",
+      "reason": null,
+      "title": "CPU cache hierarchy",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 2,
+        "how": "Pass the host cache topology to the guest CPU model.",
+        "chimera": "Choose emulated devices in xl.cfg (model=e1000, emulated AHCI disks, HDA audio, no vkb/vfb) and override their ids where QEMU allows it; xen_platform_pci=0 removes the Xen platform device."
+      },
+      "references": [
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.cpuinfo_virtual_model",
+      "technique": "cpu.brand_string",
+      "status": "implemented",
+      "reason": null,
+      "title": "Virtual CPU model in /proc/cpuinfo",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "CPU_BRAND",
+          "BOCHS_CPU",
+          "UML_CPU"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Use CPU passthrough with the host model name.",
+        "chimera": "DRAKVUF cpuidmon -s clears the hypervisor bit and vendor leaves; pair it with a host-like CPU model string through the Xen CPUID policy (cpuid= in xl.cfg)."
+      },
+      "references": [
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.cpuinfo_hypervisor_flag",
+      "technique": "cpu.hypervisor_bit",
+      "status": "implemented",
+      "reason": null,
+      "title": "'hypervisor' flag in /proc/cpuinfo",
+      "severity": "critical",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "HYPERVISOR_BIT"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Clear CPUID.1:ECX[31] (Xen + DRAKVUF: cpuidmon -s also hides it from the guest kernel).",
+        "chimera": "DRAKVUF cpuidmon -s clears the hypervisor bit and vendor leaves; pair it with a host-like CPU model string through the Xen CPUID policy (cpuid= in xl.cfg)."
+      },
+      "references": [
+        "https://github.com/NotRequiem/VMAware",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.env.screen_resolution",
+      "technique": "resources.screen",
+      "status": "implemented",
+      "reason": null,
+      "title": "Screen resolution",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 1,
+        "how": "Configure a 1920x1080 or larger virtual display.",
+        "chimera": "Give the guest a 1920x1080 or larger framebuffer (videoram and vga in xl.cfg)."
+      },
+      "references": [
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.design.sandbox_hostname_list",
+      "technique": "identity.hostname",
+      "status": "implemented",
+      "reason": null,
+      "title": "Hostname on public sandbox lists",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Rename the image.",
+        "chimera": "Set hostname, user, locale and sample drop location in the Linux golden image and in the DRAKVUF injector's start command."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ]
+    },
+    {
+      "id": "linux.design.linux_user_host",
+      "technique": "identity.username",
+      "status": "implemented",
+      "reason": null,
+      "title": "Live-session default user and host",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "LINUX_USER_HOST"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Install the OS; do not run samples on live media.",
+        "chimera": "Set hostname, user, locale and sample drop location in the Linux golden image and in the DRAKVUF injector's start command."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ]
+    },
+    {
+      "id": "linux.design.default_hostname",
+      "technique": "identity.hostname",
+      "status": "implemented",
+      "reason": null,
+      "title": "Default or generated hostname",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Set a personal-looking hostname.",
+        "chimera": "Set hostname, user, locale and sample drop location in the Linux golden image and in the DRAKVUF injector's start command."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ]
+    },
+    {
+      "id": "linux.design.ci_runner_hostname",
+      "technique": "identity.hostname",
+      "status": "implemented",
+      "reason": null,
+      "title": "Hosted CI runner hostname",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Do not detonate on CI runners.",
+        "chimera": "Set hostname, user, locale and sample drop location in the Linux golden image and in the DRAKVUF injector's start command."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ]
+    },
+    {
+      "id": "linux.design.ci_environment",
+      "technique": "identity.environment_variables",
+      "status": "implemented",
+      "reason": null,
+      "title": "CI environment variables",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Do not detonate on CI runners.",
+        "chimera": "Set hostname, user, locale and sample drop location in the Linux golden image and in the DRAKVUF injector's start command."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ]
+    },
+    {
+      "id": "linux.design.sandbox_environment_variables",
+      "technique": "identity.environment_variables",
+      "status": "implemented",
+      "reason": null,
+      "title": "Sandbox environment variables",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Start samples with a clean user environment.",
+        "chimera": "Set hostname, user, locale and sample drop location in the Linux golden image and in the DRAKVUF injector's start command."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ]
+    },
+    {
+      "id": "linux.design.sample_path",
+      "technique": "identity.sample_path",
+      "status": "implemented",
+      "reason": null,
+      "title": "Sample runs from a sandbox-like location",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 1,
+        "how": "Drop samples into a user-like location (~/Downloads) under a plausible name.",
+        "chimera": "Set hostname, user, locale and sample drop location in the Linux golden image and in the DRAKVUF injector's start command."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ]
+    },
+    {
+      "id": "linux.design.sample_name",
+      "technique": "identity.sample_path",
+      "status": "implemented",
+      "reason": null,
+      "title": "Sample file name is a hash or sandbox name",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 1,
+        "how": "Rename samples to a plausible original name before running them.",
+        "chimera": "Set hostname, user, locale and sample drop location in the Linux golden image and in the DRAKVUF injector's start command."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ]
+    },
+    {
+      "id": "linux.design.parent_process",
+      "technique": "identity.parent_process",
+      "status": "implemented",
+      "reason": null,
+      "title": "Launched by an analysis agent",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Start samples the way a user would (file manager, shell, xdg-open), not from the agent (CHIMERA: DRAKVUF injection avoids an in-guest agent).",
+        "chimera": "Have the DRAKVUF injector start samples through the desktop session (gio open / a shell) rather than as a child of a service."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ]
+    },
+    {
+      "id": "linux.design.locale_generic",
+      "technique": "identity.locale",
+      "status": "implemented",
+      "reason": null,
+      "title": "Generic C/POSIX locale",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Configure the impersonated user's locale.",
+        "chimera": "Set hostname, user, locale and sample drop location in the Linux golden image and in the DRAKVUF injector's start command."
+      },
+      "references": [
+        "https://attack.mitre.org/techniques/T1614/001/",
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ]
+    },
+    {
+      "id": "linux.design.cis_locale_guardrail",
+      "technique": "identity.locale",
+      "status": "implemented",
+      "reason": null,
+      "title": "CIS language or time zone (sample guardrail)",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Use a non-CIS locale and time zone for the analysis image.",
+        "chimera": "Set hostname, user, locale and sample drop location in the Linux golden image and in the DRAKVUF injector's start command."
+      },
+      "references": [
+        "https://attack.mitre.org/techniques/T1614/001/",
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ]
+    },
+    {
+      "id": "linux.design.running_as_root",
+      "technique": "os_config.uac_sip",
+      "status": "implemented",
+      "reason": null,
+      "title": "Sample runs as root",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Run samples as an unprivileged desktop user.",
+        "chimera": "Commit the distribution's default hardening in the golden image; samples must run as the desktop user."
+      },
+      "references": [
+        "https://www.kernel.org/doc/html/latest/admin-guide/sysctl/kernel.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.design.analysis_tool_cmdline",
+      "technique": "analysis_tools.processes",
+      "status": "implemented",
+      "reason": null,
+      "title": "Interpreted analysis tools running",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Run analysis tooling outside the guest.",
+        "chimera": "CHIMERA analyses Linux guests agentlessly with DRAKVUF; keep the image free of in-guest tooling and verify after every snapshot commit."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.design.analysis_tool_binaries",
+      "technique": "analysis_tools.files",
+      "status": "implemented",
+      "reason": null,
+      "title": "Analysis tools installed",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Do not install analysis tools in the detonation image.",
+        "chimera": "CHIMERA analyses Linux guests agentlessly with DRAKVUF; keep the image free of in-guest tooling and verify after every snapshot commit."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.design.analysis_tool_packages",
+      "technique": "analysis_tools.files",
+      "status": "implemented",
+      "reason": null,
+      "title": "Analysis tool packages installed",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Purge analysis packages from the image.",
+        "chimera": "CHIMERA analyses Linux guests agentlessly with DRAKVUF; keep the image free of in-guest tooling and verify after every snapshot commit."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.design.listening_ports",
+      "technique": "analysis_tools.listening_ports",
+      "status": "implemented",
+      "reason": null,
+      "title": "Analysis agent ports listening",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Use agentless analysis or move the agent to an unremarkable port.",
+        "chimera": "CHIMERA analyses Linux guests agentlessly with DRAKVUF; keep the image free of in-guest tooling and verify after every snapshot commit."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.design.core_pattern",
+      "technique": "analysis_tools.drivers_services",
+      "status": "implemented",
+      "reason": null,
+      "title": "Crash dumps piped to a collector",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Keep the distribution's core dump handler.",
+        "chimera": "CHIMERA analyses Linux guests agentlessly with DRAKVUF; keep the image free of in-guest tooling and verify after every snapshot commit."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.design.monitoring_services",
+      "technique": "analysis_tools.drivers_services",
+      "status": "implemented",
+      "reason": null,
+      "title": "Monitoring and EDR services installed",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Monitor from outside the guest instead (CHIMERA: DRAKVUF).",
+        "chimera": "CHIMERA analyses Linux guests agentlessly with DRAKVUF; keep the image free of in-guest tooling and verify after every snapshot commit."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.design.selinux_state",
+      "technique": "integrity.selinux",
+      "status": "implemented",
+      "reason": null,
+      "title": "SELinux permissive or disabled",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Set SELinux to enforcing.",
+        "chimera": "Keep the distribution's default mandatory access control state."
+      },
+      "references": [
+        "https://man7.org/linux/man-pages/man8/selinux.8.html",
+        "https://www.kernel.org/doc/html/latest/admin-guide/sysctl/kernel.html"
+      ]
+    },
+    {
+      "id": "linux.design.apparmor_state",
+      "technique": "os_config.uac_sip",
+      "status": "implemented",
+      "reason": null,
+      "title": "AppArmor disabled",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Keep AppArmor enabled.",
+        "chimera": "Commit the distribution's default hardening in the golden image; samples must run as the desktop user."
+      },
+      "references": [
+        "https://www.kernel.org/doc/html/latest/admin-guide/sysctl/kernel.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.design.kernel_lockdown",
+      "technique": "os_config.uac_sip",
+      "status": "implemented",
+      "reason": null,
+      "title": "Kernel lockdown off under Secure Boot",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Do not disable lockdown on the kernel command line.",
+        "chimera": "Commit the distribution's default hardening in the golden image; samples must run as the desktop user."
+      },
+      "references": [
+        "https://man7.org/linux/man-pages/man7/kernel_lockdown.7.html",
+        "https://www.kernel.org/doc/html/latest/admin-guide/sysctl/kernel.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.design.aslr_disabled",
+      "technique": "os_config.uac_sip",
+      "status": "implemented",
+      "reason": null,
+      "title": "ASLR weakened",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Set kernel.randomize_va_space=2.",
+        "chimera": "Commit the distribution's default hardening in the golden image; samples must run as the desktop user."
+      },
+      "references": [
+        "https://www.kernel.org/doc/html/latest/admin-guide/sysctl/kernel.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.design.ptrace_scope",
+      "technique": "os_config.uac_sip",
+      "status": "implemented",
+      "reason": null,
+      "title": "Yama ptrace restriction relaxed",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Restore kernel.yama.ptrace_scope=1.",
+        "chimera": "Commit the distribution's default hardening in the golden image; samples must run as the desktop user."
+      },
+      "references": [
+        "https://www.kernel.org/doc/html/latest/admin-guide/LSM/Yama.html",
+        "https://www.kernel.org/doc/html/latest/admin-guide/sysctl/kernel.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.design.autologin",
+      "technique": "os_config.uac_sip",
+      "status": "implemented",
+      "reason": null,
+      "title": "Automatic login configured",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Log in through the normal greeter (hidsim can type the password).",
+        "chimera": "Commit the distribution's default hardening in the golden image; samples must run as the desktop user."
+      },
+      "references": [
+        "https://www.kernel.org/doc/html/latest/admin-guide/sysctl/kernel.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.design.sudo_nopasswd",
+      "technique": "os_config.uac_sip",
+      "status": "implemented",
+      "reason": null,
+      "title": "Password-less sudo",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Require a password for sudo in the image.",
+        "chimera": "Commit the distribution's default hardening in the golden image; samples must run as the desktop user."
+      },
+      "references": [
+        "https://www.kernel.org/doc/html/latest/admin-guide/sysctl/kernel.html",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.design.default_subnet",
+      "technique": "network.default_subnets",
+      "status": "implemented",
+      "reason": null,
+      "title": "Default sandbox subnet",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "network",
+        "effort": 2,
+        "how": "Address the analysis network like an office or home LAN (CHIMERA: choose a non-default subnet for the INetSim bridge).",
+        "chimera": "CHIMERA's isolated analysis network runs INetSim; configure its DNS and HTTP responders and the guest's addressing so they look like a home or office LAN."
+      },
+      "references": [
+        "https://www.inetsim.org/",
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.design.dns_resolver_address",
+      "technique": "network.default_subnets",
+      "status": "implemented",
+      "reason": null,
+      "title": "Sandbox or cloud DNS resolver",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "network",
+        "effort": 2,
+        "how": "Serve DNS from an address that fits the simulated LAN.",
+        "chimera": "CHIMERA's isolated analysis network runs INetSim; configure its DNS and HTTP responders and the guest's addressing so they look like a home or office LAN."
+      },
+      "references": [
+        "https://www.inetsim.org/",
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.design.no_default_route",
+      "technique": "network.connectivity",
+      "status": "implemented",
+      "reason": null,
+      "title": "No default route",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "network",
+        "effort": 2,
+        "how": "Give the guest a default route to the simulated internet (INetSim gateway).",
+        "chimera": "CHIMERA's isolated analysis network runs INetSim; configure its DNS and HTTP responders and the guest's addressing so they look like a home or office LAN."
+      },
+      "references": [
+        "https://www.inetsim.org/",
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.design.dns_sinkhole",
+      "technique": "network.dns_sinkhole",
+      "status": "implemented",
+      "reason": null,
+      "title": "DNS answers non-existent names",
+      "severity": "high",
+      "cost": "medium",
+      "network": true,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "network",
+        "effort": 2,
+        "how": "Make the fake DNS return NXDOMAIN for names it does not simulate (INetSim: dns_default_ip only for listed zones; or forward unknown names to a real resolver).",
+        "chimera": "CHIMERA's isolated analysis network runs INetSim; configure its DNS and HTTP responders and the guest's addressing so they look like a home or office LAN."
+      },
+      "references": [
+        "https://www.inetsim.org/",
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.design.simulated_internet",
+      "technique": "network.simulated_internet",
+      "status": "implemented",
+      "reason": null,
+      "title": "Simulated internet answers random hosts",
+      "severity": "high",
+      "cost": "medium",
+      "network": true,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "network",
+        "effort": 3,
+        "how": "Answer only for simulated hosts; return connection errors for random names, and replace the INetSim default banner.",
+        "chimera": "CHIMERA's isolated analysis network runs INetSim; configure its DNS and HTTP responders and the guest's addressing so they look like a home or office LAN."
+      },
+      "references": [
+        "https://www.inetsim.org/",
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.design.network_adapters",
+      "technique": "network.adapter_count",
+      "status": "implemented",
+      "reason": null,
+      "title": "Single wired adapter, no Wi-Fi",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 2,
+        "how": "Add a second (e.g. Wi-Fi-named) adapter to match a laptop identity.",
+        "chimera": "CHIMERA's isolated analysis network runs INetSim; configure its DNS and HTTP responders and the guest's addressing so they look like a home or office LAN."
+      },
+      "references": [
+        "https://www.inetsim.org/",
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.design.proxy_environment",
+      "technique": "network.proxy_mitm",
+      "status": "implemented",
+      "reason": null,
+      "title": "Proxy configured",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Route traffic transparently instead of through a configured proxy.",
+        "chimera": "CHIMERA's isolated analysis network runs INetSim; configure its DNS and HTTP responders and the guest's addressing so they look like a home or office LAN."
+      },
+      "references": [
+        "https://www.inetsim.org/",
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.design.mitm_ca_certificates",
+      "technique": "network.proxy_mitm",
+      "status": "implemented",
+      "reason": null,
+      "title": "Interception proxy CA installed",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Use a CA named like a corporate inspection CA, or none.",
+        "chimera": "CHIMERA's isolated analysis network runs INetSim; configure its DNS and HTTP responders and the guest's addressing so they look like a home or office LAN."
+      },
+      "references": [
+        "https://www.inetsim.org/",
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/001/"
+      ]
+    },
+    {
+      "id": "linux.timing.clock_source",
+      "technique": "timing.clock_source",
+      "status": "implemented",
+      "reason": null,
+      "title": "Paravirtual clock source in use",
+      "severity": "high",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "TIMER"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 3,
+        "how": "Make the guest use tsc (Xen HVM: tsc_mode='native' or 'always_emulate' plus clocksource=tsc; do not expose the Xen PV clock).",
+        "chimera": "Use tsc_mode and a TSC clocksource in the guest, NTP from the analysis network, and resync the guest clock after snapshot restore (CHIMERA's time-acceleration mode must keep wall time plausible)."
+      },
+      "references": [
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://attack.mitre.org/techniques/T1497/003/"
+      ]
+    },
+    {
+      "id": "linux.timing.clock_source_available",
+      "technique": "timing.clock_source",
+      "status": "implemented",
+      "reason": null,
+      "title": "Paravirtual clock source registered",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 3,
+        "how": "Hide the hypervisor so the guest kernel never registers its clock (Xen + DRAKVUF: cpuidmon -s masks the leaves the kernel probes).",
+        "chimera": "Use tsc_mode and a TSC clocksource in the guest, NTP from the analysis network, and resync the guest clock after snapshot restore (CHIMERA's time-acceleration mode must keep wall time plausible)."
+      },
+      "references": [
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://attack.mitre.org/techniques/T1497/003/"
+      ]
+    },
+    {
+      "id": "linux.timing.time_zone_utc",
+      "technique": "timing.time_plausibility",
+      "status": "implemented",
+      "reason": null,
+      "title": "Time zone is UTC",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Set the time zone the impersonated user would have.",
+        "chimera": "Use tsc_mode and a TSC clocksource in the guest, NTP from the analysis network, and resync the guest clock after snapshot restore (CHIMERA's time-acceleration mode must keep wall time plausible)."
+      },
+      "references": [
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://attack.mitre.org/techniques/T1497/003/"
+      ]
+    },
+    {
+      "id": "linux.timing.ntp_unsynchronised",
+      "technique": "timing.time_plausibility",
+      "status": "implemented",
+      "reason": null,
+      "title": "Clock not NTP-synchronised",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "network",
+        "effort": 2,
+        "how": "Give the analysis network an NTP server (INetSim ntp service or a local chrony).",
+        "chimera": "Use tsc_mode and a TSC clocksource in the guest, NTP from the analysis network, and resync the guest clock after snapshot restore (CHIMERA's time-acceleration mode must keep wall time plausible)."
+      },
+      "references": [
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://attack.mitre.org/techniques/T1497/003/"
+      ]
+    },
+    {
+      "id": "linux.timing.future_file_times",
+      "technique": "timing.time_plausibility",
+      "status": "implemented",
+      "reason": null,
+      "title": "Files modified in the future",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Advance the guest clock to real time after restoring a snapshot (Xen: xl restore keeps the saved time; set it from the host or with NTP).",
+        "chimera": "Use tsc_mode and a TSC clocksource in the guest, NTP from the analysis network, and resync the guest clock after snapshot restore (CHIMERA's time-acceleration mode must keep wall time plausible)."
+      },
+      "references": [
+        "https://xenbits.xen.org/docs/unstable/man/xl.cfg.5.html",
+        "https://attack.mitre.org/techniques/T1497/003/"
+      ]
+    },
+    {
+      "id": "linux.behavioural.shell_history_age",
+      "technique": "wear_and_tear.recent_files",
+      "status": "implemented",
+      "reason": null,
+      "title": "Shell history age",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Build the image's history over time (or with back-dated timestamps).",
+        "chimera": "Age the Linux golden image: use it as a desktop for days before the final snapshot, keep logs and history, and re-check after every snapshot commit."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ]
+    },
+    {
+      "id": "linux.behavioural.recently_used_xbel",
+      "technique": "wear_and_tear.recent_files",
+      "status": "implemented",
+      "reason": null,
+      "title": "Recently used files list",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "FILE_ACCESS_HISTORY"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Open documents in the image so the recents list fills.",
+        "chimera": "Age the Linux golden image: use it as a desktop for days before the final snapshot, keep logs and history, and re-check after every snapshot commit."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ]
+    },
+    {
+      "id": "linux.behavioural.browser_profiles",
+      "technique": "wear_and_tear.browser_history",
+      "status": "implemented",
+      "reason": null,
+      "title": "Browser profiles",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Install a browser in the image and browse with it before freezing.",
+        "chimera": "Age the Linux golden image: use it as a desktop for days before the final snapshot, keep logs and history, and re-check after every snapshot commit."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ]
+    },
+    {
+      "id": "linux.behavioural.browser_history_size",
+      "technique": "wear_and_tear.browser_history",
+      "status": "implemented",
+      "reason": null,
+      "title": "Browser history volume",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Browse with the image's browser for a while before freezing it.",
+        "chimera": "Age the Linux golden image: use it as a desktop for days before the final snapshot, keep logs and history, and re-check after every snapshot commit."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ]
+    },
+    {
+      "id": "linux.behavioural.xdg_user_files",
+      "technique": "wear_and_tear.user_files",
+      "status": "implemented",
+      "reason": null,
+      "title": "Files in the user's folders",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Put plausible documents, downloads and pictures in the user's folders.",
+        "chimera": "Age the Linux golden image: use it as a desktop for days before the final snapshot, keep logs and history, and re-check after every snapshot commit."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ]
+    },
+    {
+      "id": "linux.behavioural.system_age",
+      "technique": "wear_and_tear.system_age",
+      "status": "implemented",
+      "reason": null,
+      "title": "Operating system age",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Build the golden image well before use, or back-date it consistently.",
+        "chimera": "Age the Linux golden image: use it as a desktop for days before the final snapshot, keep logs and history, and re-check after every snapshot commit."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ]
+    },
+    {
+      "id": "linux.behavioural.log_age",
+      "technique": "wear_and_tear.system_logs",
+      "status": "implemented",
+      "reason": null,
+      "title": "Age of system logs",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Do not wipe /var/log when building the image; let it age.",
+        "chimera": "Age the Linux golden image: use it as a desktop for days before the final snapshot, keep logs and history, and re-check after every snapshot commit."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ]
+    },
+    {
+      "id": "linux.behavioural.journal_files",
+      "technique": "wear_and_tear.system_logs",
+      "status": "implemented",
+      "reason": null,
+      "title": "Persistent journal history",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Keep the journal of the image's build and use period.",
+        "chimera": "Age the Linux golden image: use it as a desktop for days before the final snapshot, keep logs and history, and re-check after every snapshot commit."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ]
+    },
+    {
+      "id": "linux.behavioural.login_records",
+      "technique": "wear_and_tear.system_logs",
+      "status": "implemented",
+      "reason": null,
+      "title": "Login history (wtmp)",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Log in and reboot the image several times while building it.",
+        "chimera": "Age the Linux golden image: use it as a desktop for days before the final snapshot, keep logs and history, and re-check after every snapshot commit."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ]
+    },
+    {
+      "id": "linux.behavioural.ssh_known_hosts",
+      "technique": "wear_and_tear.network_history",
+      "status": "implemented",
+      "reason": null,
+      "title": "SSH known hosts",
+      "severity": "info",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Optional: connect to a few hosts while building the image.",
+        "chimera": "Age the Linux golden image: use it as a desktop for days before the final snapshot, keep logs and history, and re-check after every snapshot commit."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ]
+    },
+    {
+      "id": "linux.behavioural.arp_neighbors",
+      "technique": "wear_and_tear.network_history",
+      "status": "implemented",
+      "reason": null,
+      "title": "ARP neighbours",
+      "severity": "info",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "network",
+        "effort": 2,
+        "how": "Put a few simulated hosts on the analysis network.",
+        "chimera": "Age the Linux golden image: use it as a desktop for days before the final snapshot, keep logs and history, and re-check after every snapshot commit."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ]
+    },
+    {
+      "id": "linux.behavioural.desktop_entries",
+      "technique": "wear_and_tear.installed_software",
+      "status": "implemented",
+      "reason": null,
+      "title": "Desktop applications",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Install everyday desktop applications.",
+        "chimera": "Age the Linux golden image: use it as a desktop for days before the final snapshot, keep logs and history, and re-check after every snapshot commit."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ]
+    },
+    {
+      "id": "linux.behavioural.thumbnail_cache",
+      "technique": "wear_and_tear.recent_files",
+      "status": "implemented",
+      "reason": null,
+      "title": "Thumbnail cache",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Browse pictures in the image's file manager.",
+        "chimera": "Age the Linux golden image: use it as a desktop for days before the final snapshot, keep logs and history, and re-check after every snapshot commit."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ]
+    },
+    {
+      "id": "linux.behavioural.scheduled_jobs",
+      "technique": "wear_and_tear.installed_software",
+      "status": "implemented",
+      "reason": null,
+      "title": "Scheduled jobs",
+      "severity": "info",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Keep the distribution's default jobs.",
+        "chimera": "Age the Linux golden image: use it as a desktop for days before the final snapshot, keep logs and history, and re-check after every snapshot commit."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ]
+    },
+    {
+      "id": "linux.behavioural.input_interrupts",
+      "technique": "human.idle_time",
+      "status": "implemented",
+      "reason": null,
+      "title": "Keyboard/mouse interrupts since boot",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Simulate input during analysis (CHIMERA: hidsim injects PS/2 keyboard and mouse events).",
+        "chimera": "CHIMERA's hidsim injects PS/2 keyboard and mouse input during analysis, which raises these interrupt counters."
+      },
+      "references": [
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ]
+    },
+    {
+      "id": "linux.env.acpi_boot_logo",
+      "technique": "firmware.acpi_tables",
+      "status": "planned",
+      "reason": "Needs a vetted set of reference digests for the boot logos virtual firmware ships (OVMF/TianoCore, VirtualBox, Hyper-V); /sys/firmware/acpi/bgrt/image is also root-only on most distributions.",
+      "title": "ACPI BGRT boot logo",
+      "severity": "medium",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "root"
+      ],
+      "equivalents": {
+        "vmaware": [
+          "BOOT_LOGO"
+        ]
+      },
+      "fix": {
+        "layer": "firmware",
+        "effort": 2,
+        "how": "Boot with firmware that shows the hardware vendor's logo, or with no BGRT table.",
+        "chimera": "CHIMERA's Linux guest boots through hvmloader/SeaBIOS, which publishes no BGRT table; re-check if the guest moves to OVMF."
+      },
+      "references": [
+        "https://uefi.org/specifications",
+        "https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-firmware-acpi",
+        "https://github.com/NotRequiem/VMAware"
+      ]
+    }
+  ]
+}

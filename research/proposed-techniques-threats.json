@@ -1,0 +1,99 @@
+{
+  "format": 1,
+  "description": "Technique keys proposed by the threat-model work. They are not in catalog/techniques.json, so no family in catalog/threats.json uses them yet.",
+  "proposals": [
+    {
+      "key": "identity.command_line_arguments",
+      "class": "identity",
+      "title": "Payload runs only with the arguments its downloader passes",
+      "attack": [
+        "T1480"
+      ],
+      "mbc": [
+        "B0007"
+      ],
+      "discrimination": 0.7,
+      "tier": "occasional",
+      "platforms": [
+        "windows",
+        "linux",
+        "macos"
+      ],
+      "why": "Locky payloads only execute properly when the downloader passes a set of command-line parameters; sandboxes that submit the payload alone run it without them (Cyberbit, 30 Jun 2016, citing FireEye: https://www.cyberbit.com/endpoint-security/locky-ransomware-new-evasion-techniques-discovered/). No existing key covers a missing-argument gate."
+    },
+    {
+      "key": "wear_and_tear.desktop_wallpaper",
+      "class": "wear_and_tear",
+      "title": "Default or known-sandbox desktop wallpaper",
+      "attack": [
+        "T1497.001"
+      ],
+      "mbc": [
+        "B0007"
+      ],
+      "discrimination": 0.6,
+      "tier": "rare",
+      "platforms": [
+        "windows"
+      ],
+      "why": "Rhadamanthys 0.9.x hashes the current wallpaper and compares it with the SHA1 of the Triage sandbox default (Check Point Research, 1 Oct 2025: https://research.checkpoint.com/2025/rhadamanthys-0-9-x-walk-through-the-updates/). A self-test should report whether the wallpaper is an image a public sandbox ships."
+    },
+    {
+      "key": "identity.host_process_name",
+      "class": "identity",
+      "title": "Code runs only inside an expected host process",
+      "attack": [
+        "T1480"
+      ],
+      "mbc": [
+        "B0007"
+      ],
+      "discrimination": 0.8,
+      "tier": "rare",
+      "platforms": [
+        "windows",
+        "linux",
+        "macos"
+      ],
+      "why": "SUNBURST continues only if the current process is solarwinds.businesslayerhost (FireEye, 24 Dec 2020: https://www.fireeyesolution.com/blog/threat-research/2020/12/sunburst-additional-technical-details.html). Sandboxes that load a DLL through rundll32 fail this; identity.sample_path and identity.parent_process do not describe it."
+    },
+    {
+      "key": "timing.install_dormancy",
+      "class": "timing",
+      "title": "Waits days after installation (file timestamp) before acting",
+      "attack": [
+        "T1497.003"
+      ],
+      "mbc": [
+        "B0007"
+      ],
+      "discrimination": 0.5,
+      "tier": "rare",
+      "platforms": [
+        "windows",
+        "linux",
+        "macos",
+        "android",
+        "ios"
+      ],
+      "why": "SUNBURST compares the file write time of its host assembly with the current time and lies low for almost two weeks (FireEye, 24 Dec 2020, same URL as above). Not detectable by an environment probe, but a sandbox can expose it by reporting whether file timestamps are freshly written; listed so the gap is visible."
+    },
+    {
+      "key": "emulator.fake_library_load",
+      "class": "emulator",
+      "title": "Loading a non-existent DLL reports success",
+      "attack": [
+        "T1497.001"
+      ],
+      "mbc": [
+        "B0007"
+      ],
+      "discrimination": 0.85,
+      "tier": "occasional",
+      "platforms": [
+        "windows"
+      ],
+      "why": "Documented as a sandbox and emulator check by Check Point's evasion encyclopedia (https://evasions.checkpoint.com/src/Evasions/techniques/processes.html, section 1.4). No family in catalog/threats.json is sourced for it yet, so it is proposed at tier 'occasional' pending family evidence."
+    }
+  ]
+}

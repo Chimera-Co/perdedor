@@ -1,0 +1,50 @@
+# Static analysis of the C++ agent (all three targets are compiled under the tracer), the Python
+# packages and the workflows themselves. Results appear under Security > Code scanning.
+name: CodeQL
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "17 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    name: Analyze ${{ matrix.language }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { language: c-cpp, build-mode: manual }
+          - { language: python, build-mode: none }
+          - { language: actions, build-mode: none }
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: github/codeql-action/init@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+          queries: security-and-quality
+      - if: matrix.build-mode == 'manual'
+        name: Build every target
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends g++ make g++-mingw-w64-x86-64-win32 g++-mingw-w64-i686-win32
+          make -C native -j"$(nproc)" linux win64 win32 \
+            WIN64_CXX=x86_64-w64-mingw32-g++-win32 WIN32_CXX=i686-w64-mingw32-g++-win32
+      - uses: github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+        with:
+          category: /language:${{ matrix.language }}

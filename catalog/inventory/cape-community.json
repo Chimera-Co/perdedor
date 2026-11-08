@@ -1,0 +1,446 @@
+{
+  "source_id": "cape-community",
+  "revision": "9d9156384fd4",
+  "commit": "9d9156384fd49dc18e6008c3e99116e40dae06eb",
+  "fetched": "2026-11-08",
+  "techniques": [
+    {
+      "name": "cape/modules/signatures/windows/antidebug_addvectoredexceptionhandler",
+      "detail": "modules/signatures/windows/antidebug_addvectoredexceptionhandler.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antidebug_apioverride_libs",
+      "detail": "modules/signatures/windows/antidebug_apioverride_libs.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antidebug_checkremotedebuggerpresent",
+      "detail": "modules/signatures/windows/antidebug_checkremotedebuggerpresent.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antidebug_debugactiveprocess",
+      "detail": "modules/signatures/windows/antidebug_debugactiveprocess.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antidebug_devices",
+      "detail": "modules/signatures/windows/antidebug_devices.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antidebug_gettickcount",
+      "detail": "modules/signatures/windows/antidebug_gettickcount.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antidebug_guardpages",
+      "detail": "modules/signatures/windows/antidebug_guardpages.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antidebug_ntcreatethreadex",
+      "detail": "modules/signatures/windows/antidebug_ntcreatethreadex.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antidebug_nthookengine_libs",
+      "detail": "modules/signatures/windows/antidebug_nthookengine_libs.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antidebug_ntsetinformationthread",
+      "detail": "modules/signatures/windows/antidebug_ntsetinformationthread.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antidebug_outputdebugstring",
+      "detail": "modules/signatures/windows/antidebug_outputdebugstring.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antidebug_setunhandledexceptionfilter",
+      "detail": "modules/signatures/windows/antidebug_setunhandledexceptionfilter.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antidebug_windows",
+      "detail": "modules/signatures/windows/antidebug_windows.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antiemu_windefend",
+      "detail": "modules/signatures/windows/antiemu_windefend.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antiemu_wine",
+      "detail": "modules/signatures/windows/antiemu_wine.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antiemu_wine_func",
+      "detail": "modules/signatures/windows/antiemu_wine_func.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antisandbox_check_userdomain",
+      "detail": "modules/signatures/windows/antisandbox_check_userdomain.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antisandbox_cuckoo",
+      "detail": "modules/signatures/windows/antisandbox_cuckoo.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antisandbox_cuckoo_files",
+      "detail": "modules/signatures/windows/antisandbox_cuckoo_files.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antisandbox_cuckoocrash",
+      "detail": "modules/signatures/windows/antisandbox_cuckoocrash.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antisandbox_forehwnd",
+      "detail": "modules/signatures/windows/antisandbox_forehwnd.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antisandbox_fortinet_files",
+      "detail": "modules/signatures/windows/antisandbox_fortinet_files.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antisandbox_joe_anubis_files",
+      "detail": "modules/signatures/windows/antisandbox_joe_anubis_files.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antisandbox_mouse_hook",
+      "detail": "modules/signatures/windows/antisandbox_mouse_hook.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antisandbox_mousemovement",
+      "detail": "modules/signatures/windows/antisandbox_mousemovement.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antisandbox_restart",
+      "detail": "modules/signatures/windows/antisandbox_restart.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antisandbox_sboxie_libs",
+      "detail": "modules/signatures/windows/antisandbox_sboxie_libs.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antisandbox_sboxie_mutex",
+      "detail": "modules/signatures/windows/antisandbox_sboxie_mutex.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antisandbox_sboxie_objects",
+      "detail": "modules/signatures/windows/antisandbox_sboxie_objects.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antisandbox_scripttimer",
+      "detail": "modules/signatures/windows/antisandbox_scripttimer.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antisandbox_sleep",
+      "detail": "modules/signatures/windows/antisandbox_sleep.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antisandbox_sunbelt_files",
+      "detail": "modules/signatures/windows/antisandbox_sunbelt_files.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antisandbox_sunbelt_libs",
+      "detail": "modules/signatures/windows/antisandbox_sunbelt_libs.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antisandbox_suspend",
+      "detail": "modules/signatures/windows/antisandbox_suspend.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antisandbox_systemparams",
+      "detail": "modules/signatures/windows/antisandbox_systemparams.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antisandbox_threattrack_files",
+      "detail": "modules/signatures/windows/antisandbox_threattrack_files.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antisandbox_unhook",
+      "detail": "modules/signatures/windows/antisandbox_unhook.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antisandbox_volumeserial",
+      "detail": "modules/signatures/windows/antisandbox_volumeserial.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antisandbox_windowsactivation",
+      "detail": "modules/signatures/windows/antisandbox_windowsactivation.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_bochs_keys",
+      "detail": "modules/signatures/windows/antivm_bochs_keys.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_dirobjects",
+      "detail": "modules/signatures/windows/antivm_dirobjects.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_display",
+      "detail": "modules/signatures/windows/antivm_display.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_generic_bios",
+      "detail": "modules/signatures/windows/antivm_generic_bios.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_generic_cpu",
+      "detail": "modules/signatures/windows/antivm_generic_cpu.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_generic_disk",
+      "detail": "modules/signatures/windows/antivm_generic_disk.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_generic_disk_setupapi",
+      "detail": "modules/signatures/windows/antivm_generic_disk_setupapi.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_generic_diskreg",
+      "detail": "modules/signatures/windows/antivm_generic_diskreg.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_generic_scsi",
+      "detail": "modules/signatures/windows/antivm_generic_scsi.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_generic_services",
+      "detail": "modules/signatures/windows/antivm_generic_services.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_generic_system",
+      "detail": "modules/signatures/windows/antivm_generic_system.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_hyperv_keys",
+      "detail": "modules/signatures/windows/antivm_hyperv_keys.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_memory",
+      "detail": "modules/signatures/windows/antivm_memory.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_network_adapter",
+      "detail": "modules/signatures/windows/antivm_network_adapter.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_parallels_keys",
+      "detail": "modules/signatures/windows/antivm_parallels_keys.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_recent_files",
+      "detail": "modules/signatures/windows/antivm_recent_files.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_recentdocs",
+      "detail": "modules/signatures/windows/antivm_recentdocs.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_vbox_devices",
+      "detail": "modules/signatures/windows/antivm_vbox_devices.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_vbox_files",
+      "detail": "modules/signatures/windows/antivm_vbox_files.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_vbox_keys",
+      "detail": "modules/signatures/windows/antivm_vbox_keys.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_vbox_libs",
+      "detail": "modules/signatures/windows/antivm_vbox_libs.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_vbox_provname",
+      "detail": "modules/signatures/windows/antivm_vbox_provname.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_vbox_window",
+      "detail": "modules/signatures/windows/antivm_vbox_window.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_vmware_devices",
+      "detail": "modules/signatures/windows/antivm_vmware_devices.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_vmware_events",
+      "detail": "modules/signatures/windows/antivm_vmware_events.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_vmware_files",
+      "detail": "modules/signatures/windows/antivm_vmware_files.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_vmware_keys",
+      "detail": "modules/signatures/windows/antivm_vmware_keys.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_vmware_libs",
+      "detail": "modules/signatures/windows/antivm_vmware_libs.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_vmware_mutexes",
+      "detail": "modules/signatures/windows/antivm_vmware_mutexes.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_vpc_files",
+      "detail": "modules/signatures/windows/antivm_vpc_files.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_vpc_keys",
+      "detail": "modules/signatures/windows/antivm_vpc_keys.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_vpc_mutex",
+      "detail": "modules/signatures/windows/antivm_vpc_mutex.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_wmi",
+      "detail": "modules/signatures/windows/antivm_wmi.py",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "cape/modules/signatures/windows/antivm_xen_keys",
+      "detail": "modules/signatures/windows/antivm_xen_keys.py",
+      "platforms": [],
+      "score": null
+    }
+  ]
+}

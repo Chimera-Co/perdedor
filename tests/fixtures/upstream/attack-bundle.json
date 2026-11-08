@@ -1,0 +1,12 @@
+{"type":"bundle","id":"bundle--1","objects":[
+{"type":"attack-pattern","id":"attack-pattern--a","name":"Virtualization/Sandbox Evasion","external_references":[{"source_name":"mitre-attack","external_id":"T1497"}],"x_mitre_platforms":["Windows","Linux","macOS"]},
+{"type":"attack-pattern","id":"attack-pattern--b","name":"System Checks","external_references":[{"source_name":"mitre-attack","external_id":"T1497.001"}],"x_mitre_platforms":["Windows","Linux"]},
+{"type":"attack-pattern","id":"attack-pattern--c","name":"Old technique","revoked":true,"external_references":[{"source_name":"mitre-attack","external_id":"T1497.009"}]},
+{"type":"attack-pattern","id":"attack-pattern--d","name":"Unrelated","external_references":[{"source_name":"mitre-attack","external_id":"T1059"}]},
+{"type":"attack-pattern","id":"attack-pattern--e","name":"Debugger Evasion","external_references":[{"source_name":"mitre-attack","external_id":"T1622"}],"x_mitre_platforms":["Windows"]},
+{"type":"malware","id":"malware--1","name":"Agent Tesla","description":"has } and \"quotes\" [ ]"},
+{"type":"intrusion-set","id":"intrusion-set--1","name":"Group X"},
+{"type":"relationship","id":"relationship--1","relationship_type":"uses","source_ref":"malware--1","target_ref":"attack-pattern--b"},
+{"type":"relationship","id":"relationship--2","relationship_type":"uses","source_ref":"intrusion-set--1","target_ref":"attack-pattern--b"},
+{"type":"relationship","id":"relationship--3","relationship_type":"uses","source_ref":"malware--1","target_ref":"attack-pattern--d"}
+]}

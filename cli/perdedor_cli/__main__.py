@@ -183,6 +183,10 @@ def build_parser() -> argparse.ArgumentParser:
 
     assess_cmd.register(subparsers)
 
+    from perdedor_cli import upstream
+
+    upstream.register(subparsers)
+
     return parser
 
 

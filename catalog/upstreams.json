@@ -1,5 +1,561 @@
 {
   "catalog_format": 2,
-  "description": "Upstream projects and datasets whose new releases may add techniques Perdedor should check. Read by `perdedor upstream check`.",
-  "upstreams": []
+  "description": "Upstream projects and datasets whose new releases may add techniques Perdedor should check. Read by `perdedor upstream check`; see docs/UPSTREAM.md. `pinned` is the last reviewed revision (date = when it was pinned, released = when upstream published it).",
+  "upstreams": [
+    {
+      "id": "vmaware",
+      "name": "VMAware",
+      "kind": "github-release",
+      "repo": "NotRequiem/VMAware",
+      "url": "https://github.com/NotRequiem/VMAware",
+      "paths": [
+        "src/vmaware.hpp"
+      ],
+      "parser": "vmaware_enum",
+      "why": "Largest actively maintained VM/sandbox detection library; its technique enum is the broadest list of tells Perdedor should be able to reproduce. Renamed from kernelwernel/VMAware.",
+      "equivalents_key": "vmaware",
+      "pinned": {
+        "version": "v2.8.2",
+        "commit": "a3cc54f7da798819d305fd1415daf1b8cd140c70",
+        "date": "2026-11-08",
+        "released": "2026-09-14"
+      }
+    },
+    {
+      "id": "al-khaser",
+      "name": "al-khaser",
+      "kind": "github-release",
+      "repo": "ayoubfaouzi/al-khaser",
+      "url": "https://github.com/ayoubfaouzi/al-khaser",
+      "paths": [
+        "al-khaser/Al-khaser.cpp"
+      ],
+      "parser": "alkhaser_checks",
+      "why": "The reference Windows anti-VM, anti-debug and anti-sandbox check suite that malware authors copy from. Moved from LordNoteworthy/al-khaser.",
+      "equivalents_key": "al-khaser",
+      "pinned": {
+        "version": "v1.1.0",
+        "commit": "6d6453654545c370b966f399db863c011d19c08a",
+        "date": "2026-11-08",
+        "released": "2026-01-27"
+      }
+    },
+    {
+      "id": "pafish",
+      "name": "Pafish",
+      "kind": "github-release",
+      "repo": "a0rtega/pafish",
+      "url": "https://github.com/a0rtega/pafish",
+      "paths": [
+        "pafish/main.c"
+      ],
+      "parser": "pafish_checks",
+      "why": "The original sandbox-detection demonstrator. The repository is archived, so a change here is unexpected.",
+      "equivalents_key": "pafish",
+      "pinned": {
+        "version": "v0.6",
+        "commit": "b497899ff355ea7b9ecc1f5cd34a9fd1def02aec",
+        "date": "2026-11-08",
+        "released": "2021-11-09"
+      }
+    },
+    {
+      "id": "invizzzible",
+      "name": "InviZzzible",
+      "kind": "github-commits",
+      "repo": "CheckPointSW/InviZzzible",
+      "url": "https://github.com/CheckPointSW/InviZzzible",
+      "paths": [
+        "config/"
+      ],
+      "parser": "invizzzible_configs",
+      "why": "Configurable evasion test tool from Check Point; its config/*.conf files list the checks with scores and countermeasures.",
+      "suffixes": [
+        ".conf"
+      ],
+      "equivalents_key": "invizzzible",
+      "branch": "master",
+      "pinned": {
+        "version": "d6fa72cb4d51",
+        "commit": "d6fa72cb4d51d4ab51c5d4c76b63e7bf9179bdbe",
+        "date": "2026-11-08",
+        "released": "2022-02-07"
+      }
+    },
+    {
+      "id": "checkpoint-evasions",
+      "name": "Check Point Evasions encyclopedia",
+      "kind": "github-commits",
+      "repo": "CheckPointSW/Evasions",
+      "url": "https://github.com/CheckPointSW/Evasions",
+      "paths": [
+        "_src/Evasions/techniques/",
+        "_src/Anti-Debug/techniques/",
+        "_src/Android/techniques/"
+      ],
+      "parser": "checkpoint_evasions",
+      "why": "The most complete public catalogue of sandbox, VM and debugger evasion techniques with signature recommendations (evasions.checkpoint.com).",
+      "suffixes": [
+        ".md"
+      ],
+      "equivalents_key": "checkpoint-evasions",
+      "branch": "master",
+      "pinned": {
+        "version": "4cda4b058641",
+        "commit": "4cda4b058641cbf0dc14fe465368cd31fa196c91",
+        "date": "2026-11-08",
+        "released": "2024-07-09"
+      }
+    },
+    {
+      "id": "unprotect",
+      "name": "Unprotect Project",
+      "kind": "web-page",
+      "url": "https://unprotect.it/techniques/",
+      "paths": [],
+      "parser": "none",
+      "why": "Community database of malware evasion techniques mapped to ATT&CK and MBC; no public repository, so the technique index page is hashed and a change is a prompt to review the site.",
+      "equivalents_key": "unprotect",
+      "pinned": {
+        "version": "sha256:05e38966bdf38e9e",
+        "commit": null,
+        "date": "2026-11-08"
+      }
+    },
+    {
+      "id": "attack",
+      "name": "MITRE ATT&CK STIX data",
+      "kind": "attack-stix",
+      "repo": "mitre-attack/attack-stix-data",
+      "url": "https://github.com/mitre-attack/attack-stix-data",
+      "paths": [
+        "enterprise-attack/enterprise-attack.json",
+        "mobile-attack/mobile-attack.json"
+      ],
+      "parser": "attack_techniques",
+      "why": "Authoritative technique and procedure-example data for T1497 (virtualization/sandbox evasion), T1622 (debugger evasion) and T1633 (mobile sandbox evasion); the check catalog maps its techniques to these ids.",
+      "pinned": {
+        "version": "v20.1",
+        "commit": "f59b03ecf828579d5f9e93683ce25b7e2e5fd9d7",
+        "date": "2026-11-08",
+        "released": "2026-11-05"
+      }
+    },
+    {
+      "id": "mitre-cti",
+      "name": "MITRE CTI repository",
+      "kind": "github-release",
+      "repo": "mitre/cti",
+      "url": "https://github.com/mitre/cti",
+      "paths": [],
+      "parser": "none",
+      "why": "The original ATT&CK STIX repository; it still publishes a release for each ATT&CK version, so it is a second signal for a new matrix version.",
+      "pinned": {
+        "version": "ATT&CK-v20.1",
+        "commit": "e79c7c53d13c08cc21ba3ad77d4f8f49bf64ff07",
+        "date": "2026-11-08",
+        "released": "2026-11-05"
+      }
+    },
+    {
+      "id": "mbc",
+      "name": "Malware Behavior Catalog",
+      "kind": "github-release",
+      "repo": "MBCProject/mbc-markdown",
+      "url": "https://github.com/MBCProject/mbc-markdown",
+      "paths": [
+        "anti-behavioral-analysis/"
+      ],
+      "parser": "mbc",
+      "why": "MBC behaviours B0001-B0037 (debugger and VM detection, sandbox detection, emulator detection) are referenced from the technique catalog.",
+      "suffixes": [
+        ".md"
+      ],
+      "pinned": {
+        "version": "v3.2",
+        "commit": "0aa720aa318924b8b102107ee0f004b5993bc8ad",
+        "date": "2026-11-08",
+        "released": "2024-12-09"
+      }
+    },
+    {
+      "id": "mbc-stix",
+      "name": "MBC STIX 2.1 data",
+      "kind": "github-tag",
+      "repo": "MBCProject/mbc-stix2.1",
+      "url": "https://github.com/MBCProject/mbc-stix2.1",
+      "paths": [],
+      "parser": "none",
+      "why": "Machine-readable MBC; a new tag means new or renumbered behaviours.",
+      "pinned": {
+        "version": "v25.01",
+        "commit": "add8ab4d523afe1de82e261d34ca378ddeffb1bf",
+        "date": "2026-11-08",
+        "released": "2025-01-27"
+      }
+    },
+    {
+      "id": "anti-emulator",
+      "name": "anti-emulator (Android)",
+      "kind": "github-commits",
+      "repo": "strazzere/anti-emulator",
+      "url": "https://github.com/strazzere/anti-emulator",
+      "paths": [
+        "AntiEmulator/src/diff/strazzere/anti/emulator/FindEmulator.java"
+      ],
+      "parser": "anti_emulator",
+      "why": "The classic Android emulator detection checks (QEMU files and drivers, telephony defaults, build properties) that the Android agent must pass.",
+      "equivalents_key": "anti-emulator",
+      "branch": "master",
+      "pinned": {
+        "version": "f2b669a54980",
+        "commit": "f2b669a5498076c4071670bd97268971d01ad7ae",
+        "date": "2026-11-08",
+        "released": "2019-09-23"
+      }
+    },
+    {
+      "id": "freerasp-android",
+      "name": "freeRASP for Android",
+      "kind": "github-release",
+      "repo": "talsec/Free-RASP-Android",
+      "url": "https://github.com/talsec/Free-RASP-Android",
+      "paths": [
+        "FreeRASPDemoApp/app/src/main/java/com/aheaditec/talsec/demoapp/TalsecApplication.kt"
+      ],
+      "parser": "freerasp",
+      "why": "Widely deployed Android app-protection SDK; its threat callbacks list what apps check (root, hooks, emulator, debugger, developer mode).",
+      "equivalents_key": "freerasp",
+      "pinned": {
+        "version": "v19.3.0",
+        "commit": "e105f3253e5a861812e07a813f0dcd761bc647df",
+        "date": "2026-11-08",
+        "released": "2026-09-09"
+      }
+    },
+    {
+      "id": "freerasp-ios",
+      "name": "freeRASP for iOS",
+      "kind": "github-release",
+      "repo": "talsec/Free-RASP-iOS",
+      "url": "https://github.com/talsec/Free-RASP-iOS",
+      "paths": [],
+      "parser": "none",
+      "why": "iOS counterpart of freeRASP; the checks are in a binary framework, so only releases are watched.",
+      "equivalents_key": "freerasp",
+      "pinned": {
+        "version": "v8.1.0",
+        "commit": "e4abfe069a930b77ca90405c7bbf6923596e8b00",
+        "date": "2026-11-08",
+        "released": "2026-10-28"
+      }
+    },
+    {
+      "id": "freerasp-flutter",
+      "name": "freeRASP for Flutter",
+      "kind": "github-release",
+      "repo": "talsec/Free-RASP-Flutter",
+      "url": "https://github.com/talsec/Free-RASP-Flutter",
+      "paths": [
+        "lib/src/enums/threat.dart"
+      ],
+      "parser": "freerasp",
+      "why": "The Threat enum is the cross-platform list of freeRASP detections (Android and iOS).",
+      "equivalents_key": "freerasp",
+      "pinned": {
+        "version": "v8.2.4",
+        "commit": "48c6fc061ac22bcf3986421ee109dba67969d47d",
+        "date": "2026-11-08",
+        "released": "2026-10-05"
+      }
+    },
+    {
+      "id": "iossecuritysuite",
+      "name": "IOSSecuritySuite",
+      "kind": "github-release",
+      "repo": "securing/IOSSecuritySuite",
+      "url": "https://github.com/securing/IOSSecuritySuite",
+      "paths": [
+        "IOSSecuritySuite/IOSSecuritySuite.swift"
+      ],
+      "parser": "ios_security_suite",
+      "why": "Open-source iOS jailbreak, emulator, debugger and reverse-engineering detection; defines the iOS checks the future iOS agent should resist.",
+      "equivalents_key": "iossecuritysuite",
+      "pinned": {
+        "version": "2.3.0",
+        "commit": "7436aea705a6c7ad6013edaaeaf051667cdd4beb",
+        "date": "2026-11-08",
+        "released": "2026-08-05"
+      }
+    },
+    {
+      "id": "rootbeer",
+      "name": "RootBeer",
+      "kind": "github-release",
+      "repo": "scottyab/rootbeer",
+      "url": "https://github.com/scottyab/rootbeer",
+      "paths": [
+        "rootbeerlib/src/main/java/com/scottyab/rootbeer/RootBeer.java"
+      ],
+      "parser": "rootbeer",
+      "why": "The most used open-source Android root detection library; its checks are what apps run on a rooted analysis device.",
+      "equivalents_key": "rootbeer",
+      "pinned": {
+        "version": "0.1.2",
+        "commit": "de7bc7b4b09c9db148b62b331b4a44076b2eb480",
+        "date": "2026-11-08",
+        "released": "2026-03-07"
+      }
+    },
+    {
+      "id": "android-native-root-detector",
+      "name": "Android Native Root Detector",
+      "kind": "github-release",
+      "repo": "reveny/Android-Native-Root-Detector",
+      "url": "https://github.com/reveny/Android-Native-Root-Detector",
+      "paths": [],
+      "parser": "none",
+      "why": "Native-code root and hook detection for Android; watched for new detection ideas, no parser.",
+      "pinned": {
+        "version": "v7.7.0",
+        "commit": "9e682056cbfde0ae6bc23823ed7736589b41b380",
+        "date": "2026-11-08",
+        "released": "2026-04-11"
+      }
+    },
+    {
+      "id": "owasp-mastg",
+      "name": "OWASP MASTG",
+      "kind": "github-release",
+      "repo": "OWASP/mastg",
+      "url": "https://github.com/OWASP/mastg",
+      "paths": [],
+      "parser": "none",
+      "why": "Mobile security testing guide: the tests for root, emulator and tamper detection that app developers are told to implement. Renamed from OWASP/owasp-mastg.",
+      "pinned": {
+        "version": "v2.0.0",
+        "commit": "990472dbcffe126f5556045d60270c4ffdfdde72",
+        "date": "2026-11-08",
+        "released": "2026-06-30"
+      }
+    },
+    {
+      "id": "drakvuf",
+      "name": "DRAKVUF",
+      "kind": "github-commits",
+      "repo": "tklengyel/drakvuf",
+      "url": "https://github.com/tklengyel/drakvuf",
+      "paths": [
+        "src/plugins/",
+        "src/libdrakvuf/"
+      ],
+      "parser": "none",
+      "why": "The introspection engine CHIMERA runs; new plugins and options (cpuidmon, hidsim, altp2m changes) change what the sandbox can hide.",
+      "branch": "main",
+      "pinned": {
+        "version": "3ce4088ce898",
+        "commit": "3ce4088ce898a3ef61ecc093e44e25964d46b421",
+        "date": "2026-11-08",
+        "released": "2026-11-02"
+      }
+    },
+    {
+      "id": "drakvuf-sandbox",
+      "name": "DRAKVUF Sandbox",
+      "kind": "github-release",
+      "repo": "CERT-Polska/drakvuf-sandbox",
+      "url": "https://github.com/CERT-Polska/drakvuf-sandbox",
+      "paths": [],
+      "parser": "none",
+      "why": "The analysis pipeline built on DRAKVUF; its releases show how other deployments handle evasion and VM hardening.",
+      "pinned": {
+        "version": "v0.21.0",
+        "commit": "7c328ab48bfe07b99c896c8695b7e51edf431ceb",
+        "date": "2026-11-08",
+        "released": "2026-08-19"
+      }
+    },
+    {
+      "id": "libvmi",
+      "name": "LibVMI",
+      "kind": "github-commits",
+      "repo": "libvmi/libvmi",
+      "url": "https://github.com/libvmi/libvmi",
+      "paths": [
+        "libvmi/"
+      ],
+      "parser": "none",
+      "why": "VM introspection library under DRAKVUF; its last release is from 2020, so the master branch is tracked.",
+      "branch": "master",
+      "pinned": {
+        "version": "ed407297cc3b",
+        "commit": "ed407297cc3b9690bf2a572b30704e03301c57bf",
+        "date": "2026-11-08",
+        "released": "2026-10-22"
+      }
+    },
+    {
+      "id": "xen",
+      "name": "Xen 4.19 releases",
+      "kind": "github-tag",
+      "repo": "xen-project/xen",
+      "url": "https://github.com/xen-project/xen",
+      "paths": [],
+      "parser": "none",
+      "why": "The hypervisor CHIMERA runs (4.19 branch): new point releases carry security fixes and hypercall or CPUID behaviour changes. Tags RELEASE-4.19.N on the GitHub mirror.",
+      "tag_prefix": "RELEASE-4.19.",
+      "tag_regex": "RELEASE-4\\.19\\.\\d+",
+      "pinned": {
+        "version": "RELEASE-4.19.6",
+        "commit": "54ee7c511ae7f5cac195cce271564a1a339ae99a",
+        "date": "2026-11-08",
+        "released": "2026-07-29"
+      }
+    },
+    {
+      "id": "xen-xsa",
+      "name": "Xen security advisories",
+      "kind": "web-page",
+      "url": "https://xenbits.xen.org/xsa/",
+      "paths": [],
+      "parser": "none",
+      "why": "The advisory index at xenbits.xen.org; a changed page means a new XSA to assess against the pinned Xen build.",
+      "pinned": {
+        "version": "sha256:19aec6228545ef41",
+        "commit": null,
+        "date": "2026-11-08"
+      }
+    },
+    {
+      "id": "qemu",
+      "name": "QEMU",
+      "kind": "github-tag",
+      "repo": "qemu/qemu",
+      "url": "https://github.com/qemu/qemu",
+      "paths": [],
+      "parser": "none",
+      "why": "The device model behind Xen HVM guests: new releases change emulated devices, ACPI and SMBIOS strings that guests can fingerprint.",
+      "tag_regex": "v\\d+\\.\\d+\\.\\d+",
+      "pinned": {
+        "version": "v11.1.3",
+        "commit": "005c61c0ef6f6ae615283440b4bb7be51b2c6ddd",
+        "date": "2026-11-08",
+        "released": "2026-10-28"
+      }
+    },
+    {
+      "id": "systemd",
+      "name": "systemd (systemd-detect-virt)",
+      "kind": "github-release",
+      "repo": "systemd/systemd",
+      "url": "https://github.com/systemd/systemd",
+      "paths": [
+        "src/basic/virt.h"
+      ],
+      "parser": "systemd_virt",
+      "why": "systemd-detect-virt is what many Linux samples and tools call; virt.h lists the hypervisors and container runtimes it recognises.",
+      "equivalents_key": "systemd-detect-virt",
+      "pinned": {
+        "version": "v262.2",
+        "commit": "63511d7283d7d0e2a2fc28075481afaf1a7be8f5",
+        "date": "2026-11-08",
+        "released": "2026-11-05"
+      }
+    },
+    {
+      "id": "virt-what",
+      "name": "virt-what",
+      "kind": "web-page",
+      "url": "https://people.redhat.com/~rjones/virt-what/",
+      "paths": [],
+      "parser": "none",
+      "why": "Shell tool that detects virtualization from CPUID, DMI and /proc; the release page is hashed (no public git mirror).",
+      "equivalents_key": "virt-what",
+      "pinned": {
+        "version": "sha256:c5f0eb8e92210d3d",
+        "commit": null,
+        "date": "2026-11-08"
+      }
+    },
+    {
+      "id": "capa-rules",
+      "name": "capa rules (anti-analysis)",
+      "kind": "github-release",
+      "repo": "mandiant/capa-rules",
+      "url": "https://github.com/mandiant/capa-rules",
+      "paths": [
+        "anti-analysis/"
+      ],
+      "parser": "generic_list",
+      "why": "Mandiant capa's anti-analysis rules (anti-vm, anti-debugging, anti-emulation) describe the evasion behaviours found in real samples.",
+      "suffixes": [
+        ".yml"
+      ],
+      "name_prefix": "capa/",
+      "equivalents_key": "other",
+      "pinned": {
+        "version": "v10.0.0",
+        "commit": "805f9eaccfb6a4e1ddffc809d71d1e2b5ccc15e5",
+        "date": "2026-11-08",
+        "released": "2026-10-16"
+      }
+    },
+    {
+      "id": "cape-community",
+      "name": "CAPE community signatures",
+      "kind": "github-commits",
+      "repo": "CAPESandbox/community",
+      "url": "https://github.com/CAPESandbox/community",
+      "paths": [
+        "modules/signatures/windows/"
+      ],
+      "parser": "generic_list",
+      "why": "CAPE's antisandbox, antivm, antidebug and antiemu signatures list evasions seen in malware that a sandbox reports. Directory-wide commit tracking is noisy; the technique list is the useful part.",
+      "suffixes": [
+        ".py"
+      ],
+      "name_filter": "^anti(sandbox|vm|debug|dbg|emu)",
+      "name_prefix": "cape/",
+      "equivalents_key": "other",
+      "branch": "master",
+      "pinned": {
+        "version": "9d9156384fd4",
+        "commit": "9d9156384fd49dc18e6008c3e99116e40dae06eb",
+        "date": "2026-11-08",
+        "released": "2026-10-30"
+      }
+    },
+    {
+      "id": "vmware-hardened-loader",
+      "name": "VmwareHardenedLoader",
+      "kind": "github-release",
+      "repo": "hzqst/VmwareHardenedLoader",
+      "url": "https://github.com/hzqst/VmwareHardenedLoader",
+      "paths": [],
+      "parser": "none",
+      "why": "Open-source VMware hardening against detection; its patch list shows which tells defenders consider worth hiding.",
+      "pinned": {
+        "version": "v20261029a",
+        "commit": "57c590d5288ec9eb615fca9a3cacfdf5959256f2",
+        "date": "2026-11-08",
+        "released": "2026-10-29"
+      }
+    },
+    {
+      "id": "vmde",
+      "name": "VMDE (Virtual Machine Detection Engine)",
+      "kind": "github-release",
+      "repo": "hfiref0x/VMDE",
+      "url": "https://github.com/hfiref0x/VMDE",
+      "paths": [],
+      "parser": "none",
+      "why": "Early VM detection engine; archived, kept as a historical reference.",
+      "pinned": {
+        "version": "v1.1",
+        "commit": "95fcc9c3ab5bd4f87c1a30ddb985262d523485f9",
+        "date": "2026-11-08",
+        "released": "2015-04-30"
+      }
+    }
+  ]
 }

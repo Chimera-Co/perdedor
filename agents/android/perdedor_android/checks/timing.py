@@ -12,8 +12,8 @@ natural place to add a genuine timing probe once the on-device agent
 from __future__ import annotations
 
 from perdedor_common import FindingFactory
-from perdedor_common.registry import RunContext, run_checks, spec
 from perdedor_common.models import Category, Finding, Platform, Severity
+from perdedor_common.registry import RunContext, run_checks, spec
 
 from .. import adb
 
@@ -51,7 +51,7 @@ def check_uptime(serial: str | None = None) -> Finding:
 
 
 CHECKS = [
-    spec('android.timing.low_uptime', check_uptime, 'timing.uptime'),
+    spec("android.timing.low_uptime", check_uptime, "timing.uptime"),
 ]
 
 

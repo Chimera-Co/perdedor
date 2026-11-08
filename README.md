@@ -1,4 +1,8 @@
-# PERDEDOR
+<p align="center">
+  <img src="docs/img/logo.png" alt="PERDEDOR logo: Sisyphus pushing a boulder uphill inside a Greek-key ring" width="220">
+</p>
+
+<h1 align="center">PERDEDOR</h1>
 
 A cross-platform sandbox-evasion self-test suite for Windows, Linux, and
 Android — the companion probe suite for CHIMERA, a hardened multi-platform
