@@ -24,7 +24,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import models as M  # noqa: E402
 from models import MODELS, Params, Technique, aggregate, class_pass_rates, run_model  # noqa: E402
-from toolmap import ToolMap  # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "common" / "python"))
+from perdedor_common.equivalents import ToolMap  # noqa: E402
 
 TOOLS = ("perdedor", "alkhaser", "pafish", "vmaware")
 

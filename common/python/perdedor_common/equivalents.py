@@ -1,8 +1,9 @@
 """Map check ids of other evasion suites onto Perdedor technique keys.
 
-The scoring lab needs every finding, whatever tool produced it, expressed as a technique from
-catalog/techniques.json, so that the same environment measured by different suites can be scored
-by one model. Perdedor ids map through the check catalogs; al-khaser, Pafish and VMAware ids map
+The exposure model scores techniques, not tools: a finding from al-khaser, Pafish or VMAware that
+measures the same technique as a Perdedor check is the same evidence. This module expresses every
+finding, whatever tool produced it, as a technique from catalog/techniques.json, so that one
+environment measured by several suites is scored once, on all the evidence. Perdedor ids map through the check catalogs; al-khaser, Pafish and VMAware ids map
 through the ordered rules below (first match wins). Unmapped ids are returned as None and counted
 by the lab, never silently dropped.
 """
@@ -12,9 +13,9 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, Iterable, List, Mapping, Optional, Tuple
 
-ROOT = Path(__file__).resolve().parents[2]
+from .catalog import default_catalog_dir
 
 # (tool, regex on the tool's own id, technique). Ordered: first match wins.
 RULES: List[Tuple[str, str, str]] = [
@@ -107,17 +108,17 @@ RULES: List[Tuple[str, str, str]] = [
 ]
 
 
-def perdedor_ids(root: Path = ROOT) -> Dict[str, str]:
+def perdedor_ids(catalog_dir: Optional[Path] = None) -> Dict[str, str]:
     out: Dict[str, str] = {}
-    for f in sorted((root / "catalog" / "checks").glob("*.json")):
+    for f in sorted(((catalog_dir or default_catalog_dir()) / "checks").glob("*.json")):
         for c in json.loads(f.read_text())["checks"]:
             out[c["id"]] = c["technique"]
     return out
 
 
 class ToolMap:
-    def __init__(self, root: Path = ROOT):
-        self.perdedor = perdedor_ids(root)
+    def __init__(self, catalog_dir: Optional[Path] = None):
+        self.perdedor = perdedor_ids(catalog_dir)
         self.rules = [(t, re.compile(rx), tech) for t, rx, tech in RULES]
 
     def technique(self, tool: str, check_id: str) -> Optional[str]:
@@ -128,3 +129,14 @@ class ToolMap:
             if t == tool and rx.search(local):
                 return tech
         return None
+
+
+def as_findings(tool: str, checks: Iterable[Mapping], tool_map: Optional[ToolMap] = None) -> List[dict]:
+    """Findings of any supported tool, each with its technique filled in (unmapped ones dropped)."""
+    tm = tool_map or ToolMap()
+    out = []
+    for c in checks:
+        tech = c.get("technique") or tm.technique(tool, c["id"])
+        if tech:
+            out.append({**c, "tool": tool, "technique": tech})
+    return out

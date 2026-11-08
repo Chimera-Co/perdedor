@@ -12,7 +12,7 @@ python3 research/scoring-lab/figures.py OUT/results.json docs/img/scoring-arms.s
 |---|---|
 | `models.py` | The candidate models M0–M6 (prototype implementations) |
 | `lab.py` | Axioms A1–A11, synthetic environments, labelled-arm evaluation, Markdown/JSON output; also runs the shipped `perdedor_common.exposure` as "PEM-1" |
-| `toolmap.py` | Maps al-khaser, Pafish, VMAware and Perdedor check ids onto catalog techniques |
+| `../../common/python/perdedor_common/equivalents.py` | Maps al-khaser, Pafish, VMAware and Perdedor check ids onto catalog techniques |
 | `figures.py` | Renders the arms figure (light and dark) |
 | `results/` | Synthetic results; labelled-experiment data describes a specific sandbox and is kept outside this repository |
 

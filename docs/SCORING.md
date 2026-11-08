@@ -173,7 +173,7 @@ Random Windows environments drawn from the catalog (60 trials per axiom; `resear
 
 The experiments are nine snapshots and configurations of one Xen + DRAKVUF Windows 10 sandbox,
 produced by successive fixes, and each was scanned five times by Perdedor and al-khaser together.
-Every al-khaser and Perdedor check was mapped onto a technique (`research/scoring-lab/toolmap.py`;
+Every al-khaser and Perdedor check was mapped onto a technique (`perdedor_common/equivalents.py`;
 all 340 al-khaser, 58 Pafish and 15 VMAware ids map). The arms are:
 - **H1** hardened image;
 - **S** CPUID leaves hidden by the instrumentation;
