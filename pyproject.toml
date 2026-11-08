@@ -1,6 +1,6 @@
 [project]
 name = "perdedor"
-version = "0.1.0"
+version = "2.0.0"
 description = "PERDEDOR: cross-platform sandbox-evasion self-test suite for CHIMERA (Windows, Linux, Android)"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -20,6 +20,10 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools]
 package-dir = { "perdedor_common" = "common/python/perdedor_common", "perdedor_linux" = "agents/linux/perdedor_linux", "perdedor_android" = "agents/android/perdedor_android", "perdedor_cli" = "cli/perdedor_cli" }
 packages = ["perdedor_common", "perdedor_linux", "perdedor_android", "perdedor_cli"]
+
+[tool.setuptools.package-data]
+# Filled by scripts/build_dist.sh just before building; absent in a checkout.
+perdedor_common = ["_catalog/**/*.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

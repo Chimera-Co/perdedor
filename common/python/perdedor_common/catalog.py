@@ -36,8 +36,13 @@ def default_catalog_dir() -> Path:
     env = os.environ.get("PERDEDOR_CATALOG")
     if env:
         return Path(env)
-    # common/python/perdedor_common/catalog.py -> repo root
-    return Path(__file__).resolve().parents[3] / "catalog"
+    # A checkout keeps the catalog at the repository root (common/python/perdedor_common -> root);
+    # an installed distribution carries a copy inside the package (see scripts/build_dist.sh).
+    here = Path(__file__).resolve()
+    checkout = here.parents[3] / "catalog"
+    if (checkout / "techniques.json").is_file():
+        return checkout
+    return here.parent / "_catalog"
 
 
 @dataclass

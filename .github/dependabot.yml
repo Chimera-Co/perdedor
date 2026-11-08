@@ -1,0 +1,18 @@
+# Keeps the pinned action SHAs and the pinned Python dev tools current; each update arrives as a
+# pull request that has to pass CI.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      dev-tools:
+        patterns: ["*"]
