@@ -25,7 +25,9 @@ def run_scan(
 ) -> PlatformReport:
     params = dict(params or {})
     chosen = select(all_checks(), profile=profile, only=only, skip=skip, network=network)
-    ctx = RunContext(platform=Platform.ANDROID, profile=profile, params=params, network=network, target=serial)
+    ctx = RunContext(
+        platform=Platform.ANDROID, profile=profile, params=params, network=network, target=serial
+    )
     findings = run_checks(chosen, ctx)
 
     metadata = {"adb_serial": serial or "(default device)"}

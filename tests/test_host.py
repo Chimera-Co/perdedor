@@ -6,7 +6,6 @@ import os
 import time
 
 import pytest
-
 from perdedor_common import host
 from perdedor_common.catalog import load_catalog
 
@@ -18,16 +17,19 @@ def test_selection_defaults_and_normalisation():
     assert s["only"] == ["class:cpu", "id:win.*"] and s["params"] == {"watchdog.slow_s": "300"}
 
 
-@pytest.mark.parametrize("bad,field", [
-    ({"profile": "max"}, "profile"),
-    ({"only": ["foo;rm -rf"]}, "only"),
-    ({"skip": ["vendor:xen"]}, "skip"),
-    ({"skip": ["cost:huge"]}, "skip"),
-    ({"params": {"Bad Key": "1"}}, "params"),
-    ({"params": {"a.b": "x\ny"}}, "params"),
-    ({"params": ["novalue"]}, "params"),
-    ({"network": "no"}, "network"),
-])
+@pytest.mark.parametrize(
+    "bad,field",
+    [
+        ({"profile": "max"}, "profile"),
+        ({"only": ["foo;rm -rf"]}, "only"),
+        ({"skip": ["vendor:xen"]}, "skip"),
+        ({"skip": ["cost:huge"]}, "skip"),
+        ({"params": {"Bad Key": "1"}}, "params"),
+        ({"params": {"a.b": "x\ny"}}, "params"),
+        ({"params": ["novalue"]}, "params"),
+        ({"network": "no"}, "network"),
+    ],
+)
 def test_selection_rejects_what_the_agent_would(bad, field):
     with pytest.raises(host.SelectionError) as exc:
         host.validate_selection(bad)
@@ -35,10 +37,28 @@ def test_selection_rejects_what_the_agent_would(bad, field):
 
 
 def test_agent_args_round_trip():
-    s = host.validate_selection({"profile": "deep", "only": ["class:cpu"], "skip": ["cost:slow"],
-                                 "params": {"watchdog.fast_s": 5}, "network": False})
-    assert host.agent_args(s, "r.json") == ["-o", "r.json", "--profile", "deep", "--only", "class:cpu",
-                                           "--skip", "cost:slow", "--param", "watchdog.fast_s=5", "--no-network"]
+    s = host.validate_selection(
+        {
+            "profile": "deep",
+            "only": ["class:cpu"],
+            "skip": ["cost:slow"],
+            "params": {"watchdog.fast_s": 5},
+            "network": False,
+        }
+    )
+    assert host.agent_args(s, "r.json") == [
+        "-o",
+        "r.json",
+        "--profile",
+        "deep",
+        "--only",
+        "class:cpu",
+        "--skip",
+        "cost:slow",
+        "--param",
+        "watchdog.fast_s=5",
+        "--no-network",
+    ]
 
 
 @pytest.mark.parametrize("platform", ["windows", "linux", "android"])
@@ -57,7 +77,9 @@ def test_native_binary_reuses_a_fresh_build(tmp_path, monkeypatch):
     native = tmp_path / "native"
     (native / "src").mkdir(parents=True)
     (native / "src" / "a.cpp").write_text("x")
-    (native / "Makefile").write_text("win64:\n\tmkdir -p build && echo bin > build/perdedor-windows-x64.exe\n")
+    (native / "Makefile").write_text(
+        "win64:\n\tmkdir -p build && echo bin > build/perdedor-windows-x64.exe\n"
+    )
     out = host.native_binary(tmp_path, "windows-x64")
     assert out.read_text() == "bin\n"
     out.write_text("cached")

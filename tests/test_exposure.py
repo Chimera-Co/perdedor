@@ -5,7 +5,6 @@ from __future__ import annotations
 import random
 
 import pytest
-
 from perdedor_common.catalog import load_catalog
 from perdedor_common.exposure import assess, plan
 
@@ -93,7 +92,15 @@ def test_class_and_category_views_are_consistent():
 
 def test_pillars_reward_corroboration_and_repeat_runs():
     one = [{"id": "a", "technique": "cpu.hypervisor_bit", "status": "detected", "evidence": "bit31"}]
-    two = one + [{"id": "b", "technique": "cpu.hypervisor_bit", "status": "detected", "evidence": "bit31", "tool": "t2"}]
+    two = one + [
+        {
+            "id": "b",
+            "technique": "cpu.hypervisor_bit",
+            "status": "detected",
+            "evidence": "bit31",
+            "tool": "t2",
+        }
+    ]
     p1 = assess(one, "windows", CAT, draws=20)["pillars"]
     p2 = assess(two, "windows", CAT, draws=20, runs=[two, two])["pillars"]
     assert p1["credibility"]["value"] < p2["credibility"]["value"]

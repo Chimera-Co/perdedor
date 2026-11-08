@@ -28,8 +28,13 @@ def render(results: dict) -> str:
     W, H = 800, 420
     L, R, T, B = 56, 200, 56, 56
     pw, ph = W - L - R, H - T - B
-    x = lambda i: L + pw * i / (len(arms) - 1)
-    y = lambda v: T + ph * (1 - v / 100)
+
+    def x(i):
+        return L + pw * i / (len(arms) - 1)
+
+    def y(v):
+        return T + ph * (1 - v / 100)
+
     css_vars_light = "".join(f"--s{i}:{s[2]};" for i, s in enumerate(SERIES))
     css_vars_dark = "".join(f"--s{i}:{s[3]};" for i, s in enumerate(SERIES))
     out = [
@@ -37,8 +42,8 @@ def render(results: dict) -> str:
         'aria-labelledby="t d" font-family="system-ui,-apple-system,Segoe UI,sans-serif">',
         '<title id="t">Score of each hardening arm under four scoring models</title>',
         '<desc id="d">Arms H1 to H3b are successive hardening steps of one Xen sandbox, each measured five times '
-        'with Perdedor and al-khaser. The v1 formula and the weighted pass rate stay between 95 and 99 for every '
-        'arm; the exposure models spread the arms from under 10 to about 60.</desc>',
+        "with Perdedor and al-khaser. The v1 formula and the weighted pass rate stay between 95 and 99 for every "
+        "arm; the exposure models spread the arms from under 10 to about 60.</desc>",
         "<style>",
         f":root{{--bg:#fcfcfb;--ink:#1f1f1e;--ink2:#5c5b55;--grid:#e4e3df;{css_vars_light}}}",
         f"@media (prefers-color-scheme:dark){{:root{{--bg:#1a1a19;--ink:#f0efec;--ink2:#c3c2b7;--grid:#3a3936;{css_vars_dark}}}}}",
@@ -53,7 +58,9 @@ def render(results: dict) -> str:
         out.append(f'<line class="g" x1="{L}" x2="{L + pw}" y1="{y(v):.1f}" y2="{y(v):.1f}"/>')
         out.append(f'<text class="a" x="{L - 8}" y="{y(v) + 4:.1f}" text-anchor="end">{v}</text>')
     for i, a in enumerate(arms):
-        out.append(f'<text class="a" x="{x(i):.1f}" y="{T + ph + 20}" text-anchor="middle">{escape(LABEL_ARM.get(a, a))}</text>')
+        out.append(
+            f'<text class="a" x="{x(i):.1f}" y="{T + ph + 20}" text-anchor="middle">{escape(LABEL_ARM.get(a, a))}</text>'
+        )
     ends = []
     for si, (key, label, *_c) in enumerate(SERIES):
         if key not in models:
@@ -61,17 +68,23 @@ def render(results: dict) -> str:
         med = models[key]["median"]
         pts = [(x(i), y(med[a])) for i, a in enumerate(arms)]
         d = " ".join(f"{'M' if j == 0 else 'L'}{px:.1f},{py:.1f}" for j, (px, py) in enumerate(pts))
-        out.append(f'<path d="{d}" fill="none" stroke="var(--s{si})" stroke-width="2" stroke-linejoin="round"/>')
-        for (px, py), a in zip(pts, arms):
-            out.append(f'<circle cx="{px:.1f}" cy="{py:.1f}" r="4" fill="var(--s{si})" stroke="var(--bg)" stroke-width="2">'
-                       f'<title>{escape(label)} — {escape(a)}: {med[a]:.1f}</title></circle>')
+        out.append(
+            f'<path d="{d}" fill="none" stroke="var(--s{si})" stroke-width="2" stroke-linejoin="round"/>'
+        )
+        for (px, py), a in zip(pts, arms, strict=True):
+            out.append(
+                f'<circle cx="{px:.1f}" cy="{py:.1f}" r="4" fill="var(--s{si})" stroke="var(--bg)" stroke-width="2">'
+                f"<title>{escape(label)} — {escape(a)}: {med[a]:.1f}</title></circle>"
+            )
         ends.append([pts[-1][1], label, si, med[arms[-1]]])
     # direct labels at the right edge, nudged apart so they never overlap
     ends.sort()
     for i in range(1, len(ends)):
         ends[i][0] = max(ends[i][0], ends[i - 1][0] + 16)
     for ey, label, si, v in ends:
-        out.append(f'<rect x="{L + pw + 12}" y="{ey - 5:.1f}" width="10" height="10" rx="2" fill="var(--s{si})"/>')
+        out.append(
+            f'<rect x="{L + pw + 12}" y="{ey - 5:.1f}" width="10" height="10" rx="2" fill="var(--s{si})"/>'
+        )
         out.append(f'<text class="l" x="{L + pw + 28}" y="{ey + 4:.1f}">{escape(label)} ({v:.0f})</text>')
     out.append("</svg>")
     return "\n".join(out)

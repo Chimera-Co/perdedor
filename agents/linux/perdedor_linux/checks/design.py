@@ -16,8 +16,8 @@ import socket
 from pathlib import Path
 
 from perdedor_common import FindingFactory
-from perdedor_common.registry import RunContext, run_checks, spec
 from perdedor_common.models import Category, Finding, Platform, Severity
+from perdedor_common.registry import RunContext, run_checks, spec
 
 from .. import signatures, utils
 
@@ -121,10 +121,10 @@ def check_mac_oui() -> Finding:
 
 
 CHECKS = [
-    spec('linux.design.analysis_tools_running', check_analysis_tools_running, 'analysis_tools.processes'),
-    spec('linux.design.suspicious_hostname_or_user', check_suspicious_hostname_or_user, 'identity.hostname'),
-    spec('linux.design.exact_sandbox_username', check_exact_sandbox_username, 'identity.username'),
-    spec('linux.design.mac_oui', check_mac_oui, 'network.mac_oui'),
+    spec("linux.design.analysis_tools_running", check_analysis_tools_running, "analysis_tools.processes"),
+    spec("linux.design.suspicious_hostname_or_user", check_suspicious_hostname_or_user, "identity.hostname"),
+    spec("linux.design.exact_sandbox_username", check_exact_sandbox_username, "identity.username"),
+    spec("linux.design.mac_oui", check_mac_oui, "network.mac_oui"),
 ]
 
 

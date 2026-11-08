@@ -110,7 +110,9 @@ class CheckSpec:
         if self.check_class not in CLASS_CATEGORY:
             raise ValueError(f"{self.ids[0]}: unknown class '{self.check_class}'")
         if not self.technique.startswith(self.check_class + "."):
-            raise ValueError(f"{self.ids[0]}: technique '{self.technique}' is not in class '{self.check_class}'")
+            raise ValueError(
+                f"{self.ids[0]}: technique '{self.technique}' is not in class '{self.check_class}'"
+            )
 
     @property
     def id(self) -> str:
@@ -243,7 +245,9 @@ def run_checks(checks: Sequence[CheckSpec], ctx: RunContext) -> list[Finding]:
     return findings
 
 
-def selection_doc(profile: str, only: Sequence[str], skip: Sequence[str], params: dict, network: bool) -> dict:
+def selection_doc(
+    profile: str, only: Sequence[str], skip: Sequence[str], params: dict, network: bool
+) -> dict:
     return {
         "profile": profile,
         "only": list(only),

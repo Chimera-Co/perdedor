@@ -67,7 +67,9 @@ class Catalog:
 
     def checks_for(self, platform: str, status: str | None = "implemented") -> list[dict]:
         return [
-            c for c in self.checks.values() if c["platform"] == platform and (status is None or c["status"] == status)
+            c
+            for c in self.checks.values()
+            if c["platform"] == platform and (status is None or c["status"] == status)
         ]
 
     def techniques_for(self, platform: str) -> list[dict]:

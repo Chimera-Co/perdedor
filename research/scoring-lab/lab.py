@@ -23,7 +23,8 @@ from typing import Dict, List, Mapping, Optional, Sequence, Tuple
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import models as M  # noqa: E402
-from models import MODELS, Params, Technique, aggregate, class_pass_rates, run_model  # noqa: E402
+from models import Params, Technique, aggregate, class_pass_rates, run_model  # noqa: E402
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "common" / "python"))
 from perdedor_common.equivalents import ToolMap  # noqa: E402
 
@@ -35,8 +36,13 @@ TOOLS = ("perdedor", "alkhaser", "pafish", "vmaware")
 # ---------------------------------------------------------------------------------------------
 
 
-def synthetic_env(P: Params, rng: random.Random, platform: str = "windows", tested_share: float = 0.8,
-                  hit_rate: Optional[float] = None) -> List[dict]:
+def synthetic_env(
+    P: Params,
+    rng: random.Random,
+    platform: str = "windows",
+    tested_share: float = 0.8,
+    hit_rate: Optional[float] = None,
+) -> List[dict]:
     rate = rng.uniform(0.02, 0.5) if hit_rate is None else hit_rate
     out = []
     for t in P.for_platform(platform):
@@ -71,7 +77,10 @@ def axiom_monotonic(P: Params, names: Sequence[str], trials: int, rng: random.Ra
             res[n]["n"] += 1
             res[n]["never_up"] += b <= a + 1e-9
             res[n]["strictly_down"] += b < a - 1e-9
-    return {n: {"never_up": r["never_up"] / r["n"], "strictly_down": r["strictly_down"] / r["n"]} for n, r in res.items()}
+    return {
+        n: {"never_up": r["never_up"] / r["n"], "strictly_down": r["strictly_down"] / r["n"]}
+        for n, r in res.items()
+    }
 
 
 def axiom_no_dilution(P: Params, names: Sequence[str], trials: int, rng: random.Random) -> Dict[str, dict]:
@@ -81,8 +90,10 @@ def axiom_no_dilution(P: Params, names: Sequence[str], trials: int, rng: random.
     for _ in range(trials):
         env = synthetic_env(P, rng)
         tested = sorted({f["technique"] for f in env})
-        extra = [{"tool": "padding", "id": f"pad.{i}", "technique": rng.choice(tested), "status": "clean"}
-                 for i in range(20)]
+        extra = [
+            {"tool": "padding", "id": f"pad.{i}", "technique": rng.choice(tested), "status": "clean"}
+            for i in range(20)
+        ]
         for n in names:
             res[n].append(score(n, env + extra, P) - score(n, env, P))
     return {n: {"mean_gain": statistics.mean(v), "max_gain": max(v)} for n, v in res.items()}
@@ -92,7 +103,10 @@ def axiom_severity(P: Params, names: Sequence[str]) -> Dict[str, dict]:
     """A3: one detection of a very common, highly discriminating technique (CPUID hypervisor bit)
     must cost more than five detections of rarely used, weakly discriminating techniques, and must
     by itself take a clean environment below the 90 warning line."""
-    base = [{"tool": "x", "id": f"c.{t.key}", "technique": t.key, "status": "clean"} for t in P.for_platform("windows")]
+    base = [
+        {"tool": "x", "id": f"c.{t.key}", "technique": t.key, "status": "clean"}
+        for t in P.for_platform("windows")
+    ]
     strong = "cpu.hypervisor_bit"
     weak = [t.key for t in P.for_platform("windows") if t.tier in ("rare", "research") and t.q <= 0.6][:5]
     if len(weak) < 5:
@@ -117,15 +131,20 @@ def axiom_coverage(P: Params, names: Sequence[str], trials: int, rng: random.Ran
         small = [f for f in env if f["technique"] in keep]
         for n in names:
             res[n].append(score(n, small, P) - score(n, env, P))
-    return {n: {"mean_rise": statistics.mean(v), "p90_rise": sorted(v)[int(0.9 * (len(v) - 1))]} for n, v in res.items()}
+    return {
+        n: {"mean_rise": statistics.mean(v), "p90_rise": sorted(v)[int(0.9 * (len(v) - 1))]}
+        for n, v in res.items()
+    }
 
 
 def axiom_range(P: Params, names: Sequence[str], rng: random.Random) -> Dict[str, dict]:
     """A10: the score uses its range: a fully clean environment scores 100, an environment where a
     third of the techniques fire scores clearly lower than one where a tenth fire."""
     out = {}
-    envs = {r: [synthetic_env(P, random.Random(i), tested_share=0.95, hit_rate=r) for i in range(15)]
-            for r in (0.0, 0.1, 0.33, 0.66)}
+    envs = {
+        r: [synthetic_env(P, random.Random(i), tested_share=0.95, hit_rate=r) for i in range(15)]
+        for r in (0.0, 0.1, 0.33, 0.66)
+    }
     for n in names:
         med = {r: statistics.median(score(n, e, P) for e in es) for r, es in envs.items()}
         out[n] = {f"hit_{int(r * 100)}": round(v, 2) for r, v in med.items()}
@@ -149,8 +168,16 @@ ARM_OF_SET = {
 ARM_ORDER = ["H1", "H1S", "H1SH", "H2a", "H2b", "H2c", "H3a", "H3b", "H3b+clock"]
 # (worse, better): each pair is one fix whose effect the experiments measured
 EXPECTED = [
-    ("H1", "H1S"), ("H1S", "H1SH"), ("H1", "H1SH"), ("H1SH", "H2c"), ("H2a", "H2c"), ("H2b", "H2c"),
-    ("H2c", "H3b"), ("H3a", "H3b"), ("H3b+clock", "H3b"), ("H1", "H3b"),
+    ("H1", "H1S"),
+    ("H1S", "H1SH"),
+    ("H1", "H1SH"),
+    ("H1SH", "H2c"),
+    ("H2a", "H2c"),
+    ("H2b", "H2c"),
+    ("H2c", "H3b"),
+    ("H3a", "H3b"),
+    ("H3b+clock", "H3b"),
+    ("H1", "H3b"),
 ]
 
 
@@ -172,7 +199,8 @@ def load_arms(directory: Path, tm: ToolMap) -> Tuple[Dict[str, Dict[str, List[di
                 unmapped += 1
                 continue
             arms.setdefault(arm, {}).setdefault(r["scan"], []).append(
-                {"tool": r["tool"], "id": r["id"], "technique": tech, "status": r["status"]})
+                {"tool": r["tool"], "id": r["id"], "technique": tech, "status": r["status"]}
+            )
     return arms, unmapped
 
 
@@ -189,11 +217,12 @@ def spearman(xs: Sequence[float], ys: Sequence[float]) -> float:
                 r[order[k]] = (i + j) / 2
             i = j + 1
         return r
+
     if len(xs) < 3:
         return 0.0
     rx, ry = ranks(xs), ranks(ys)
     mx, my = statistics.mean(rx), statistics.mean(ry)
-    num = sum((a - mx) * (b - my) for a, b in zip(rx, ry))
+    num = sum((a - mx) * (b - my) for a, b in zip(rx, ry, strict=True))
     den = math.sqrt(sum((a - mx) ** 2 for a in rx) * sum((b - my) ** 2 for b in ry))
     return num / den if den else 0.0
 
@@ -224,7 +253,9 @@ def evaluate_arms(P: Params, names: Sequence[str], arms: Dict[str, Dict[str, Lis
                     a_only.append(sa)
         out["models"][n] = {
             "median": {a: round(v, 2) for a, v in med.items()},
-            "pairs_correct": correct, "pairs_tied": ties, "pairs": len(pairs),
+            "pairs_correct": correct,
+            "pairs_tied": ties,
+            "pairs": len(pairs),
             "eta2": ss_between / ss_tot if ss_tot else 0.0,
             "within_sd": within_sd,
             "range": max(med.values()) - min(med.values()),
@@ -242,12 +273,15 @@ def perturbed(P: Params, rng: random.Random, factor: float = 2.0) -> Params:
     for k, t in P.techniques.items():
         fp = math.exp(rng.uniform(-math.log(factor), math.log(factor)))
         fq = math.exp(rng.uniform(-math.log(factor), math.log(factor)))
-        techs[k] = Technique(t.key, t.klass, t.category, min(0.9, t.p * fp), min(0.99, t.q * fq), t.tier, t.platforms)
+        techs[k] = Technique(
+            t.key, t.klass, t.category, min(0.9, t.p * fp), min(0.99, t.q * fq), t.tier, t.platforms
+        )
     return Params(techs, P.severity_weights, P.families)
 
 
-def robustness(P: Params, names: Sequence[str], arms: Dict[str, Dict[str, List[dict]]], rounds: int,
-               rng: random.Random) -> Dict[str, dict]:
+def robustness(
+    P: Params, names: Sequence[str], arms: Dict[str, Dict[str, List[dict]]], rounds: int, rng: random.Random
+) -> Dict[str, dict]:
     """A11: share of expected arm pairs still ranked correctly when p and q are off by up to 2x."""
     saved = M.DRAWS
     M.DRAWS = 60
@@ -328,32 +362,63 @@ def fmt(x, nd=2):
 
 def markdown(results: Dict) -> str:
     names = list(results["axioms"]["A1_monotonic"].keys())
-    L = ["# Scoring lab results", "", f"Synthetic trials per axiom: {results['trials']}. "
-         f"Threat model: {'sourced families' if results['sourced_threats'] else 'pseudo-families drawn from technique tiers (provisional)'}.", ""]
-    L += ["## Synthetic axioms", "",
-          "| Model | A1 never up | A1 strictly down | A2 mean gain from padding | A3 one strong < five weak | A3 one strong < 90 | A8 mean rise with 40 % fewer techniques | A10 score at 10 % / 33 % hits |",
-          "|---|---|---|---|---|---|---|---|"]
+    L = [
+        "# Scoring lab results",
+        "",
+        f"Synthetic trials per axiom: {results['trials']}. "
+        f"Threat model: {'sourced families' if results['sourced_threats'] else 'pseudo-families drawn from technique tiers (provisional)'}.",
+        "",
+    ]
+    L += [
+        "## Synthetic axioms",
+        "",
+        "| Model | A1 never up | A1 strictly down | A2 mean gain from padding | A3 one strong < five weak | A3 one strong < 90 | A8 mean rise with 40 % fewer techniques | A10 score at 10 % / 33 % hits |",
+        "|---|---|---|---|---|---|---|---|",
+    ]
     ax = results["axioms"]
     for n in names:
-        a1, a2, a3, a8, a10 = (ax["A1_monotonic"][n], ax["A2_no_dilution"][n], ax["A3_severity"][n],
-                               ax["A8_coverage"][n], ax["A10_range"][n])
-        L.append(f"| {n} | {a1['never_up']:.0%} | {a1['strictly_down']:.0%} | {a2['mean_gain']:+.2f} | "
-                 f"{fmt(a3['dominance'])} ({a3['one_strong']:.1f} vs {a3['five_weak']:.1f}) | {fmt(a3['below_warn'])} | "
-                 f"{a8['mean_rise']:+.2f} | {a10['hit_10']:.1f} / {a10['hit_33']:.1f} |")
+        a1, a2, a3, a8, a10 = (
+            ax["A1_monotonic"][n],
+            ax["A2_no_dilution"][n],
+            ax["A3_severity"][n],
+            ax["A8_coverage"][n],
+            ax["A10_range"][n],
+        )
+        L.append(
+            f"| {n} | {a1['never_up']:.0%} | {a1['strictly_down']:.0%} | {a2['mean_gain']:+.2f} | "
+            f"{fmt(a3['dominance'])} ({a3['one_strong']:.1f} vs {a3['five_weak']:.1f}) | {fmt(a3['below_warn'])} | "
+            f"{a8['mean_rise']:+.2f} | {a10['hit_10']:.1f} / {a10['hit_33']:.1f} |"
+        )
     if "arms" in results:
         A = results["arms"]
-        L += ["", "## Labelled hardening arms", "",
-              "Each arm is one snapshot/configuration measured 5 times with Perdedor and al-khaser together "
-              "(al-khaser and Perdedor checks mapped onto techniques). Expected pairs are fixes whose effect was "
-              "measured; a model should rank the fixed arm higher.", "",
-              "| Model | " + " | ".join(A["arms"]) + " | pairs right | ties | arm explains variance (eta²) | Perdedor vs al-khaser agreement (Spearman) | A11 pairs right with p, q off by up to 2x (mean / worst) |",
-              "|---|" + "---|" * (len(A["arms"]) + 5)]
+        L += [
+            "",
+            "## Labelled hardening arms",
+            "",
+            "Each arm is one snapshot/configuration measured 5 times with Perdedor and al-khaser together "
+            "(al-khaser and Perdedor checks mapped onto techniques). Expected pairs are fixes whose effect was "
+            "measured; a model should rank the fixed arm higher.",
+            "",
+            "| Model | "
+            + " | ".join(A["arms"])
+            + " | pairs right | ties | arm explains variance (eta²) | Perdedor vs al-khaser agreement (Spearman) | A11 pairs right with p, q off by up to 2x (mean / worst) |",
+            "|---|" + "---|" * (len(A["arms"]) + 5),
+        ]
         for n in names:
             m = A["models"][n]
-            L.append(f"| {n} | " + " | ".join(fmt(m["median"][a], 1) for a in A["arms"]) +
-                     f" | {m['pairs_correct']}/{m['pairs']} | {m['pairs_tied']} | {m['eta2']:.2f} | {m['tool_agreement']:+.2f} | "
-                     f"{A['robustness'][n]['mean_correct']:.0%} / {A['robustness'][n]['worst_correct']:.0%} |")
-    L += ["", "## Qualitative properties", "", "| Model | What the number means | Decomposes by class |", "|---|---|---|"]
+            L.append(
+                f"| {n} | "
+                + " | ".join(fmt(m["median"][a], 1) for a in A["arms"])
+                + f" | {m['pairs_correct']}/{m['pairs']} | {m['pairs_tied']} | {m['eta2']:.2f} | {m['tool_agreement']:+.2f} | "
+                f"{A['robustness'][n]['mean_correct']:.0%} / {A['robustness'][n]['worst_correct']:.0%} |"
+            )
+    L += [
+        "",
+        "## Qualitative properties",
+        "",
+        "| Model | What the number means | Decomposes by class |",
+        "|---|---|---|",
+    ]
     for n in names:
         L.append(f"| {n} | {MEANING[n]} | {DECOMPOSABLE[n]} |")
     return "\n".join(L) + "\n"
@@ -374,8 +439,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     if add_production_model() and PRODUCTION not in names:
         names.append(PRODUCTION)
     rng = random.Random(2026)
-    results: Dict = {"trials": a.trials,
-                     "sourced_threats": len([f for f in P.families if "windows" in f.get("platforms", [])]) >= 10}
+    results: Dict = {
+        "trials": a.trials,
+        "sourced_threats": len([f for f in P.families if "windows" in f.get("platforms", [])]) >= 10,
+    }
     results["axioms"] = {
         "A1_monotonic": axiom_monotonic(P, names, a.trials, rng),
         "A2_no_dilution": axiom_no_dilution(P, names, a.trials // 2, rng),
@@ -390,7 +457,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         results["arms"]["robustness"] = robustness(P, names, arms, a.rounds, random.Random(5))
         last = next(x for x in reversed(ARM_ORDER) if x in arms and x != "H3b+clock")
         scan = next(iter(arms[last].values()))
-        results["arms"]["class_pass_rates_" + last] = {k: round(v, 1) for k, v in sorted(class_pass_rates(scan, P).items())}
+        results["arms"]["class_pass_rates_" + last] = {
+            k: round(v, 1) for k, v in sorted(class_pass_rates(scan, P).items())
+        }
     a.out.mkdir(parents=True, exist_ok=True)
     (a.out / "results.json").write_text(json.dumps(results, indent=1, default=str))
     (a.out / "results.md").write_text(markdown(results))

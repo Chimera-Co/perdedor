@@ -55,7 +55,8 @@ def validate_selector(value: Any, field: str) -> str:
         prefix, rest = v.split(":", 1)
         if prefix not in SELECTOR_PREFIXES:
             raise SelectionError(
-                f"{field}: unknown selector '{prefix}:' (use one of {', '.join(SELECTOR_PREFIXES)})", field)
+                f"{field}: unknown selector '{prefix}:' (use one of {', '.join(SELECTOR_PREFIXES)})", field
+            )
         if prefix == "cost" and rest not in COSTS:
             raise SelectionError(f"{field}: cost must be one of {', '.join(COSTS)}", field)
         if not _GLOB.match(rest):
@@ -158,8 +159,12 @@ def native_binary(repo_root: Path | str, target: str, *, timeout: float = 900) -
             return out
         try:
             proc = subprocess.run(
-                ["make", "-C", str(native), make_target], capture_output=True, text=True, timeout=timeout,
-                env={**os.environ, "MAKEFLAGS": f"-j{os.cpu_count() or 2}"})
+                ["make", "-C", str(native), make_target],
+                capture_output=True,
+                text=True,
+                timeout=timeout,
+                env={**os.environ, "MAKEFLAGS": f"-j{os.cpu_count() or 2}"},
+            )
         except (OSError, subprocess.TimeoutExpired) as exc:
             raise BuildError(f"building the {target} agent failed: {exc}") from exc
         if proc.returncode != 0 or not out.is_file():
@@ -176,22 +181,29 @@ def check_tree(platform: str, catalog: Catalog | None = None) -> list[dict]:
         tech = catalog.technique(c["technique"]) or {}
         klass = tech.get("class", "other")
         cat = catalog.class_category(klass) if klass in catalog.classes else "other"
-        groups.setdefault(cat, {}).setdefault(klass, []).append({
-            "id": c["id"], "technique": c["technique"], "title": tech.get("title", c["technique"]),
-            "cost": c.get("cost", "fast"), "network": bool(c.get("network", False)),
-            "severity": c.get("severity"),
-        })
+        groups.setdefault(cat, {}).setdefault(klass, []).append(
+            {
+                "id": c["id"],
+                "technique": c["technique"],
+                "title": tech.get("title", c["technique"]),
+                "cost": c.get("cost", "fast"),
+                "network": bool(c.get("network", False)),
+                "severity": c.get("severity"),
+            }
+        )
     tree = []
     for cat in (*CATEGORY_ORDER, "other"):
         if cat not in groups:
             continue
-        tree.append({
-            "category": cat,
-            "classes": [
-                {"class": k, "title": catalog.classes.get(k, {}).get("title", k), "checks": v}
-                for k, v in sorted(groups[cat].items())
-            ],
-        })
+        tree.append(
+            {
+                "category": cat,
+                "classes": [
+                    {"class": k, "title": catalog.classes.get(k, {}).get("title", k), "checks": v}
+                    for k, v in sorted(groups[cat].items())
+                ],
+            }
+        )
     return tree
 
 

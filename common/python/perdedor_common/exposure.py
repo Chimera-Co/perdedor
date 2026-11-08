@@ -153,7 +153,9 @@ def _space(obs: Mapping[str, TechniqueObs], catalog: Catalog, platform: str) -> 
     for k in keys:
         if k not in tested:
             c = techs[k]["class"]
-            untested_weight[c] = untested_weight.get(c, 0.0) + catalog.prevalence(k) * float(techs[k]["discrimination"])
+            untested_weight[c] = untested_weight.get(c, 0.0) + catalog.prevalence(k) * float(
+                techs[k]["discrimination"]
+            )
     rate = {}
     for k in keys:
         if k not in tested:
@@ -231,8 +233,12 @@ def assess(
     findings = [_as_dict(f) for f in findings]
     obs = observe(findings, catalog)
     if not obs:
-        return {"model": MODEL_ID, "platform": platform, "score": None,
-                "reason": "no applicable findings: nothing was measured, so nothing can be scored"}
+        return {
+            "model": MODEL_ID,
+            "platform": platform,
+            "score": None,
+            "reason": "no applicable findings: nothing was measured, so nothing can be scored",
+        }
     sp = _space(obs, catalog, platform)
 
     expected = dict(sp.tested)
@@ -283,8 +289,10 @@ def assess(
         "interval": [round(_pct(samples, 0.05), 2), round(_pct(samples, 0.95), 2)],
         "coverage": round(coverage, 3),
         "techniques": {
-            "platform": len(sp.keys), "tested": len(sp.tested),
-            "detected": sum(1 for h in sp.tested.values() if h > 0), "untested": len(sp.rate),
+            "platform": len(sp.keys),
+            "tested": len(sp.tested),
+            "detected": sum(1 for h in sp.tested.values() if h > 0),
+            "untested": len(sp.rate),
         },
         "threat_model": {
             "source": "catalog/threats.json" if sp.sourced else "technique prevalence tiers",
@@ -294,8 +302,12 @@ def assess(
         "categories": categories,
         "detected": detected,
         "untested_top": [
-            {"technique": k, "title": catalog.techniques[k]["title"], "class": sp.klass[k],
-             "expected_rate": round(sp.rate[k], 3)}
+            {
+                "technique": k,
+                "title": catalog.techniques[k]["title"],
+                "class": sp.klass[k],
+                "expected_rate": round(sp.rate[k], 3),
+            }
             for k in untested[:15]
         ],
         "families": _family_view(sp, obs, catalog) if sp.sourced else [],
@@ -340,8 +352,18 @@ def _class_view(sp: _Space, expected: Mapping[str, float], score: float, catalog
 def _category_view(classes: Mapping[str, dict], catalog: Catalog) -> dict:
     out: dict[str, dict] = {}
     for c, v in classes.items():
-        cat = out.setdefault(v["category"], {"score": 100.0, "points_lost": 0.0, "classes": [],
-                                             "techniques": 0, "tested": 0, "detected": 0, "untested": 0})
+        cat = out.setdefault(
+            v["category"],
+            {
+                "score": 100.0,
+                "points_lost": 0.0,
+                "classes": [],
+                "techniques": 0,
+                "tested": 0,
+                "detected": 0,
+                "untested": 0,
+            },
+        )
         cat["score"] *= v["score"] / 100.0
         cat["points_lost"] += v["points_lost"]
         cat["classes"].append(c)
@@ -365,11 +387,17 @@ def _family_view(sp: _Space, obs: Mapping[str, TechniqueObs], catalog: Catalog, 
             elif h > 0:
                 s *= 1 - sp.q[k] * h
                 triggered.append(k)
-        rows.append({
-            "name": f["name"], "type": f.get("type"), "weight": f.get("weight", 1.0),
-            "survival": round(100.0 * s, 1), "triggered": triggered, "untested": unknown,
-            "actors": f.get("actors", []),
-        })
+        rows.append(
+            {
+                "name": f["name"],
+                "type": f.get("type"),
+                "weight": f.get("weight", 1.0),
+                "survival": round(100.0 * s, 1),
+                "triggered": triggered,
+                "untested": unknown,
+                "actors": f.get("actors", []),
+            }
+        )
     rows.sort(key=lambda r: (r["survival"], -float(r["weight"] or 1)))
     return rows[:top]
 
@@ -379,8 +407,14 @@ def _family_view(sp: _Space, obs: Mapping[str, TechniqueObs], catalog: Catalog, 
 # ---------------------------------------------------------------------------------------------
 
 
-def pillars(obs: Mapping[str, TechniqueObs], sp: _Space, findings: Sequence[Mapping],
-            runs: Sequence[Iterable[Any]] | None, catalog: Catalog, platform: str) -> dict:
+def pillars(
+    obs: Mapping[str, TechniqueObs],
+    sp: _Space,
+    findings: Sequence[Mapping],
+    runs: Sequence[Iterable[Any]] | None,
+    catalog: Catalog,
+    platform: str,
+) -> dict:
     w = {k: sp.p[k] * sp.q[k] for k in sp.tested}
     wt = sum(w.values()) or 1.0
 
@@ -394,7 +428,9 @@ def pillars(obs: Mapping[str, TechniqueObs], sp: _Space, findings: Sequence[Mapp
         num = den = 0.0
         for f in sp.families:
             n = len(f["techniques"])
-            num += float(f.get("weight", 1.0)) * (sum(k in sp.tested for k in f["techniques"]) / n if n else 0)
+            num += float(f.get("weight", 1.0)) * (
+                sum(k in sp.tested for k in f["techniques"]) / n if n else 0
+            )
             den += float(f.get("weight", 1.0))
         trans = num / den if den else 0.0
         trans_basis = f"{len(sp.families)} sourced families; share of their techniques that were tested"
@@ -412,7 +448,9 @@ def pillars(obs: Mapping[str, TechniqueObs], sp: _Space, findings: Sequence[Mapp
         if common:
             agree = sum(1 for k in common if len({v[k] for v in verdicts}) == 1)
             dep = agree / len(common)
-            dep_basis = f"{len(runs)} runs; share of {len(common)} techniques with the same verdict in every run"
+            dep_basis = (
+                f"{len(runs)} runs; share of {len(common)} techniques with the same verdict in every run"
+            )
 
     # Confirmability: can every verdict be traced to recorded evidence?
     applicable = [f for f in findings if f.get("status") in APPLICABLE]
@@ -422,12 +460,22 @@ def pillars(obs: Mapping[str, TechniqueObs], sp: _Space, findings: Sequence[Mapp
     vals = {"credibility": cred, "transferability": trans, "dependability": dep, "confirmability": conf}
     known = [v for v in vals.values() if v is not None]
     return {
-        "credibility": {"value": round(cred, 3), "grade": _grade(cred),
-                        "basis": "share of tested weight resting on >= 2 agreeing checks (contradictions count against)"},
+        "credibility": {
+            "value": round(cred, 3),
+            "grade": _grade(cred),
+            "basis": "share of tested weight resting on >= 2 agreeing checks (contradictions count against)",
+        },
         "transferability": {"value": round(trans, 3), "grade": _grade(trans), "basis": trans_basis},
-        "dependability": {"value": None if dep is None else round(dep, 3), "grade": _grade(dep), "basis": dep_basis},
-        "confirmability": {"value": round(conf, 3), "grade": _grade(conf),
-                           "basis": "share of applicable findings that recorded evidence or a measurement"},
+        "dependability": {
+            "value": None if dep is None else round(dep, 3),
+            "grade": _grade(dep),
+            "basis": dep_basis,
+        },
+        "confirmability": {
+            "value": round(conf, 3),
+            "grade": _grade(conf),
+            "basis": "share of applicable findings that recorded evidence or a measurement",
+        },
         "overall": _grade(min(known) if known else None),
     }
 
@@ -442,12 +490,18 @@ def _technique_fix(key: str, obs: TechniqueObs | None, catalog: Catalog) -> dict
     fixes = [f for f in fixes if f]
     if fixes:
         best = min(fixes, key=lambda f: int(f.get("effort", 3)))
-        return {"layer": best.get("layer"), "effort": int(best.get("effort", 3)), "how": best.get("how"),
-                "chimera": best.get("chimera")}
+        return {
+            "layer": best.get("layer"),
+            "effort": int(best.get("effort", 3)),
+            "how": best.get("how"),
+            "chimera": best.get("chimera"),
+        }
     return {"layer": None, "effort": 3, "how": None, "chimera": None}
 
 
-def plan(findings: Iterable[Any], platform: str, catalog: Catalog | None = None, *, max_steps: int = 25) -> dict:
+def plan(
+    findings: Iterable[Any], platform: str, catalog: Catalog | None = None, *, max_steps: int = 25
+) -> dict:
     """Order the detected techniques into a hardening roadmap: at every step pick the fix with the
     largest score gain per unit of effort (greedy on the exposure model, untested techniques held at
     their current estimate), and report the score after each step."""
@@ -478,19 +532,34 @@ def plan(findings: Iterable[Any], platform: str, catalog: Catalog | None = None,
         current += gain
         todo.discard(k)
         t = catalog.techniques[k]
-        steps.append({
-            "step": len(steps) + 1, "technique": k, "title": t["title"], "class": t["class"],
-            "category": catalog.class_category(t["class"]), "gain": round(gain, 2),
-            "score_after": round(current, 2), **fixes[k], "checks": obs[k].detected_checks,
-        })
+        steps.append(
+            {
+                "step": len(steps) + 1,
+                "technique": k,
+                "title": t["title"],
+                "class": t["class"],
+                "category": catalog.class_category(t["class"]),
+                "gain": round(gain, 2),
+                "score_after": round(current, 2),
+                **fixes[k],
+                "checks": obs[k].detected_checks,
+            }
+        )
     measure = sorted(sp.rate, key=lambda k: -sp.p[k] * sp.q[k] * sp.rate[k])[:10]
     return {
-        "model": MODEL_ID, "platform": platform, "start": round(start, 2), "end": round(current, 2),
+        "model": MODEL_ID,
+        "platform": platform,
+        "start": round(start, 2),
+        "end": round(current, 2),
         "steps": steps,
         "measure_next": [
-            {"technique": k, "title": catalog.techniques[k]["title"], "class": sp.klass[k],
-             "expected_rate": round(sp.rate[k], 3),
-             "implemented_checks": [c["id"] for c in catalog.checks_for(platform) if c["technique"] == k]}
+            {
+                "technique": k,
+                "title": catalog.techniques[k]["title"],
+                "class": sp.klass[k],
+                "expected_rate": round(sp.rate[k], 3),
+                "implemented_checks": [c["id"] for c in catalog.checks_for(platform) if c["technique"] == k],
+            }
             for k in measure
         ],
     }
