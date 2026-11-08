@@ -298,13 +298,32 @@
       "status": "implemented",
       "fix": {
         "layer": "hypervisor",
-        "effort": 3
+        "effort": 4,
+        "how": "Present a coherent CPU policy: match vendor, brand, feature dependencies, cache and topology to the configured vCPUs and real model. Do not advertise instructions the guest cannot execute.",
+        "chimera": "Validate Xen CPUID policy together with cpuidmon -s. Host-derived SMBIOS does not change CPUID. Test both guests and every advertised CPU leaf after masking."
       },
       "equivalents": {
         "vmaware": [
           "CPU_BRAND"
+        ],
+        "pafish": [
+          "qemu_cpu_name"
         ]
-      }
+      },
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Extended CPUID brand contains virtual/emulated CPU tokens; reports brand and match count.",
+      "severity": "high",
+      "references": [
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html",
+        "https://github.com/NotRequiem/VMAware/blob/main/src/vmaware.hpp",
+        "https://github.com/a0rtega/pafish/blob/master/pafish/qemu.c"
+      ],
+      "params": []
     },
     {
       "id": "linux.env.cpuid_hypervisor_bit",
@@ -312,13 +331,37 @@
       "status": "implemented",
       "fix": {
         "layer": "analysis-engine",
-        "effort": 3
+        "effort": 4,
+        "how": "Mask exposed hypervisor interfaces consistently, including relocated ranges and interface signatures. Remove dependent guest enlightenments only after checking boot, clock and interrupt behavior.",
+        "chimera": "The reviewed upstream cpuidmon stealth path clears leaf 1 ECX[31] and 0x40000000 through 0x40000004. Audit the deployed build for relocated Xen 0x40000100 and Viridian/Hyper-V leaves; do not assume -s covers them. Xen defines relocation in arch-x86/cpuid.h."
       },
       "equivalents": {
+        "al-khaser": [
+          "cpuid_is_hypervisor"
+        ],
+        "pafish": [
+          "cpu_hv"
+        ],
         "vmaware": [
           "HYPERVISOR_BIT"
         ]
-      }
+      },
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "CPUID.1 ECX[31] advertises a hypervisor; numeric ECX and bit value.",
+      "severity": "critical",
+      "references": [
+        "https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/tlfs/feature-discovery",
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiVM/Generic.cpp",
+        "https://github.com/a0rtega/pafish/blob/master/pafish/cpu.c",
+        "https://github.com/NotRequiem/VMAware/blob/main/src/vmaware.hpp",
+        "https://github.com/tklengyel/drakvuf/blob/main/src/plugins/cpuidmon/cpuidmon.cpp"
+      ],
+      "params": []
     },
     {
       "id": "linux.env.cpuid_hypervisor_vendor",
@@ -326,13 +369,37 @@
       "status": "implemented",
       "fix": {
         "layer": "analysis-engine",
-        "effort": 3
+        "effort": 4,
+        "how": "Mask exposed hypervisor interfaces consistently, including relocated ranges and interface signatures. Remove dependent guest enlightenments only after checking boot, clock and interrupt behavior.",
+        "chimera": "The reviewed upstream cpuidmon stealth path clears leaf 1 ECX[31] and 0x40000000 through 0x40000004. Audit the deployed build for relocated Xen 0x40000100 and Viridian/Hyper-V leaves; do not assume -s covers them. Xen defines relocation in arch-x86/cpuid.h."
       },
       "equivalents": {
+        "al-khaser": [
+          "cpuid_hypervisor_vendor"
+        ],
+        "pafish": [
+          "cpu_known_vm_vendors"
+        ],
         "vmaware": [
           "HYPERVISOR_STR"
         ]
-      }
+      },
+      "reason": null,
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "CPUID 0x40000000 signature matched against known hypervisor vendors; includes maximum leaf.",
+      "severity": "critical",
+      "references": [
+        "https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/tlfs/feature-discovery",
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/AntiVM/Generic.cpp",
+        "https://github.com/a0rtega/pafish/blob/master/pafish/cpu.c",
+        "https://github.com/NotRequiem/VMAware/blob/main/src/vmaware.hpp",
+        "https://github.com/tklengyel/drakvuf/blob/main/src/plugins/cpuidmon/cpuidmon.cpp"
+      ],
+      "params": []
     },
     {
       "id": "linux.env.dmi_bios_vendor",
@@ -922,13 +989,30 @@
       "status": "implemented",
       "fix": {
         "layer": "hypervisor",
-        "effort": 5
+        "effort": 5,
+        "how": "Calibrate on comparable bare metal and minimize exits and host scheduling noise. TSC offsetting/scaling and exit-cost compensation require coordinated hypervisor work; a static offset cannot remove per-exit cost and clock compensation must remain consistent across vCPUs and clocks.",
+        "chimera": "cpuidmon -s changes CPUID values, not VM-exit latency; its handling can add cost. Xen TSC mode or vCPU pinning alone cannot erase that cost. Validate any Xen/DRAKVUF compensation against raw RDTSC, RDTSCP and OS clocks; retain residual-risk reporting."
       },
       "equivalents": {
-        "vmaware": [
-          "TIMER"
+        "pafish": [
+          "cpu_rdtsc_force_vmexit"
         ]
-      }
+      },
+      "description": "Frozen v1 Linux native-helper median RDTSC/CPUID timing, retained for compatibility. New robust sampling is linux.timing.rdtsc_cpuid_vmexit; its parameters do not apply to this legacy Python check.",
+      "severity": "high",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser/blob/master/al-khaser/TimingAttacks/timing.cpp",
+        "https://github.com/a0rtega/pafish/blob/master/pafish/cpu.c",
+        "https://www.itl.nist.gov/div898/handbook/eda/section3/eda35h.htm",
+        "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html"
+      ],
+      "params": [],
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "reason": null
     }
   ]
 }

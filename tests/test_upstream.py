@@ -300,9 +300,7 @@ UPSTREAMS = [
         "tag_regex": r"R-\d+\.\d+\.\d+",
     },
 ]
-VM_HPP = (
-    "enum enum_flags : u8 {\n /* Windows */\n TRAP,\n MSR,\n /* Cross-platform */\n TIMER,\n DEFAULT\n };\n"
-)
+VM_HPP = "enum enum_flags : u8 {\n /* Windows */\n ZZ_FIXTURE_TRAP,\n ZZ_FIXTURE_MSR,\n /* Cross-platform */\n TIMER,\n DEFAULT\n };\n"
 CATALOG_CHECKS_MAP = ("TIMER",)  # catalog already lists vmaware TIMER (windows-core cpuid_qpc_jitter)
 
 
@@ -350,7 +348,7 @@ def test_check_reports_updates_new_unmapped_techniques_and_exit_10(tmp_path, cap
     by = {s["id"]: s for s in res["sources"]}
     assert by["vmaware"]["status"] == "update" and by["vmaware"]["change"] == {"from": "v1", "to": "v2"}
     new = {t["name"]: t for t in by["vmaware"]["new_techniques"]}
-    assert set(new) == {"TRAP", "MSR"}
+    assert set(new) == {"ZZ_FIXTURE_TRAP", "ZZ_FIXTURE_MSR"}
     assert by["vmaware"]["removed_techniques"] == ["OLDONE"]
     assert all(t["unmapped"] for t in new.values())
     assert by["tool"]["status"] == "update" and by["tool"]["latest"]["commit"] == "c" * 40
@@ -419,7 +417,9 @@ def test_pin_updates_catalog_and_refreshes_inventory(tmp_path):
     assert vm["version"] == "v2" and vm["commit"] == "b" * 40 and vm["released"] == "2026-11-02"
     assert doc["upstreams"][1]["pinned"]["version"] == "aaaaaaaaaaaa"  # untouched
     inv = json.loads((cat / "inventory" / "vmaware.json").read_text())
-    assert [t["name"] for t in inv["techniques"]] == ["MSR", "TIMER", "TRAP"] and inv["revision"] == "v2"
+    assert [t["name"] for t in inv["techniques"]] == ["TIMER", "ZZ_FIXTURE_MSR", "ZZ_FIXTURE_TRAP"] and inv[
+        "revision"
+    ] == "v2"
     bad = U.cmd_pin(
         _args(catalog=str(cat), state=str(state), ids=["nope"], all=False, inventory=False, token_env=None)
     )
