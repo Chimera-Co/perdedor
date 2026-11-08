@@ -12,14 +12,16 @@ dev = ["pytest>=7", "black", "isort", "ruff"]
 
 [project.scripts]
 perdedor = "perdedor_cli.__main__:main"
+perdedor-macos = "perdedor_macos.__main__:main"
+perdedor-ios = "perdedor_ios.__main__:main"
 
 [build-system]
 requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-package-dir = { "perdedor_common" = "common/python/perdedor_common", "perdedor_linux" = "agents/linux/perdedor_linux", "perdedor_android" = "agents/android/perdedor_android", "perdedor_cli" = "cli/perdedor_cli" }
-packages = ["perdedor_common", "perdedor_linux", "perdedor_android", "perdedor_cli"]
+package-dir = { "perdedor_common" = "common/python/perdedor_common", "perdedor_linux" = "agents/linux/perdedor_linux", "perdedor_android" = "agents/android/perdedor_android", "perdedor_cli" = "cli/perdedor_cli", "perdedor_macos" = "agents/macos/perdedor_macos", "perdedor_ios" = "agents/ios/perdedor_ios" }
+packages = ["perdedor_common", "perdedor_linux", "perdedor_android", "perdedor_cli", "perdedor_macos", "perdedor_macos.checks", "perdedor_ios", "perdedor_ios.checks"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
