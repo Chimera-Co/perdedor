@@ -303,7 +303,7 @@ def robustness(
 # report
 # ---------------------------------------------------------------------------------------------
 
-PRODUCTION = "PEM-1 production (perdedor_common.exposure)"
+PRODUCTION = "PEM-2 production (perdedor_common.exposure)"
 
 
 def add_production_model() -> bool:
@@ -323,7 +323,9 @@ def add_production_model() -> bool:
 
     M.MODELS[PRODUCTION] = pem
     M.PLATFORM_AWARE.add(PRODUCTION)
-    MEANING[PRODUCTION] = "as M5 coverage-imputed, with the Jensen correction and pillars"
+    MEANING[PRODUCTION] = (
+        "as M5 coverage-imputed, with the Jensen correction, families calibrated to measured prevalence, and pillars"
+    )
     DECOMPOSABLE[PRODUCTION] = "yes: class survivals and points lost per class/category"
     return True
 

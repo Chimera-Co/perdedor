@@ -17,7 +17,7 @@ SERIES = [  # (results key, label, light, dark)
     ("M0 severity penalty", "M0 v1 formula", "#2a78d6", "#3987e5"),
     ("M1 weighted pass rate", "M1 weighted pass rate", "#eb6834", "#d95926"),
     ("M3 noisy-OR exposure", "M3 measured only", "#1baf7a", "#199e70"),
-    ("PEM-1 production (perdedor_common.exposure)", "PEM-1 (chosen)", "#eda100", "#c98500"),
+    ("PEM-2 production (perdedor_common.exposure)", "PEM-2 (chosen)", "#eda100", "#c98500"),
 ]
 LABEL_ARM = {"H3b+clock": "H3b+clk"}
 

@@ -223,9 +223,34 @@ It is the only candidate that meets every requirement:
 - **M5 imputed and PEM-1 meet A1–A11.** PEM-1 adds the Jensen correction (a deterministic,
   monotonic point estimate instead of a Monte-Carlo median) and has the best tool agreement (0.84).
 
-When `catalog/threats.json` holds sourced families, PEM-1 switches its headline from the noisy-OR
-form to the family form (M4's structure). That form represents techniques that malware uses
-together, which the independence assumption of M3 cannot.
+### Iteration 2: sourced families (PEM-2, shipped)
+
+The first iteration scored against pseudo-families drawn from the technique tiers. With the sourced
+threat catalog in place (120 families, 302 evidence items from 75 primary sources; see
+[THREATS.md](THREATS.md)), the family form of the headline was re-tested, and the raw form failed.
+
+The reason is reporting bias. A family's technique list holds what public analyses *name*, which
+is a lower bound on what the family does. The CPUID hypervisor bit is the clearest case: studies
+that measure samples directly put it among the most common checks (tier `very_common`), yet only
+two sourced Windows families have a report naming it, 5.4 % of the family weight. Under the raw
+family form, a sandbox exposing that bit alone scored 94.9 and passed.
+
+PEM-2 keeps the family structure (attribution and techniques used together) and calibrates it to
+the measured prevalence. Each family also uses every technique its sources do not name, with the
+residual rate `u_i = max(0, p_i − share_i) / (1 − share_i)`, where `share_i` is the family weight
+whose sources name technique `i`. With that rate, the population's use of each technique equals
+`p_i` again. Where the family data already accounts for the measured prevalence, `u_i` falls to 0.
+
+| Model, sourced families | A3 strong alone < 90 | A8 rise with 40 % fewer techniques | H1 | H1SH | H2c | H3b | Pairs right | A6 agreement | A11 pairs right |
+|---|---|---|---|---|---|---|---|---|---|
+| M4 raw families | **no** (94.9) | **+11.1** | 62.8 | 64.2 | 92.1 | 92.1 | **8/10** (2 ties) | 0.85 | **80 %** |
+| M5 raw families, imputed | **no** (94.8) | 0.0 | 52.9 | 56.8 | 81.1 | 81.5 | 10/10 | 0.73 | 100 % |
+| **PEM-2 calibrated families** | **yes** | **−0.3** | **5.4** | **14.4** | **40.9** | **44.6** | **10/10** | **0.84** | **100 %** |
+
+PEM-2 meets every axiom with the sourced catalog. Its arm scores stay within a few points of
+PEM-1's, which is the intended outcome: calibration reproduces the measured marginals, while the
+family view now names which known families an environment would let through. The model id in
+reports is `perdedor-exposure-2`.
 
 ## Trustworthiness pillars
 

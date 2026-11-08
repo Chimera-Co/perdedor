@@ -17,9 +17,16 @@ clean, else the highest confidence of a detected check), or nothing when no chec
   rate with the weight of two techniques). That keeps quick profiles from scoring better than full
   ones.
 * With a sourced threat model (catalog/threats.json, >= 10 families on the platform) the score is
-  the weighted share of families none of whose techniques fire::
+  the weighted share of families none of whose techniques fire. A family's technique list holds
+  what public analyses *name*, a lower bound, so each family also uses every unlisted technique
+  with the residual rate that makes the population match the measured prevalence::
 
-      S = 100 * sum_f w_f * prod_{i in T_f} (1 - q_i h_i) / sum_f w_f
+      share_i = sum_{f: i in T_f} w_f / sum_f w_f
+      u_i     = max(0, p_i - share_i) / (1 - share_i)
+      S = 100 * sum_f w_f * prod_{i in T_f} (1 - q_i h_i) * prod_{i not in T_f} (1 - u_i q_i h_i) / sum_f w_f
+
+  (calibrated family form, model 2; the raw form of model 1 let under-reported techniques such as
+  the CPUID hypervisor bit pass a sandbox that exposes them).
 
 * Without one it is the noisy-OR survival of a sample that uses each technique with chance p_i::
 
@@ -47,7 +54,7 @@ from typing import Any
 
 from .catalog import Catalog, load_catalog
 
-MODEL_ID = "perdedor-exposure-1"
+MODEL_ID = "perdedor-exposure-2"
 PASS_THRESHOLD = 90.0
 WARN_THRESHOLD = 70.0
 MIN_SOURCED_FAMILIES = 10
@@ -129,6 +136,7 @@ class _Space:
     rate: dict[str, float]  # untested key -> expected detection rate
     families: list[dict]
     sourced: bool
+    share: dict[str, float] = field(default_factory=dict)  # family-weight share citing each key
 
 
 def _space(obs: Mapping[str, TechniqueObs], catalog: Catalog, platform: str) -> _Space:
@@ -166,6 +174,12 @@ def _space(obs: Mapping[str, TechniqueObs], catalog: Catalog, platform: str) -> 
             rate[k] = min(1.0, r + 0.5 * untested_weight[c] * var)
     fams = [f for f in catalog.threats if platform in f.get("platforms", []) and f.get("techniques")]
     sourced = len(fams) >= MIN_SOURCED_FAMILIES
+    share: dict[str, float] = {}
+    if sourced:
+        total = sum(float(f.get("weight", 1.0)) for f in fams)
+        for f in fams:
+            for k in set(f["techniques"]):
+                share[k] = share.get(k, 0.0) + float(f.get("weight", 1.0)) / total
     return _Space(
         keys=keys,
         p={k: catalog.prevalence(k) for k in keys},
@@ -175,20 +189,41 @@ def _space(obs: Mapping[str, TechniqueObs], catalog: Catalog, platform: str) -> 
         rate=rate,
         families=fams if sourced else [],
         sourced=sourced,
+        share=share,
     )
+
+
+def _residual(sp: _Space, k: str, p: Mapping[str, float]) -> float:
+    """Chance a family whose sources do not name technique ``k`` uses it anyway (see module doc)."""
+    share = min(sp.share.get(k, 0.0), 0.999)
+    return max(0.0, p[k] - share) / (1.0 - share)
+
+
+def _family_survival(sp: _Space, f: Mapping, hits: Mapping[str, float], p, q, base: float) -> float:
+    """One family's survival given ``base`` = prod over all keys of (1 - u_k q_k h_k)."""
+    s = base
+    for k in set(f["techniques"]):
+        h = hits.get(k, 0.0)
+        if h:
+            s *= (1.0 - q[k] * h) / (1.0 - _residual(sp, k, p) * q[k] * h)
+    return s
+
+
+def _family_base(sp: _Space, hits: Mapping[str, float], p, q) -> float:
+    base = 1.0
+    for k, h in hits.items():
+        if h and k in q:
+            base *= 1.0 - _residual(sp, k, p) * q[k] * h
+    return base
 
 
 def _survival(sp: _Space, hits: Mapping[str, float], p: Mapping[str, float], q: Mapping[str, float]) -> float:
     if sp.sourced:
+        base = _family_base(sp, hits, p, q)
         num = den = 0.0
         for f in sp.families:
-            s = 1.0
-            for k in f["techniques"]:
-                h = hits.get(k, 0.0)
-                if h:
-                    s *= 1.0 - q[k] * h
             w = float(f.get("weight", 1.0))
-            num += w * s
+            num += w * _family_survival(sp, f, hits, p, q, base)
             den += w
         return num / den if den else 1.0
     s = 1.0
@@ -377,15 +412,15 @@ def _category_view(classes: Mapping[str, dict], catalog: Catalog) -> dict:
 
 def _family_view(sp: _Space, obs: Mapping[str, TechniqueObs], catalog: Catalog, top: int = 20) -> list:
     rows = []
+    base = _family_base(sp, sp.tested, sp.p, sp.q)
     for f in sp.families:
-        s = 1.0
+        s = _family_survival(sp, f, sp.tested, sp.p, sp.q, base)
         triggered, unknown = [], []
         for k in f["techniques"]:
             h = sp.tested.get(k)
             if h is None:
                 unknown.append(k)
             elif h > 0:
-                s *= 1 - sp.q[k] * h
                 triggered.append(k)
         rows.append(
             {

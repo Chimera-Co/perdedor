@@ -8,12 +8,23 @@ import re
 from pathlib import Path
 
 import pytest
-
 from perdedor_common.catalog import load_catalog
 
 ROOT = Path(__file__).resolve().parents[1]
-TYPES = {"loader", "stealer", "rat", "ransomware", "banker", "backdoor", "botnet",
-         "miner", "spyware", "apt-tool", "protector", "crypter"}
+TYPES = {
+    "loader",
+    "stealer",
+    "rat",
+    "ransomware",
+    "banker",
+    "backdoor",
+    "botnet",
+    "miner",
+    "spyware",
+    "apt-tool",
+    "protector",
+    "crypter",
+}
 PLATFORMS = {"windows", "linux", "macos", "android", "ios"}
 DATE_RE = re.compile(r"^\d{4}(-\d{2}(-\d{2})?)?$")
 MIN_YEAR, MAX_YEAR = 1980, 2026
@@ -115,4 +126,14 @@ def test_proposed_keys_are_new(catalog):
     doc = json.loads((ROOT / "research" / "proposed-techniques-threats.json").read_text())
     for p in doc["proposals"]:
         assert catalog.technique(p["key"]) is None, f"{p['key']} already exists"
-        assert {"key", "class", "title", "attack", "mbc", "discrimination", "tier", "platforms", "why"} <= set(p)
+        assert {
+            "key",
+            "class",
+            "title",
+            "attack",
+            "mbc",
+            "discrimination",
+            "tier",
+            "platforms",
+            "why",
+        } <= set(p)
