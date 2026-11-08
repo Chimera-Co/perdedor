@@ -1,0 +1,3206 @@
+{
+  "format": 1,
+  "description": "Per-technique prevalence estimates: p is the estimated share of evasive samples on the technique's platforms that perform the check. Point estimates combine the catalog tier prior with the share of sourced families in catalog/threats.json; intervals are deliberately wide and are widest where fewer than three families are sourced. See docs/THREATS.md (Method).",
+  "techniques": [
+    {
+      "key": "cpu.hypervisor_bit",
+      "p": 0.164,
+      "ci": [
+        0.014,
+        0.6
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'very_common' prior p=0.3.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "3 of 107 sourced families on linux, macos, windows have a cited check for this technique.",
+          "n": 3,
+          "year": 2026
+        },
+        {
+          "source": "https://ris.utwente.nl/ws/portalfiles/portal/269166759/Galloro2022systematical.pdf",
+          "finding": "Evasive techniques detected in 67.8% of Windows samples from 2010, rising to about 80% by 2019; 46 families are characterised by their choice of techniques.",
+          "n": null,
+          "year": 2022
+        },
+        {
+          "source": "https://mdbailey.web.engr.illinois.edu/publications/dsn08_final.pdf",
+          "finding": "Over 40% of 6,900 Windows samples reduced malicious behaviour under a VM or with a debugger attached; VM alone changed behaviour for 2.7% (167 of 6,222).",
+          "n": 6900,
+          "year": 2008
+        }
+      ]
+    },
+    {
+      "key": "cpu.hypervisor_vendor_leaf",
+      "p": 0.3,
+      "ci": [
+        0.075,
+        0.9
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'very_common' prior p=0.3.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "2 of 107 sourced families on linux, macos, windows have a cited check for this technique.",
+          "n": 2,
+          "year": 2026
+        },
+        {
+          "source": "https://ris.utwente.nl/ws/portalfiles/portal/269166759/Galloro2022systematical.pdf",
+          "finding": "Evasive techniques detected in 67.8% of Windows samples from 2010, rising to about 80% by 2019; 46 families are characterised by their choice of techniques.",
+          "n": null,
+          "year": 2022
+        },
+        {
+          "source": "https://mdbailey.web.engr.illinois.edu/publications/dsn08_final.pdf",
+          "finding": "Over 40% of 6,900 Windows samples reduced malicious behaviour under a VM or with a debugger attached; VM alone changed behaviour for 2.7% (167 of 6,222).",
+          "n": 6900,
+          "year": 2008
+        }
+      ]
+    },
+    {
+      "key": "cpu.hypervisor_leaf_range",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 107 sourced families on linux, macos, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        },
+        {
+          "source": "https://ris.utwente.nl/ws/portalfiles/portal/269166759/Galloro2022systematical.pdf",
+          "finding": "Evasive techniques detected in 67.8% of Windows samples from 2010, rising to about 80% by 2019; 46 families are characterised by their choice of techniques.",
+          "n": null,
+          "year": 2022
+        },
+        {
+          "source": "https://mdbailey.web.engr.illinois.edu/publications/dsn08_final.pdf",
+          "finding": "Over 40% of 6,900 Windows samples reduced malicious behaviour under a VM or with a debugger attached; VM alone changed behaviour for 2.7% (167 of 6,222).",
+          "n": 6900,
+          "year": 2008
+        }
+      ]
+    },
+    {
+      "key": "cpu.brand_string",
+      "p": 0.12,
+      "ci": [
+        0.03,
+        0.48
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "2 of 107 sourced families on linux, macos, windows have a cited check for this technique.",
+          "n": 2,
+          "year": 2026
+        },
+        {
+          "source": "https://ris.utwente.nl/ws/portalfiles/portal/269166759/Galloro2022systematical.pdf",
+          "finding": "Evasive techniques detected in 67.8% of Windows samples from 2010, rising to about 80% by 2019; 46 families are characterised by their choice of techniques.",
+          "n": null,
+          "year": 2022
+        },
+        {
+          "source": "https://mdbailey.web.engr.illinois.edu/publications/dsn08_final.pdf",
+          "finding": "Over 40% of 6,900 Windows samples reduced malicious behaviour under a VM or with a debugger attached; VM alone changed behaviour for 2.7% (167 of 6,222).",
+          "n": 6900,
+          "year": 2008
+        }
+      ]
+    },
+    {
+      "key": "cpu.feature_consistency",
+      "p": 0.012,
+      "ci": [
+        0.003,
+        0.048
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'rare' prior p=0.012.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 107 sourced families on linux, macos, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        },
+        {
+          "source": "https://ris.utwente.nl/ws/portalfiles/portal/269166759/Galloro2022systematical.pdf",
+          "finding": "Evasive techniques detected in 67.8% of Windows samples from 2010, rising to about 80% by 2019; 46 families are characterised by their choice of techniques.",
+          "n": null,
+          "year": 2022
+        },
+        {
+          "source": "https://mdbailey.web.engr.illinois.edu/publications/dsn08_final.pdf",
+          "finding": "Over 40% of 6,900 Windows samples reduced malicious behaviour under a VM or with a debugger attached; VM alone changed behaviour for 2.7% (167 of 6,222).",
+          "n": 6900,
+          "year": 2008
+        }
+      ]
+    },
+    {
+      "key": "cpu.topology_consistency",
+      "p": 0.012,
+      "ci": [
+        0.003,
+        0.048
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'rare' prior p=0.012.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 107 sourced families on linux, macos, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        },
+        {
+          "source": "https://ris.utwente.nl/ws/portalfiles/portal/269166759/Galloro2022systematical.pdf",
+          "finding": "Evasive techniques detected in 67.8% of Windows samples from 2010, rising to about 80% by 2019; 46 families are characterised by their choice of techniques.",
+          "n": null,
+          "year": 2022
+        },
+        {
+          "source": "https://mdbailey.web.engr.illinois.edu/publications/dsn08_final.pdf",
+          "finding": "Over 40% of 6,900 Windows samples reduced malicious behaviour under a VM or with a debugger attached; VM alone changed behaviour for 2.7% (167 of 6,222).",
+          "n": 6900,
+          "year": 2008
+        }
+      ]
+    },
+    {
+      "key": "cpu.descriptor_tables",
+      "p": 0.012,
+      "ci": [
+        0.003,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 100 sourced families on linux, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        },
+        {
+          "source": "https://ris.utwente.nl/ws/portalfiles/portal/269166759/Galloro2022systematical.pdf",
+          "finding": "SIDT-based checks are no longer used because hardware virtualisation removed the side effect.",
+          "n": null,
+          "year": 2022
+        },
+        {
+          "source": "https://ris.utwente.nl/ws/portalfiles/portal/269166759/Galloro2022systematical.pdf",
+          "finding": "Evasive techniques detected in 67.8% of Windows samples from 2010, rising to about 80% by 2019; 46 families are characterised by their choice of techniques.",
+          "n": null,
+          "year": 2022
+        },
+        {
+          "source": "https://mdbailey.web.engr.illinois.edu/publications/dsn08_final.pdf",
+          "finding": "Over 40% of 6,900 Windows samples reduced malicious behaviour under a VM or with a debugger attached; VM alone changed behaviour for 2.7% (167 of 6,222).",
+          "n": 6900,
+          "year": 2008
+        }
+      ]
+    },
+    {
+      "key": "cpu.vmware_backdoor",
+      "p": 0.075,
+      "ci": [
+        0.015,
+        0.24
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "3 of 100 sourced families on linux, windows have a cited check for this technique.",
+          "n": 3,
+          "year": 2026
+        },
+        {
+          "source": "https://ris.utwente.nl/ws/portalfiles/portal/269166759/Galloro2022systematical.pdf",
+          "finding": "Evasive techniques detected in 67.8% of Windows samples from 2010, rising to about 80% by 2019; 46 families are characterised by their choice of techniques.",
+          "n": null,
+          "year": 2022
+        },
+        {
+          "source": "https://mdbailey.web.engr.illinois.edu/publications/dsn08_final.pdf",
+          "finding": "Over 40% of 6,900 Windows samples reduced malicious behaviour under a VM or with a debugger attached; VM alone changed behaviour for 2.7% (167 of 6,222).",
+          "n": 6900,
+          "year": 2008
+        }
+      ]
+    },
+    {
+      "key": "cpu.undefined_instruction_behaviour",
+      "p": 0.012,
+      "ci": [
+        0.003,
+        0.048
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'rare' prior p=0.012.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "2 of 100 sourced families on linux, windows have a cited check for this technique.",
+          "n": 2,
+          "year": 2026
+        },
+        {
+          "source": "https://ris.utwente.nl/ws/portalfiles/portal/269166759/Galloro2022systematical.pdf",
+          "finding": "Evasive techniques detected in 67.8% of Windows samples from 2010, rising to about 80% by 2019; 46 families are characterised by their choice of techniques.",
+          "n": null,
+          "year": 2022
+        },
+        {
+          "source": "https://mdbailey.web.engr.illinois.edu/publications/dsn08_final.pdf",
+          "finding": "Over 40% of 6,900 Windows samples reduced malicious behaviour under a VM or with a debugger attached; VM alone changed behaviour for 2.7% (167 of 6,222).",
+          "n": 6900,
+          "year": 2008
+        }
+      ]
+    },
+    {
+      "key": "cpu.emulation_quirks",
+      "p": 0.012,
+      "ci": [
+        0.003,
+        0.048
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'rare' prior p=0.012.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "1 of 113 sourced families on android, linux, windows have a cited check for this technique.",
+          "n": 1,
+          "year": 2026
+        },
+        {
+          "source": "https://ris.utwente.nl/ws/portalfiles/portal/269166759/Galloro2022systematical.pdf",
+          "finding": "Evasive techniques detected in 67.8% of Windows samples from 2010, rising to about 80% by 2019; 46 families are characterised by their choice of techniques.",
+          "n": null,
+          "year": 2022
+        },
+        {
+          "source": "https://mdbailey.web.engr.illinois.edu/publications/dsn08_final.pdf",
+          "finding": "Over 40% of 6,900 Windows samples reduced malicious behaviour under a VM or with a debugger attached; VM alone changed behaviour for 2.7% (167 of 6,222).",
+          "n": 6900,
+          "year": 2008
+        }
+      ]
+    },
+    {
+      "key": "firmware.smbios_strings",
+      "p": 0.2014,
+      "ci": [
+        0.0514,
+        0.6
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'very_common' prior p=0.3.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "11 of 107 sourced families on linux, macos, windows have a cited check for this technique.",
+          "n": 11,
+          "year": 2026
+        },
+        {
+          "source": "https://ris.utwente.nl/ws/portalfiles/portal/269166759/Galloro2022systematical.pdf",
+          "finding": "Evasive techniques detected in 67.8% of Windows samples from 2010, rising to about 80% by 2019; 46 families are characterised by their choice of techniques.",
+          "n": null,
+          "year": 2022
+        },
+        {
+          "source": "https://mdbailey.web.engr.illinois.edu/publications/dsn08_final.pdf",
+          "finding": "Over 40% of 6,900 Windows samples reduced malicious behaviour under a VM or with a debugger attached; VM alone changed behaviour for 2.7% (167 of 6,222).",
+          "n": 6900,
+          "year": 2008
+        }
+      ]
+    },
+    {
+      "key": "firmware.smbios_raw_table",
+      "p": 0.12,
+      "ci": [
+        0.03,
+        0.48
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "2 of 100 sourced families on linux, windows have a cited check for this technique.",
+          "n": 2,
+          "year": 2026
+        },
+        {
+          "source": "https://ris.utwente.nl/ws/portalfiles/portal/269166759/Galloro2022systematical.pdf",
+          "finding": "Evasive techniques detected in 67.8% of Windows samples from 2010, rising to about 80% by 2019; 46 families are characterised by their choice of techniques.",
+          "n": null,
+          "year": 2022
+        },
+        {
+          "source": "https://mdbailey.web.engr.illinois.edu/publications/dsn08_final.pdf",
+          "finding": "Over 40% of 6,900 Windows samples reduced malicious behaviour under a VM or with a debugger attached; VM alone changed behaviour for 2.7% (167 of 6,222).",
+          "n": 6900,
+          "year": 2008
+        }
+      ]
+    },
+    {
+      "key": "firmware.smbios_serials_uuid",
+      "p": 0.12,
+      "ci": [
+        0.03,
+        0.48
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "1 of 107 sourced families on linux, macos, windows have a cited check for this technique.",
+          "n": 1,
+          "year": 2026
+        },
+        {
+          "source": "https://ris.utwente.nl/ws/portalfiles/portal/269166759/Galloro2022systematical.pdf",
+          "finding": "Evasive techniques detected in 67.8% of Windows samples from 2010, rising to about 80% by 2019; 46 families are characterised by their choice of techniques.",
+          "n": null,
+          "year": 2022
+        },
+        {
+          "source": "https://mdbailey.web.engr.illinois.edu/publications/dsn08_final.pdf",
+          "finding": "Over 40% of 6,900 Windows samples reduced malicious behaviour under a VM or with a debugger attached; VM alone changed behaviour for 2.7% (167 of 6,222).",
+          "n": 6900,
+          "year": 2008
+        }
+      ]
+    },
+    {
+      "key": "firmware.acpi_tables",
+      "p": 0.12,
+      "ci": [
+        0.03,
+        0.48
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "1 of 100 sourced families on linux, windows have a cited check for this technique.",
+          "n": 1,
+          "year": 2026
+        },
+        {
+          "source": "https://ris.utwente.nl/ws/portalfiles/portal/269166759/Galloro2022systematical.pdf",
+          "finding": "Evasive techniques detected in 67.8% of Windows samples from 2010, rising to about 80% by 2019; 46 families are characterised by their choice of techniques.",
+          "n": null,
+          "year": 2022
+        },
+        {
+          "source": "https://mdbailey.web.engr.illinois.edu/publications/dsn08_final.pdf",
+          "finding": "Over 40% of 6,900 Windows samples reduced malicious behaviour under a VM or with a debugger attached; VM alone changed behaviour for 2.7% (167 of 6,222).",
+          "n": 6900,
+          "year": 2008
+        }
+      ]
+    },
+    {
+      "key": "firmware.bios_metadata",
+      "p": 0.12,
+      "ci": [
+        0.03,
+        0.48
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "2 of 100 sourced families on linux, windows have a cited check for this technique.",
+          "n": 2,
+          "year": 2026
+        },
+        {
+          "source": "https://ris.utwente.nl/ws/portalfiles/portal/269166759/Galloro2022systematical.pdf",
+          "finding": "Evasive techniques detected in 67.8% of Windows samples from 2010, rising to about 80% by 2019; 46 families are characterised by their choice of techniques.",
+          "n": null,
+          "year": 2022
+        },
+        {
+          "source": "https://mdbailey.web.engr.illinois.edu/publications/dsn08_final.pdf",
+          "finding": "Over 40% of 6,900 Windows samples reduced malicious behaviour under a VM or with a debugger attached; VM alone changed behaviour for 2.7% (167 of 6,222).",
+          "n": 6900,
+          "year": 2008
+        }
+      ]
+    },
+    {
+      "key": "firmware.boot_mode",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 91 sourced families on windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        },
+        {
+          "source": "https://ris.utwente.nl/ws/portalfiles/portal/269166759/Galloro2022systematical.pdf",
+          "finding": "Evasive techniques detected in 67.8% of Windows samples from 2010, rising to about 80% by 2019; 46 families are characterised by their choice of techniques.",
+          "n": null,
+          "year": 2022
+        },
+        {
+          "source": "https://mdbailey.web.engr.illinois.edu/publications/dsn08_final.pdf",
+          "finding": "Over 40% of 6,900 Windows samples reduced malicious behaviour under a VM or with a debugger attached; VM alone changed behaviour for 2.7% (167 of 6,222).",
+          "n": 6900,
+          "year": 2008
+        }
+      ]
+    },
+    {
+      "key": "hardware.pci_vendor_ids",
+      "p": 0.075,
+      "ci": [
+        0.015,
+        0.24
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "3 of 100 sourced families on linux, windows have a cited check for this technique.",
+          "n": 3,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "hardware.disk_identity",
+      "p": 0.178,
+      "ci": [
+        0.028,
+        0.6
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'very_common' prior p=0.3.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "6 of 107 sourced families on linux, macos, windows have a cited check for this technique.",
+          "n": 6,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "hardware.nic_identity",
+      "p": 0.12,
+      "ci": [
+        0.03,
+        0.48
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 107 sourced families on linux, macos, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "hardware.gpu_identity",
+      "p": 0.074,
+      "ci": [
+        0.014,
+        0.24
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "3 of 107 sourced families on linux, macos, windows have a cited check for this technique.",
+          "n": 3,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "hardware.monitor_edid",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "1 of 91 sourced families on windows have a cited check for this technique.",
+          "n": 1,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "hardware.audio_devices",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "1 of 107 sourced families on linux, macos, windows have a cited check for this technique.",
+          "n": 1,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "hardware.usb_devices",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 107 sourced families on linux, macos, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "hardware.input_devices",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "2 of 100 sourced families on linux, windows have a cited check for this technique.",
+          "n": 2,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "hardware.thermal_sensors",
+      "p": 0.0387,
+      "ci": [
+        0.0187,
+        0.08
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "4 of 107 sourced families on linux, macos, windows have a cited check for this technique.",
+          "n": 4,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "hardware.battery_power",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 120 sourced families on android, linux, macos, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "hardware.memory_modules",
+      "p": 0.012,
+      "ci": [
+        0.003,
+        0.048
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'rare' prior p=0.012.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 100 sourced families on linux, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "hardware.cpu_cache_clock",
+      "p": 0.012,
+      "ci": [
+        0.003,
+        0.048
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'rare' prior p=0.012.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 100 sourced families on linux, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "hardware.port_connectors",
+      "p": 0.012,
+      "ci": [
+        0.003,
+        0.048
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'rare' prior p=0.012.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 91 sourced families on windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "hardware.ghost_devices",
+      "p": 0.012,
+      "ci": [
+        0.003,
+        0.048
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'rare' prior p=0.012.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 91 sourced families on windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "resources.cpu_count",
+      "p": 0.1792,
+      "ci": [
+        0.0292,
+        0.6
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'very_common' prior p=0.3.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "7 of 120 sourced families on android, linux, macos, windows have a cited check for this technique.",
+          "n": 7,
+          "year": 2026
+        },
+        {
+          "source": "https://ris.utwente.nl/ws/portalfiles/portal/269166759/Galloro2022systematical.pdf",
+          "finding": "Reading the processor count from the PEB has dropped out of use as VMs gained multiple cores (that variant only; API-based counts remain common in reports).",
+          "n": null,
+          "year": 2022
+        }
+      ]
+    },
+    {
+      "key": "resources.memory_size",
+      "p": 0.175,
+      "ci": [
+        0.025,
+        0.6
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'very_common' prior p=0.3.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "6 of 120 sourced families on android, linux, macos, windows have a cited check for this technique.",
+          "n": 6,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "resources.disk_size",
+      "p": 0.1667,
+      "ci": [
+        0.0167,
+        0.6
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'very_common' prior p=0.3.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "4 of 120 sourced families on android, linux, macos, windows have a cited check for this technique.",
+          "n": 4,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "resources.screen",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "2 of 120 sourced families on android, linux, macos, windows have a cited check for this technique.",
+          "n": 2,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "guest_tools.services",
+      "p": 0.1687,
+      "ci": [
+        0.0187,
+        0.6
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'very_common' prior p=0.3.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "4 of 107 sourced families on linux, macos, windows have a cited check for this technique.",
+          "n": 4,
+          "year": 2026
+        },
+        {
+          "source": "https://ris.utwente.nl/ws/portalfiles/portal/269166759/Galloro2022systematical.pdf",
+          "finding": "Evasive techniques detected in 67.8% of Windows samples from 2010, rising to about 80% by 2019; 46 families are characterised by their choice of techniques.",
+          "n": null,
+          "year": 2022
+        },
+        {
+          "source": "https://mdbailey.web.engr.illinois.edu/publications/dsn08_final.pdf",
+          "finding": "Over 40% of 6,900 Windows samples reduced malicious behaviour under a VM or with a debugger attached; VM alone changed behaviour for 2.7% (167 of 6,222).",
+          "n": 6900,
+          "year": 2008
+        }
+      ]
+    },
+    {
+      "key": "guest_tools.drivers_modules",
+      "p": 0.1687,
+      "ci": [
+        0.0187,
+        0.6
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'very_common' prior p=0.3.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "4 of 107 sourced families on linux, macos, windows have a cited check for this technique.",
+          "n": 4,
+          "year": 2026
+        },
+        {
+          "source": "https://ris.utwente.nl/ws/portalfiles/portal/269166759/Galloro2022systematical.pdf",
+          "finding": "Evasive techniques detected in 67.8% of Windows samples from 2010, rising to about 80% by 2019; 46 families are characterised by their choice of techniques.",
+          "n": null,
+          "year": 2022
+        },
+        {
+          "source": "https://mdbailey.web.engr.illinois.edu/publications/dsn08_final.pdf",
+          "finding": "Over 40% of 6,900 Windows samples reduced malicious behaviour under a VM or with a debugger attached; VM alone changed behaviour for 2.7% (167 of 6,222).",
+          "n": 6900,
+          "year": 2008
+        }
+      ]
+    },
+    {
+      "key": "guest_tools.processes",
+      "p": 0.2014,
+      "ci": [
+        0.0514,
+        0.6
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'very_common' prior p=0.3.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "11 of 107 sourced families on linux, macos, windows have a cited check for this technique.",
+          "n": 11,
+          "year": 2026
+        },
+        {
+          "source": "https://ris.utwente.nl/ws/portalfiles/portal/269166759/Galloro2022systematical.pdf",
+          "finding": "Evasive techniques detected in 67.8% of Windows samples from 2010, rising to about 80% by 2019; 46 families are characterised by their choice of techniques.",
+          "n": null,
+          "year": 2022
+        },
+        {
+          "source": "https://mdbailey.web.engr.illinois.edu/publications/dsn08_final.pdf",
+          "finding": "Over 40% of 6,900 Windows samples reduced malicious behaviour under a VM or with a debugger attached; VM alone changed behaviour for 2.7% (167 of 6,222).",
+          "n": 6900,
+          "year": 2008
+        }
+      ]
+    },
+    {
+      "key": "artifacts.registry",
+      "p": 0.1775,
+      "ci": [
+        0.0275,
+        0.6
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'very_common' prior p=0.3.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "5 of 91 sourced families on windows have a cited check for this technique.",
+          "n": 5,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "artifacts.files",
+      "p": 0.1958,
+      "ci": [
+        0.0458,
+        0.6
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'very_common' prior p=0.3.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "11 of 120 sourced families on android, ios, linux, macos, windows have a cited check for this technique.",
+          "n": 11,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "artifacts.named_objects",
+      "p": 0.12,
+      "ci": [
+        0.03,
+        0.48
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "2 of 91 sourced families on windows have a cited check for this technique.",
+          "n": 2,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "artifacts.window_classes",
+      "p": 0.12,
+      "ci": [
+        0.03,
+        0.48
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "2 of 91 sourced families on windows have a cited check for this technique.",
+          "n": 2,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "artifacts.kernel_messages",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 11 sourced families on linux have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "artifacts.hypervisor_interfaces",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 100 sourced families on linux, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "container.container_runtime",
+      "p": 0.12,
+      "ci": [
+        0.03,
+        0.48
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "1 of 11 sourced families on linux have a cited check for this technique.",
+          "n": 1,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "container.wsl",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 11 sourced families on linux have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "container.app_sandbox",
+      "p": 0.12,
+      "ci": [
+        0.03,
+        0.48
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "2 of 100 sourced families on linux, windows have a cited check for this technique.",
+          "n": 2,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "container.virtualisation_report",
+      "p": 0.12,
+      "ci": [
+        0.03,
+        0.48
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 107 sourced families on linux, macos, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "emulator.wine",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "2 of 91 sourced families on windows have a cited check for this technique.",
+          "n": 2,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "emulator.android_properties",
+      "p": 0.3,
+      "ci": [
+        0.075,
+        0.9
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'very_common' prior p=0.3.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "1 of 13 sourced families on android have a cited check for this technique.",
+          "n": 1,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "emulator.android_files",
+      "p": 0.3,
+      "ci": [
+        0.075,
+        0.9
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'very_common' prior p=0.3.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 13 sourced families on android have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "emulator.android_vendor_emulators",
+      "p": 0.12,
+      "ci": [
+        0.03,
+        0.48
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 13 sourced families on android have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "emulator.binary_translation",
+      "p": 0.12,
+      "ci": [
+        0.03,
+        0.48
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 13 sourced families on android have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "emulator.android_build_identity",
+      "p": 0.3,
+      "ci": [
+        0.075,
+        0.9
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'very_common' prior p=0.3.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "2 of 13 sourced families on android have a cited check for this technique.",
+          "n": 2,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "emulator.ios_simulator",
+      "p": 0.12,
+      "ci": [
+        0.03,
+        0.48
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 0 sourced families on ios have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "emulator.macos_virtual_model",
+      "p": 0.2267,
+      "ci": [
+        0.06,
+        0.6667
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "3 of 9 sourced families on macos have a cited check for this technique.",
+          "n": 3,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "mobile_device.telephony",
+      "p": 0.3,
+      "ci": [
+        0.075,
+        0.9
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'very_common' prior p=0.3.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 13 sourced families on android, ios have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "mobile_device.sensors",
+      "p": 0.12,
+      "ci": [
+        0.03,
+        0.48
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "1 of 13 sourced families on android, ios have a cited check for this technique.",
+          "n": 1,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "mobile_device.sensor_activity",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.3077
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "2 of 13 sourced families on android, ios have a cited check for this technique.",
+          "n": 2,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "mobile_device.radios",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 13 sourced families on android, ios have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "mobile_device.camera",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 13 sourced families on android, ios have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "mobile_device.battery",
+      "p": 0.12,
+      "ci": [
+        0.03,
+        0.48
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 13 sourced families on android have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "timing.cpuid_vmexit",
+      "p": 0.12,
+      "ci": [
+        0.03,
+        0.48
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "2 of 100 sourced families on linux, windows have a cited check for this technique.",
+          "n": 2,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "timing.rdtsc_api_ratio",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "1 of 91 sourced families on windows have a cited check for this technique.",
+          "n": 1,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "timing.tsc_stability",
+      "p": 0.012,
+      "ci": [
+        0.003,
+        0.048
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'rare' prior p=0.012.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 100 sourced families on linux, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "timing.sleep_acceleration",
+      "p": 0.1667,
+      "ci": [
+        0.0167,
+        0.6
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'very_common' prior p=0.3.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "4 of 120 sourced families on android, ios, linux, macos, windows have a cited check for this technique.",
+          "n": 4,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "timing.clock_source",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 11 sourced families on linux have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "timing.uptime",
+      "p": 0.3,
+      "ci": [
+        0.075,
+        0.9
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'very_common' prior p=0.3.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "2 of 120 sourced families on android, ios, linux, macos, windows have a cited check for this technique.",
+          "n": 2,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "timing.time_plausibility",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 120 sourced families on android, ios, linux, macos, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "timing.instrumentation_latency",
+      "p": 0.003,
+      "ci": [
+        0.0008,
+        0.012
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'research' prior p=0.003.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 100 sourced families on linux, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "human.mouse_activity",
+      "p": 0.1704,
+      "ci": [
+        0.0204,
+        0.6
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'very_common' prior p=0.3.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "4 of 98 sourced families on macos, windows have a cited check for this technique.",
+          "n": 4,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "human.clicks_keyboard",
+      "p": 0.0753,
+      "ci": [
+        0.0153,
+        0.24
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "3 of 98 sourced families on macos, windows have a cited check for this technique.",
+          "n": 3,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "human.idle_time",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 107 sourced families on linux, macos, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "human.foreground_activity",
+      "p": 0.0353,
+      "ci": [
+        0.0153,
+        0.08
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "3 of 98 sourced families on macos, windows have a cited check for this technique.",
+          "n": 3,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "wear_and_tear.browser_history",
+      "p": 0.12,
+      "ci": [
+        0.03,
+        0.48
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 120 sourced families on android, ios, linux, macos, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "wear_and_tear.recent_files",
+      "p": 0.12,
+      "ci": [
+        0.03,
+        0.48
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 107 sourced families on linux, macos, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "wear_and_tear.installed_software",
+      "p": 0.12,
+      "ci": [
+        0.03,
+        0.48
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "1 of 120 sourced families on android, ios, linux, macos, windows have a cited check for this technique.",
+          "n": 1,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "wear_and_tear.user_files",
+      "p": 0.12,
+      "ci": [
+        0.03,
+        0.48
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 120 sourced families on android, ios, linux, macos, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "wear_and_tear.system_logs",
+      "p": 0.012,
+      "ci": [
+        0.003,
+        0.048
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'rare' prior p=0.012.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 107 sourced families on linux, macos, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "wear_and_tear.usage_traces",
+      "p": 0.012,
+      "ci": [
+        0.003,
+        0.048
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'rare' prior p=0.012.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 111 sourced families on android, macos, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "wear_and_tear.system_age",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 120 sourced families on android, ios, linux, macos, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "wear_and_tear.network_history",
+      "p": 0.012,
+      "ci": [
+        0.003,
+        0.048
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'rare' prior p=0.012.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 120 sourced families on android, linux, macos, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "wear_and_tear.peripherals_history",
+      "p": 0.012,
+      "ci": [
+        0.003,
+        0.048
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'rare' prior p=0.012.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 98 sourced families on macos, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "wear_and_tear.personal_data",
+      "p": 0.12,
+      "ci": [
+        0.03,
+        0.48
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "1 of 13 sourced families on android, ios have a cited check for this technique.",
+          "n": 1,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "wear_and_tear.process_count",
+      "p": 0.12,
+      "ci": [
+        0.03,
+        0.48
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "2 of 107 sourced families on linux, macos, windows have a cited check for this technique.",
+          "n": 2,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "wear_and_tear.fonts",
+      "p": 0.012,
+      "ci": [
+        0.003,
+        0.048
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'rare' prior p=0.012.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 100 sourced families on linux, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "identity.username",
+      "p": 0.1921,
+      "ci": [
+        0.0421,
+        0.6
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'very_common' prior p=0.3.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "9 of 107 sourced families on linux, macos, windows have a cited check for this technique.",
+          "n": 9,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "identity.hostname",
+      "p": 0.1687,
+      "ci": [
+        0.0187,
+        0.6
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'very_common' prior p=0.3.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "4 of 107 sourced families on linux, macos, windows have a cited check for this technique.",
+          "n": 4,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "identity.sample_path",
+      "p": 0.0974,
+      "ci": [
+        0.0374,
+        0.24
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "8 of 107 sourced families on linux, macos, windows have a cited check for this technique.",
+          "n": 8,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "identity.parent_process",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 100 sourced families on linux, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "identity.locale",
+      "p": 0.3208,
+      "ci": [
+        0.15,
+        0.6833
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'very_common' prior p=0.3.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "41 of 120 sourced families on android, ios, linux, macos, windows have a cited check for this technique.",
+          "n": 41,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "identity.domain_membership",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "1 of 91 sourced families on windows have a cited check for this technique.",
+          "n": 1,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "identity.environment_variables",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "1 of 107 sourced families on linux, macos, windows have a cited check for this technique.",
+          "n": 1,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "analysis_tools.processes",
+      "p": 0.2042,
+      "ci": [
+        0.0542,
+        0.6
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'very_common' prior p=0.3.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "13 of 120 sourced families on android, ios, linux, macos, windows have a cited check for this technique.",
+          "n": 13,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "analysis_tools.windows",
+      "p": 0.12,
+      "ci": [
+        0.03,
+        0.48
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "1 of 91 sourced families on windows have a cited check for this technique.",
+          "n": 1,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "analysis_tools.files",
+      "p": 0.12,
+      "ci": [
+        0.03,
+        0.48
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 120 sourced families on android, ios, linux, macos, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "analysis_tools.drivers_services",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "1 of 100 sourced families on linux, windows have a cited check for this technique.",
+          "n": 1,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "analysis_tools.listening_ports",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 113 sourced families on android, ios, linux, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "analysis_tools.loaded_modules",
+      "p": 0.2154,
+      "ci": [
+        0.0654,
+        0.6
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'very_common' prior p=0.3.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "14 of 107 sourced families on linux, macos, windows have a cited check for this technique.",
+          "n": 14,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "debugger.api_flags",
+      "p": 0.2208,
+      "ci": [
+        0.0708,
+        0.6
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'very_common' prior p=0.3.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "17 of 120 sourced families on android, ios, linux, macos, windows have a cited check for this technique.",
+          "n": 17,
+          "year": 2026
+        },
+        {
+          "source": "https://ris.utwente.nl/ws/portalfiles/portal/269166759/Galloro2022systematical.pdf",
+          "finding": "IsDebuggerPresent is among the oldest techniques and is used far more than alternatives such as INT 2D.",
+          "n": null,
+          "year": 2022
+        },
+        {
+          "source": "https://ris.utwente.nl/ws/portalfiles/portal/269166759/Galloro2022systematical.pdf",
+          "finding": "Evasive techniques detected in 67.8% of Windows samples from 2010, rising to about 80% by 2019; 46 families are characterised by their choice of techniques.",
+          "n": null,
+          "year": 2022
+        },
+        {
+          "source": "https://mdbailey.web.engr.illinois.edu/publications/dsn08_final.pdf",
+          "finding": "Over 40% of 6,900 Windows samples reduced malicious behaviour under a VM or with a debugger attached; VM alone changed behaviour for 2.7% (167 of 6,222).",
+          "n": 6900,
+          "year": 2008
+        }
+      ]
+    },
+    {
+      "key": "debugger.debug_objects",
+      "p": 0.082,
+      "ci": [
+        0.022,
+        0.24
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "4 of 91 sourced families on windows have a cited check for this technique.",
+          "n": 4,
+          "year": 2026
+        },
+        {
+          "source": "https://ris.utwente.nl/ws/portalfiles/portal/269166759/Galloro2022systematical.pdf",
+          "finding": "Evasive techniques detected in 67.8% of Windows samples from 2010, rising to about 80% by 2019; 46 families are characterised by their choice of techniques.",
+          "n": null,
+          "year": 2022
+        },
+        {
+          "source": "https://mdbailey.web.engr.illinois.edu/publications/dsn08_final.pdf",
+          "finding": "Over 40% of 6,900 Windows samples reduced malicious behaviour under a VM or with a debugger attached; VM alone changed behaviour for 2.7% (167 of 6,222).",
+          "n": 6900,
+          "year": 2008
+        }
+      ]
+    },
+    {
+      "key": "debugger.hardware_breakpoints",
+      "p": 0.12,
+      "ci": [
+        0.03,
+        0.48
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "2 of 91 sourced families on windows have a cited check for this technique.",
+          "n": 2,
+          "year": 2026
+        },
+        {
+          "source": "https://ris.utwente.nl/ws/portalfiles/portal/269166759/Galloro2022systematical.pdf",
+          "finding": "Evasive techniques detected in 67.8% of Windows samples from 2010, rising to about 80% by 2019; 46 families are characterised by their choice of techniques.",
+          "n": null,
+          "year": 2022
+        },
+        {
+          "source": "https://mdbailey.web.engr.illinois.edu/publications/dsn08_final.pdf",
+          "finding": "Over 40% of 6,900 Windows samples reduced malicious behaviour under a VM or with a debugger attached; VM alone changed behaviour for 2.7% (167 of 6,222).",
+          "n": 6900,
+          "year": 2008
+        }
+      ]
+    },
+    {
+      "key": "debugger.exception_tricks",
+      "p": 0.075,
+      "ci": [
+        0.015,
+        0.24
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "3 of 100 sourced families on linux, windows have a cited check for this technique.",
+          "n": 3,
+          "year": 2026
+        },
+        {
+          "source": "https://ris.utwente.nl/ws/portalfiles/portal/269166759/Galloro2022systematical.pdf",
+          "finding": "Evasive techniques detected in 67.8% of Windows samples from 2010, rising to about 80% by 2019; 46 families are characterised by their choice of techniques.",
+          "n": null,
+          "year": 2022
+        },
+        {
+          "source": "https://mdbailey.web.engr.illinois.edu/publications/dsn08_final.pdf",
+          "finding": "Over 40% of 6,900 Windows samples reduced malicious behaviour under a VM or with a debugger attached; VM alone changed behaviour for 2.7% (167 of 6,222).",
+          "n": 6900,
+          "year": 2008
+        }
+      ]
+    },
+    {
+      "key": "debugger.kernel_debugger",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "2 of 107 sourced families on linux, macos, windows have a cited check for this technique.",
+          "n": 2,
+          "year": 2026
+        },
+        {
+          "source": "https://ris.utwente.nl/ws/portalfiles/portal/269166759/Galloro2022systematical.pdf",
+          "finding": "Evasive techniques detected in 67.8% of Windows samples from 2010, rising to about 80% by 2019; 46 families are characterised by their choice of techniques.",
+          "n": null,
+          "year": 2022
+        },
+        {
+          "source": "https://mdbailey.web.engr.illinois.edu/publications/dsn08_final.pdf",
+          "finding": "Over 40% of 6,900 Windows samples reduced malicious behaviour under a VM or with a debugger attached; VM alone changed behaviour for 2.7% (167 of 6,222).",
+          "n": 6900,
+          "year": 2008
+        }
+      ]
+    },
+    {
+      "key": "debugger.tracer",
+      "p": 0.189,
+      "ci": [
+        0.06,
+        0.5161
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "8 of 31 sourced families on android, ios, linux, macos have a cited check for this technique.",
+          "n": 8,
+          "year": 2026
+        },
+        {
+          "source": "https://ris.utwente.nl/ws/portalfiles/portal/269166759/Galloro2022systematical.pdf",
+          "finding": "Evasive techniques detected in 67.8% of Windows samples from 2010, rising to about 80% by 2019; 46 families are characterised by their choice of techniques.",
+          "n": null,
+          "year": 2022
+        },
+        {
+          "source": "https://mdbailey.web.engr.illinois.edu/publications/dsn08_final.pdf",
+          "finding": "Over 40% of 6,900 Windows samples reduced malicious behaviour under a VM or with a debugger attached; VM alone changed behaviour for 2.7% (167 of 6,222).",
+          "n": 6900,
+          "year": 2008
+        }
+      ]
+    },
+    {
+      "key": "instrumentation.inline_hooks",
+      "p": 0.0765,
+      "ci": [
+        0.0165,
+        0.24
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "3 of 91 sourced families on windows have a cited check for this technique.",
+          "n": 3,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "instrumentation.module_integrity",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 91 sourced families on windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "instrumentation.injected_libraries",
+      "p": 0.12,
+      "ci": [
+        0.03,
+        0.48
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 120 sourced families on android, ios, linux, macos, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "instrumentation.hooking_frameworks",
+      "p": 0.3,
+      "ci": [
+        0.075,
+        0.9
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'very_common' prior p=0.3.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "1 of 31 sourced families on android, ios, linux, macos have a cited check for this technique.",
+          "n": 1,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "instrumentation.tracing_facilities",
+      "p": 0.012,
+      "ci": [
+        0.003,
+        0.048
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'rare' prior p=0.012.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 107 sourced families on linux, macos, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "instrumentation.vmi_side_channel",
+      "p": 0.003,
+      "ci": [
+        0.0008,
+        0.012
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'research' prior p=0.003.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 100 sourced families on linux, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "network.mac_oui",
+      "p": 0.1667,
+      "ci": [
+        0.0167,
+        0.6
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'very_common' prior p=0.3.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "4 of 120 sourced families on android, ios, linux, macos, windows have a cited check for this technique.",
+          "n": 4,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "network.default_subnets",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 120 sourced families on android, linux, macos, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "network.dns_sinkhole",
+      "p": 0.12,
+      "ci": [
+        0.03,
+        0.48
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "2 of 120 sourced families on android, ios, linux, macos, windows have a cited check for this technique.",
+          "n": 2,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "network.simulated_internet",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 120 sourced families on android, ios, linux, macos, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "network.connectivity",
+      "p": 0.12,
+      "ci": [
+        0.03,
+        0.48
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "1 of 120 sourced families on android, ios, linux, macos, windows have a cited check for this technique.",
+          "n": 1,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "network.cloud_metadata",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 107 sourced families on linux, macos, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "network.public_ip_reputation",
+      "p": 0.0725,
+      "ci": [
+        0.0125,
+        0.24
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "3 of 120 sourced families on android, ios, linux, macos, windows have a cited check for this technique.",
+          "n": 3,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "network.adapter_count",
+      "p": 0.012,
+      "ci": [
+        0.003,
+        0.048
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'rare' prior p=0.012.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "1 of 107 sourced families on linux, macos, windows have a cited check for this technique.",
+          "n": 1,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "network.proxy_mitm",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 120 sourced families on android, ios, linux, macos, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "os_config.security_software",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 98 sourced families on macos, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "os_config.uac_sip",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 120 sourced families on android, linux, macos, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "os_config.boot_debug_flags",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "1 of 91 sourced families on windows have a cited check for this technique.",
+          "n": 1,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "os_config.activation_updates",
+      "p": 0.012,
+      "ci": [
+        0.003,
+        0.048
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'rare' prior p=0.012.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 98 sourced families on macos, windows have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "os_config.script_policies",
+      "p": 0.012,
+      "ci": [
+        0.003,
+        0.048
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'rare' prior p=0.012.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "1 of 91 sourced families on windows have a cited check for this technique.",
+          "n": 1,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "integrity.root",
+      "p": 0.2654,
+      "ci": [
+        0.1154,
+        0.6
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'very_common' prior p=0.3.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "3 of 13 sourced families on android have a cited check for this technique.",
+          "n": 3,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "integrity.jailbreak",
+      "p": 0.3,
+      "ci": [
+        0.075,
+        0.9
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'very_common' prior p=0.3.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 0 sourced families on ios have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "integrity.debuggable_build",
+      "p": 0.12,
+      "ci": [
+        0.03,
+        0.48
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 13 sourced families on android have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "integrity.bootloader",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 13 sourced families on android have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "integrity.developer_settings",
+      "p": 0.12,
+      "ci": [
+        0.03,
+        0.48
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'common' prior p=0.12.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "2 of 13 sourced families on android have a cited check for this technique.",
+          "n": 2,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "integrity.selinux",
+      "p": 0.04,
+      "ci": [
+        0.01,
+        0.16
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'occasional' prior p=0.04.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 24 sourced families on android, linux have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    },
+    {
+      "key": "integrity.accessibility_overrides",
+      "p": 0.012,
+      "ci": [
+        0.003,
+        0.048
+      ],
+      "basis": [
+        {
+          "source": "catalog/classes.json",
+          "finding": "Tier 'rare' prior p=0.012.",
+          "n": null,
+          "year": 2026
+        },
+        {
+          "source": "catalog/threats.json",
+          "finding": "0 of 13 sourced families on android have a cited check for this technique.",
+          "n": 0,
+          "year": 2026
+        }
+      ]
+    }
+  ]
+}
