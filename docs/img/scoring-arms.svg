@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 420" width="800" height="420" role="img" aria-labelledby="t d" font-family="system-ui,-apple-system,Segoe UI,sans-serif">
+<title id="t">Score of each hardening arm under four scoring models</title>
+<desc id="d">Arms H1 to H3b are successive hardening steps of one Xen sandbox, each measured five times with Perdedor and al-khaser. The v1 formula and the weighted pass rate stay between 95 and 99 for every arm; the exposure models spread the arms from under 10 to about 60.</desc>
+<style>
+:root{--bg:#fcfcfb;--ink:#1f1f1e;--ink2:#5c5b55;--grid:#e4e3df;--s0:#2a78d6;--s1:#eb6834;--s2:#1baf7a;--s3:#eda100;}
+@media (prefers-color-scheme:dark){:root{--bg:#1a1a19;--ink:#f0efec;--ink2:#c3c2b7;--grid:#3a3936;--s0:#3987e5;--s1:#d95926;--s2:#199e70;--s3:#c98500;}}
+.bg{fill:var(--bg)} .t{fill:var(--ink);font-size:15px;font-weight:600} .a{fill:var(--ink2);font-size:12px} .g{stroke:var(--grid);stroke-width:1} .l{fill:var(--ink);font-size:12px}
+</style>
+<rect class="bg" width="800" height="420" rx="8"/>
+<text class="t" x="56" y="26">Same experiments, four scoring models</text>
+<text class="a" x="56" y="44">Median of 5 scans per arm; higher = better hidden. Arms left to right = fixes applied.</text>
+<line class="g" x1="56" x2="600" y1="364.0" y2="364.0"/>
+<text class="a" x="48" y="368.0" text-anchor="end">0</text>
+<line class="g" x1="56" x2="600" y1="287.0" y2="287.0"/>
+<text class="a" x="48" y="291.0" text-anchor="end">25</text>
+<line class="g" x1="56" x2="600" y1="210.0" y2="210.0"/>
+<text class="a" x="48" y="214.0" text-anchor="end">50</text>
+<line class="g" x1="56" x2="600" y1="133.0" y2="133.0"/>
+<text class="a" x="48" y="137.0" text-anchor="end">75</text>
+<line class="g" x1="56" x2="600" y1="56.0" y2="56.0"/>
+<text class="a" x="48" y="60.0" text-anchor="end">100</text>
+<text class="a" x="56.0" y="384" text-anchor="middle">H1</text>
+<text class="a" x="124.0" y="384" text-anchor="middle">H1S</text>
+<text class="a" x="192.0" y="384" text-anchor="middle">H1SH</text>
+<text class="a" x="260.0" y="384" text-anchor="middle">H2a</text>
+<text class="a" x="328.0" y="384" text-anchor="middle">H2b</text>
+<text class="a" x="396.0" y="384" text-anchor="middle">H2c</text>
+<text class="a" x="464.0" y="384" text-anchor="middle">H3a</text>
+<text class="a" x="532.0" y="384" text-anchor="middle">H3b</text>
+<text class="a" x="600.0" y="384" text-anchor="middle">H3b+clk</text>
+<path d="M56.0,65.2 L124.0,64.1 L192.0,63.4 L260.0,61.8 L328.0,61.7 L396.0,61.2 L464.0,61.6 L532.0,61.1 L600.0,61.6" fill="none" stroke="var(--s0)" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="56.0" cy="65.2" r="4" fill="var(--s0)" stroke="var(--bg)" stroke-width="2"><title>M0 v1 formula — H1: 97.0</title></circle>
+<circle cx="124.0" cy="64.1" r="4" fill="var(--s0)" stroke="var(--bg)" stroke-width="2"><title>M0 v1 formula — H1S: 97.4</title></circle>
+<circle cx="192.0" cy="63.4" r="4" fill="var(--s0)" stroke="var(--bg)" stroke-width="2"><title>M0 v1 formula — H1SH: 97.6</title></circle>
+<circle cx="260.0" cy="61.8" r="4" fill="var(--s0)" stroke="var(--bg)" stroke-width="2"><title>M0 v1 formula — H2a: 98.1</title></circle>
+<circle cx="328.0" cy="61.7" r="4" fill="var(--s0)" stroke="var(--bg)" stroke-width="2"><title>M0 v1 formula — H2b: 98.1</title></circle>
+<circle cx="396.0" cy="61.2" r="4" fill="var(--s0)" stroke="var(--bg)" stroke-width="2"><title>M0 v1 formula — H2c: 98.3</title></circle>
+<circle cx="464.0" cy="61.6" r="4" fill="var(--s0)" stroke="var(--bg)" stroke-width="2"><title>M0 v1 formula — H3a: 98.2</title></circle>
+<circle cx="532.0" cy="61.1" r="4" fill="var(--s0)" stroke="var(--bg)" stroke-width="2"><title>M0 v1 formula — H3b: 98.4</title></circle>
+<circle cx="600.0" cy="61.6" r="4" fill="var(--s0)" stroke="var(--bg)" stroke-width="2"><title>M0 v1 formula — H3b+clock: 98.2</title></circle>
+<path d="M56.0,71.8 L124.0,69.9 L192.0,68.7 L260.0,66.0 L328.0,65.9 L396.0,64.9 L464.0,65.6 L532.0,64.7 L600.0,65.6" fill="none" stroke="var(--s1)" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="56.0" cy="71.8" r="4" fill="var(--s1)" stroke="var(--bg)" stroke-width="2"><title>M1 weighted pass rate — H1: 94.9</title></circle>
+<circle cx="124.0" cy="69.9" r="4" fill="var(--s1)" stroke="var(--bg)" stroke-width="2"><title>M1 weighted pass rate — H1S: 95.5</title></circle>
+<circle cx="192.0" cy="68.7" r="4" fill="var(--s1)" stroke="var(--bg)" stroke-width="2"><title>M1 weighted pass rate — H1SH: 95.9</title></circle>
+<circle cx="260.0" cy="66.0" r="4" fill="var(--s1)" stroke="var(--bg)" stroke-width="2"><title>M1 weighted pass rate — H2a: 96.7</title></circle>
+<circle cx="328.0" cy="65.9" r="4" fill="var(--s1)" stroke="var(--bg)" stroke-width="2"><title>M1 weighted pass rate — H2b: 96.8</title></circle>
+<circle cx="396.0" cy="64.9" r="4" fill="var(--s1)" stroke="var(--bg)" stroke-width="2"><title>M1 weighted pass rate — H2c: 97.1</title></circle>
+<circle cx="464.0" cy="65.6" r="4" fill="var(--s1)" stroke="var(--bg)" stroke-width="2"><title>M1 weighted pass rate — H3a: 96.9</title></circle>
+<circle cx="532.0" cy="64.7" r="4" fill="var(--s1)" stroke="var(--bg)" stroke-width="2"><title>M1 weighted pass rate — H3b: 97.2</title></circle>
+<circle cx="600.0" cy="65.6" r="4" fill="var(--s1)" stroke="var(--bg)" stroke-width="2"><title>M1 weighted pass rate — H3b+clock: 96.9</title></circle>
+<path d="M56.0,337.8 L124.0,312.1 L192.0,299.4 L260.0,208.6 L328.0,210.6 L396.0,190.9 L464.0,199.7 L532.0,181.0 L600.0,199.7" fill="none" stroke="var(--s2)" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="56.0" cy="337.8" r="4" fill="var(--s2)" stroke="var(--bg)" stroke-width="2"><title>M3 measured only — H1: 8.5</title></circle>
+<circle cx="124.0" cy="312.1" r="4" fill="var(--s2)" stroke="var(--bg)" stroke-width="2"><title>M3 measured only — H1S: 16.9</title></circle>
+<circle cx="192.0" cy="299.4" r="4" fill="var(--s2)" stroke="var(--bg)" stroke-width="2"><title>M3 measured only — H1SH: 21.0</title></circle>
+<circle cx="260.0" cy="208.6" r="4" fill="var(--s2)" stroke="var(--bg)" stroke-width="2"><title>M3 measured only — H2a: 50.5</title></circle>
+<circle cx="328.0" cy="210.6" r="4" fill="var(--s2)" stroke="var(--bg)" stroke-width="2"><title>M3 measured only — H2b: 49.8</title></circle>
+<circle cx="396.0" cy="190.9" r="4" fill="var(--s2)" stroke="var(--bg)" stroke-width="2"><title>M3 measured only — H2c: 56.2</title></circle>
+<circle cx="464.0" cy="199.7" r="4" fill="var(--s2)" stroke="var(--bg)" stroke-width="2"><title>M3 measured only — H3a: 53.4</title></circle>
+<circle cx="532.0" cy="181.0" r="4" fill="var(--s2)" stroke="var(--bg)" stroke-width="2"><title>M3 measured only — H3b: 59.4</title></circle>
+<circle cx="600.0" cy="199.7" r="4" fill="var(--s2)" stroke="var(--bg)" stroke-width="2"><title>M3 measured only — H3b+clock: 53.4</title></circle>
+<path d="M56.0,350.7 L124.0,334.8 L192.0,324.5 L260.0,261.5 L328.0,265.7 L396.0,246.3 L464.0,250.8 L532.0,235.4 L600.0,250.8" fill="none" stroke="var(--s3)" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="56.0" cy="350.7" r="4" fill="var(--s3)" stroke="var(--bg)" stroke-width="2"><title>PEM-1 (chosen) — H1: 4.3</title></circle>
+<circle cx="124.0" cy="334.8" r="4" fill="var(--s3)" stroke="var(--bg)" stroke-width="2"><title>PEM-1 (chosen) — H1S: 9.5</title></circle>
+<circle cx="192.0" cy="324.5" r="4" fill="var(--s3)" stroke="var(--bg)" stroke-width="2"><title>PEM-1 (chosen) — H1SH: 12.8</title></circle>
+<circle cx="260.0" cy="261.5" r="4" fill="var(--s3)" stroke="var(--bg)" stroke-width="2"><title>PEM-1 (chosen) — H2a: 33.3</title></circle>
+<circle cx="328.0" cy="265.7" r="4" fill="var(--s3)" stroke="var(--bg)" stroke-width="2"><title>PEM-1 (chosen) — H2b: 31.9</title></circle>
+<circle cx="396.0" cy="246.3" r="4" fill="var(--s3)" stroke="var(--bg)" stroke-width="2"><title>PEM-1 (chosen) — H2c: 38.2</title></circle>
+<circle cx="464.0" cy="250.8" r="4" fill="var(--s3)" stroke="var(--bg)" stroke-width="2"><title>PEM-1 (chosen) — H3a: 36.8</title></circle>
+<circle cx="532.0" cy="235.4" r="4" fill="var(--s3)" stroke="var(--bg)" stroke-width="2"><title>PEM-1 (chosen) — H3b: 41.8</title></circle>
+<circle cx="600.0" cy="250.8" r="4" fill="var(--s3)" stroke="var(--bg)" stroke-width="2"><title>PEM-1 (chosen) — H3b+clock: 36.8</title></circle>
+<rect x="612" y="56.6" width="10" height="10" rx="2" fill="var(--s0)"/>
+<text class="l" x="628" y="65.6">M0 v1 formula (98)</text>
+<rect x="612" y="72.6" width="10" height="10" rx="2" fill="var(--s1)"/>
+<text class="l" x="628" y="81.6">M1 weighted pass rate (97)</text>
+<rect x="612" y="194.7" width="10" height="10" rx="2" fill="var(--s2)"/>
+<text class="l" x="628" y="203.7">M3 measured only (53)</text>
+<rect x="612" y="245.8" width="10" height="10" rx="2" fill="var(--s3)"/>
+<text class="l" x="628" y="254.8">PEM-1 (chosen) (37)</text>
+</svg>
