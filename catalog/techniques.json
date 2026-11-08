@@ -1,0 +1,2319 @@
+{
+ "catalog_format": 2,
+ "description": "Cross-platform technique vocabulary. Checks implement techniques; threat families use techniques. discrimination = how decisive a positive is (1 = only virtual/analysis environments show it); tier = how widely malware uses it (see classes.json prevalence_tiers).",
+ "techniques": [
+  {
+   "key": "cpu.hypervisor_bit",
+   "class": "cpu",
+   "title": "CPUID leaf 1 ECX bit 31 (hypervisor present)",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.95,
+   "tier": "very_common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos"
+   ]
+  },
+  {
+   "key": "cpu.hypervisor_vendor_leaf",
+   "class": "cpu",
+   "title": "CPUID 0x40000000 hypervisor vendor signature",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.98,
+   "tier": "very_common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos"
+   ]
+  },
+  {
+   "key": "cpu.hypervisor_leaf_range",
+   "class": "cpu",
+   "title": "Hypervisor leaves beyond 0x40000000 (relocated Xen/Viridian/KVM ranges)",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.9,
+   "tier": "occasional",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos"
+   ]
+  },
+  {
+   "key": "cpu.brand_string",
+   "class": "cpu",
+   "title": "CPUID brand string names a virtual CPU",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.95,
+   "tier": "common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos"
+   ]
+  },
+  {
+   "key": "cpu.feature_consistency",
+   "class": "cpu",
+   "title": "CPUID feature bits inconsistent with the claimed CPU model",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.6,
+   "tier": "rare",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos"
+   ]
+  },
+  {
+   "key": "cpu.topology_consistency",
+   "class": "cpu",
+   "title": "Core/thread topology impossible for the claimed CPU model",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.55,
+   "tier": "rare",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos"
+   ]
+  },
+  {
+   "key": "cpu.descriptor_tables",
+   "class": "cpu",
+   "title": "SIDT/SGDT/SLDT/STR/SMSW values (Red Pill family)",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.25,
+   "tier": "occasional",
+   "platforms": [
+    "windows",
+    "linux"
+   ]
+  },
+  {
+   "key": "cpu.vmware_backdoor",
+   "class": "cpu",
+   "title": "VMware backdoor I/O port 0x5658 answers",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.99,
+   "tier": "common",
+   "platforms": [
+    "windows",
+    "linux"
+   ]
+  },
+  {
+   "key": "cpu.undefined_instruction_behaviour",
+   "class": "cpu",
+   "title": "Hypervisor-specific behaviour of VMCALL/VMMCALL/VirtualPC opcodes",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.8,
+   "tier": "rare",
+   "platforms": [
+    "windows",
+    "linux"
+   ]
+  },
+  {
+   "key": "cpu.emulation_quirks",
+   "class": "cpu",
+   "title": "Instruction semantics that differ under a CPU emulator (TCG/Bochs)",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0004"
+   ],
+   "discrimination": 0.85,
+   "tier": "rare",
+   "platforms": [
+    "windows",
+    "linux",
+    "android"
+   ]
+  },
+  {
+   "key": "firmware.smbios_strings",
+   "class": "firmware",
+   "title": "SMBIOS vendor, product, version and BIOS strings name a hypervisor",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.95,
+   "tier": "very_common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos"
+   ]
+  },
+  {
+   "key": "firmware.smbios_raw_table",
+   "class": "firmware",
+   "title": "Raw SMBIOS table bytes contain hypervisor strings",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.95,
+   "tier": "common",
+   "platforms": [
+    "windows",
+    "linux"
+   ]
+  },
+  {
+   "key": "firmware.smbios_serials_uuid",
+   "class": "firmware",
+   "title": "Serial numbers / system UUID empty, default or in a hypervisor pattern",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.7,
+   "tier": "common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos"
+   ]
+  },
+  {
+   "key": "firmware.acpi_tables",
+   "class": "firmware",
+   "title": "ACPI table OEM IDs/strings and table set (BOCHS, BXPC, Xen, VBOX...)",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.9,
+   "tier": "common",
+   "platforms": [
+    "windows",
+    "linux"
+   ]
+  },
+  {
+   "key": "firmware.bios_metadata",
+   "class": "firmware",
+   "title": "BIOS vendor/date/version typical of SeaBIOS/OVMF/hvmloader",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.8,
+   "tier": "common",
+   "platforms": [
+    "windows",
+    "linux"
+   ]
+  },
+  {
+   "key": "firmware.boot_mode",
+   "class": "firmware",
+   "title": "Legacy BIOS boot, missing TPM or Secure Boot where real hardware has them",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.35,
+   "tier": "occasional",
+   "platforms": [
+    "windows"
+   ]
+  },
+  {
+   "key": "hardware.pci_vendor_ids",
+   "class": "hardware",
+   "title": "PCI/PnP vendor IDs of virtual devices (virtio, Xen, VMware, VirtualBox...)",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.95,
+   "tier": "common",
+   "platforms": [
+    "windows",
+    "linux"
+   ]
+  },
+  {
+   "key": "hardware.disk_identity",
+   "class": "hardware",
+   "title": "Disk model/serial/vendor names a virtual disk",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.9,
+   "tier": "very_common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos"
+   ]
+  },
+  {
+   "key": "hardware.nic_identity",
+   "class": "hardware",
+   "title": "Network adapter names a virtual NIC",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.85,
+   "tier": "common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos"
+   ]
+  },
+  {
+   "key": "hardware.gpu_identity",
+   "class": "hardware",
+   "title": "GPU / display adapter names a virtual adapter (or none)",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.85,
+   "tier": "common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos"
+   ]
+  },
+  {
+   "key": "hardware.monitor_edid",
+   "class": "hardware",
+   "title": "Monitors without EDID or with a default/virtual monitor identity",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.6,
+   "tier": "occasional",
+   "platforms": [
+    "windows"
+   ]
+  },
+  {
+   "key": "hardware.audio_devices",
+   "class": "hardware",
+   "title": "No audio device, or a virtual one",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.4,
+   "tier": "occasional",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos"
+   ]
+  },
+  {
+   "key": "hardware.usb_devices",
+   "class": "hardware",
+   "title": "Few or virtual USB controllers/devices (QEMU tablet, VirtualBox USB)",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.55,
+   "tier": "occasional",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos"
+   ]
+  },
+  {
+   "key": "hardware.input_devices",
+   "class": "hardware",
+   "title": "Virtual pointing/keyboard devices (VMware mouse, QEMU tablet, Xen input)",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.7,
+   "tier": "occasional",
+   "platforms": [
+    "windows",
+    "linux"
+   ]
+  },
+  {
+   "key": "hardware.thermal_sensors",
+   "class": "hardware",
+   "title": "No thermal zones, temperature probes or CPU fans",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.5,
+   "tier": "occasional",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos"
+   ]
+  },
+  {
+   "key": "hardware.battery_power",
+   "class": "hardware",
+   "title": "Power/battery capabilities absent or implausible for the identity",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.3,
+   "tier": "occasional",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos",
+    "android"
+   ]
+  },
+  {
+   "key": "hardware.memory_modules",
+   "class": "hardware",
+   "title": "Physical memory modules missing manufacturer/serial/speed",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.5,
+   "tier": "rare",
+   "platforms": [
+    "windows",
+    "linux"
+   ]
+  },
+  {
+   "key": "hardware.cpu_cache_clock",
+   "class": "hardware",
+   "title": "CPU cache sizes or clock speeds implausible (zero L2/L3, fixed clock)",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.45,
+   "tier": "rare",
+   "platforms": [
+    "windows",
+    "linux"
+   ]
+  },
+  {
+   "key": "hardware.port_connectors",
+   "class": "hardware",
+   "title": "No physical port connectors reported",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.4,
+   "tier": "rare",
+   "platforms": [
+    "windows"
+   ]
+  },
+  {
+   "key": "hardware.ghost_devices",
+   "class": "hardware",
+   "title": "Non-present (previously attached) virtual devices remain enumerated",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.7,
+   "tier": "rare",
+   "platforms": [
+    "windows"
+   ]
+  },
+  {
+   "key": "resources.cpu_count",
+   "class": "resources",
+   "title": "Too few logical processors",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.3,
+   "tier": "very_common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos",
+    "android"
+   ]
+  },
+  {
+   "key": "resources.memory_size",
+   "class": "resources",
+   "title": "Too little physical memory",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.3,
+   "tier": "very_common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos",
+    "android"
+   ]
+  },
+  {
+   "key": "resources.disk_size",
+   "class": "resources",
+   "title": "Small system disk",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.35,
+   "tier": "very_common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos",
+    "android"
+   ]
+  },
+  {
+   "key": "resources.screen",
+   "class": "resources",
+   "title": "Low or default screen resolution / single tiny display",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.25,
+   "tier": "occasional",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos",
+    "android"
+   ]
+  },
+  {
+   "key": "guest_tools.services",
+   "class": "guest_tools",
+   "title": "Guest-integration services installed or running",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.95,
+   "tier": "very_common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos"
+   ]
+  },
+  {
+   "key": "guest_tools.drivers_modules",
+   "class": "guest_tools",
+   "title": "Paravirtual / guest drivers or kernel modules loaded",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.95,
+   "tier": "very_common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos"
+   ]
+  },
+  {
+   "key": "guest_tools.processes",
+   "class": "guest_tools",
+   "title": "Guest-tool processes running (vmtoolsd, VBoxService, xenservice...)",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.95,
+   "tier": "very_common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos"
+   ]
+  },
+  {
+   "key": "artifacts.registry",
+   "class": "artifacts",
+   "title": "Registry keys/values left by virtualisation software",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.95,
+   "tier": "very_common",
+   "platforms": [
+    "windows"
+   ]
+  },
+  {
+   "key": "artifacts.files",
+   "class": "artifacts",
+   "title": "Files and directories left by virtualisation or sandbox software",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009",
+    "B0007"
+   ],
+   "discrimination": 0.9,
+   "tier": "very_common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos",
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "key": "artifacts.named_objects",
+   "class": "artifacts",
+   "title": "Named pipes, devices and mutexes of hypervisors or sandboxes",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009",
+    "B0007"
+   ],
+   "discrimination": 0.95,
+   "tier": "common",
+   "platforms": [
+    "windows"
+   ]
+  },
+  {
+   "key": "artifacts.window_classes",
+   "class": "artifacts",
+   "title": "Window classes/titles of guest tools",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.95,
+   "tier": "common",
+   "platforms": [
+    "windows"
+   ]
+  },
+  {
+   "key": "artifacts.kernel_messages",
+   "class": "artifacts",
+   "title": "Kernel log / boot messages naming a hypervisor",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.85,
+   "tier": "occasional",
+   "platforms": [
+    "linux"
+   ]
+  },
+  {
+   "key": "artifacts.hypervisor_interfaces",
+   "class": "artifacts",
+   "title": "Hypervisor interfaces exposed to the guest (/sys/hypervisor, /proc/xen, Hyper-V objects)",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.9,
+   "tier": "occasional",
+   "platforms": [
+    "windows",
+    "linux"
+   ]
+  },
+  {
+   "key": "container.container_runtime",
+   "class": "container",
+   "title": "Container runtime markers (/.dockerenv, cgroups, overlay root)",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.9,
+   "tier": "common",
+   "platforms": [
+    "linux"
+   ]
+  },
+  {
+   "key": "container.wsl",
+   "class": "container",
+   "title": "Windows Subsystem for Linux",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.95,
+   "tier": "occasional",
+   "platforms": [
+    "linux"
+   ]
+  },
+  {
+   "key": "container.app_sandbox",
+   "class": "container",
+   "title": "Application sandbox (Sandboxie, Windows Sandbox, Deep Freeze, firejail, bwrap)",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.95,
+   "tier": "common",
+   "platforms": [
+    "windows",
+    "linux"
+   ]
+  },
+  {
+   "key": "container.virtualisation_report",
+   "class": "container",
+   "title": "OS virtualisation self-report (systemd-detect-virt, HypervisorPresent, kern.hv_vmm_present)",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.95,
+   "tier": "common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos"
+   ]
+  },
+  {
+   "key": "emulator.wine",
+   "class": "emulator",
+   "title": "Wine compatibility layer",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0004"
+   ],
+   "discrimination": 0.98,
+   "tier": "occasional",
+   "platforms": [
+    "windows"
+   ]
+  },
+  {
+   "key": "emulator.android_properties",
+   "class": "emulator",
+   "title": "Android build properties of an emulator (ro.kernel.qemu, ro.hardware=ranchu...)",
+   "attack": [
+    "T1633.001"
+   ],
+   "mbc": [
+    "B0004"
+   ],
+   "discrimination": 0.95,
+   "tier": "very_common",
+   "platforms": [
+    "android"
+   ]
+  },
+  {
+   "key": "emulator.android_files",
+   "class": "emulator",
+   "title": "Emulator device nodes, sockets and init files (qemud, goldfish_pipe, init.ranchu.rc)",
+   "attack": [
+    "T1633.001"
+   ],
+   "mbc": [
+    "B0004"
+   ],
+   "discrimination": 0.95,
+   "tier": "very_common",
+   "platforms": [
+    "android"
+   ]
+  },
+  {
+   "key": "emulator.android_vendor_emulators",
+   "class": "emulator",
+   "title": "Commercial emulator markers (Genymotion, BlueStacks, Nox, MEmu, LDPlayer...)",
+   "attack": [
+    "T1633.001"
+   ],
+   "mbc": [
+    "B0004"
+   ],
+   "discrimination": 0.95,
+   "tier": "common",
+   "platforms": [
+    "android"
+   ]
+  },
+  {
+   "key": "emulator.binary_translation",
+   "class": "emulator",
+   "title": "ARM-on-x86 binary translation (libhoudini/libndk_translation) or x86 ABI",
+   "attack": [
+    "T1633.001"
+   ],
+   "mbc": [
+    "B0004"
+   ],
+   "discrimination": 0.75,
+   "tier": "common",
+   "platforms": [
+    "android"
+   ]
+  },
+  {
+   "key": "emulator.android_build_identity",
+   "class": "emulator",
+   "title": "Generic build identity (sdk_gphone, generic, test-keys, userdebug)",
+   "attack": [
+    "T1633.001"
+   ],
+   "mbc": [
+    "B0004"
+   ],
+   "discrimination": 0.85,
+   "tier": "very_common",
+   "platforms": [
+    "android"
+   ]
+  },
+  {
+   "key": "emulator.ios_simulator",
+   "class": "emulator",
+   "title": "iOS Simulator or Corellium virtual device markers",
+   "attack": [
+    "T1633.001"
+   ],
+   "mbc": [
+    "B0004"
+   ],
+   "discrimination": 0.95,
+   "tier": "common",
+   "platforms": [
+    "ios"
+   ]
+  },
+  {
+   "key": "emulator.macos_virtual_model",
+   "class": "emulator",
+   "title": "macOS virtual hardware model (VirtualMac, VMware7,1, Parallels)",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.98,
+   "tier": "common",
+   "platforms": [
+    "macos"
+   ]
+  },
+  {
+   "key": "mobile_device.telephony",
+   "class": "mobile_device",
+   "title": "SIM, IMEI, operator and phone number of an emulator",
+   "attack": [
+    "T1633.001"
+   ],
+   "mbc": [
+    "B0004"
+   ],
+   "discrimination": 0.9,
+   "tier": "very_common",
+   "platforms": [
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "key": "mobile_device.sensors",
+   "class": "mobile_device",
+   "title": "Missing or emulator-vendor sensors (accelerometer, gyroscope, step counter)",
+   "attack": [
+    "T1633.001"
+   ],
+   "mbc": [
+    "B0004"
+   ],
+   "discrimination": 0.8,
+   "tier": "common",
+   "platforms": [
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "key": "mobile_device.sensor_activity",
+   "class": "mobile_device",
+   "title": "Sensors report no motion (static accelerometer)",
+   "attack": [
+    "T1633.001"
+   ],
+   "mbc": [
+    "B0004"
+   ],
+   "discrimination": 0.6,
+   "tier": "occasional",
+   "platforms": [
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "key": "mobile_device.radios",
+   "class": "mobile_device",
+   "title": "No Bluetooth/Wi-Fi/NFC hardware or emulator radio interfaces",
+   "attack": [
+    "T1633.001"
+   ],
+   "mbc": [
+    "B0004"
+   ],
+   "discrimination": 0.6,
+   "tier": "occasional",
+   "platforms": [
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "key": "mobile_device.camera",
+   "class": "mobile_device",
+   "title": "No camera or an emulator virtual camera",
+   "attack": [
+    "T1633.001"
+   ],
+   "mbc": [
+    "B0004"
+   ],
+   "discrimination": 0.5,
+   "tier": "occasional",
+   "platforms": [
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "key": "mobile_device.battery",
+   "class": "mobile_device",
+   "title": "Battery level/temperature/charging state constant at emulator defaults",
+   "attack": [
+    "T1633.001"
+   ],
+   "mbc": [
+    "B0004"
+   ],
+   "discrimination": 0.6,
+   "tier": "common",
+   "platforms": [
+    "android"
+   ]
+  },
+  {
+   "key": "timing.cpuid_vmexit",
+   "class": "timing",
+   "title": "RDTSC around CPUID shows VM-exit cost",
+   "attack": [
+    "T1497.003",
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.85,
+   "tier": "common",
+   "platforms": [
+    "windows",
+    "linux"
+   ]
+  },
+  {
+   "key": "timing.rdtsc_api_ratio",
+   "class": "timing",
+   "title": "RDTSC ratio between cheap and trapping APIs (Locky-style)",
+   "attack": [
+    "T1497.003"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.6,
+   "tier": "occasional",
+   "platforms": [
+    "windows"
+   ]
+  },
+  {
+   "key": "timing.tsc_stability",
+   "class": "timing",
+   "title": "TSC frequency/consistency against other clocks",
+   "attack": [
+    "T1497.003"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.6,
+   "tier": "rare",
+   "platforms": [
+    "windows",
+    "linux"
+   ]
+  },
+  {
+   "key": "timing.sleep_acceleration",
+   "class": "timing",
+   "title": "Sleep skipping/acceleration: clocks disagree across a sleep",
+   "attack": [
+    "T1497.003"
+   ],
+   "mbc": [
+    "B0007",
+    "B0003"
+   ],
+   "discrimination": 0.9,
+   "tier": "very_common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos",
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "key": "timing.clock_source",
+   "class": "timing",
+   "title": "Paravirtual clock source (kvm-clock, xen, hyperv) in use",
+   "attack": [
+    "T1497.003",
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.9,
+   "tier": "occasional",
+   "platforms": [
+    "linux"
+   ]
+  },
+  {
+   "key": "timing.uptime",
+   "class": "timing",
+   "title": "System booted shortly before the sample started",
+   "attack": [
+    "T1497.003",
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.35,
+   "tier": "very_common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos",
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "key": "timing.time_plausibility",
+   "class": "timing",
+   "title": "System time / time zone implausible (default date, UTC, NTP absent)",
+   "attack": [
+    "T1497.003"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.3,
+   "tier": "occasional",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos",
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "key": "timing.instrumentation_latency",
+   "class": "timing",
+   "title": "System-call / API latency inflated by tracing (VMI or hooks)",
+   "attack": [
+    "T1497.003"
+   ],
+   "mbc": [
+    "B0003"
+   ],
+   "discrimination": 0.7,
+   "tier": "research",
+   "platforms": [
+    "windows",
+    "linux"
+   ]
+  },
+  {
+   "key": "human.mouse_activity",
+   "class": "human",
+   "title": "No mouse movement or human-like cursor trajectories",
+   "attack": [
+    "T1497.002"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.6,
+   "tier": "very_common",
+   "platforms": [
+    "windows",
+    "macos"
+   ]
+  },
+  {
+   "key": "human.clicks_keyboard",
+   "class": "human",
+   "title": "No clicks or keystrokes within a waiting window",
+   "attack": [
+    "T1497.002"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.55,
+   "tier": "common",
+   "platforms": [
+    "windows",
+    "macos"
+   ]
+  },
+  {
+   "key": "human.idle_time",
+   "class": "human",
+   "title": "Input idle time shows nobody is at the machine",
+   "attack": [
+    "T1497.002"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.5,
+   "tier": "occasional",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos"
+   ]
+  },
+  {
+   "key": "human.foreground_activity",
+   "class": "human",
+   "title": "Foreground window never changes; few top-level windows",
+   "attack": [
+    "T1497.002"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.45,
+   "tier": "occasional",
+   "platforms": [
+    "windows",
+    "macos"
+   ]
+  },
+  {
+   "key": "wear_and_tear.browser_history",
+   "class": "wear_and_tear",
+   "title": "Little or no browser history, cookies or profiles",
+   "attack": [
+    "T1497.002"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.55,
+   "tier": "common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos",
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "key": "wear_and_tear.recent_files",
+   "class": "wear_and_tear",
+   "title": "No recently used documents / shell recents / MRU lists",
+   "attack": [
+    "T1497.002"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.5,
+   "tier": "common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos"
+   ]
+  },
+  {
+   "key": "wear_and_tear.installed_software",
+   "class": "wear_and_tear",
+   "title": "Few installed programs or apps",
+   "attack": [
+    "T1497.002"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.45,
+   "tier": "common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos",
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "key": "wear_and_tear.user_files",
+   "class": "wear_and_tear",
+   "title": "Empty Desktop/Documents/Downloads/Pictures",
+   "attack": [
+    "T1497.002"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.45,
+   "tier": "common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos",
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "key": "wear_and_tear.system_logs",
+   "class": "wear_and_tear",
+   "title": "Small or young event logs / journal",
+   "attack": [
+    "T1497.002"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.4,
+   "tier": "rare",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos"
+   ]
+  },
+  {
+   "key": "wear_and_tear.usage_traces",
+   "class": "wear_and_tear",
+   "title": "Usage traces (UserAssist, prefetch, MUICache, shell bags, app usage stats)",
+   "attack": [
+    "T1497.002"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.4,
+   "tier": "rare",
+   "platforms": [
+    "windows",
+    "macos",
+    "android"
+   ]
+  },
+  {
+   "key": "wear_and_tear.system_age",
+   "class": "wear_and_tear",
+   "title": "OS installed recently; few updates or reboots",
+   "attack": [
+    "T1497.002"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.35,
+   "tier": "occasional",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos",
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "key": "wear_and_tear.network_history",
+   "class": "wear_and_tear",
+   "title": "No DNS/ARP cache entries, Wi-Fi profiles or network shares",
+   "attack": [
+    "T1497.002"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.35,
+   "tier": "rare",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos",
+    "android"
+   ]
+  },
+  {
+   "key": "wear_and_tear.peripherals_history",
+   "class": "wear_and_tear",
+   "title": "No USB storage / Bluetooth / printer history",
+   "attack": [
+    "T1497.002"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.35,
+   "tier": "rare",
+   "platforms": [
+    "windows",
+    "macos"
+   ]
+  },
+  {
+   "key": "wear_and_tear.personal_data",
+   "class": "wear_and_tear",
+   "title": "No contacts, messages, call log, photos or accounts",
+   "attack": [
+    "T1497.002"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.55,
+   "tier": "common",
+   "platforms": [
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "key": "wear_and_tear.process_count",
+   "class": "wear_and_tear",
+   "title": "Few running processes for a desktop",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.3,
+   "tier": "common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos"
+   ]
+  },
+  {
+   "key": "wear_and_tear.fonts",
+   "class": "wear_and_tear",
+   "title": "Small font set",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.25,
+   "tier": "rare",
+   "platforms": [
+    "windows",
+    "linux"
+   ]
+  },
+  {
+   "key": "identity.username",
+   "class": "identity",
+   "title": "User name on public sandbox lists or generic",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.75,
+   "tier": "very_common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos"
+   ]
+  },
+  {
+   "key": "identity.hostname",
+   "class": "identity",
+   "title": "Computer name on public sandbox lists or generic",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.75,
+   "tier": "very_common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos"
+   ]
+  },
+  {
+   "key": "identity.sample_path",
+   "class": "identity",
+   "title": "Sample runs from a sandbox-like path/name (hash name, sample.exe, C:\\analysis)",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.65,
+   "tier": "common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos"
+   ]
+  },
+  {
+   "key": "identity.parent_process",
+   "class": "identity",
+   "title": "Unexpected parent process / launch method",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.5,
+   "tier": "occasional",
+   "platforms": [
+    "windows",
+    "linux"
+   ]
+  },
+  {
+   "key": "identity.locale",
+   "class": "identity",
+   "title": "Language, keyboard layout and region (also CIS guardrails)",
+   "attack": [
+    "T1614.001",
+    "T1480"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.2,
+   "tier": "very_common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos",
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "key": "identity.domain_membership",
+   "class": "identity",
+   "title": "Workgroup/standalone where the target expects a domain",
+   "attack": [
+    "T1480"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.2,
+   "tier": "occasional",
+   "platforms": [
+    "windows"
+   ]
+  },
+  {
+   "key": "identity.environment_variables",
+   "class": "identity",
+   "title": "Environment variables set by sandboxes/analysis agents",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.7,
+   "tier": "occasional",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos"
+   ]
+  },
+  {
+   "key": "analysis_tools.processes",
+   "class": "analysis_tools",
+   "title": "Analysis tool processes (debuggers, monitors, sniffers, sandbox agents)",
+   "attack": [
+    "T1057",
+    "T1518.001"
+   ],
+   "mbc": [
+    "B0013"
+   ],
+   "discrimination": 0.85,
+   "tier": "very_common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos",
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "key": "analysis_tools.windows",
+   "class": "analysis_tools",
+   "title": "Analysis tool windows / classes",
+   "attack": [
+    "T1010"
+   ],
+   "mbc": [
+    "B0013"
+   ],
+   "discrimination": 0.85,
+   "tier": "common",
+   "platforms": [
+    "windows"
+   ]
+  },
+  {
+   "key": "analysis_tools.files",
+   "class": "analysis_tools",
+   "title": "Analysis tool files, folders and installations",
+   "attack": [
+    "T1083"
+   ],
+   "mbc": [
+    "B0013"
+   ],
+   "discrimination": 0.75,
+   "tier": "common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos",
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "key": "analysis_tools.drivers_services",
+   "class": "analysis_tools",
+   "title": "Monitoring drivers and services (Sysmon, Procmon, Npcap...)",
+   "attack": [
+    "T1518.001"
+   ],
+   "mbc": [
+    "B0013"
+   ],
+   "discrimination": 0.6,
+   "tier": "occasional",
+   "platforms": [
+    "windows",
+    "linux"
+   ]
+  },
+  {
+   "key": "analysis_tools.listening_ports",
+   "class": "analysis_tools",
+   "title": "Agent/instrumentation ports open (Cuckoo 8000, Frida 27042, adb 5555)",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0013"
+   ],
+   "discrimination": 0.75,
+   "tier": "occasional",
+   "platforms": [
+    "windows",
+    "linux",
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "key": "analysis_tools.loaded_modules",
+   "class": "analysis_tools",
+   "title": "Monitoring DLLs or libraries loaded into the process",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0013"
+   ],
+   "discrimination": 0.9,
+   "tier": "very_common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos"
+   ]
+  },
+  {
+   "key": "debugger.api_flags",
+   "class": "debugger",
+   "title": "Debugger present according to OS APIs and process structures",
+   "attack": [
+    "T1622"
+   ],
+   "mbc": [
+    "B0001"
+   ],
+   "discrimination": 0.95,
+   "tier": "very_common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos",
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "key": "debugger.debug_objects",
+   "class": "debugger",
+   "title": "Debug ports, debug objects and flags (NtQueryInformationProcess)",
+   "attack": [
+    "T1622"
+   ],
+   "mbc": [
+    "B0001"
+   ],
+   "discrimination": 0.95,
+   "tier": "common",
+   "platforms": [
+    "windows"
+   ]
+  },
+  {
+   "key": "debugger.hardware_breakpoints",
+   "class": "debugger",
+   "title": "Debug registers set (hardware breakpoints)",
+   "attack": [
+    "T1622"
+   ],
+   "mbc": [
+    "B0001"
+   ],
+   "discrimination": 0.95,
+   "tier": "common",
+   "platforms": [
+    "windows"
+   ]
+  },
+  {
+   "key": "debugger.exception_tricks",
+   "class": "debugger",
+   "title": "Exception-based debugger tricks (INT3/INT 2D/invalid handle/trap flag)",
+   "attack": [
+    "T1622"
+   ],
+   "mbc": [
+    "B0001"
+   ],
+   "discrimination": 0.85,
+   "tier": "common",
+   "platforms": [
+    "windows",
+    "linux"
+   ]
+  },
+  {
+   "key": "debugger.kernel_debugger",
+   "class": "debugger",
+   "title": "Kernel debugger enabled or attached",
+   "attack": [
+    "T1622"
+   ],
+   "mbc": [
+    "B0001"
+   ],
+   "discrimination": 0.9,
+   "tier": "occasional",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos"
+   ]
+  },
+  {
+   "key": "debugger.tracer",
+   "class": "debugger",
+   "title": "ptrace / TracerPid / P_TRACED shows a tracer",
+   "attack": [
+    "T1622"
+   ],
+   "mbc": [
+    "B0001"
+   ],
+   "discrimination": 0.95,
+   "tier": "common",
+   "platforms": [
+    "linux",
+    "macos",
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "key": "instrumentation.inline_hooks",
+   "class": "instrumentation",
+   "title": "Inline hooks in system DLL prologues",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0003"
+   ],
+   "discrimination": 0.9,
+   "tier": "common",
+   "platforms": [
+    "windows"
+   ]
+  },
+  {
+   "key": "instrumentation.module_integrity",
+   "class": "instrumentation",
+   "title": "In-memory system modules differ from their on-disk image",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0003"
+   ],
+   "discrimination": 0.85,
+   "tier": "occasional",
+   "platforms": [
+    "windows"
+   ]
+  },
+  {
+   "key": "instrumentation.injected_libraries",
+   "class": "instrumentation",
+   "title": "Preloaded/injected libraries (LD_PRELOAD, DYLD_INSERT_LIBRARIES, AppInit)",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0003"
+   ],
+   "discrimination": 0.85,
+   "tier": "common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos",
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "key": "instrumentation.hooking_frameworks",
+   "class": "instrumentation",
+   "title": "Dynamic instrumentation frameworks (Frida, Xposed/LSPosed, Substrate)",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0003"
+   ],
+   "discrimination": 0.95,
+   "tier": "very_common",
+   "platforms": [
+    "linux",
+    "macos",
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "key": "instrumentation.tracing_facilities",
+   "class": "instrumentation",
+   "title": "Kernel tracing active (ETW consumers, eBPF, kprobes, auditd, dtrace)",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0003"
+   ],
+   "discrimination": 0.5,
+   "tier": "rare",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos"
+   ]
+  },
+  {
+   "key": "instrumentation.vmi_side_channel",
+   "class": "instrumentation",
+   "title": "Hypervisor-level introspection side effects (altp2m/EPT faults, breakpoint traps)",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0003"
+   ],
+   "discrimination": 0.7,
+   "tier": "research",
+   "platforms": [
+    "windows",
+    "linux"
+   ]
+  },
+  {
+   "key": "network.mac_oui",
+   "class": "network",
+   "title": "MAC address OUI belongs to a hypervisor vendor",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0009"
+   ],
+   "discrimination": 0.9,
+   "tier": "very_common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos",
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "key": "network.default_subnets",
+   "class": "network",
+   "title": "Default sandbox/emulator addressing (10.0.2.0/24, 192.168.56.0/24, 192.168.122.0/24)",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0007",
+    "B0004"
+   ],
+   "discrimination": 0.6,
+   "tier": "occasional",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos",
+    "android"
+   ]
+  },
+  {
+   "key": "network.dns_sinkhole",
+   "class": "network",
+   "title": "Fake DNS answers non-existent domains",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.85,
+   "tier": "common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos",
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "key": "network.simulated_internet",
+   "class": "network",
+   "title": "Simulated internet (HTTP 200 for random hosts, INetSim/FakeNet banners)",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.85,
+   "tier": "occasional",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos",
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "key": "network.connectivity",
+   "class": "network",
+   "title": "No internet connectivity or captive analysis network",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.4,
+   "tier": "common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos",
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "key": "network.cloud_metadata",
+   "class": "network",
+   "title": "Cloud instance-metadata endpoint reachable",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.8,
+   "tier": "occasional",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos"
+   ]
+  },
+  {
+   "key": "network.public_ip_reputation",
+   "class": "network",
+   "title": "Public IP belongs to a hosting/security vendor range",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.7,
+   "tier": "common",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos",
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "key": "network.adapter_count",
+   "class": "network",
+   "title": "Single adapter, no Wi-Fi, implausible link state",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.3,
+   "tier": "rare",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos"
+   ]
+  },
+  {
+   "key": "network.proxy_mitm",
+   "class": "network",
+   "title": "Interception proxy or MITM certificate present",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.6,
+   "tier": "occasional",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos",
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "key": "os_config.security_software",
+   "class": "os_config",
+   "title": "Antivirus/EDR disabled or absent where users normally have it",
+   "attack": [
+    "T1518.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.3,
+   "tier": "occasional",
+   "platforms": [
+    "windows",
+    "macos"
+   ]
+  },
+  {
+   "key": "os_config.uac_sip",
+   "class": "os_config",
+   "title": "UAC/SIP/Gatekeeper/SELinux weakened",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.3,
+   "tier": "occasional",
+   "platforms": [
+    "windows",
+    "linux",
+    "macos",
+    "android"
+   ]
+  },
+  {
+   "key": "os_config.boot_debug_flags",
+   "class": "os_config",
+   "title": "Boot configuration in debug/test-signing mode",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.6,
+   "tier": "occasional",
+   "platforms": [
+    "windows"
+   ]
+  },
+  {
+   "key": "os_config.activation_updates",
+   "class": "os_config",
+   "title": "OS not activated or long out of date",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.3,
+   "tier": "rare",
+   "platforms": [
+    "windows",
+    "macos"
+   ]
+  },
+  {
+   "key": "os_config.script_policies",
+   "class": "os_config",
+   "title": "Script/execution policies opened up for automation",
+   "attack": [
+    "T1497.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.2,
+   "tier": "rare",
+   "platforms": [
+    "windows"
+   ]
+  },
+  {
+   "key": "integrity.root",
+   "class": "integrity",
+   "title": "Root access (su, Magisk, KernelSU) present",
+   "attack": [
+    "T1633.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.6,
+   "tier": "very_common",
+   "platforms": [
+    "android"
+   ]
+  },
+  {
+   "key": "integrity.jailbreak",
+   "class": "integrity",
+   "title": "Jailbreak artifacts (Cydia/Sileo, rootless paths, sandbox escape)",
+   "attack": [
+    "T1633.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.6,
+   "tier": "very_common",
+   "platforms": [
+    "ios"
+   ]
+  },
+  {
+   "key": "integrity.debuggable_build",
+   "class": "integrity",
+   "title": "Debuggable/insecure build (ro.debuggable=1, ro.secure=0, adb root)",
+   "attack": [
+    "T1633.001"
+   ],
+   "mbc": [
+    "B0004"
+   ],
+   "discrimination": 0.7,
+   "tier": "common",
+   "platforms": [
+    "android"
+   ]
+  },
+  {
+   "key": "integrity.bootloader",
+   "class": "integrity",
+   "title": "Unlocked boot loader / verified boot not green",
+   "attack": [
+    "T1633.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.4,
+   "tier": "occasional",
+   "platforms": [
+    "android"
+   ]
+  },
+  {
+   "key": "integrity.developer_settings",
+   "class": "integrity",
+   "title": "Developer options / USB debugging / mock locations enabled",
+   "attack": [
+    "T1633.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.4,
+   "tier": "common",
+   "platforms": [
+    "android"
+   ]
+  },
+  {
+   "key": "integrity.selinux",
+   "class": "integrity",
+   "title": "SELinux permissive or disabled",
+   "attack": [
+    "T1633.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.5,
+   "tier": "occasional",
+   "platforms": [
+    "android",
+    "linux"
+   ]
+  },
+  {
+   "key": "integrity.accessibility_overrides",
+   "class": "integrity",
+   "title": "Accessibility/notification services pre-granted by automation",
+   "attack": [
+    "T1633.001"
+   ],
+   "mbc": [
+    "B0007"
+   ],
+   "discrimination": 0.3,
+   "tier": "rare",
+   "platforms": [
+    "android"
+   ]
+  }
+ ]
+}

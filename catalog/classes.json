@@ -1,0 +1,56 @@
+{
+  "catalog_format": 2,
+  "description": "Class taxonomy used for per-class scores, plus the scales the hardening planner and the scoring model use. Every class rolls up into exactly one of the four CHIMERA detection categories.",
+  "categories": {
+    "environment_artifact": "Hardware, firmware, driver and OS artifacts that a virtual or emulated machine leaves behind.",
+    "timing": "Clock, cycle-counter and scheduling discrepancies caused by virtualisation, emulation or instrumentation.",
+    "behavioural_interaction": "Absence of a real person: no input, no wear-and-tear, no history.",
+    "design_specific": "Quirks of a particular analysis platform: its tools, accounts, network, instrumentation and configuration."
+  },
+  "classes": {
+    "cpu": {"category": "environment_artifact", "title": "CPU and instruction set", "summary": "CPUID leaves, brand strings, descriptor tables, privileged and undefined instruction behaviour."},
+    "firmware": {"category": "environment_artifact", "title": "Firmware (SMBIOS / ACPI / BIOS)", "summary": "Vendor strings, serials, UUIDs and table layout in SMBIOS, ACPI and BIOS data."},
+    "hardware": {"category": "environment_artifact", "title": "Devices and peripherals", "summary": "PCI/USB/PnP devices, disks, GPU, NIC, audio, monitors, sensors, battery, thermal and fans."},
+    "resources": {"category": "environment_artifact", "title": "Resource sizing", "summary": "Core count, RAM, disk size, screen resolution: values sandboxes provision too small."},
+    "guest_tools": {"category": "environment_artifact", "title": "Guest tools, drivers and services", "summary": "Hypervisor guest additions, paravirtual drivers, kernel modules and their services."},
+    "artifacts": {"category": "environment_artifact", "title": "Registry, files and named objects", "summary": "Registry keys, files, directories, pipes, devices, mutexes and window classes left by virtualisation software."},
+    "container": {"category": "environment_artifact", "title": "Containers and application sandboxes", "summary": "Docker/Podman/LXC/WSL/gVisor, Sandboxie, Windows Sandbox and similar isolation layers."},
+    "emulator": {"category": "environment_artifact", "title": "Emulators and compatibility layers", "summary": "Android emulators (goldfish/ranchu, Genymotion, BlueStacks...), iOS simulators, Wine, QEMU TCG."},
+    "mobile_device": {"category": "environment_artifact", "title": "Telephony, sensors and radios", "summary": "SIM/IMEI/operator, sensors, camera, Bluetooth and other mobile hardware a real phone has."},
+    "timing": {"category": "timing", "title": "Timing", "summary": "RDTSC/CPUID VM-exit cost, clock drift between time sources, sleep acceleration, uptime."},
+    "human": {"category": "behavioural_interaction", "title": "Human interaction", "summary": "Mouse movement and clicks, keyboard input, foreground window changes, idle time."},
+    "wear_and_tear": {"category": "behavioural_interaction", "title": "Wear and tear", "summary": "History, recent files, installed software, logs, caches and other traces of a lived-in machine."},
+    "identity": {"category": "design_specific", "title": "Identity and locale", "summary": "User, host and domain names, language, keyboard layout, time zone, sample file name and path."},
+    "analysis_tools": {"category": "design_specific", "title": "Analysis tools and agents", "summary": "Debuggers, monitors, sniffers, sandbox agents and their processes, windows, files and ports."},
+    "debugger": {"category": "design_specific", "title": "Debugger detection", "summary": "PEB flags, debug ports and objects, hardware breakpoints, exception-based tricks, ptrace/TracerPid."},
+    "instrumentation": {"category": "design_specific", "title": "Hooks and instrumentation", "summary": "Inline/IAT hooks, injected modules, tracing frameworks, VMI and syscall-latency side channels."},
+    "network": {"category": "design_specific", "title": "Network environment", "summary": "MAC OUI, default sandbox subnets, DNS sinkholes, simulated internet, cloud metadata, proxies."},
+    "os_config": {"category": "design_specific", "title": "OS configuration", "summary": "Security features turned off (AV, UAC, SIP, Secure Boot), debug/test boot modes, activation, update state."},
+    "integrity": {"category": "design_specific", "title": "Device integrity (root / jailbreak)", "summary": "Root, jailbreak, unlocked boot loaders, debuggable builds, hooking frameworks on mobile devices."}
+  },
+  "severity_weights": {"info": 0.05, "low": 0.15, "medium": 0.35, "high": 0.65, "critical": 1.0},
+  "prevalence_tiers": {
+    "very_common": {"p": 0.30, "meaning": "Seen in a large share of evasive commodity malware (e.g. CPUID hypervisor bit, VM process/registry lists)."},
+    "common": {"p": 0.12, "meaning": "Regularly seen across several unrelated families."},
+    "occasional": {"p": 0.04, "meaning": "Documented in a handful of families or loaders."},
+    "rare": {"p": 0.012, "meaning": "Single families, targeted tooling or specialist protectors."},
+    "research": {"p": 0.003, "meaning": "Published technique with little or no observed use in the wild."}
+  },
+  "effort_scale": {
+    "1": "Minutes: a guest setting, registry value or file change on the running image.",
+    "2": "Hours: rebuild or re-snapshot the golden image (install software, rename accounts, generate history).",
+    "3": "A day: change the VM definition or the analysis engine configuration (devices, firmware strings, plugin flags).",
+    "4": "Days: patch and rebuild firmware, the hypervisor or the instrumentation engine.",
+    "5": "Architectural: needs different hardware, bare metal, or accepting the residual risk."
+  },
+  "fix_layers": {
+    "guest-runtime": "A setting inside the running guest that does not survive a re-snapshot unless committed.",
+    "guest-image": "The golden image contents (software, accounts, history, configuration).",
+    "vm-config": "The VM definition (xl.cfg / libvirt XML / emulator AVD config): devices, CPU model, memory.",
+    "firmware": "hvmloader / SeaBIOS / OVMF / SMBIOS and ACPI tables presented to the guest.",
+    "hypervisor": "Xen / KVM / QEMU behaviour (CPUID policy, timers, exits), usually a patch.",
+    "analysis-engine": "The instrumentation stack (DRAKVUF plugins, injector, agents).",
+    "network": "The analysis network (DNS, simulated internet, routing, addressing).",
+    "host-hardware": "Physical host choice: CPU generation, bare metal, real phones."
+  }
+}

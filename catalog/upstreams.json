@@ -1,0 +1,5 @@
+{
+  "catalog_format": 2,
+  "description": "Upstream projects and datasets whose new releases may add techniques Perdedor should check. Read by `perdedor upstream check`.",
+  "upstreams": []
+}

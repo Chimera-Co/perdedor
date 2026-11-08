@@ -10,7 +10,7 @@ isolation architecture), so the common package stays stdlib-only.
 from __future__ import annotations
 
 _REQUIRED_TOP = {"perdedor_version", "platform", "hostname", "generated_at", "findings", "summary"}
-_PLATFORMS = {"windows", "linux", "android"}
+_PLATFORMS = {"windows", "linux", "android", "macos", "ios"}
 _CATEGORIES = {"environment_artifact", "timing", "behavioural_interaction", "design_specific"}
 _STATUSES = {"clean", "detected", "error", "skipped"}
 _SEVERITIES = {"info", "low", "medium", "high", "critical"}
@@ -58,6 +58,14 @@ def _validate_finding(finding: dict, *, source: str) -> None:
         raise ValidationError(f"{source}: status '{finding['status']}' not in {_STATUSES}")
     if finding["severity"] not in _SEVERITIES:
         raise ValidationError(f"{source}: severity '{finding['severity']}' not in {_SEVERITIES}")
+    confidence = finding.get("confidence")
+    if confidence is not None and (
+        isinstance(confidence, bool) or not isinstance(confidence, (int, float)) or not 0 <= confidence <= 1
+    ):
+        raise ValidationError(f"{source}: confidence must be a number between 0 and 1")
+    for key in ("measurement",):
+        if finding.get(key) is not None and not isinstance(finding[key], dict):
+            raise ValidationError(f"{source}: {key} must be an object")
     if finding["status"] == "error" and not finding.get("error_detail"):
         raise ValidationError(f"{source}: status is 'error' but 'error_detail' is empty")
 

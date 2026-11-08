@@ -2,30 +2,78 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://perdedor.chimera.local/schema/perdedor-report.schema.json",
   "title": "PERDEDOR Platform Report",
-  "description": "Unified report format emitted by every PERDEDOR agent (Windows, Linux, Android). One suite, one schema, three platforms.",
+  "description": "Unified report format emitted by every PERDEDOR agent (Windows, Linux, Android, macOS, iOS). Schema version 2 adds optional technique/class/confidence/measurement fields; version-1 reports remain valid.",
   "type": "object",
-  "required": ["perdedor_version", "platform", "hostname", "generated_at", "findings", "summary"],
+  "required": [
+    "perdedor_version",
+    "platform",
+    "hostname",
+    "generated_at",
+    "findings",
+    "summary"
+  ],
   "additionalProperties": false,
   "properties": {
-    "perdedor_version": { "type": "string" },
-    "platform": { "type": "string", "enum": ["windows", "linux", "android"] },
-    "hostname": { "type": "string" },
-    "generated_at": { "type": "string", "format": "date-time" },
+    "perdedor_version": {
+      "type": "string"
+    },
+    "platform": {
+      "type": "string",
+      "enum": [
+        "windows",
+        "linux",
+        "android",
+        "macos",
+        "ios"
+      ]
+    },
+    "hostname": {
+      "type": "string"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
     "agent_metadata": {
       "type": "object",
       "description": "Free-form platform-specific identity info (OS build, device model, etc.) for report context only.",
-      "additionalProperties": { "type": "string" }
+      "additionalProperties": {
+        "type": "string"
+      }
     },
     "findings": {
       "type": "array",
-      "items": { "$ref": "#/definitions/finding" }
+      "items": {
+        "$ref": "#/definitions/finding"
+      }
     },
-    "summary": { "$ref": "#/definitions/summary" }
+    "summary": {
+      "$ref": "#/definitions/summary"
+    },
+    "schema_version": {
+      "type": "integer",
+      "enum": [
+        1,
+        2
+      ]
+    },
+    "selection": {
+      "type": "object",
+      "description": "Profile, only/skip patterns and parameters the run used."
+    }
   },
   "definitions": {
     "finding": {
       "type": "object",
-      "required": ["id", "category", "platform", "name", "description", "status", "severity"],
+      "required": [
+        "id",
+        "category",
+        "platform",
+        "name",
+        "description",
+        "status",
+        "severity"
+      ],
       "additionalProperties": false,
       "properties": {
         "id": {
@@ -35,46 +83,133 @@
         },
         "category": {
           "type": "string",
-          "enum": ["environment_artifact", "timing", "behavioural_interaction", "design_specific"],
+          "enum": [
+            "environment_artifact",
+            "timing",
+            "behavioural_interaction",
+            "design_specific"
+          ],
           "description": "The four detection categories from the CHIMERA theoretical model (Ch.3)."
         },
-        "platform": { "type": "string", "enum": ["windows", "linux", "android"] },
-        "name": { "type": "string", "description": "Short human title, e.g. 'SMBIOS system vendor string'." },
-        "description": { "type": "string", "description": "What the check does and why it matters." },
+        "platform": {
+          "type": "string",
+          "enum": [
+            "windows",
+            "linux",
+            "android",
+            "macos",
+            "ios"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "Short human title, e.g. 'SMBIOS system vendor string'."
+        },
+        "description": {
+          "type": "string",
+          "description": "What the check does and why it matters."
+        },
         "status": {
           "type": "string",
-          "enum": ["clean", "detected", "error", "skipped"],
+          "enum": [
+            "clean",
+            "detected",
+            "error",
+            "skipped"
+          ],
           "description": "clean = no tell found; detected = evasion tell found (BAD); error = probe could not run; skipped = not applicable on this host."
         },
         "severity": {
           "type": "string",
-          "enum": ["info", "low", "medium", "high", "critical"],
+          "enum": [
+            "info",
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ],
           "description": "Real-world significance if detected -- mirrors the KVM hardening report's per-flag justification approach, not just pass/fail."
         },
         "evidence": {
           "description": "Raw observed value(s) supporting the status, for analyst review.",
-          "type": ["string", "object", "array", "null"]
+          "type": [
+            "string",
+            "object",
+            "array",
+            "null"
+          ]
         },
         "remediation": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Suggested hardening-profile change to close this gap, so findings feed back into CHIMERA hardening rather than only being reported."
         },
         "error_detail": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Populated when status == error."
+        },
+        "technique": {
+          "type": "string",
+          "description": "Catalog technique key (catalog/techniques.json), e.g. cpu.hypervisor_bit."
+        },
+        "class": {
+          "type": "string",
+          "description": "Catalog class (catalog/classes.json)."
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Agent's confidence in the status (timing statistics, partial reads)."
+        },
+        "measurement": {
+          "type": "object",
+          "description": "Numeric measurements behind the verdict."
+        },
+        "duration_ms": {
+          "type": "number",
+          "minimum": 0
         }
       }
     },
     "summary": {
       "type": "object",
-      "required": ["total", "clean", "detected", "errored", "skipped", "raw_score", "weighted_score"],
+      "required": [
+        "total",
+        "clean",
+        "detected",
+        "errored",
+        "skipped",
+        "raw_score",
+        "weighted_score"
+      ],
       "additionalProperties": false,
       "properties": {
-        "total": { "type": "integer", "minimum": 0 },
-        "clean": { "type": "integer", "minimum": 0 },
-        "detected": { "type": "integer", "minimum": 0 },
-        "errored": { "type": "integer", "minimum": 0 },
-        "skipped": { "type": "integer", "minimum": 0 },
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "clean": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "detected": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "errored": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "skipped": {
+          "type": "integer",
+          "minimum": 0
+        },
         "raw_score": {
           "type": "string",
           "description": "VMAware-style 'clean/total' string, e.g. '91/93'."

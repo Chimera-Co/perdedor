@@ -296,20 +296,18 @@ function Test-CloudMetadataReachable {
         -Remediation 'Ensure the sandbox network has no route to the cloud metadata service (169.254.169.254) if cloud infrastructure is being used for hosting only, not as the detonation identity.'
 }
 
-function Invoke-EnvironmentChecks {
-    @(
-        Test-SmbiosVendor
-        Test-CpuidHypervisorBit
-        Test-CpuidHypervisorVendor
-        Test-CpuBrandString
-        Test-PnpVirtualDevices
-        Test-GuestServices
-        Test-RegistryArtifacts
-        Test-ArtifactFiles
-        Test-SmbiosFirmwareTableRaw
-        Test-LowCoreCount
-        Test-LowRam
-        Test-SmallDisk
-        Test-CloudMetadataReachable
-    )
-}
+
+# --- registration (Invoke-Perdedor.ps1 selects and runs these) ---
+Register-PerdedorCheck -Ids 'win.env.smbios_vendor' -Technique 'firmware.smbios_strings' -Run { Test-SmbiosVendor }
+Register-PerdedorCheck -Ids 'win.env.cpuid_hypervisor_bit' -Technique 'cpu.hypervisor_bit' -Run { Test-CpuidHypervisorBit }
+Register-PerdedorCheck -Ids 'win.env.cpuid_hypervisor_vendor' -Technique 'cpu.hypervisor_vendor_leaf' -Run { Test-CpuidHypervisorVendor }
+Register-PerdedorCheck -Ids 'win.env.cpu_brand_string' -Technique 'cpu.brand_string' -Run { Test-CpuBrandString }
+Register-PerdedorCheck -Ids 'win.env.pnp_virtual_devices' -Technique 'hardware.pci_vendor_ids' -Run { Test-PnpVirtualDevices }
+Register-PerdedorCheck -Ids 'win.env.guest_services' -Technique 'guest_tools.services' -Run { Test-GuestServices }
+Register-PerdedorCheck -Ids 'win.env.registry_artifacts' -Technique 'artifacts.registry' -Run { Test-RegistryArtifacts }
+Register-PerdedorCheck -Ids 'win.env.artifact_files' -Technique 'artifacts.files' -Run { Test-ArtifactFiles }
+Register-PerdedorCheck -Ids 'win.env.smbios_firmware_table_raw' -Technique 'firmware.smbios_raw_table' -Run { Test-SmbiosFirmwareTableRaw }
+Register-PerdedorCheck -Ids 'win.env.low_core_count' -Technique 'resources.cpu_count' -Run { Test-LowCoreCount }
+Register-PerdedorCheck -Ids 'win.env.low_ram' -Technique 'resources.memory_size' -Run { Test-LowRam }
+Register-PerdedorCheck -Ids 'win.env.small_disk' -Technique 'resources.disk_size' -Run { Test-SmallDisk }
+Register-PerdedorCheck -Ids 'win.env.cloud_metadata_reachable' -Technique 'network.cloud_metadata' -Network -Run { Test-CloudMetadataReachable }

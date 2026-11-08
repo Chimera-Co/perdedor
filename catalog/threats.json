@@ -1,0 +1,5 @@
+{
+  "catalog_format": 2,
+  "description": "Malware families, tools and threat actors with the evasion techniques public reporting attributes to them. Every entry cites its sources; 'weight' is the family's share of the reference population used by the threat-survival score.",
+  "threats": []
+}

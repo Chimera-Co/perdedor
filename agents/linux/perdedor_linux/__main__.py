@@ -1,9 +1,10 @@
-"""Entry point: `python -m perdedor_linux [-o output.json]`
+"""Entry point: `python -m perdedor_linux [-o output.json] [selection flags]`
 
-Runs every check and writes a schema-conformant JSON report. With no -o,
-prints to stdout so it can be piped straight off the guest, e.g.:
+Runs the selected checks (all of the standard profile by default) and writes a
+schema-conformant JSON report. With no -o, prints to stdout so it can be piped
+straight off the guest, e.g.:
 
-    ssh sandbox-run 'python3 -m perdedor_linux' > linux-report.json
+    ssh sandbox-run 'python3 -m perdedor_linux --profile deep' > linux-report.json
 """
 
 from __future__ import annotations
@@ -12,7 +13,9 @@ import argparse
 import json
 import sys
 
-from .runner import run_scan
+from perdedor_common.registry import add_selection_arguments, list_doc, parse_params, select
+
+from .runner import all_checks, run_scan
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -20,9 +23,21 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "-o", "--output", type=str, default=None, help="write JSON report to this path instead of stdout"
     )
+    add_selection_arguments(parser)
     args = parser.parse_args(argv)
-
-    report = run_scan().to_dict()
+    try:
+        params = parse_params(args.param)
+        if args.list_checks:
+            chosen = select(
+                all_checks(), profile=args.profile, only=args.only, skip=args.skip, network=not args.no_network
+            )
+            print(json.dumps(list_doc(chosen), indent=2))
+            return 0
+        report = run_scan(
+            profile=args.profile, only=args.only, skip=args.skip, params=params, network=not args.no_network
+        ).to_dict()
+    except ValueError as exc:
+        parser.error(str(exc))
     text = json.dumps(report, indent=2)
 
     if args.output:

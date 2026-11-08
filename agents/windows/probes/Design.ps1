@@ -180,16 +180,14 @@ function Test-ManagedDebuggerAttached {
         -Remediation 'Detach any attached managed debugger before running the sample.'
 }
 
-function Invoke-DesignChecks {
-    @(
-        Test-AnalysisToolsRunning
-        Test-SuspiciousHostnameOrUser
-        Test-ExactSandboxUsername
-        Test-MacOui
-        Test-BlacklistedDlls
-        Test-WindowClassArtifacts
-        Test-DebuggerPresent
-        Test-RemoteDebuggerPresent
-        Test-ManagedDebuggerAttached
-    )
-}
+
+# --- registration (Invoke-Perdedor.ps1 selects and runs these) ---
+Register-PerdedorCheck -Ids 'win.design.analysis_tools_running' -Technique 'analysis_tools.processes' -Run { Test-AnalysisToolsRunning }
+Register-PerdedorCheck -Ids 'win.design.suspicious_hostname_or_user' -Technique 'identity.hostname' -Run { Test-SuspiciousHostnameOrUser }
+Register-PerdedorCheck -Ids 'win.design.exact_sandbox_username' -Technique 'identity.username' -Run { Test-ExactSandboxUsername }
+Register-PerdedorCheck -Ids 'win.design.mac_oui' -Technique 'network.mac_oui' -Run { Test-MacOui }
+Register-PerdedorCheck -Ids 'win.design.blacklisted_dlls' -Technique 'analysis_tools.loaded_modules' -Run { Test-BlacklistedDlls }
+Register-PerdedorCheck -Ids 'win.design.window_class_artifacts' -Technique 'artifacts.window_classes' -Run { Test-WindowClassArtifacts }
+Register-PerdedorCheck -Ids 'win.design.debugger_present' -Technique 'debugger.api_flags' -Run { Test-DebuggerPresent }
+Register-PerdedorCheck -Ids 'win.design.remote_debugger_present' -Technique 'debugger.api_flags' -Run { Test-RemoteDebuggerPresent }
+Register-PerdedorCheck -Ids 'win.design.managed_debugger_attached' -Technique 'debugger.api_flags' -Run { Test-ManagedDebuggerAttached }

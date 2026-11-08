@@ -8,6 +8,7 @@ empirical detail behind the thresholds used here.
 from __future__ import annotations
 
 from perdedor_common import FindingFactory
+from perdedor_common.registry import RunContext, run_checks, spec
 from perdedor_common.models import Category, Finding, Platform, Severity
 
 from .. import cpu, utils
@@ -88,5 +89,12 @@ def check_rdtsc_cpuid_jitter() -> Finding:
     )
 
 
+CHECKS = [
+    spec('linux.timing.low_uptime', check_uptime, 'timing.uptime'),
+    spec('linux.timing.rdtsc_cpuid_jitter', check_rdtsc_cpuid_jitter, 'timing.cpuid_vmexit', cost='medium'),
+]
+
+
 def run_all() -> list[Finding]:
-    return [check_uptime(), check_rdtsc_cpuid_jitter()]
+    """Every check in this module, unfiltered (v1 entry point)."""
+    return run_checks(CHECKS, RunContext(platform=_PLATFORM))

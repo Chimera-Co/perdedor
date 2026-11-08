@@ -15,8 +15,10 @@ import argparse
 import json
 import sys
 
+from perdedor_common.registry import add_selection_arguments, list_doc, parse_params, select
+
 from . import adb
-from .runner import run_scan
+from .runner import all_checks, run_scan
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -31,7 +33,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "-o", "--output", type=str, default=None, help="write JSON report to this path instead of stdout"
     )
+    add_selection_arguments(parser)
     args = parser.parse_args(argv)
+    try:
+        params = parse_params(args.param)
+    except ValueError as exc:
+        parser.error(str(exc))
+    if args.list_checks:
+        chosen = select(all_checks(), profile=args.profile, only=args.only, skip=args.skip, network=not args.no_network)
+        print(json.dumps(list_doc(chosen), indent=2))
+        return 0
 
     if not adb.adb_binary_available():
         print("warning: `adb` not found on PATH -- every check will report as errored", file=sys.stderr)
@@ -42,7 +53,14 @@ def main(argv: list[str] | None = None) -> int:
             file=sys.stderr,
         )
 
-    report = run_scan(args.serial).to_dict()
+    report = run_scan(
+        args.serial,
+        profile=args.profile,
+        only=args.only,
+        skip=args.skip,
+        params=params,
+        network=not args.no_network,
+    ).to_dict()
     text = json.dumps(report, indent=2)
 
     if args.output:

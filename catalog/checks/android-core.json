@@ -1,0 +1,227 @@
+{
+ "catalog_format": 2,
+ "platform": "android",
+ "source": "perdedor v0.1 checks",
+ "checks": [
+  {
+   "id": "android.behavioural.battery_plausibility",
+   "technique": "mobile_device.battery",
+   "status": "implemented",
+   "fix": {
+    "layer": "vm-config",
+    "effort": 3
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "android.behavioural.battery_temperature",
+   "technique": "mobile_device.battery",
+   "status": "implemented",
+   "fix": {
+    "layer": "vm-config",
+    "effort": 3
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "android.behavioural.installed_packages",
+   "technique": "wear_and_tear.installed_software",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 2
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "android.design.avd_default_subnet",
+   "technique": "network.default_subnets",
+   "status": "implemented",
+   "fix": {
+    "layer": "network",
+    "effort": 3
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "android.design.build_characteristics",
+   "technique": "emulator.android_build_identity",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 3
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "android.design.build_tags",
+   "technique": "emulator.android_build_identity",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 3
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "android.design.camera_feature",
+   "technique": "mobile_device.camera",
+   "status": "implemented",
+   "fix": {
+    "layer": "vm-config",
+    "effort": 3
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "android.design.sensor_list",
+   "technique": "mobile_device.sensors",
+   "status": "implemented",
+   "fix": {
+    "layer": "vm-config",
+    "effort": 4
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "android.design.suspicious_device_name",
+   "technique": "identity.hostname",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 2
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "android.design.telephony_signals",
+   "technique": "mobile_device.telephony",
+   "status": "implemented",
+   "fix": {
+    "layer": "vm-config",
+    "effort": 4
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "android.env.boot_hardware",
+   "technique": "emulator.android_properties",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 3
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "android.env.build_fingerprint",
+   "technique": "emulator.android_build_identity",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 3
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "android.env.cpu_abi",
+   "technique": "emulator.binary_translation",
+   "status": "implemented",
+   "fix": {
+    "layer": "host-hardware",
+    "effort": 5
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "android.env.gralloc_egl",
+   "technique": "emulator.android_properties",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 3
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "android.env.hardware_prop",
+   "technique": "emulator.android_properties",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 3
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "android.env.libhoudini_present",
+   "technique": "emulator.binary_translation",
+   "status": "implemented",
+   "fix": {
+    "layer": "host-hardware",
+    "effort": 5
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "android.env.manufacturer",
+   "technique": "emulator.android_build_identity",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 3
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "android.env.product_model",
+   "technique": "emulator.android_build_identity",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 3
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "android.env.qemu_device_nodes",
+   "technique": "emulator.android_files",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 3
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "android.env.qemu_kernel_flag",
+   "technique": "emulator.android_properties",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 3
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "android.env.qemu_properties_present",
+   "technique": "emulator.android_properties",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 3
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "android.timing.low_uptime",
+   "technique": "timing.uptime",
+   "status": "implemented",
+   "fix": {
+    "layer": "analysis-engine",
+    "effort": 1
+   },
+   "equivalents": {}
+  }
+ ]
+}

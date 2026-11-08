@@ -4,6 +4,7 @@ and device-node signatures unique to emulated/virtualised Android guests."""
 from __future__ import annotations
 
 from perdedor_common import FindingFactory
+from perdedor_common.registry import RunContext, run_checks, spec
 from perdedor_common.models import Category, Finding, Platform, Severity
 
 from .. import adb, signatures
@@ -216,17 +217,21 @@ def check_cpu_abi(serial: str | None = None) -> Finding:
     )
 
 
+CHECKS = [
+    spec('android.env.build_fingerprint', check_build_fingerprint, 'emulator.android_build_identity'),
+    spec('android.env.hardware_prop', check_hardware_prop, 'emulator.android_properties'),
+    spec('android.env.boot_hardware', check_boot_hardware, 'emulator.android_properties'),
+    spec('android.env.product_model', check_product_model, 'emulator.android_build_identity'),
+    spec('android.env.manufacturer', check_manufacturer, 'emulator.android_build_identity'),
+    spec('android.env.gralloc_egl', check_gralloc_egl, 'emulator.android_properties'),
+    spec('android.env.qemu_properties_present', check_qemu_properties_present, 'emulator.android_properties'),
+    spec('android.env.qemu_kernel_flag', check_qemu_kernel_flag, 'emulator.android_properties'),
+    spec('android.env.qemu_device_nodes', check_qemu_device_nodes, 'emulator.android_files'),
+    spec('android.env.libhoudini_present', check_libhoudini_present, 'emulator.binary_translation'),
+    spec('android.env.cpu_abi', check_cpu_abi, 'emulator.binary_translation'),
+]
+
+
 def run_all(serial: str | None = None) -> list[Finding]:
-    return [
-        check_build_fingerprint(serial),
-        check_hardware_prop(serial),
-        check_boot_hardware(serial),
-        check_product_model(serial),
-        check_manufacturer(serial),
-        check_gralloc_egl(serial),
-        check_qemu_properties_present(serial),
-        check_qemu_kernel_flag(serial),
-        check_qemu_device_nodes(serial),
-        check_libhoudini_present(serial),
-        check_cpu_abi(serial),
-    ]
+    """Every check in this module, unfiltered (v1 entry point)."""
+    return run_checks(CHECKS, RunContext(platform=_PLATFORM, target=serial))

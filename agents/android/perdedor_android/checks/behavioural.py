@@ -7,6 +7,7 @@ from __future__ import annotations
 import re
 
 from perdedor_common import FindingFactory
+from perdedor_common.registry import RunContext, run_checks, spec
 from perdedor_common.models import Category, Finding, Platform, Severity
 
 from .. import adb, signatures
@@ -96,9 +97,13 @@ def check_battery_temperature(serial: str | None = None) -> Finding:
     )
 
 
+CHECKS = [
+    spec('android.behavioural.installed_packages', check_installed_packages, 'wear_and_tear.installed_software'),
+    spec('android.behavioural.battery_plausibility', check_battery_plausibility, 'mobile_device.battery'),
+    spec('android.behavioural.battery_temperature', check_battery_temperature, 'mobile_device.battery'),
+]
+
+
 def run_all(serial: str | None = None) -> list[Finding]:
-    return [
-        check_installed_packages(serial),
-        check_battery_plausibility(serial),
-        check_battery_temperature(serial),
-    ]
+    """Every check in this module, unfiltered (v1 entry point)."""
+    return run_checks(CHECKS, RunContext(platform=_PLATFORM, target=serial))

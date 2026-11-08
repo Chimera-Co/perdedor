@@ -12,6 +12,7 @@ import urllib.request
 from pathlib import Path
 
 from perdedor_common import FindingFactory
+from perdedor_common.registry import RunContext, run_checks, spec
 from perdedor_common.models import Category, Finding, Platform, Severity
 
 from .. import cpu, signatures, utils
@@ -395,22 +396,26 @@ def check_sandbox_framework_paths() -> Finding:
     )
 
 
+CHECKS = [
+    spec('linux.env.cpuid_hypervisor_bit', check_cpuid_hypervisor_bit, 'cpu.hypervisor_bit'),
+    spec('linux.env.cpuid_hypervisor_vendor', check_cpuid_hypervisor_vendor, 'cpu.hypervisor_vendor_leaf'),
+    spec('linux.env.cpu_brand_string', check_cpu_brand_string, 'cpu.brand_string'),
+    spec('linux.env.pci_virtio_devices', check_pci_virtio_devices, 'hardware.pci_vendor_ids'),
+    spec('linux.env.guest_kernel_modules', check_guest_kernel_modules, 'guest_tools.drivers_modules'),
+    spec('linux.env.guest_agent_binaries', check_guest_agent_binaries, 'guest_tools.processes'),
+    spec('linux.env.scsi_device_vendor', check_scsi_device_vendor, 'hardware.disk_identity'),
+    spec('linux.env.block_device_vendor', check_block_device_vendor, 'hardware.disk_identity'),
+    spec('linux.env.systemd_detect_virt', check_systemd_detect_virt, 'container.virtualisation_report'),
+    spec('linux.env.low_core_count', check_low_core_count, 'resources.cpu_count'),
+    spec('linux.env.low_ram', check_low_ram, 'resources.memory_size'),
+    spec('linux.env.small_disk', check_small_disk, 'resources.disk_size'),
+    spec('linux.env.container_or_wsl', check_container_or_wsl, 'container.container_runtime'),
+    spec('linux.env.cloud_metadata_reachable', check_cloud_metadata_reachable, 'network.cloud_metadata', network=True),
+    spec('linux.env.sandbox_framework_paths', check_sandbox_framework_paths, 'analysis_tools.files'),
+    spec(('linux.env.dmi_sys_vendor', 'linux.env.dmi_product_name', 'linux.env.dmi_product_family', 'linux.env.dmi_product_sku', 'linux.env.dmi_product_version', 'linux.env.dmi_bios_vendor', 'linux.env.dmi_bios_version', 'linux.env.dmi_board_vendor', 'linux.env.dmi_board_name', 'linux.env.dmi_chassis_vendor', 'linux.env.dmi_chassis_asset_tag',), _dmi_checks, 'firmware.smbios_strings'),
+]
+
+
 def run_all() -> list[Finding]:
-    return [
-        *_dmi_checks(),
-        check_cpuid_hypervisor_bit(),
-        check_cpuid_hypervisor_vendor(),
-        check_cpu_brand_string(),
-        check_pci_virtio_devices(),
-        check_guest_kernel_modules(),
-        check_guest_agent_binaries(),
-        check_scsi_device_vendor(),
-        check_block_device_vendor(),
-        check_systemd_detect_virt(),
-        check_low_core_count(),
-        check_low_ram(),
-        check_small_disk(),
-        check_container_or_wsl(),
-        check_cloud_metadata_reachable(),
-        check_sandbox_framework_paths(),
-    ]
+    """Every check in this module, unfiltered (v1 entry point)."""
+    return run_checks(CHECKS, RunContext(platform=_PLATFORM))

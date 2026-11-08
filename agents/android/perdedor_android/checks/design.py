@@ -5,6 +5,7 @@ emulator images rather than virtualisation in general."""
 from __future__ import annotations
 
 from perdedor_common import FindingFactory
+from perdedor_common.registry import RunContext, run_checks, spec
 from perdedor_common.models import Category, Finding, Platform, Severity
 
 from .. import adb, signatures
@@ -147,13 +148,17 @@ def check_suspicious_hostname(serial: str | None = None) -> Finding:
     )
 
 
+CHECKS = [
+    spec('android.design.build_characteristics', check_build_characteristics, 'emulator.android_build_identity'),
+    spec('android.design.telephony_signals', check_telephony_signals, 'mobile_device.telephony'),
+    spec('android.design.sensor_list', check_sensor_list, 'mobile_device.sensors'),
+    spec('android.design.camera_feature', check_camera_feature, 'mobile_device.camera'),
+    spec('android.design.build_tags', check_build_tags, 'emulator.android_build_identity'),
+    spec('android.design.avd_default_subnet', check_avd_default_subnet, 'network.default_subnets'),
+    spec('android.design.suspicious_device_name', check_suspicious_hostname, 'identity.hostname'),
+]
+
+
 def run_all(serial: str | None = None) -> list[Finding]:
-    return [
-        check_build_characteristics(serial),
-        check_telephony_signals(serial),
-        check_sensor_list(serial),
-        check_camera_feature(serial),
-        check_build_tags(serial),
-        check_avd_default_subnet(serial),
-        check_suspicious_hostname(serial),
-    ]
+    """Every check in this module, unfiltered (v1 entry point)."""
+    return run_checks(CHECKS, RunContext(platform=_PLATFORM, target=serial))

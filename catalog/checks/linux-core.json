@@ -1,0 +1,498 @@
+{
+ "catalog_format": 2,
+ "platform": "linux",
+ "source": "perdedor v0.1 checks",
+ "checks": [
+  {
+   "id": "linux.behavioural.aged_files",
+   "technique": "wear_and_tear.user_files",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 2
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "linux.behavioural.font_count",
+   "technique": "wear_and_tear.fonts",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 2
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "linux.behavioural.installed_packages",
+   "technique": "wear_and_tear.installed_software",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 2
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "linux.behavioural.running_process_count",
+   "technique": "wear_and_tear.process_count",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 2
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "linux.behavioural.shell_history",
+   "technique": "wear_and_tear.recent_files",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 2
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "linux.design.analysis_tools_running",
+   "technique": "analysis_tools.processes",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 1
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "linux.design.exact_sandbox_username",
+   "technique": "identity.username",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 2
+   },
+   "equivalents": {
+    "vmaware": [
+     "LINUX_USER_HOST"
+    ]
+   }
+  },
+  {
+   "id": "linux.design.mac_oui",
+   "technique": "network.mac_oui",
+   "status": "implemented",
+   "fix": {
+    "layer": "vm-config",
+    "effort": 1
+   },
+   "equivalents": {
+    "vmaware": [
+     "MAC"
+    ]
+   }
+  },
+  {
+   "id": "linux.design.suspicious_hostname_or_user",
+   "technique": "identity.hostname",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 2
+   },
+   "equivalents": {
+    "vmaware": [
+     "GENERAL_HOSTNAME"
+    ]
+   }
+  },
+  {
+   "id": "linux.env.block_device_vendor",
+   "technique": "hardware.disk_identity",
+   "status": "implemented",
+   "fix": {
+    "layer": "vm-config",
+    "effort": 3
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "linux.env.cloud_metadata_reachable",
+   "technique": "network.cloud_metadata",
+   "status": "implemented",
+   "fix": {
+    "layer": "network",
+    "effort": 1
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "linux.env.container_or_wsl",
+   "technique": "container.container_runtime",
+   "status": "implemented",
+   "fix": {
+    "layer": "vm-config",
+    "effort": 3
+   },
+   "equivalents": {
+    "vmaware": [
+     "DOCKERENV",
+     "WSL_PROC",
+     "PODMAN_FILE"
+    ]
+   }
+  },
+  {
+   "id": "linux.env.cpu_brand_string",
+   "technique": "cpu.brand_string",
+   "status": "implemented",
+   "fix": {
+    "layer": "hypervisor",
+    "effort": 3
+   },
+   "equivalents": {
+    "vmaware": [
+     "CPU_BRAND"
+    ]
+   }
+  },
+  {
+   "id": "linux.env.cpuid_hypervisor_bit",
+   "technique": "cpu.hypervisor_bit",
+   "status": "implemented",
+   "fix": {
+    "layer": "analysis-engine",
+    "effort": 3
+   },
+   "equivalents": {
+    "vmaware": [
+     "HYPERVISOR_BIT"
+    ]
+   }
+  },
+  {
+   "id": "linux.env.cpuid_hypervisor_vendor",
+   "technique": "cpu.hypervisor_vendor_leaf",
+   "status": "implemented",
+   "fix": {
+    "layer": "analysis-engine",
+    "effort": 3
+   },
+   "equivalents": {
+    "vmaware": [
+     "HYPERVISOR_STR"
+    ]
+   }
+  },
+  {
+   "id": "linux.env.dmi_bios_vendor",
+   "technique": "firmware.smbios_strings",
+   "status": "implemented",
+   "fix": {
+    "layer": "firmware",
+    "effort": 3
+   },
+   "equivalents": {
+    "vmaware": [
+     "DMIDECODE",
+     "DMI_SCAN"
+    ]
+   }
+  },
+  {
+   "id": "linux.env.dmi_bios_version",
+   "technique": "firmware.smbios_strings",
+   "status": "implemented",
+   "fix": {
+    "layer": "firmware",
+    "effort": 3
+   },
+   "equivalents": {
+    "vmaware": [
+     "DMIDECODE",
+     "DMI_SCAN"
+    ]
+   }
+  },
+  {
+   "id": "linux.env.dmi_board_name",
+   "technique": "firmware.smbios_strings",
+   "status": "implemented",
+   "fix": {
+    "layer": "firmware",
+    "effort": 3
+   },
+   "equivalents": {
+    "vmaware": [
+     "DMIDECODE",
+     "DMI_SCAN"
+    ]
+   }
+  },
+  {
+   "id": "linux.env.dmi_board_vendor",
+   "technique": "firmware.smbios_strings",
+   "status": "implemented",
+   "fix": {
+    "layer": "firmware",
+    "effort": 3
+   },
+   "equivalents": {
+    "vmaware": [
+     "DMIDECODE",
+     "DMI_SCAN"
+    ]
+   }
+  },
+  {
+   "id": "linux.env.dmi_chassis_asset_tag",
+   "technique": "firmware.smbios_strings",
+   "status": "implemented",
+   "fix": {
+    "layer": "firmware",
+    "effort": 3
+   },
+   "equivalents": {
+    "vmaware": [
+     "DMIDECODE",
+     "DMI_SCAN"
+    ]
+   }
+  },
+  {
+   "id": "linux.env.dmi_chassis_vendor",
+   "technique": "firmware.smbios_strings",
+   "status": "implemented",
+   "fix": {
+    "layer": "firmware",
+    "effort": 3
+   },
+   "equivalents": {
+    "vmaware": [
+     "DMIDECODE",
+     "DMI_SCAN"
+    ]
+   }
+  },
+  {
+   "id": "linux.env.dmi_product_family",
+   "technique": "firmware.smbios_strings",
+   "status": "implemented",
+   "fix": {
+    "layer": "firmware",
+    "effort": 3
+   },
+   "equivalents": {
+    "vmaware": [
+     "DMIDECODE",
+     "DMI_SCAN"
+    ]
+   }
+  },
+  {
+   "id": "linux.env.dmi_product_name",
+   "technique": "firmware.smbios_strings",
+   "status": "implemented",
+   "fix": {
+    "layer": "firmware",
+    "effort": 3
+   },
+   "equivalents": {
+    "vmaware": [
+     "DMIDECODE",
+     "DMI_SCAN"
+    ]
+   }
+  },
+  {
+   "id": "linux.env.dmi_product_sku",
+   "technique": "firmware.smbios_strings",
+   "status": "implemented",
+   "fix": {
+    "layer": "firmware",
+    "effort": 3
+   },
+   "equivalents": {
+    "vmaware": [
+     "DMIDECODE",
+     "DMI_SCAN"
+    ]
+   }
+  },
+  {
+   "id": "linux.env.dmi_product_version",
+   "technique": "firmware.smbios_strings",
+   "status": "implemented",
+   "fix": {
+    "layer": "firmware",
+    "effort": 3
+   },
+   "equivalents": {
+    "vmaware": [
+     "DMIDECODE",
+     "DMI_SCAN"
+    ]
+   }
+  },
+  {
+   "id": "linux.env.dmi_sys_vendor",
+   "technique": "firmware.smbios_strings",
+   "status": "implemented",
+   "fix": {
+    "layer": "firmware",
+    "effort": 3
+   },
+   "equivalents": {
+    "vmaware": [
+     "DMIDECODE",
+     "DMI_SCAN"
+    ]
+   }
+  },
+  {
+   "id": "linux.env.guest_agent_binaries",
+   "technique": "guest_tools.processes",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 2
+   },
+   "equivalents": {
+    "vmaware": [
+     "QEMU_GA"
+    ]
+   }
+  },
+  {
+   "id": "linux.env.guest_kernel_modules",
+   "technique": "guest_tools.drivers_modules",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 2
+   },
+   "equivalents": {
+    "vmaware": [
+     "VBOX_MODULE"
+    ]
+   }
+  },
+  {
+   "id": "linux.env.low_core_count",
+   "technique": "resources.cpu_count",
+   "status": "implemented",
+   "fix": {
+    "layer": "vm-config",
+    "effort": 1
+   },
+   "equivalents": {
+    "vmaware": [
+     "THREAD_COUNT"
+    ]
+   }
+  },
+  {
+   "id": "linux.env.low_ram",
+   "technique": "resources.memory_size",
+   "status": "implemented",
+   "fix": {
+    "layer": "vm-config",
+    "effort": 1
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "linux.env.pci_virtio_devices",
+   "technique": "hardware.pci_vendor_ids",
+   "status": "implemented",
+   "fix": {
+    "layer": "vm-config",
+    "effort": 3
+   },
+   "equivalents": {
+    "vmaware": [
+     "PCI_VM"
+    ]
+   }
+  },
+  {
+   "id": "linux.env.sandbox_framework_paths",
+   "technique": "analysis_tools.files",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 2
+   },
+   "equivalents": {
+    "vmaware": [
+     "CUCKOO_DIR"
+    ]
+   }
+  },
+  {
+   "id": "linux.env.scsi_device_vendor",
+   "technique": "hardware.disk_identity",
+   "status": "implemented",
+   "fix": {
+    "layer": "vm-config",
+    "effort": 3
+   },
+   "equivalents": {
+    "vmaware": [
+     "VMWARE_SCSI"
+    ]
+   }
+  },
+  {
+   "id": "linux.env.small_disk",
+   "technique": "resources.disk_size",
+   "status": "implemented",
+   "fix": {
+    "layer": "vm-config",
+    "effort": 1
+   },
+   "equivalents": {
+    "vmaware": [
+     "DISK_SIZE"
+    ]
+   }
+  },
+  {
+   "id": "linux.env.systemd_detect_virt",
+   "technique": "container.virtualisation_report",
+   "status": "implemented",
+   "fix": {
+    "layer": "hypervisor",
+    "effort": 4
+   },
+   "equivalents": {
+    "vmaware": [
+     "SYSTEMD"
+    ]
+   }
+  },
+  {
+   "id": "linux.timing.low_uptime",
+   "technique": "timing.uptime",
+   "status": "implemented",
+   "fix": {
+    "layer": "analysis-engine",
+    "effort": 1
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "linux.timing.rdtsc_cpuid_jitter",
+   "technique": "timing.cpuid_vmexit",
+   "status": "implemented",
+   "fix": {
+    "layer": "hypervisor",
+    "effort": 5
+   },
+   "equivalents": {
+    "vmaware": [
+     "TIMER"
+    ]
+   }
+  }
+ ]
+}

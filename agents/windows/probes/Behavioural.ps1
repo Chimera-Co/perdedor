@@ -155,13 +155,11 @@ public static extern bool GetCursorPos(out POINT lpPoint);
         -Remediation 'This single sample is a weak signal on its own (a real user can be briefly idle); use CHIMERA forward-plan human-interaction simulation for the real mitigation.'
 }
 
-function Invoke-BehaviouralChecks {
-    @(
-        Test-BrowserHistory
-        Test-AgedFiles
-        Test-InstalledPrograms
-        Test-FontCount
-        Test-RunningProcessCount
-        Test-MouseMovement
-    )
-}
+
+# --- registration (Invoke-Perdedor.ps1 selects and runs these) ---
+Register-PerdedorCheck -Ids 'win.behavioural.browser_history' -Technique 'wear_and_tear.browser_history' -Run { Test-BrowserHistory }
+Register-PerdedorCheck -Ids 'win.behavioural.aged_files' -Technique 'wear_and_tear.user_files' -Run { Test-AgedFiles }
+Register-PerdedorCheck -Ids 'win.behavioural.installed_programs' -Technique 'wear_and_tear.installed_software' -Run { Test-InstalledPrograms }
+Register-PerdedorCheck -Ids 'win.behavioural.font_count' -Technique 'wear_and_tear.fonts' -Run { Test-FontCount }
+Register-PerdedorCheck -Ids 'win.behavioural.running_process_count' -Technique 'wear_and_tear.process_count' -Run { Test-RunningProcessCount }
+Register-PerdedorCheck -Ids 'win.behavioural.mouse_movement' -Technique 'human.mouse_activity' -Cost medium -Run { Test-MouseMovement }

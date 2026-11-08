@@ -1,0 +1,494 @@
+{
+ "catalog_format": 2,
+ "platform": "windows",
+ "source": "perdedor v0.1 checks",
+ "checks": [
+  {
+   "id": "win.behavioural.aged_files",
+   "technique": "wear_and_tear.user_files",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 2
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "win.behavioural.browser_history",
+   "technique": "wear_and_tear.browser_history",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 2
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "win.behavioural.font_count",
+   "technique": "wear_and_tear.fonts",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 2
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "win.behavioural.installed_programs",
+   "technique": "wear_and_tear.installed_software",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 2
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "win.behavioural.mouse_movement",
+   "technique": "human.mouse_activity",
+   "status": "implemented",
+   "fix": {
+    "layer": "analysis-engine",
+    "effort": 3
+   },
+   "equivalents": {
+    "pafish": [
+     "gensandbox_mouse_act"
+    ],
+    "al-khaser": [
+     "mouse_movement"
+    ]
+   }
+  },
+  {
+   "id": "win.behavioural.running_process_count",
+   "technique": "wear_and_tear.process_count",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 2
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "win.design.analysis_tools_running",
+   "technique": "analysis_tools.processes",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 1
+   },
+   "equivalents": {
+    "al-khaser": [
+     "analysis_tools_process"
+    ]
+   }
+  },
+  {
+   "id": "win.design.blacklisted_dlls",
+   "technique": "analysis_tools.loaded_modules",
+   "status": "implemented",
+   "fix": {
+    "layer": "analysis-engine",
+    "effort": 3
+   },
+   "equivalents": {
+    "pafish": [
+     "sboxie_detect_sbiedll"
+    ],
+    "al-khaser": [
+     "loaded_dlls"
+    ],
+    "vmaware": [
+     "DLL"
+    ]
+   }
+  },
+  {
+   "id": "win.design.debugger_present",
+   "technique": "debugger.api_flags",
+   "status": "implemented",
+   "fix": {
+    "layer": "analysis-engine",
+    "effort": 3
+   },
+   "equivalents": {
+    "pafish": [
+     "debug_isdebuggerpresent"
+    ],
+    "al-khaser": [
+     "IsDebuggerPresentAPI"
+    ]
+   }
+  },
+  {
+   "id": "win.design.exact_sandbox_username",
+   "technique": "identity.username",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 2
+   },
+   "equivalents": {
+    "pafish": [
+     "gensandbox_username"
+    ],
+    "al-khaser": [
+     "known_usernames"
+    ]
+   }
+  },
+  {
+   "id": "win.design.mac_oui",
+   "technique": "network.mac_oui",
+   "status": "implemented",
+   "fix": {
+    "layer": "vm-config",
+    "effort": 1
+   },
+   "equivalents": {
+    "al-khaser": [
+     "*_check_mac"
+    ],
+    "vmaware": [
+     "MAC"
+    ]
+   }
+  },
+  {
+   "id": "win.design.managed_debugger_attached",
+   "technique": "debugger.api_flags",
+   "status": "implemented",
+   "fix": {
+    "layer": "analysis-engine",
+    "effort": 3
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "win.design.remote_debugger_present",
+   "technique": "debugger.api_flags",
+   "status": "implemented",
+   "fix": {
+    "layer": "analysis-engine",
+    "effort": 3
+   },
+   "equivalents": {
+    "al-khaser": [
+     "CheckRemoteDebuggerPresentAPI"
+    ]
+   }
+  },
+  {
+   "id": "win.design.suspicious_hostname_or_user",
+   "technique": "identity.hostname",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 2
+   },
+   "equivalents": {
+    "al-khaser": [
+     "known_hostnames"
+    ]
+   }
+  },
+  {
+   "id": "win.design.window_class_artifacts",
+   "technique": "artifacts.window_classes",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 2
+   },
+   "equivalents": {
+    "pafish": [
+     "vbox_window_class"
+    ],
+    "al-khaser": [
+     "vbox_window_class"
+    ]
+   }
+  },
+  {
+   "id": "win.env.artifact_files",
+   "technique": "artifacts.files",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 2
+   },
+   "equivalents": {
+    "pafish": [
+     "*_files"
+    ],
+    "al-khaser": [
+     "*_files",
+     "*_dir"
+    ],
+    "vmaware": [
+     "VM_FILES"
+    ]
+   }
+  },
+  {
+   "id": "win.env.cloud_metadata_reachable",
+   "technique": "network.cloud_metadata",
+   "status": "implemented",
+   "fix": {
+    "layer": "network",
+    "effort": 1
+   },
+   "equivalents": {}
+  },
+  {
+   "id": "win.env.cpu_brand_string",
+   "technique": "cpu.brand_string",
+   "status": "implemented",
+   "fix": {
+    "layer": "hypervisor",
+    "effort": 3
+   },
+   "equivalents": {
+    "pafish": [
+     "cpu_brand"
+    ],
+    "vmaware": [
+     "CPU_BRAND",
+     "QEMU_BRAND"
+    ]
+   }
+  },
+  {
+   "id": "win.env.cpuid_hypervisor_bit",
+   "technique": "cpu.hypervisor_bit",
+   "status": "implemented",
+   "fix": {
+    "layer": "analysis-engine",
+    "effort": 3
+   },
+   "equivalents": {
+    "pafish": [
+     "cpu_hv"
+    ],
+    "al-khaser": [
+     "cpuid_is_hypervisor"
+    ],
+    "vmaware": [
+     "HYPERVISOR_BIT"
+    ]
+   }
+  },
+  {
+   "id": "win.env.cpuid_hypervisor_vendor",
+   "technique": "cpu.hypervisor_vendor_leaf",
+   "status": "implemented",
+   "fix": {
+    "layer": "analysis-engine",
+    "effort": 3
+   },
+   "equivalents": {
+    "pafish": [
+     "cpu_known_vm_vendors"
+    ],
+    "al-khaser": [
+     "cpuid_hypervisor_vendor"
+    ],
+    "vmaware": [
+     "HYPERVISOR_STR"
+    ]
+   }
+  },
+  {
+   "id": "win.env.guest_services",
+   "technique": "guest_tools.services",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 2
+   },
+   "equivalents": {
+    "al-khaser": [
+     "*_services"
+    ],
+    "vmaware": [
+     "VM_PROCESSES"
+    ]
+   }
+  },
+  {
+   "id": "win.env.low_core_count",
+   "technique": "resources.cpu_count",
+   "status": "implemented",
+   "fix": {
+    "layer": "vm-config",
+    "effort": 1
+   },
+   "equivalents": {
+    "pafish": [
+     "gensandbox_one_cpu*"
+    ],
+    "al-khaser": [
+     "NumberOfProcessors"
+    ],
+    "vmaware": [
+     "THREAD_COUNT"
+    ]
+   }
+  },
+  {
+   "id": "win.env.low_ram",
+   "technique": "resources.memory_size",
+   "status": "implemented",
+   "fix": {
+    "layer": "vm-config",
+    "effort": 1
+   },
+   "equivalents": {
+    "pafish": [
+     "gensandbox_less_than_onegb"
+    ],
+    "al-khaser": [
+     "memory_space"
+    ],
+    "vmaware": [
+     "RAM?"
+    ]
+   }
+  },
+  {
+   "id": "win.env.pnp_virtual_devices",
+   "technique": "hardware.pci_vendor_ids",
+   "status": "implemented",
+   "fix": {
+    "layer": "vm-config",
+    "effort": 3
+   },
+   "equivalents": {
+    "al-khaser": [
+     "vbox_pnpentity_*",
+     "pnp_devices"
+    ],
+    "vmaware": [
+     "PCI_VM",
+     "DEVICE_STRING"
+    ]
+   }
+  },
+  {
+   "id": "win.env.registry_artifacts",
+   "technique": "artifacts.registry",
+   "status": "implemented",
+   "fix": {
+    "layer": "guest-image",
+    "effort": 2
+   },
+   "equivalents": {
+    "pafish": [
+     "*_reg_key*"
+    ],
+    "al-khaser": [
+     "*_reg_keys",
+     "*_reg_key_value"
+    ],
+    "vmaware": [
+     "REGISTRY",
+     "HKLM_REGISTRIES"
+    ]
+   }
+  },
+  {
+   "id": "win.env.small_disk",
+   "technique": "resources.disk_size",
+   "status": "implemented",
+   "fix": {
+    "layer": "vm-config",
+    "effort": 1
+   },
+   "equivalents": {
+    "pafish": [
+     "gensandbox_drive_size*"
+    ],
+    "al-khaser": [
+     "disk_size_*"
+    ],
+    "vmaware": [
+     "DISK_SIZE"
+    ]
+   }
+  },
+  {
+   "id": "win.env.smbios_firmware_table_raw",
+   "technique": "firmware.smbios_raw_table",
+   "status": "implemented",
+   "fix": {
+    "layer": "firmware",
+    "effort": 4
+   },
+   "equivalents": {
+    "al-khaser": [
+     "*_firmware_SMBIOS"
+    ],
+    "vmaware": [
+     "FIRMWARE",
+     "SMBIOS_VM_BIT"
+    ]
+   }
+  },
+  {
+   "id": "win.env.smbios_vendor",
+   "technique": "firmware.smbios_strings",
+   "status": "implemented",
+   "fix": {
+    "layer": "firmware",
+    "effort": 3
+   },
+   "equivalents": {
+    "al-khaser": [
+     "wmi_*"
+    ],
+    "vmaware": [
+     "DMI_SCAN",
+     "WMI_MANUFACTURER"
+    ]
+   }
+  },
+  {
+   "id": "win.timing.cpuid_qpc_jitter",
+   "technique": "timing.cpuid_vmexit",
+   "status": "implemented",
+   "fix": {
+    "layer": "hypervisor",
+    "effort": 5
+   },
+   "equivalents": {
+    "pafish": [
+     "cpu_rdtsc_force_vmexit"
+    ],
+    "al-khaser": [
+     "rdtsc_diff_vmexit"
+    ],
+    "vmaware": [
+     "TIMER"
+    ]
+   }
+  },
+  {
+   "id": "win.timing.low_uptime",
+   "technique": "timing.uptime",
+   "status": "implemented",
+   "fix": {
+    "layer": "analysis-engine",
+    "effort": 1
+   },
+   "equivalents": {
+    "pafish": [
+     "gensandbox_uptime"
+    ],
+    "vmaware": [
+     "UPTIME"
+    ]
+   }
+  }
+ ]
+}

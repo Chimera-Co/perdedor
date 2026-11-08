@@ -13,6 +13,7 @@ import time
 from pathlib import Path
 
 from perdedor_common import FindingFactory
+from perdedor_common.registry import RunContext, run_checks, spec
 from perdedor_common.models import Category, Finding, Platform, Severity
 
 from .. import utils
@@ -150,11 +151,15 @@ def check_running_process_count() -> Finding:
     )
 
 
+CHECKS = [
+    spec('linux.behavioural.shell_history', check_shell_history, 'wear_and_tear.recent_files'),
+    spec('linux.behavioural.aged_files', check_aged_files, 'wear_and_tear.user_files'),
+    spec('linux.behavioural.installed_packages', check_installed_package_count, 'wear_and_tear.installed_software'),
+    spec('linux.behavioural.font_count', check_font_count, 'wear_and_tear.fonts'),
+    spec('linux.behavioural.running_process_count', check_running_process_count, 'wear_and_tear.process_count'),
+]
+
+
 def run_all() -> list[Finding]:
-    return [
-        check_shell_history(),
-        check_aged_files(),
-        check_installed_package_count(),
-        check_font_count(),
-        check_running_process_count(),
-    ]
+    """Every check in this module, unfiltered (v1 entry point)."""
+    return run_checks(CHECKS, RunContext(platform=_PLATFORM))

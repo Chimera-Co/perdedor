@@ -27,6 +27,8 @@ class Platform(str, Enum):
     WINDOWS = "windows"
     LINUX = "linux"
     ANDROID = "android"
+    MACOS = "macos"
+    IOS = "ios"
 
 
 class Status(str, Enum):
@@ -56,9 +58,17 @@ class Finding:
     evidence: Any = None
     remediation: str | None = None
     error_detail: str | None = None
+    # v2 (optional): catalog technique key and class, how sure the agent is of
+    # the status (0-1; timing statistics, partial reads), numeric measurements
+    # behind the verdict, and how long the probe took.
+    technique: str | None = None
+    check_class: str | None = None
+    confidence: float | None = None
+    measurement: dict | None = None
+    duration_ms: float | None = None
 
     def to_dict(self) -> dict:
-        return {
+        doc = {
             "id": self.id,
             "category": self.category.value,
             "platform": self.platform.value,
@@ -70,6 +80,16 @@ class Finding:
             "remediation": self.remediation,
             "error_detail": self.error_detail,
         }
+        for key, value in (
+            ("technique", self.technique),
+            ("class", self.check_class),
+            ("confidence", self.confidence),
+            ("measurement", self.measurement),
+            ("duration_ms", self.duration_ms),
+        ):
+            if value is not None:
+                doc[key] = value
+        return doc
 
 
 @dataclass(frozen=True)
@@ -84,14 +104,18 @@ class PlatformReport:
     platform: Platform
     findings: tuple[Finding, ...]
     hostname: str = field(default_factory=socket.gethostname)
-    perdedor_version: str = "0.1.0"
+    perdedor_version: str = "2.0.0"
     generated_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     agent_metadata: dict[str, str] = field(default_factory=dict)
+    # v2: what the operator asked for (profile, only/skip patterns, params), so a
+    # partial run is never mistaken for a full one when coverage is computed.
+    selection: dict | None = None
 
     def to_dict(self) -> dict:
         from .scoring import score_report  # local import avoids a cycle
 
-        return {
+        doc = {
+            "schema_version": 2,
             "perdedor_version": self.perdedor_version,
             "platform": self.platform.value,
             "hostname": self.hostname,
@@ -100,6 +124,9 @@ class PlatformReport:
             "findings": [f.to_dict() for f in self.findings],
             "summary": score_report(self.findings),
         }
+        if self.selection is not None:
+            doc["selection"] = self.selection
+        return doc
 
     @staticmethod
     def default_metadata() -> dict[str, str]:

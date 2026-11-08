@@ -63,9 +63,7 @@ function Test-TimingJitter {
         -Remediation 'Requires host-kernel KVM TSC-handling patches or migration to Xen+DRAKVUF; config-level TSC pinning reduces jitter but not the hardware VM-exit floor (CHIMERA KVM report Section 8.2/5.5).'
 }
 
-function Invoke-TimingChecks {
-    @(
-        Test-Uptime
-        Test-TimingJitter
-    )
-}
+
+# --- registration (Invoke-Perdedor.ps1 selects and runs these) ---
+Register-PerdedorCheck -Ids 'win.timing.low_uptime' -Technique 'timing.uptime' -Run { Test-Uptime }
+Register-PerdedorCheck -Ids 'win.timing.cpuid_qpc_jitter' -Technique 'timing.cpuid_vmexit' -Cost medium -Run { Test-TimingJitter }
