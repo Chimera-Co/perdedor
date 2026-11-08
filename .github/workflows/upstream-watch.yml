@@ -1,0 +1,96 @@
+# Weekly: look for new releases of the projects Perdedor mirrors and for upstream techniques that no check
+# maps. When something is new, create or update the single open issue "Upstream updates to review".
+name: Upstream watch
+
+on:
+  schedule:
+    - cron: "17 5 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: upstream-watch
+  cancel-in-progress: false
+
+env:
+  PYTHONUTF8: "1"
+
+jobs:
+  watch:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -e .
+      - name: Check upstream
+        id: check
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set +e
+          perdedor upstream check --json --state "$RUNNER_TEMP/upstream-state.json" --token-env GITHUB_TOKEN > "$RUNNER_TEMP/upstream.json"
+          code=$?
+          echo "exit code: $code"
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          if [ "$code" -ne 0 ] && [ "$code" -ne 10 ]; then
+            cat "$RUNNER_TEMP/upstream.json" >&2 || true
+            exit "$code"
+          fi
+      - name: Create or update the review issue
+        if: steps.check.outputs.code == '10'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          python - "$RUNNER_TEMP/upstream.json" > "$RUNNER_TEMP/issue-body.md" <<'PY'
+          import json, sys
+          res = json.load(open(sys.argv[1], encoding="utf-8"))
+          out = [f"Weekly upstream check of {res['checked']}: {res['summary']['update']} source(s) moved "
+                 f"since the pinned revision, {res['summary']['unmapped_new_techniques']} new upstream "
+                 "technique(s) have no mapping in the check catalog.", "", "## Updates", ""]
+          for s in res["sources"]:
+              if s["status"] != "update":
+                  continue
+              pin = (s.get("pinned") or {}).get("version", "?")
+              out.append(f"- **{s['name']}** (`{s['id']}`): {pin} -> {s['latest']['version']} ({s['latest'].get('url', '')})")
+              new = s.get("new_techniques", [])
+              if new:
+                  out.append(f"  - {len(new)} new upstream technique(s): " + ", ".join(f"`{t['name']}`" for t in new[:25]))
+              if s.get("removed_techniques"):
+                  out.append("  - removed upstream: " + ", ".join(f"`{n}`" for n in s["removed_techniques"][:25]))
+              if s.get("inspect_error"):
+                  out.append(f"  - could not list techniques: {s['inspect_error']}")
+          out += ["", "## Unmapped upstream techniques", ""]
+          unmapped = res.get("unmapped_upstream_techniques", [])
+          if unmapped:
+              for t in unmapped[:200]:
+                  out.append(f"- `{t['source_id']}`: `{t['name']}` {t.get('detail', '')}".rstrip())
+              if len(unmapped) > 200:
+                  out.append(f"- ... and {len(unmapped) - 200} more (see the workflow run)")
+          else:
+              out.append("None among the new techniques.")
+          errors = [s for s in res["sources"] if s["status"] in ("error", "skipped")]
+          if errors:
+              out += ["", "## Sources that could not be checked", ""]
+              out += [f"- `{s['id']}`: {s.get('error', s['status'])}" for s in errors]
+          out += ["", "Review with `perdedor upstream check`, add or map checks, run `perdedor coverage --markdown`, then "
+                  "`perdedor upstream pin --all --inventory`. See docs/UPSTREAM.md.", "",
+                  "Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"]
+          print("\n".join(out))
+          PY
+          title="Upstream updates to review"
+          number=$(gh issue list --state open --search "\"$title\" in:title" --json number,title --jq "map(select(.title == \"$title\")) | .[0].number // empty")
+          if [ -n "$number" ]; then
+            gh issue edit "$number" --body-file "$RUNNER_TEMP/issue-body.md"
+            echo "updated issue #$number"
+          else
+            gh issue create --title "$title" --body-file "$RUNNER_TEMP/issue-body.md"
+          fi

@@ -1,0 +1,112 @@
+{
+  "source_id": "anti-emulator",
+  "revision": "f2b669a54980",
+  "commit": "f2b669a5498076c4071670bd97268971d01ad7ae",
+  "fetched": "2026-11-08",
+  "techniques": [
+    {
+      "name": "checkQemuBreakpoint",
+      "detail": "FindEmulator",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "hasEmulatorAdb",
+      "detail": "FindEmulator",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "hasEmulatorBuild",
+      "detail": "FindEmulator",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "hasGenyFiles",
+      "detail": "FindEmulator",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "hasKnownDeviceId",
+      "detail": "FindEmulator",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "hasKnownImsi",
+      "detail": "FindEmulator",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "hasKnownPhoneNumber",
+      "detail": "FindEmulator",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "hasPipes",
+      "detail": "FindEmulator",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "hasQEmuDrivers",
+      "detail": "FindEmulator",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "hasQEmuFiles",
+      "detail": "FindEmulator",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "hasQEmuProps",
+      "detail": "FindEmulator",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "isOperatorNameAndroid",
+      "detail": "FindEmulator",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    },
+    {
+      "name": "qemuBkpt",
+      "detail": "FindEmulator",
+      "platforms": [
+        "android"
+      ],
+      "score": null
+    }
+  ]
+}

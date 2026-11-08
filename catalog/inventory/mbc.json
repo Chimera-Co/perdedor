@@ -1,0 +1,62 @@
+{
+  "source_id": "mbc",
+  "revision": "v3.2",
+  "commit": "0aa720aa318924b8b102107ee0f004b5993bc8ad",
+  "fetched": "2026-11-08",
+  "techniques": [
+    {
+      "name": "B0001",
+      "detail": "Debugger Detection; 37 methods",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "B0002",
+      "detail": "Debugger Evasion; 30 methods; ATT&CK T1622",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "B0003",
+      "detail": "Dynamic Analysis Evasion; 12 methods; ATT&CK T1497, T1633",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "B0004",
+      "detail": "Emulator Detection; 4 methods",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "B0005",
+      "detail": "Emulator Evasion; 4 methods",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "B0006",
+      "detail": "Memory Dump Evasion; 10 methods",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "B0007",
+      "detail": "Sandbox Detection; 9 methods; ATT&CK T1497, T1497.001, T1497.002, T1633, T1633.001",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "B0009",
+      "detail": "Virtual Machine Detection; 37 methods; ATT&CK T1497, T1633",
+      "platforms": [],
+      "score": null
+    },
+    {
+      "name": "B0036",
+      "detail": "Capture Evasion; 3 methods",
+      "platforms": [],
+      "score": null
+    }
+  ]
+}
