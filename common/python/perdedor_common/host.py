@@ -10,11 +10,10 @@ A sandbox controller (a console, a CI job, a script) uses these to:
 
 from __future__ import annotations
 
-import fcntl
 import os
-from fnmatch import fnmatchcase
 import re
 import subprocess
+from fnmatch import fnmatchcase
 from pathlib import Path
 from typing import Any, Iterable, Mapping, Sequence
 
@@ -155,7 +154,12 @@ def native_binary(repo_root: Path | str, target: str, *, timeout: float = 900) -
     out = build / name
     build.mkdir(parents=True, exist_ok=True)
     with open(build / ".lock", "w") as lock:
-        fcntl.flock(lock, fcntl.LOCK_EX)
+        try:  # Unix hosts build the agents; elsewhere (Windows) there is nothing to serialise against
+            import fcntl
+
+            fcntl.flock(lock, fcntl.LOCK_EX)
+        except ImportError:
+            pass
         if out.is_file() and out.stat().st_mtime >= _newest_source(native):
             return out
         try:
