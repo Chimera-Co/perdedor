@@ -1,0 +1,45 @@
+{
+ "files": {
+  "/sys/class/dmi/id/sys_vendor": "innotek GmbH\n",
+  "/sys/class/dmi/id/product_name": "VirtualBox\n",
+  "/sys/class/dmi/id/bios_vendor": "innotek GmbH\n",
+  "/sys/class/dmi/id/bios_version": "VirtualBox\n",
+  "/sys/class/dmi/id/bios_date": "03/14/2023\n",
+  "/sys/class/dmi/id/board_vendor": "Oracle Corporation\n",
+  "/sys/class/dmi/id/board_name": "VirtualBox\n",
+  "/sys/class/dmi/id/board_version": "\n",
+  "/sys/class/dmi/id/chassis_vendor": "Oracle Corporation\n",
+  "/sys/class/dmi/id/chassis_type": "1\n",
+  "/sys/class/dmi/id/chassis_version": "\n",
+  "/sys/class/dmi/id/product_serial": "0\n",
+  "/sys/class/dmi/id/product_uuid": "3c1b0d8e-1111-2222-3333-444455556666\n",
+  "/sys/class/dmi/id/product_version": "\n",
+  "/sys/class/dmi/id/board_asset_tag": "\n",
+  "/proc/cpuinfo": "processor\t: 0\nvendor_id\t: GenuineIntel\nmodel name\t: Intel(R) Core(TM) i7-11700 @ 2.50GHz\nflags\t\t: fpu vme de pse tsc msr pae mce cx8 apic sep hypervisor lahf_lm\n\n",
+  "/proc/modules": "vboxguest 450560 2 vboxsf, Live 0x0\nvboxsf 90112 1 - Live 0x0\nvboxvideo 36864 0 - Live 0x0\n",
+  "/dev/vboxguest": "",
+  "/dev/vboxuser": "",
+  "/etc/init.d/vboxadd": "#!/bin/sh\n",
+  "/etc/os-release": "NAME=\"Debian GNU/Linux\"\nID=debian\nVERSION_ID=\"12\"\n",
+  "/proc/version": "Linux version 6.1.0-27-amd64 (debian-kernel@lists.debian.org) (gcc-12 (Debian 12.2.0-14) 12.2.0) #1 SMP PREEMPT_DYNAMIC Debian 6.1.115-1 (2024-11-01)\n"
+ },
+ "expect": {
+  "detected": [
+   "env.dmi_board_name",
+   "env.dmi_product_name",
+   "env.dmi_sys_vendor",
+   "env.guest_kernel_modules",
+   "env.guest_tool_services",
+   "env.hypervisor_device_nodes",
+   "env.hypervisor_files",
+   "env.virtualisation_self_report"
+  ],
+  "not_detected": [
+   "env.dockerenv",
+   "env.qemu_fw_cfg",
+   "env.sys_hypervisor",
+   "timing.clock_source"
+  ]
+ },
+ "dirs": []
+}

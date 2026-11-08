@@ -23,7 +23,7 @@ WINLIBS  := -lole32 -loleaut32 -lwbemuuid -luuid -liphlpapi -lws2_32 -ladvapi32 
             -lwtsapi32 -lnetapi32 -lwintrust -lcrypt32 -lbcrypt -lntdll
 VERSION  := $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 
-.PHONY: all linux win64 win32 test clean
+.PHONY: test-linux all linux win64 win32 test clean
 all: $(if $(shell command -v $(LINUX_CXX)),linux) $(if $(shell command -v $(WIN64_CXX)),win64) $(if $(shell command -v $(WIN32_CXX)),win32)
 
 linux: $(BUILD)/perdedor-linux-x86_64
@@ -49,9 +49,13 @@ $(BUILD)/core_tests: $(CORE) tests/core_tests.cpp tests/fake_platform.cpp
 	@mkdir -p $(BUILD)
 	$(LINUX_CXX) $(CXXSTD) -O0 -g $(WARN) -pthread -o $@ $(filter-out src/core/main.cpp,$(CORE)) tests/core_tests.cpp tests/fake_platform.cpp
 
-test: $(BUILD)/core_tests linux
+test: $(BUILD)/core_tests linux test-linux
 	./$(BUILD)/core_tests
 	./$(BUILD)/perdedor-linux-x86_64 --list-checks > /dev/null
+
+# Linux agent against fixture root trees (tests/fixtures/linux/*.json).
+test-linux: linux
+	python3 tests/linux_fixtures.py ./$(BUILD)/perdedor-linux-x86_64
 
 clean:
 	$(RM) -r $(BUILD)
