@@ -1,0 +1,74 @@
+site_name: PERDEDOR
+site_description: Sandbox-evasion self-test for Windows, Linux, Android, macOS and iOS
+site_url: https://chimera-co.github.io/perdedor/
+repo_url: https://github.com/Chimera-Co/perdedor
+repo_name: Chimera-Co/perdedor
+edit_uri: edit/main/docs/
+copyright: MIT licence
+
+theme:
+  name: material
+  logo: img/logo-64.png
+  favicon: img/logo-64.png
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle: {icon: material/weather-night, name: Dark mode}
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle: {icon: material/weather-sunny, name: Light mode}
+  features:
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - search.highlight
+    - content.code.copy
+    - toc.follow
+
+extra_css:
+  - stylesheets/extra.css
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc: {permalink: true}
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed: {alternate_style: true}
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+nav:
+  - Home: index.md
+  - Concepts:
+      - Architecture: ARCHITECTURE.md
+      - Scoring: SCORING.md
+      - Threats: THREATS.md
+  - Coverage:
+      - Check coverage: CHECK_COVERAGE.md
+      - Staying current: UPSTREAM.md
+      - Landscape: LANDSCAPE.md
+  - Platforms:
+      - Windows: notes/windows.md
+      - Linux: notes/linux.md
+      - Low-level probes: notes/lowlevel.md
+      - Android: notes/android.md
+      - macOS and iOS: notes/apple.md
+      - Threat model notes: notes/threats.md
+      - Upstream notes: notes/upstream.md
+  - Contributing:
+      - Design and rules: DESIGN-V2.md
+
+not_in_nav: |
+  LEARNING_GUIDE_VOL1_FOUNDATIONS.md
+  BUILD_GUIDE_VOL2_PERDEDOR_FROM_SCRATCH.md

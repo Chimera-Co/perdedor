@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 from perdedor_cli import __main__ as cli_main
 from perdedor_cli.__main__ import main
@@ -124,3 +125,66 @@ def test_test_windows_reports_clear_error_when_pwsh_missing(monkeypatch, capsys)
     err = capsys.readouterr().err
     assert "pwsh" in err
     assert "PowerShell 7" in err
+
+
+def _fake_native_agent(tmp_path, report: dict):
+    """An executable standing in for the native agent: writes `report` to the path after -o."""
+    import os
+    import sys
+
+    data = tmp_path / "canned.json"
+    data.write_text(json.dumps(report), encoding="utf-8")
+    script = tmp_path / "agent"
+    script.write_text(
+        f"#!{sys.executable}\n"
+        "import shutil, sys\n"
+        "args = sys.argv[1:]\n"
+        f"shutil.copy({str(data)!r}, args[args.index('-o') + 1])\n"
+        f"open({str(tmp_path / 'argv.txt')!r}, 'w').write(' '.join(args))\n",
+        encoding="utf-8",
+    )
+    os.chmod(script, 0o755)
+    return script
+
+
+def test_test_runs_the_native_agent_with_the_selection(tmp_path, capsys) -> None:
+    from perdedor_linux.runner import run_scan
+
+    agent = _fake_native_agent(tmp_path, run_scan().to_dict())
+    code = main(
+        ["test", "linux", "--agent", str(agent), "--profile", "deep", "--only", "class:cpu", "--no-network"]
+        + ["--no-color"]
+    )
+    assert code == 0
+    argv = (tmp_path / "argv.txt").read_text()
+    assert "--profile deep" in argv and "--only class:cpu" in argv and "--no-network" in argv
+    assert "Exposure:" in capsys.readouterr().out
+
+
+def test_native_engine_without_a_binary_fails_clearly(tmp_path, monkeypatch, capsys) -> None:
+    monkeypatch.setattr(cli_main, "_REPO_ROOT", tmp_path)
+    monkeypatch.delenv("PERDEDOR_AGENT", raising=False)
+    assert main(["test", "linux", "--engine", "native"]) == 1
+    assert "no native linux agent" in capsys.readouterr().err
+
+
+def test_agent_arguments_after_double_dash_are_only_for_apple(capsys) -> None:
+    assert main(["test", "linux", "--", "--local"]) == 2
+    assert "only for macos and ios" in capsys.readouterr().err
+
+
+def test_macos_target_arguments_reach_the_agent(monkeypatch, tmp_path) -> None:
+    seen = {}
+
+    def fake_main(argv):
+        seen["argv"] = argv
+        out = argv[argv.index("-o") + 1]
+        Path(out).write_text(json.dumps({"platform": "macos", "findings": [], "summary": {}}))
+        return 0
+
+    import perdedor_macos.__main__ as mac
+
+    monkeypatch.setattr(mac, "main", fake_main)
+    out = tmp_path / "mac.json"
+    assert main(["test", "macos", "-o", str(out), "--json", "--", "--ssh", "user@mac"]) == 0
+    assert seen["argv"][:2] == ["--ssh", "user@mac"]

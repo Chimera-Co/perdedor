@@ -1,81 +1,170 @@
-# PERDEDOR Architecture
+# Architecture
 
-PERDEDOR is the cross-platform sandbox-evasion self-test suite for the CHIMERA
-platform. It exists to close one specific gap identified during CHIMERA's
-build: VMAware, Pafish, and al-khaser verify Windows/Linux hardening, but
-none of them cover Android, and none of them share a report format. PERDEDOR
-is one suite, three agents, one schema, one scoring method -- and aims for
-parity with (and, on Android, coverage beyond) that combined technique
-catalog; see [CHECK_COVERAGE.md](CHECK_COVERAGE.md) for the full mapping.
+Perdedor has three parts: **agents** that look at an environment, a **catalog** that says what each
+finding means, and an **assessment** layer that turns findings into a score and a plan. They meet in
+one JSON report format, so a finding from a Windows guest, an Android phone and a macOS VM can be read,
+scored and compared the same way.
 
-The user-facing shape of that is deliberately narrow: `perdedor test <platform>`
-takes exactly one of `windows`/`linux`/`android`, runs *only* that
-platform's full check suite against the current host (or, for Android, the
-`adb`-attached device), and returns a score. There is no mode that runs
-multiple platforms' checks in one invocation -- the tool never guesses which
-sandbox it's running on.
-
-## Design principles (from CHIMERA Ch.8)
-
-1. **One suite, three platforms.** Every agent emits the same JSON shape
-   (`schema/perdedor-report.schema.json`) so results are directly comparable
-   across Windows, Linux, and Android sandboxes.
-2. **Check categories, not just individual techniques.** Every finding is
-   tagged with one of the four detection categories from CHIMERA Ch.3:
-   - `environment_artifact` — hardware/firmware/driver signatures
-   - `timing` — RDTSC-class and uptime-based timing discrepancies
-   - `behavioural_interaction` — absence of human wear-and-tear
-   - `design_specific` — quirks of a particular analysis platform/build
-3. **Feed hardening, don't just report on it.** Every finding that can be
-   detected carries a `remediation` string describing the hardening-profile
-   change that would close it, so CHIMERA's hardening profiles can consume
-   PERDEDOR output directly instead of routing through manual analyst judgement.
+- [Components](#components)
+- [Data model](#data-model)
+- [How a scan runs](#how-a-scan-runs)
+- [Running inside CHIMERA](#running-inside-chimera)
+- [Design decisions](#design-decisions)
 
 ## Components
 
+```mermaid
+flowchart TB
+    subgraph agents["Agents (look)"]
+        N["native/ C++17<br/>Windows x64/x86, Linux x86-64<br/>one static binary each"]
+        AD["agents/android<br/>adb driver"]
+        MA["agents/macos<br/>local or ssh driver"]
+        IO["agents/ios<br/>ssh or Simulator driver"]
+        V1["agents/windows, agents/linux<br/>v1 agents, frozen"]
+    end
+    subgraph catalog["catalog/ (mean)"]
+        CH["checks/*.json<br/>1,034 entries"]
+        TE["techniques.json<br/>131 techniques"]
+        CL["classes.json<br/>19 classes, 4 categories,<br/>fix layers, effort scale"]
+        TH["threats.json<br/>91 families, tools, actors"]
+        UP["upstreams.json + inventory/<br/>30 tracked projects"]
+    end
+    subgraph assess["common/python/perdedor_common (judge)"]
+        EX["exposure.py<br/>score, interval, pillars, plan"]
+        VA["validation.py<br/>schema + catalog checks"]
+        RE["report.py, text_format.py<br/>HTML and text"]
+    end
+    CLI["cli/perdedor_cli<br/>test, score, plan, report,<br/>coverage, upstream"]
+    agents --> |"report JSON"| VA --> EX
+    catalog --> EX
+    CLI --> agents
+    CLI --> EX
+    CLI --> RE
+    UP --> |"perdedor upstream check"| CLI
 ```
-perdedor/
-├── schema/                     unified report JSON Schema
-├── common/python/perdedor_common/ shared models, scoring engine, report renderer
-├── agents/
-│   ├── linux/                  Python3 agent + small C helper for CPUID/RDTSC
-│   ├── windows/                PowerShell 7 agent (WMI/CIM, registry, PnP, raw SMBIOS, native CPUID intrinsics)
-│   └── android/                Python3 agent driving the target over adb
-└── cli/perdedor_cli/              `perdedor test <platform>`: run one agent locally and score it
-                                 `perdedor report`: aggregate JSON already collected from remote guests
+
+| Path | Role |
+|---|---|
+| `native/src/core/` | Check registry, selection (`--profile`, `--only`, `--skip`, `--param`), per-check watchdog, JSON writer, command line |
+| `native/src/common/` | Checks compiled into both native builds: CPUID, RDTSC and other instruction and timing probes |
+| `native/src/windows/` | Windows checks: SMBIOS, ACPI, EDID, registry, WMI, devices, wear and tear, identity, network, low-level debugger and instrumentation probes |
+| `native/src/linux/` | Linux checks: DMI, `/proc` and `/sys`, containers, systemd-detect-virt parity, low-level probes |
+| `agents/android/` | Host-side adb driver; pushes the static Linux binary to x86 devices for CPU and timing probes |
+| `agents/macos/`, `agents/ios/` | Host-side drivers over ssh, locally (macOS) or against the Simulator (iOS) |
+| `agents/windows/`, `agents/linux/` | The v1 PowerShell and Python agents, kept as a fallback (`--engine legacy`), no new checks |
+| `catalog/` | Everything that gives a finding meaning; see the data model below |
+| `common/python/perdedor_common/` | Models, catalog loader, registry for the Python agents, validation, exposure model, renderers |
+| `cli/perdedor_cli/` | The `perdedor` command |
+| `schema/perdedor-report.schema.json` | The report format every agent emits |
+| `research/` | The scoring lab, prevalence data and proposed new techniques |
+
+## Data model
+
+```mermaid
+erDiagram
+    CHECK }o--|| TECHNIQUE : "implements one"
+    TECHNIQUE }o--|| CLASS : "belongs to"
+    CLASS }o--|| CATEGORY : "rolls up to"
+    FAMILY }o--o{ TECHNIQUE : "uses (sourced)"
+    CHECK ||--o{ EQUIVALENT : "maps to upstream"
+    CHECK ||--|| FIX : "has"
+    FINDING }o--|| CHECK : "is a result of"
+    CHECK {
+        string id "win.env.cpuid_hypervisor_bit"
+        string status "implemented, planned, not_feasible"
+        string severity
+        string cost "fast, medium, slow"
+        bool network
+    }
+    TECHNIQUE {
+        string key "cpu.hypervisor_bit"
+        float discrimination
+        string prevalence_tier
+        string attack "T1497.001"
+    }
+    FIX {
+        string layer "guest-image to host-hardware"
+        int effort "1 to 5"
+        string how
+    }
+    FINDING {
+        string status "clean, detected, skipped, error"
+        object evidence
+        float confidence
+    }
 ```
 
-## Why agents run *inside* the guest, unlike CHIMERA's detonation model
+- A **check** is one concrete probe on one platform (`win.env.cpuid_hypervisor_bit`). Ids never change
+  once released.
+- A **technique** is the platform-independent idea (`cpu.hypervisor_bit`). Several checks on several
+  platforms can implement one technique; the score works on techniques, so adding a second check for
+  the same idea cannot inflate it.
+- A **class** groups techniques (CPU, firmware, wear and tear…). **Categories** group classes into the
+  four families used throughout CHIMERA: environment artifacts, timing, behaviour and interaction, and
+  design-specific.
+- A **family** (malware family, tool or actor) lists the techniques it is documented to check, with
+  sources. That is what lets the score say how many known evasive families would still run here.
+- An **equivalent** names the upstream function or technique a check covers, spelt exactly as upstream
+  spells it; `perdedor coverage` counts these.
+- A **fix** says where the problem lives (one of eight layers, from `guest-runtime` to
+  `host-hardware`), how hard it is (1 = minutes in the guest, 5 = architectural) and how to do it.
 
-CHIMERA's malware detonation sandboxes are deliberately agentless — no
-tooling exists inside the guest, because modern malware refuses to run in
-the presence of analysis tools. PERDEDOR is different: it is an *analyst-run
-self-test*, executed deliberately against a golden image before it is ever
-used for detonation, in the same way Pafish and al-khaser are literally run
-as executables inside the guest. There is no conflict — PERDEDOR never runs
-during a real detonation, only during sandbox verification.
+## How a scan runs
 
-## Aggregation workflow
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Op as Operator
+    participant CLI as perdedor CLI or CHIMERA console
+    participant G as Guest or device
+    participant A as Agent
+    participant M as Exposure model
+    Op->>CLI: platform, profile, selectors
+    CLI->>G: copy the native agent (or connect over adb / ssh)
+    CLI->>A: run with --args-file
+    loop every selected check, each under a watchdog
+        A->>G: read-only probe
+        A-->>A: clean, detected, skipped or error, with evidence
+    end
+    A-->>CLI: report JSON
+    CLI->>CLI: validate against schema and catalog
+    CLI->>M: findings + catalog + threat model
+    M-->>Op: score, interval, classes, trust grades, plan
+```
 
-1. Copy the appropriate agent into the golden image (or run it over adb for
-   Android) and execute it. Each agent writes one JSON file conforming to
-   the schema.
-2. Pull the JSON files back to the analyst host.
-3. Run `perdedor report <file1.json> <file2.json> ...` to render a single
-   unified HTML/JSON report scored consistently across all platforms
-   tested.
+Unknown is never clean. A probe that could not look (access denied, API missing, timeout) reports
+`error` or `skipped` with the reason, and the model leaves it out instead of counting it as a pass.
 
-## Scoring
+## Running inside CHIMERA
 
-Two scores are reported side by side, deliberately mirroring the CHIMERA
-KVM hardening report's own finding that not all detections are equally
-significant:
+CHIMERA (Xen 4.19 with DRAKVUF) runs Perdedor as one of its evasion verifiers:
 
-- **raw_score** — `clean/applicable`, the VMAware-style headline number
-  (`errored`/`skipped` findings are excluded from the denominator, since
-  neither one is a pass/fail result on this host).
-- **weighted_score** — a 0-100 score where each `detected` finding is
-  discounted by its severity weight (`info`=0.05 ... `critical`=1.0), so a
-  sandbox with one critical RDTSC leak scores worse than one with ten
-  low-severity sensor-telemetry gaps, even though the raw count says
-  otherwise.
+1. A disposable copy of the golden image is restored, optionally with DRAKVUF attached so its CPUID
+   masking and simulated input are active, exactly as during a real detonation.
+2. The native agent and an argument file built from the operator's choices are copied in and started
+   through the guest shell.
+3. The report comes back, is validated, and is scored together with any other tools that ran (Pafish,
+   al-khaser, VMAware, a CPUID timing probe). Their findings are mapped onto the same techniques, so
+   they add evidence rather than a second, incompatible number.
+4. The console shows the exposure score, the class and category breakdown, the detected techniques with
+   the families that use them, and the hardening plan.
+
+The guest is destroyed afterwards. Nothing Perdedor does persists into the image used for detonation.
+
+## Design decisions
+
+- **Native agents for Windows and Linux.** Malware probes the machine natively. A test suite that needs
+  PowerShell 7 or Python in the guest tests a machine that does not look like a victim, misses
+  low-level tells (instruction timing, exceptions, raw firmware tables, `ntdll`) and cannot run on
+  minimal images. One static binary per target has no runtime dependencies.
+- **Host-side drivers for phones and Macs.** Installing an app on a phone changes the phone. The
+  Android, iOS and macOS drivers look from outside over adb or ssh; the only thing ever copied is the
+  native Linux binary to x86 Android devices, removed again after the run.
+- **Read-only, bounded, never crashing.** Every probe is read-only and runs under a watchdog with a
+  budget set by its cost class. Techniques known to crash guests (for example VMAware's `EIP_OVERFLOW`
+  on Xen) are catalogued as not feasible rather than implemented.
+- **The catalog is data.** Checks, techniques, threats, fixes and upstream mappings live in JSON, so they
+  can be reviewed, diffed and extended without touching agent code, and the console, the CLI and the
+  documentation all read the same source.
+- **The score is a model, not a count.** See [SCORING.md](SCORING.md) for why a pass rate or a points
+  total misleads, and how the exposure model was chosen.
