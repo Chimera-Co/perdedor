@@ -39,7 +39,7 @@ std::vector<Finding> wmi_check(Context &ctx, const char *id, const char *name, c
     if (rows.value.empty() && rule != WmiRule::Missing)
         return {absent(id, name, "provider returned no instances")};
     bool hit = rule == WmiRule::Missing && rows.value.empty();
-    size_t populated = 0, missing = 0;
+    size_t populated = 0, missing = 0, missing_required = 0;
     uint64_t minimum = UINT64_MAX;
     std::vector<std::string> hits;
     for (const auto &row : rows.value)
@@ -47,6 +47,10 @@ std::vector<Finding> wmi_check(Context &ctx, const char *id, const char *name, c
             auto key = win::narrow(p), v = win::field(row, key);
             if (v.empty()) {
                 ++missing;
+                // Consumer firmware commonly leaves the chassis asset tag blank (the Acer laptop CHIMERA
+                // runs on does), so a missing asset tag is no tell; a placeholder or vendor value still is.
+                if (key != "SMBIOSAssetTag")
+                    ++missing_required;
                 if (rule == WmiRule::Null)
                     hit = true;
                 continue;
@@ -142,7 +146,7 @@ std::vector<Finding> wmi_check(Context &ctx, const char *id, const char *name, c
                     hits.push_back(label);
             }
         }
-    if (rule == WmiRule::Serial && missing)
+    if (rule == WmiRule::Serial && missing_required)
         hit = true;
     if (rule == WmiRule::Age) {
         if (minimum == UINT64_MAX)

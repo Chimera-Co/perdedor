@@ -92,7 +92,7 @@ them with `make -C native`.
 Then, on the analyst host:
 
 ```bash
-pip install perdedor-2.0.0-py3-none-any.whl
+pip install perdedor-2.0.1-py3-none-any.whl
 perdedor score report.json     # exposure score with per-class detail and trust grades
 perdedor plan report.json      # fixes ordered by score gain per unit of effort
 ```

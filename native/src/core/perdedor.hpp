@@ -132,6 +132,6 @@ bool run_with_timeout(const std::function<void()>& fn, double seconds);
 [[noreturn]] void hard_exit(int code);
 }  // namespace platform
 
-constexpr const char* kVersion = "2.0.0";
+constexpr const char* kVersion = "2.0.1";
 
 }  // namespace perdedor

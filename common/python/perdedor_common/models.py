@@ -104,7 +104,7 @@ class PlatformReport:
     platform: Platform
     findings: tuple[Finding, ...]
     hostname: str = field(default_factory=socket.gethostname)
-    perdedor_version: str = "2.0.0"
+    perdedor_version: str = "2.0.1"
     generated_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     agent_metadata: dict[str, str] = field(default_factory=dict)
     # v2: what the operator asked for (profile, only/skip patterns, params), so a

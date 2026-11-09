@@ -92,7 +92,7 @@ function New-PerdedorReport {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)][AllowEmptyCollection()][array]$Findings,
-        [string]$PerdedorVersion = '2.0.0',
+        [string]$PerdedorVersion = '2.0.1',
         $Selection = $null
     )
 

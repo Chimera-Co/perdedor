@@ -76,6 +76,7 @@ nav:
       - Upstream notes: notes/upstream.md
   - Contributing:
       - Design and rules: DESIGN-V2.md
+      - Releases and deployments: RELEASING.md
 
 not_in_nav: |
   LEARNING_GUIDE_VOL1_FOUNDATIONS.md

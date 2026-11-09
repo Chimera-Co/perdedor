@@ -1,7 +1,10 @@
 # Push a tag vX.Y.Z (matching every version string, see scripts/check_version.py) to publish a release:
 # the full CI runs first, then the release job attaches the native agents, the Python distributions,
-# the legacy PowerShell agent and SHA256SUMS, each with a signed build-provenance attestation
-# (verify with: gh attestation verify <file> --repo Chimera-Co/perdedor).
+# the legacy PowerShell agent, a deploy bundle and SHA256SUMS, each with a signed build-provenance
+# attestation (verify with: gh attestation verify <file> --repo Chimera-Co/perdedor).
+# perdedor-deploy-<tag>.tar.gz is the tagged source tree (catalog, schema, every agent, native sources)
+# with the three native agents already in native/build/, newer than their sources so nothing is rebuilt:
+# what a host that runs scans from a checkout (CHIMERA's repo_path) installs.
 name: Release
 
 on:
@@ -47,6 +50,16 @@ jobs:
           scripts/build_dist.sh dist
           (cd agents && zip -qr "../dist/perdedor-windows-ps7-agent-${GITHUB_REF_NAME}.zip" windows)
           chmod +x dist/perdedor-linux-x86_64
+      - name: Deploy bundle (tagged source tree plus the native agents)
+        run: |
+          top="perdedor-${GITHUB_REF_NAME}"
+          mkdir bundle
+          git archive --prefix="${top}/" "$GITHUB_REF_NAME" | tar -x -C bundle
+          mkdir -p "bundle/${top}/native/build"
+          cp dist/perdedor-linux-x86_64 dist/perdedor-windows-x64.exe dist/perdedor-windows-x86.exe \
+            "bundle/${top}/native/build/"
+          tar --sort=name --owner=0 --group=0 --numeric-owner -czf "dist/perdedor-deploy-${GITHUB_REF_NAME}.tar.gz" \
+            -C bundle "$top"
           (cd dist && sha256sum * > SHA256SUMS && cat SHA256SUMS)
       - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
         with:

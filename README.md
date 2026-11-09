@@ -89,7 +89,7 @@ perdedor-windows-x64.exe --profile standard -o report.json
 agent for you.
 
 ```bash
-pip install perdedor-2.0.0-py3-none-any.whl     # or: pip install -e . from a checkout
+pip install perdedor-2.0.1-py3-none-any.whl     # or: pip install -e . from a checkout
 
 perdedor score report.json                      # exposure score with per-class detail
 perdedor plan report.json                       # what to fix first
@@ -205,7 +205,8 @@ pytest -q                 # Python agents, catalog consistency, scoring, CLI
 
 CI builds every agent and runs it for real on Windows Server 2022 and 2025 (x64, and 32-bit under
 WOW64), Linux and macOS, validates each report against the schema and the catalog, and runs CodeQL.
-Tagged releases publish the agents and Python packages with signed provenance attestations.
+Tagged releases publish the agents, the Python packages and a deploy bundle with signed provenance attestations;
+see [docs/RELEASING.md](docs/RELEASING.md) and [CHANGELOG.md](CHANGELOG.md).
 
 ## Safety
 

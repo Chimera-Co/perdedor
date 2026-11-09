@@ -1,6 +1,6 @@
 [project]
 name = "perdedor"
-version = "2.0.0"
+version = "2.0.1"
 description = "PERDEDOR: cross-platform sandbox-evasion self-test suite for CHIMERA (Windows, Linux, Android)"
 readme = "README.md"
 requires-python = ">=3.10"
