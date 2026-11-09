@@ -6,6 +6,7 @@ Perdedor reports one headline number per run, the **exposure score**:
 > normally.** 0–100, higher is better. Techniques that were not measured are estimated from those that were.
 
 Next to it Perdedor reports:
+
 - a 90 % interval;
 - the score from measured techniques only;
 - coverage;
@@ -43,9 +44,14 @@ On the Xen sandbox used for CHIMERA it reported **99.48 and then 100.0**, while 
   The new one moves by 37 points over the same steps (figure below). Operators could not see their
   progress, and could not see what was still left.
 
+Reports still carry the old numbers in `summary.raw_score` and `summary.weighted_score` so that
+existing tools keep parsing them, but nothing in Perdedor displays the weighted score any more: the
+agents, `perdedor test`, `perdedor report` and the CHIMERA console all show the exposure score.
+
 ## The model
 
 For each technique *i* in the catalog, two values come from `catalog/`:
+
 - **prevalence** *pᵢ*: the share of evasive samples that use the technique, from its tier, or from
   the threat model when one is loaded;
 - **discrimination** *qᵢ*: how reliably our check firing means the malware's own version of the
@@ -55,6 +61,7 @@ A run gives, for each technique, a hit *hᵢ* ∈ [0, 1]: 0 when every check was
 highest confidence of a check that detected. A technique with no applicable check is **untested**.
 
 **Untested techniques are estimated, not assumed clean.**
+
 - Each untested technique gets the expected detection rate *rᵢ* of its class: the observed rate in
   the class, shrunk towards the run's overall rate with the weight of two techniques.
 - A second-order correction then removes the optimism caused by sharing one estimated rate across
@@ -74,12 +81,14 @@ fact that techniques travel together:
 $$S = 100 \cdot \frac{\sum_f w_f \prod_{i \in T_f} \left(1 - q_i\, \tilde h_i\right)}{\sum_f w_f}$$
 
 **Interval.**
+
 - 400 Monte-Carlo draws vary *p* and *q* (a Beta distribution around each catalog value,
   concentration 12) and the outcomes of untested techniques (Bernoulli with rate *rᵢ*).
 - The 5th and 95th percentiles form the reported interval.
 - The interval is wide when coverage is low or the catalog is uncertain. That width is the point.
 
 **Classes and categories.**
+
 - A class's score is its own survival, `100 · Π_{i∈class} (1 − pᵢ qᵢ h̃ᵢ)`.
 - The headline's lost points are shared among classes by their share of the log-loss, so
   "points lost" sums exactly to `100 − score`.
@@ -175,6 +184,7 @@ The experiments are nine snapshots and configurations of one Xen + DRAKVUF Windo
 produced by successive fixes, and each was scanned five times by Perdedor and al-khaser together.
 Every al-khaser and Perdedor check was mapped onto a technique (`perdedor_common/equivalents.py`;
 all 340 al-khaser, 58 Pafish and 15 VMAware ids map). The arms are:
+
 - **H1** hardened image;
 - **S** CPUID leaves hidden by the instrumentation;
 - **H** simulated input;
@@ -183,6 +193,7 @@ all 340 al-khaser, 58 Pafish and 15 VMAware ids map). The arms are:
 - **+clock** guest clock synchronised.
 
 Ten pairs are known to be ordered, because each was a measured fix:
+
 - H1 < H1S < H1SH < H2c;
 - H2a, H2b < H2c;
 - H2c < H3b;
@@ -282,6 +293,7 @@ ordered list of fixes:
    measures them.
 
 On the H3b scan above, four fixes take the score from 42 to 66:
+
 - named-object artifacts;
 - SMBIOS table layout;
 - ACPI table layout;

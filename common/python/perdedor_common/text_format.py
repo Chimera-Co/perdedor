@@ -114,10 +114,7 @@ def render_platform_text(report: dict, *, use_color: bool | None = None, verbose
     lines.append(f"{bold}PERDEDOR -- {report['platform'].capitalize()} Sandbox-Evasion Self-Test{reset}")
     lines.append(f"{dim}Host: {report['hostname']}    Generated: {report['generated_at']}{reset}")
     lines.append("")
-    lines.append(
-        f"Score: {bold}{s['raw_score']}{reset} clean (applicable checks)"
-        f"    Weighted: {bold}{s['weighted_score']}/100{reset}"
-    )
+    lines.append(f"Checks: {bold}{s['raw_score']}{reset} clean (of the checks that could run)")
     lines.append(
         f"{_c(str(s['clean']) + ' clean', 'clean', use_color)}  "
         f"{_c(str(s['detected']) + ' detected', 'detected', use_color)}  "

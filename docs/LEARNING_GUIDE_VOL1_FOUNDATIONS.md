@@ -3,6 +3,10 @@
 
 ---
 
+> **This guide describes Perdedor v1** (August 2026: PowerShell and Python agents, 89 checks, the
+> old weighted score). The concepts still apply; the code it walks through has been replaced. For v2
+> see [Architecture](ARCHITECTURE.md), [Scoring](SCORING.md) and [the native agents](https://github.com/Chimera-Co/perdedor/tree/main/native).
+
 ## How to use this document
 
 This is Volume 1 of a two-volume set. It is written so that a person with

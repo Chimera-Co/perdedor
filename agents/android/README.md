@@ -1,48 +1,35 @@
-# PERDEDOR Android Agent
+# Android driver
 
-Python3 agent that drives the target device over `adb` from the analyst
-host, rather than shipping an on-device APK.
+Tests an Android device or emulator from the analyst host over `adb`. Nothing is installed on the
+device and no setting is changed. 197 checks: emulator properties and files, vendor emulators
+(Genymotion, BlueStacks, Nox, LDPlayer and others), root and Magisk/KernelSU/APatch,
+instrumentation (Frida, Xposed), device integrity, sensors, telephony and other mobile-device
+signals, wear and tear, network and resources.
 
-## Why adb instead of an on-device app
-
-CHIMERA's own PERDEDOR design doc (Ch.8) describes on-device agents for every
-platform. For Android specifically, most of the checks that matter here --
-build-fingerprint properties, device nodes, installed packages, sensor
-lists, telephony properties -- are readable over `adb shell` /
-`adb shell getprop` /`dumpsys` without installing anything on the guest.
-That keeps v1 simple and buildable without the Android SDK/Gradle toolchain.
-Native framework instrumentation (CHIMERA Ch.7.4, "Native Framework
-Instrumentation") is the natural on-device upgrade path if a check is ever
-needed that adb genuinely cannot reach.
+On x86 devices it also pushes the static native Linux agent to a private temporary directory for
+22 CPU and timing probes (CPUID, descriptor tables, RDTSC exit cost, sleep acceleration), and deletes
+it afterwards.
 
 ## Run
 
 ```bash
-adb devices                                          # find the serial
-python3 -m perdedor_android -s emulator-5554             # prints JSON to stdout
-python3 -m perdedor_android -s emulator-5554 -o report.json
+adb devices                                         # find the serial
+perdedor test android -s emulator-5554              # run, then show the exposure score
+python3 -m perdedor_android -s emulator-5554 --no-network -o report.json
+perdedor score report.json && perdedor plan report.json
 ```
 
-If `adb` isn't installed, or no device is reachable at the given serial,
-every check reports `error` with a clear reason rather than the scan
-failing outright -- the emitted report is always schema-valid.
+Selection works as in every agent: `--profile quick|standard|deep`, `--only class:integrity`,
+`--skip PATTERN`, `--param android.package=com.example.app`, `--no-network`, `--list-checks`.
+The native probes have slow cost: they run under `--profile deep` or when selected (`--only tag:native`).
 
-## Checks
+If `adb` is missing or the device is unreachable, every check reports `error` with the reason; the
+report is still valid.
 
-22 checks total. No Pafish/al-khaser/VMAware equivalent exists for Android --
-see [docs/CHECK_COVERAGE.md](../../docs/CHECK_COVERAGE.md) for why this
-entire agent's check list is PERDEDOR-original rather than ported from an
-upstream tool.
+## Privacy
 
-| Category | Checks |
-|---|---|
-| `environment_artifact` | Build fingerprint, `ro.hardware`, `ro.boot.hardware` (incl. Cuttlefish), product model, manufacturer/brand, graphics HAL (gralloc/EGL) implementation, any `qemu.*` system property present, `ro.kernel.qemu`, goldfish/ranchu device nodes, libhoudini ARM-translation shim, CPU ABI (x86 translation-layer requirement) |
-| `timing` | Low uptime |
-| `behavioural_interaction` | Third-party installed package count, battery-state plausibility, battery temperature plausibility |
-| `design_specific` | `ro.build.characteristics`, telephony/RIL identity, sensor count, camera hardware feature declaration, `ro.build.tags` test-keys, default AVD NAT subnet (10.0.2.0/24), device name plausibility |
+Reports hold counts and signatures, never personal content: content-provider queries project only
+row ids, and subscriber evidence names the matching signature, not the identifier. Do not enable
+raw adb logging when testing a personal device.
 
-## Tested against
-
-Unit-tested with `adb` mocked out (`tests/test_android_agent.py`), plus a
-live smoke test against `adb` present with no device attached, confirming
-every check degrades to `error` cleanly rather than crashing the scan.
+Details, thresholds and sources: [docs/notes/android.md](../../docs/notes/android.md).

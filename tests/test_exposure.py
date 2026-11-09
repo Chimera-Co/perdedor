@@ -115,3 +115,12 @@ def test_plan_orders_by_gain_per_effort_and_ends_higher():
     afters = [s["score_after"] for s in p["steps"]]
     assert afters == sorted(afters)
     assert all(s["gain"] >= 0 for s in p["steps"])
+
+
+def test_headline_text_gives_exposure_or_points_to_perdedor_score():
+    from perdedor_common.exposure import headline, headline_text
+
+    summary = {"raw_score": "0/0", "detected": 0, "errored": 0, "skipped": 0}
+    unscorable = {"platform": "nonexistent", "findings": [], "summary": summary}
+    assert headline(unscorable) is None
+    assert headline_text(unscorable).endswith("Exposure score: perdedor score <report.json>")

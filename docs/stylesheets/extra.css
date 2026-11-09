@@ -12,7 +12,7 @@
 .pd-hero img { width: 140px; height: auto; }
 .pd-hero h1 { margin: .5rem 0 .25rem; letter-spacing: .08em; }
 .pd-hero p { font-size: 1.05rem; max-width: 40rem; margin: 0 auto; }
-.pd-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr)); gap: .75rem; margin: 1.5rem 0; }
+.pd-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr)); gap: .75rem; margin: 1.5rem 0; }
 .pd-stats div { border: 1px solid var(--md-default-fg-color--lightest); border-radius: 6px; padding: .75rem; text-align: center; }
 .pd-stats b { display: block; font-size: 1.5rem; color: var(--md-primary-fg-color); font-variant-numeric: tabular-nums; }
 .pd-stats span { font-size: .75rem; color: var(--md-default-fg-color--light); }

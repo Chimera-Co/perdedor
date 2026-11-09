@@ -15,6 +15,7 @@ import argparse
 import json
 import sys
 
+from perdedor_common.exposure import headline_text
 from perdedor_common.registry import add_selection_arguments, list_doc, parse_params, select
 
 from . import adb
@@ -72,12 +73,7 @@ def main(argv: list[str] | None = None) -> int:
     else:
         print(text)
 
-    summary = report["summary"]
-    print(
-        f"PERDEDOR android scan: {summary['raw_score']} clean, weighted {summary['weighted_score']}/100 "
-        f"({summary['errored']} errored, {summary['skipped']} skipped)",
-        file=sys.stderr,
-    )
+    print(f"PERDEDOR android scan: {headline_text(report)}", file=sys.stderr)
     return 0
 
 

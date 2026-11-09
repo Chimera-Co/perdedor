@@ -12,6 +12,7 @@ import html
 from datetime import datetime, timezone
 from typing import Any
 
+from .exposure import headline
 from .models import Severity
 from .scoring import SEVERITY_WEIGHT
 from .validation import validate_report
@@ -88,13 +89,36 @@ def _summary_block(aggregate: dict) -> str:
   <p class="meta">Generated {html.escape(aggregate['generated_at'])} &middot; Platforms tested: {html.escape(platforms)}</p>
   <div class="score-row">
     <div class="score-card"><div class="score-num">{html.escape(s['raw_score'])}</div><div class="score-label">clean / applicable</div></div>
-    <div class="score-card"><div class="score-num">{s['weighted_score']}</div><div class="score-label">weighted score (0-100)</div></div>
+{_exposure_cards(aggregate)}
     <div class="score-card detected"><div class="score-num">{s['detected']}</div><div class="score-label">detected</div></div>
     <div class="score-card errored"><div class="score-num">{s['errored']}</div><div class="score-label">errored</div></div>
     <div class="score-card skipped"><div class="score-num">{s['skipped']}</div><div class="score-label">skipped</div></div>
   </div>
 </header>
 """
+
+
+def _exposure_cards(aggregate: dict) -> str:
+    cards = []
+    for report in aggregate["reports"]:
+        h = headline(report)
+        value = f"{h['score']:.1f}" if h else "&mdash;"
+        verdict = f" &middot; {html.escape(h['verdict'])}" if h else ""
+        cards.append(
+            f'    <div class="score-card"><div class="score-num">{value}</div><div class="score-label">'
+            f"{html.escape(report['platform'].capitalize())} exposure (0-100){verdict}</div></div>"
+        )
+    return "\n".join(cards)
+
+
+def _exposure_text(report: dict) -> str:
+    h = headline(report)
+    if h is None:
+        return "exposure: not scored (run perdedor score)"
+    return (
+        f"exposure {h['score']:.1f}/100 ({html.escape(h['verdict'])}, 90 % interval "
+        f"{h['interval'][0]:.1f}-{h['interval'][1]:.1f}, trust {html.escape(str(h['trust']))})"
+    )
 
 
 def _platform_block(report: dict) -> str:
@@ -104,7 +128,7 @@ def _platform_block(report: dict) -> str:
 <section>
   <h2>{html.escape(report['platform'].capitalize())} &mdash; {html.escape(report['hostname'])}</h2>
   <p class="meta">PERDEDOR {html.escape(report['perdedor_version'])} &middot; {html.escape(report['generated_at'])} &middot;
-     raw {html.escape(s['raw_score'])} &middot; weighted {s['weighted_score']}</p>
+     {html.escape(s['raw_score'])} clean &middot; {_exposure_text(report)}</p>
   <table>
     <thead><tr><th>Status</th><th>Severity</th><th>Category</th><th>Check</th><th>Evidence</th><th>Remediation</th></tr></thead>
     <tbody>

@@ -1,8 +1,3 @@
----
-hide:
-  - navigation
----
-
 <div class="pd-hero" markdown>
 ![PERDEDOR logo](img/logo.png)
 

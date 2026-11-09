@@ -216,8 +216,11 @@ int main(int argc, char** argv) {
         std::cout << text << "\n";
         std::cout.flush();
     }
-    std::fprintf(stderr, "PERDEDOR %s scan: %s clean, weighted %g/100 (%g errored, %g skipped)\n", platform::name(),
-                 summary["raw_score"].str().c_str(), summary["weighted_score"].number(),
+    // The exposure score needs the catalog, which lives on the analyst host: point there.
+    std::fprintf(stderr,
+                 "PERDEDOR %s scan: %s clean, %g detected (%g errored, %g skipped). "
+                 "Exposure score: perdedor score <report.json>\n",
+                 platform::name(), summary["raw_score"].str().c_str(), summary["detected"].number(),
                  summary["errored"].number(), summary["skipped"].number());
     std::fflush(stderr);
     // Abandoned (timed-out) probe threads must not keep the process alive.

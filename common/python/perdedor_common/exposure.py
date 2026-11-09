@@ -598,3 +598,38 @@ def plan(
             for k in measure
         ],
     }
+
+
+def headline(report: Mapping) -> dict | None:
+    """Exposure headline of one agent report: score, verdict, interval and overall trust grade.
+
+    None when the report cannot be scored (unknown platform, no catalog, nothing tested). Agents and
+    renderers use this for their one-line summary; ``perdedor score`` gives the full breakdown.
+    """
+    try:
+        a = assess(report["findings"], report["platform"], load_catalog())
+    except Exception:  # noqa: BLE001 - a summary line must never break a scan or a render
+        return None
+    if a.get("score") is None:
+        return None
+    return {
+        "score": round(a["score"], 1),
+        "verdict": a["verdict"],
+        "interval": [round(x, 1) for x in a["interval"]],
+        "trust": a["pillars"]["overall"],
+    }
+
+
+def headline_text(report: Mapping) -> str:
+    """One line for terminals: counts, then the exposure score or how to get it."""
+    s = report["summary"]
+    counts = (
+        f"{s['raw_score']} clean, {s['detected']} detected ({s['errored']} errored, {s['skipped']} skipped)"
+    )
+    h = headline(report)
+    if h is None:
+        return f"{counts}. Exposure score: perdedor score <report.json>"
+    return (
+        f"{counts}. Exposure {h['score']:.1f}/100 [{h['verdict'].upper()}], "
+        f"90 % interval {h['interval'][0]:.1f}-{h['interval'][1]:.1f}, trust {h['trust']}"
+    )

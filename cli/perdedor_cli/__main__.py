@@ -23,6 +23,8 @@ import sys
 import tempfile
 from pathlib import Path
 
+from perdedor_common.exposure import headline_text
+
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 _WINDOWS_AGENT_SCRIPT = _REPO_ROOT / "agents" / "windows" / "Invoke-Perdedor.ps1"
 
@@ -236,12 +238,8 @@ def _cmd_report(args: argparse.Namespace) -> int:
     output_path.write_text(render_html(aggregate), encoding="utf-8")
     print(f"Wrote unified report to {output_path}", file=sys.stderr)
 
-    summary = aggregate["overall_summary"]
-    platforms = ", ".join(aggregate["platforms"])
-    print(
-        f"PERDEDOR unified: {summary['raw_score']} clean, weighted {summary['weighted_score']}/100 across [{platforms}]",
-        file=sys.stderr,
-    )
+    for report in aggregate["reports"]:
+        print(f"PERDEDOR {report['platform']}: {headline_text(report)}", file=sys.stderr)
     return 0
 
 

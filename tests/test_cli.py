@@ -29,7 +29,7 @@ def test_test_linux_default_output_is_human_readable_text(capsys) -> None:
     assert exit_code == 0
     out = capsys.readouterr().out
     assert "PERDEDOR -- Linux Sandbox-Evasion Self-Test" in out
-    assert "Score:" in out
+    assert "Checks:" in out
     # human-readable mode must not just be JSON on stdout
     assert not out.strip().startswith("{")
 
@@ -40,7 +40,7 @@ def test_test_linux_shows_splash_banner_before_the_report(capsys) -> None:
     out = capsys.readouterr().out
     assert "Sandbox-Evasion Self-Test Suite" in out
     # the banner must appear before the report, not after
-    assert out.index("Self-Test Suite") < out.index("Score:")
+    assert out.index("Self-Test Suite") < out.index("Checks:")
 
 
 def test_test_linux_json_flag_never_shows_the_banner(capsys) -> None:
