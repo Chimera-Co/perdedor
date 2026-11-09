@@ -183,6 +183,9 @@
         ],
         "pafish": [
           "vbox_wmi_devices"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_generic_disk_setupapi"
         ]
       },
       "fix": {
@@ -273,7 +276,11 @@
       "cost": "medium",
       "network": false,
       "requires": [],
-      "equivalents": {},
+      "equivalents": {
+        "cape": [
+          "cape/modules/signatures/windows/antivm_generic_bios"
+        ]
+      },
       "fix": {
         "layer": "firmware",
         "effort": 3,
@@ -325,6 +332,12 @@
         ],
         "pafish": [
           "vmware_wmi_serial"
+        ],
+        "checkpoint-evasions": [
+          "evasions/wmi/generic-wmi-queries"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_wmi"
         ]
       },
       "fix": {
@@ -382,6 +395,12 @@
       "equivalents": {
         "al-khaser": [
           "model_computer_system_wmi"
+        ],
+        "checkpoint-evasions": [
+          "evasions/wmi/generic-wmi-queries"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_wmi"
         ]
       },
       "fix": {
@@ -410,6 +429,9 @@
       "equivalents": {
         "al-khaser": [
           "vbox_baseboard_wmi"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-vm/vm-detection/detect-vm-via-motherboard-hardware-wmi-queries"
         ]
       },
       "fix": {
@@ -438,6 +460,9 @@
       "equivalents": {
         "al-khaser": [
           "vbox_baseboard_wmi"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-vm/vm-detection/detect-vm-via-motherboard-hardware-wmi-queries"
         ]
       },
       "fix": {
@@ -793,6 +818,17 @@
         ],
         "vmaware": [
           "DISK"
+        ],
+        "checkpoint-evasions": [
+          "evasions/hardware/check-if-hdd-has-specific-name",
+          "evasions/wmi/generic-wmi-queries"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-vm/vm-detection/detect-vm-via-disk-hardware-wmi-queries"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_generic_disk",
+          "cape/modules/signatures/windows/antivm_wmi"
         ]
       },
       "fix": {
@@ -821,6 +857,9 @@
       "equivalents": {
         "al-khaser": [
           "setupdi_diskdrive"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-vm/vm-detection/detect-vm-via-disk-hardware-wmi-queries"
         ]
       },
       "fix": {
@@ -953,6 +992,9 @@
       "equivalents": {
         "vmaware": [
           "GPU_CAPABILITIES"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_display"
         ]
       },
       "fix": {
@@ -1618,6 +1660,9 @@
         ],
         "pafish": [
           "gensandbox_one_cpu"
+        ],
+        "checkpoint-evasions": [
+          "evasions/wmi/generic-wmi-queries"
         ]
       },
       "fix": {
@@ -1765,6 +1810,12 @@
       "equivalents": {
         "al-khaser": [
           "pirated_windows"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-vm/vm-detection/check-for-windows-sandbox-via-genuine-state"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antisandbox_windowsactivation"
         ]
       },
       "fix": {
@@ -2033,6 +2084,9 @@
       "equivalents": {
         "al-khaser": [
           "lack_user_input"
+        ],
+        "checkpoint-evasions": [
+          "evasions/human-like-behavior/check-user-presence-at-the-moment-of-executing"
         ]
       },
       "fix": {
@@ -2390,7 +2444,15 @@
       "cost": "medium",
       "network": false,
       "requires": [],
-      "equivalents": {},
+      "equivalents": {
+        "checkpoint-evasions": [
+          "evasions/human-like-behavior/general-detection-methods-via-registry"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_recent_files",
+          "cape/modules/signatures/windows/antivm_recentdocs"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 2,
@@ -2412,7 +2474,11 @@
       "cost": "medium",
       "network": false,
       "requires": [],
-      "equivalents": {},
+      "equivalents": {
+        "checkpoint-evasions": [
+          "evasions/human-like-behavior/general-detection-methods-via-registry"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 2,
@@ -2434,7 +2500,11 @@
       "cost": "medium",
       "network": false,
       "requires": [],
-      "equivalents": {},
+      "equivalents": {
+        "checkpoint-evasions": [
+          "evasions/human-like-behavior/general-detection-methods-via-registry"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 2,
@@ -2610,7 +2680,11 @@
       "cost": "medium",
       "network": false,
       "requires": [],
-      "equivalents": {},
+      "equivalents": {
+        "cape": [
+          "cape/modules/signatures/windows/antivm_recent_files"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 2,
@@ -2720,7 +2794,11 @@
       "cost": "fast",
       "network": false,
       "requires": [],
-      "equivalents": {},
+      "equivalents": {
+        "cape": [
+          "cape/modules/signatures/windows/antivm_vmware_events"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 2,
@@ -2797,7 +2875,11 @@
       "cost": "medium",
       "network": false,
       "requires": [],
-      "equivalents": {},
+      "equivalents": {
+        "capa": [
+          "capa/anti-analysis/reference-analysis-tools-strings"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 1,
@@ -2863,7 +2945,11 @@
       "cost": "fast",
       "network": false,
       "requires": [],
-      "equivalents": {},
+      "equivalents": {
+        "checkpoint-evasions": [
+          "evasions/network/check-specific-network-properties"
+        ]
+      },
       "fix": {
         "layer": "vm-config",
         "effort": 2,
@@ -2961,6 +3047,12 @@
         ],
         "pafish": [
           "vmware_adapter_name"
+        ],
+        "checkpoint-evasions": [
+          "evasions/network/check-specific-network-properties"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_network_adapter"
         ]
       },
       "fix": {
@@ -3125,6 +3217,9 @@
       "equivalents": {
         "invizzzible": [
           "vbox/Forbidden MACs"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_network_adapter"
         ]
       },
       "fix": {
@@ -3152,6 +3247,9 @@
       "equivalents": {
         "invizzzible": [
           "vmware/Forbidden MACs"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_network_adapter"
         ]
       },
       "fix": {
@@ -3237,6 +3335,12 @@
         ],
         "invizzzible": [
           "cuckoo/ResultserverConnection"
+        ],
+        "checkpoint-evasions": [
+          "evasions/network/cuckoo-resultserver-connection-based-anti-emulation-technique"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antisandbox_cuckoo"
         ]
       },
       "fix": {
@@ -3694,6 +3798,9 @@
         ],
         "pafish": [
           "gensandbox_less_than_onegb"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_memory"
         ]
       },
       "fix": {
@@ -3791,6 +3898,9 @@
       "equivalents": {
         "pafish": [
           "gensandbox_IsNativeVhdBoot"
+        ],
+        "checkpoint-evasions": [
+          "evasions/generic-os-queries/check-if-os-was-boot-from-virtual-disk"
         ]
       },
       "fix": {
@@ -3849,6 +3959,13 @@
         ],
         "vmaware": [
           "DISK"
+        ],
+        "checkpoint-evasions": [
+          "evasions/hardware/check-if-hdd-has-specific-name",
+          "evasions/hardware/check-if-hdd-vendor-id-has-specific-value"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_generic_disk"
         ]
       },
       "fix": {
@@ -4022,6 +4139,12 @@
       "equivalents": {
         "al-khaser": [
           "known_hostnames"
+        ],
+        "checkpoint-evasions": [
+          "evasions/generic-os-queries/check-if-computer-name-is-specific"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-vm/vm-detection/check-for-sandbox-username-or-hostname"
         ]
       },
       "fix": {
@@ -4046,7 +4169,11 @@
       "cost": "fast",
       "network": false,
       "requires": [],
-      "equivalents": {},
+      "equivalents": {
+        "capa": [
+          "capa/anti-analysis/anti-vm/vm-detection/check-for-windows-sandbox-via-registry"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 1,
@@ -4071,6 +4198,9 @@
       "equivalents": {
         "al-khaser": [
           "known_file_names"
+        ],
+        "checkpoint-evasions": [
+          "evasions/filesystem/check-if-exec-files-with-specific-names"
         ]
       },
       "fix": {
@@ -4095,7 +4225,11 @@
       "cost": "fast",
       "network": false,
       "requires": [],
-      "equivalents": {},
+      "equivalents": {
+        "checkpoint-evasions": [
+          "evasions/filesystem/check-if-exec-files-with-specific-names"
+        ]
+      },
       "fix": {
         "layer": "analysis-engine",
         "effort": 1,
@@ -4120,6 +4254,9 @@
       "equivalents": {
         "pafish": [
           "gensandbox_path"
+        ],
+        "checkpoint-evasions": [
+          "evasions/filesystem/check-if-exec-is-run"
         ]
       },
       "fix": {
@@ -4144,7 +4281,12 @@
       "cost": "fast",
       "network": false,
       "requires": [],
-      "equivalents": {},
+      "equivalents": {
+        "checkpoint-evasions": [
+          "evasions/filesystem/check-if-exec-is-run",
+          "evasions/filesystem/check-if-full-path-exec"
+        ]
+      },
       "fix": {
         "layer": "analysis-engine",
         "effort": 1,
@@ -4169,6 +4311,9 @@
       "equivalents": {
         "pafish": [
           "gensandbox_path"
+        ],
+        "checkpoint-evasions": [
+          "evasions/filesystem/check-if-full-path-exec"
         ]
       },
       "fix": {
@@ -4334,6 +4479,9 @@
       "equivalents": {
         "al-khaser": [
           "IsParentExplorerExe"
+        ],
+        "checkpoint-evasions": [
+          "anti-debug/misc/parent-process-check"
         ]
       },
       "fix": {
@@ -4402,7 +4550,11 @@
       "cost": "medium",
       "network": false,
       "requires": [],
-      "equivalents": {},
+      "equivalents": {
+        "cape": [
+          "cape/modules/signatures/windows/antisandbox_check_userdomain"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 2,
@@ -4477,6 +4629,15 @@
         ],
         "vmaware": [
           "WINE"
+        ],
+        "checkpoint-evasions": [
+          "evasions/os-features/detect-wine"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-emulation/wine/check-if-process-is-running-under-wine"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antiemu_wine_func"
         ]
       },
       "fix": {
@@ -4504,6 +4665,9 @@
       "equivalents": {
         "invizzzible": [
           "vbox/FirmwareRaw Table"
+        ],
+        "checkpoint-evasions": [
+          "evasions/firmware-tables/check-specific-strings-in-raw-firmware-table"
         ]
       },
       "fix": {
@@ -4531,6 +4695,9 @@
       "equivalents": {
         "invizzzible": [
           "vbox/FirmwareSMBIOS Table"
+        ],
+        "checkpoint-evasions": [
+          "evasions/firmware-tables/check-specific-strings-in-raw-smbios-firmware-table"
         ]
       },
       "fix": {
@@ -4558,6 +4725,9 @@
       "equivalents": {
         "invizzzible": [
           "vmware/FirmwareRaw Table"
+        ],
+        "checkpoint-evasions": [
+          "evasions/firmware-tables/check-specific-strings-in-raw-firmware-table"
         ]
       },
       "fix": {
@@ -4585,6 +4755,9 @@
       "equivalents": {
         "invizzzible": [
           "vmware/FirmwareSMBIOS Table"
+        ],
+        "checkpoint-evasions": [
+          "evasions/firmware-tables/check-specific-strings-in-raw-smbios-firmware-table"
         ]
       },
       "fix": {
@@ -4720,6 +4893,9 @@
       "equivalents": {
         "vmaware": [
           "FIRMWARE"
+        ],
+        "checkpoint-evasions": [
+          "evasions/firmware-tables/check-specific-strings-in-raw-smbios-firmware-table"
         ]
       },
       "fix": {
@@ -4751,6 +4927,9 @@
         ],
         "vmaware": [
           "FIRMWARE"
+        ],
+        "checkpoint-evasions": [
+          "evasions/firmware-tables/check-specific-strings-in-raw-smbios-firmware-table"
         ]
       },
       "fix": {
@@ -4808,6 +4987,9 @@
       "equivalents": {
         "invizzzible": [
           "qemu/QEMU Disk Name"
+        ],
+        "checkpoint-evasions": [
+          "evasions/hardware/check-if-hdd-has-specific-name"
         ]
       },
       "fix": {
@@ -4835,6 +5017,9 @@
       "equivalents": {
         "invizzzible": [
           "vbox/VBox Disk Name"
+        ],
+        "checkpoint-evasions": [
+          "evasions/hardware/check-if-hdd-has-specific-name"
         ]
       },
       "fix": {
@@ -4862,6 +5047,9 @@
       "equivalents": {
         "invizzzible": [
           "vmware/VMWare Disk Name"
+        ],
+        "checkpoint-evasions": [
+          "evasions/hardware/check-if-hdd-has-specific-name"
         ]
       },
       "fix": {
@@ -4913,7 +5101,11 @@
       "cost": "fast",
       "network": false,
       "requires": [],
-      "equivalents": {},
+      "equivalents": {
+        "checkpoint-evasions": [
+          "evasions/hardware/check-if-hdd-has-specific-name"
+        ]
+      },
       "fix": {
         "layer": "vm-config",
         "effort": 3,
@@ -4939,6 +5131,9 @@
       "equivalents": {
         "invizzzible": [
           "vbox/VBox Drive Model"
+        ],
+        "checkpoint-evasions": [
+          "evasions/hardware/check-if-hdd-vendor-id-has-specific-value"
         ]
       },
       "fix": {
@@ -4966,6 +5161,9 @@
       "equivalents": {
         "invizzzible": [
           "vmware/VMWare Drive Model"
+        ],
+        "checkpoint-evasions": [
+          "evasions/hardware/check-if-hdd-vendor-id-has-specific-value"
         ]
       },
       "fix": {
@@ -4993,6 +5191,9 @@
       "equivalents": {
         "invizzzible": [
           "vmware/VMWare Physical Display Adapter VendorId"
+        ],
+        "checkpoint-evasions": [
+          "evasions/hardware/check-directx-adapter"
         ]
       },
       "fix": {
@@ -5101,6 +5302,12 @@
       "equivalents": {
         "al-khaser": [
           "vbox_pnpentity_pcideviceid_wmi"
+        ],
+        "checkpoint-evasions": [
+          "evasions/hardware/check-directx-adapter"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_display"
         ]
       },
       "fix": {
@@ -5153,7 +5360,11 @@
       "cost": "fast",
       "network": false,
       "requires": [],
-      "equivalents": {},
+      "equivalents": {
+        "checkpoint-evasions": [
+          "evasions/global-os-objects/check-if-specific-mutexes-present"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 1,
@@ -5210,6 +5421,9 @@
         ],
         "vmaware": [
           "HANDLES"
+        ],
+        "checkpoint-evasions": [
+          "evasions/global-os-objects/check-if-specific-virtual-devices-present"
         ]
       },
       "fix": {
@@ -5239,6 +5453,12 @@
       "equivalents": {
         "vmaware": [
           "CUCKOO"
+        ],
+        "checkpoint-evasions": [
+          "evasions/filesystem/check-if-specific-directories-present"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antisandbox_cuckoo_files"
         ]
       },
       "fix": {
@@ -5267,6 +5487,9 @@
       "equivalents": {
         "vmaware": [
           "VIRTUAL_REGISTRY"
+        ],
+        "checkpoint-evasions": [
+          "evasions/global-os-objects/check-if-virtual-registry-present"
         ]
       },
       "fix": {
@@ -5294,6 +5517,9 @@
       "equivalents": {
         "invizzzible": [
           "misc/Sandbox User Names"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-vm/vm-detection/check-for-sandbox-username-or-hostname"
         ]
       },
       "fix": {
@@ -5320,6 +5546,9 @@
       "equivalents": {
         "invizzzible": [
           "misc/Sandbox Computer Names"
+        ],
+        "checkpoint-evasions": [
+          "evasions/generic-os-queries/check-if-computer-name-is-specific"
         ]
       },
       "fix": {
@@ -5482,6 +5711,9 @@
       "equivalents": {
         "al-khaser": [
           "qemu_processes"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-vm/vm-detection/reference-anti-vm-strings-targeting-qemu"
         ]
       },
       "fix": {
@@ -5531,7 +5763,11 @@
       "cost": "fast",
       "network": false,
       "requires": [],
-      "equivalents": {},
+      "equivalents": {
+        "checkpoint-evasions": [
+          "evasions/ui-artifacts/check-number-of-top-level-windows"
+        ]
+      },
       "fix": {
         "layer": "analysis-engine",
         "effort": 2,
@@ -5552,7 +5788,11 @@
       "cost": "fast",
       "network": false,
       "requires": [],
-      "equivalents": {},
+      "equivalents": {
+        "checkpoint-evasions": [
+          "evasions/registry/check-if-vbawarning-enabled"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 1,
@@ -6044,6 +6284,9 @@
       "equivalents": {
         "invizzzible": [
           "bochs/BOCHS SystemBiosVersion Registry Key"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_bochs_keys"
         ]
       },
       "fix": {
@@ -6071,6 +6314,9 @@
       "equivalents": {
         "invizzzible": [
           "bochs/BOCHS VideoBiosVersion Registry Key"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_bochs_keys"
         ]
       },
       "fix": {
@@ -6098,6 +6344,9 @@
       "equivalents": {
         "invizzzible": [
           "generic/DiskEnum Registry Key"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_generic_diskreg"
         ]
       },
       "fix": {
@@ -6125,6 +6374,9 @@
       "equivalents": {
         "invizzzible": [
           "hyperv/Hyper-V HKLM Registry Keys"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_hyperv_keys"
         ]
       },
       "fix": {
@@ -6152,6 +6404,9 @@
       "equivalents": {
         "invizzzible": [
           "hyperv/Hyper-V Services Registry Keys"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_hyperv_keys"
         ]
       },
       "fix": {
@@ -6179,6 +6434,9 @@
       "equivalents": {
         "invizzzible": [
           "hyperv/Hyper-V Directory Device Object"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_dirobjects"
         ]
       },
       "fix": {
@@ -6339,6 +6597,15 @@
       "equivalents": {
         "invizzzible": [
           "misc/Sandbox Specific Files"
+        ],
+        "checkpoint-evasions": [
+          "evasions/filesystem/check-if-specific-files-exist"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antisandbox_fortinet_files",
+          "cape/modules/signatures/windows/antisandbox_joe_anubis_files",
+          "cape/modules/signatures/windows/antisandbox_sunbelt_files",
+          "cape/modules/signatures/windows/antisandbox_threattrack_files"
         ]
       },
       "fix": {
@@ -6366,6 +6633,9 @@
       "equivalents": {
         "invizzzible": [
           "parallels/Parallels Driver Files"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-vm/vm-detection/reference-anti-vm-strings-targeting-parallels"
         ]
       },
       "fix": {
@@ -6393,6 +6663,9 @@
       "equivalents": {
         "invizzzible": [
           "parallels/EnumPCI Registry SubKey"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_parallels_keys"
         ]
       },
       "fix": {
@@ -6420,6 +6693,9 @@
       "equivalents": {
         "invizzzible": [
           "parallels/Parallels SystemBiosVersion Registry Key"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_parallels_keys"
         ]
       },
       "fix": {
@@ -6474,6 +6750,9 @@
       "equivalents": {
         "invizzzible": [
           "parallels/Parallels Processes"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-vm/vm-detection/reference-anti-vm-strings-targeting-parallels"
         ]
       },
       "fix": {
@@ -6581,6 +6860,9 @@
       "equivalents": {
         "invizzzible": [
           "qemu/QEMU BIOS Description"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-vm/vm-detection/reference-anti-vm-strings-targeting-qemu"
         ]
       },
       "fix": {
@@ -6770,6 +7052,12 @@
       "equivalents": {
         "invizzzible": [
           "sandboxie/Directory Device Object"
+        ],
+        "checkpoint-evasions": [
+          "evasions/global-os-objects/check-if-object-directory-present"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antisandbox_sboxie_objects"
         ]
       },
       "fix": {
@@ -6824,6 +7112,12 @@
       "equivalents": {
         "invizzzible": [
           "sandboxie/Directory RPC Control Object"
+        ],
+        "checkpoint-evasions": [
+          "evasions/global-os-objects/check-if-object-directory-present"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antisandbox_sboxie_objects"
         ]
       },
       "fix": {
@@ -6851,6 +7145,9 @@
       "equivalents": {
         "invizzzible": [
           "sandboxie/Injected sbiedll module"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antisandbox_sboxie_libs"
         ]
       },
       "fix": {
@@ -6877,6 +7174,9 @@
       "equivalents": {
         "invizzzible": [
           "vbox/VBox Guest Additions Registry Key"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_vbox_keys"
         ]
       },
       "fix": {
@@ -6958,6 +7258,9 @@
       "equivalents": {
         "invizzzible": [
           "vbox/VBox Services Registry Keys"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_vbox_keys"
         ]
       },
       "fix": {
@@ -7228,6 +7531,9 @@
       "equivalents": {
         "invizzzible": [
           "vbox/VBox Processes"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-vm/vm-detection/reference-anti-vm-strings-targeting-virtualbox"
         ]
       },
       "fix": {
@@ -7254,6 +7560,9 @@
       "equivalents": {
         "invizzzible": [
           "vbox/VBox Devices"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_vbox_devices"
         ]
       },
       "fix": {
@@ -7281,6 +7590,15 @@
       "equivalents": {
         "invizzzible": [
           "vbox/VBox Driver Files"
+        ],
+        "checkpoint-evasions": [
+          "evasions/filesystem/check-if-specific-files-exist"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-vm/vm-detection/reference-anti-vm-strings-targeting-virtualbox"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_vbox_files"
         ]
       },
       "fix": {
@@ -7311,6 +7629,12 @@
         ],
         "vmaware": [
           "KERNEL_OBJECTS"
+        ],
+        "checkpoint-evasions": [
+          "evasions/global-os-objects/check-if-objects-present"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_dirobjects"
         ]
       },
       "fix": {
@@ -7365,6 +7689,12 @@
       "equivalents": {
         "invizzzible": [
           "vbox/Window Class Name"
+        ],
+        "checkpoint-evasions": [
+          "evasions/ui-artifacts/check-windows-with-certain-class"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_vbox_window"
         ]
       },
       "fix": {
@@ -7392,6 +7722,9 @@
       "equivalents": {
         "invizzzible": [
           "vbox/Window Name"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_vbox_window"
         ]
       },
       "fix": {
@@ -7419,6 +7752,12 @@
       "equivalents": {
         "invizzzible": [
           "virtualpc/VirtualPC Driver Files"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-vm/vm-detection/reference-anti-vm-strings-targeting-virtualpc"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_vpc_files"
         ]
       },
       "fix": {
@@ -7446,6 +7785,9 @@
       "equivalents": {
         "invizzzible": [
           "virtualpc/VirtualPC Services Registry Keys"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_vpc_keys"
         ]
       },
       "fix": {
@@ -7500,6 +7842,9 @@
       "equivalents": {
         "invizzzible": [
           "virtualpc/VirtualPC Processes"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-vm/vm-detection/reference-anti-vm-strings-targeting-virtualpc"
         ]
       },
       "fix": {
@@ -7580,6 +7925,9 @@
       "equivalents": {
         "invizzzible": [
           "vmware/VMWare Tools Registry Machine Key"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_vmware_keys"
         ]
       },
       "fix": {
@@ -7634,6 +7982,9 @@
       "equivalents": {
         "invizzzible": [
           "vmware/VMWare Service Registry Key"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_vmware_keys"
         ]
       },
       "fix": {
@@ -8069,6 +8420,12 @@
         ],
         "pafish": [
           "vmware_devices"
+        ],
+        "checkpoint-evasions": [
+          "evasions/global-os-objects/check-if-specific-virtual-devices-present"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_vmware_devices"
         ]
       },
       "fix": {
@@ -8099,6 +8456,12 @@
         ],
         "pafish": [
           "vmware_devices"
+        ],
+        "checkpoint-evasions": [
+          "evasions/global-os-objects/check-if-specific-virtual-devices-present"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_vmware_devices"
         ]
       },
       "fix": {
@@ -8126,6 +8489,15 @@
       "equivalents": {
         "invizzzible": [
           "vmware/VMWare Files"
+        ],
+        "checkpoint-evasions": [
+          "evasions/filesystem/check-if-specific-files-exist"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-vm/vm-detection/reference-anti-vm-strings-targeting-vmware"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_vmware_files"
         ]
       },
       "fix": {
@@ -8153,6 +8525,9 @@
       "equivalents": {
         "invizzzible": [
           "vmware/VMWare Processes"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-vm/vm-detection/reference-anti-vm-strings-targeting-vmware"
         ]
       },
       "fix": {
@@ -8182,6 +8557,12 @@
         ],
         "vmaware": [
           "KERNEL_OBJECTS"
+        ],
+        "checkpoint-evasions": [
+          "evasions/global-os-objects/check-if-objects-present"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_dirobjects"
         ]
       },
       "fix": {
@@ -8236,6 +8617,12 @@
       "equivalents": {
         "invizzzible": [
           "wine/Wine HKLM Registry Keys"
+        ],
+        "checkpoint-evasions": [
+          "evasions/os-features/detect-wine"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antiemu_wine"
         ]
       },
       "fix": {
@@ -8263,6 +8650,9 @@
       "equivalents": {
         "invizzzible": [
           "wine/Wine HKCU Registry Keys"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antiemu_wine"
         ]
       },
       "fix": {
@@ -8290,6 +8680,9 @@
       "equivalents": {
         "invizzzible": [
           "xen/Xen Hardware Device Registry Keys"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_xen_keys"
         ]
       },
       "fix": {
@@ -8317,6 +8710,12 @@
       "equivalents": {
         "invizzzible": [
           "xen/Xen Services Registry Keys"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-vm/vm-detection/reference-anti-vm-strings-targeting-xen"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_xen_keys"
         ]
       },
       "fix": {
@@ -8344,6 +8743,9 @@
       "equivalents": {
         "invizzzible": [
           "xen/Xen Processes"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-vm/vm-detection/reference-anti-vm-strings-targeting-xen"
         ]
       },
       "fix": {
@@ -8403,6 +8805,9 @@
         ],
         "pafish": [
           "vbox_processes"
+        ],
+        "checkpoint-evasions": [
+          "evasions/processes/check-specific-running-processes-and-loaded-libraries"
         ]
       },
       "fix": {
@@ -8460,6 +8865,12 @@
       "equivalents": {
         "pafish": [
           "sboxie_detect_sbiedll"
+        ],
+        "checkpoint-evasions": [
+          "evasions/global-os-objects/check-if-specific-mutexes-present"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antisandbox_sboxie_mutex"
         ]
       },
       "fix": {
@@ -8487,6 +8898,12 @@
       "equivalents": {
         "vmaware": [
           "MUTEX"
+        ],
+        "checkpoint-evasions": [
+          "evasions/global-os-objects/check-if-specific-mutexes-present"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_vpc_mutex"
         ]
       },
       "fix": {
@@ -8515,6 +8932,12 @@
       "equivalents": {
         "vmaware": [
           "CUCKOO"
+        ],
+        "checkpoint-evasions": [
+          "evasions/global-os-objects/check-if-pipes-present"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antisandbox_cuckoo"
         ]
       },
       "fix": {
@@ -8571,6 +8994,9 @@
       "equivalents": {
         "al-khaser": [
           "check_hyperv_global_objects"
+        ],
+        "checkpoint-evasions": [
+          "evasions/global-os-objects/check-if-objects-present"
         ]
       },
       "fix": {
@@ -8738,7 +9164,11 @@
       "cost": "fast",
       "network": false,
       "requires": [],
-      "equivalents": {},
+      "equivalents": {
+        "capa": [
+          "capa/anti-analysis/anti-vm/vm-detection/check-for-windows-sandbox-via-process-name"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 1,
@@ -8760,7 +9190,14 @@
       "cost": "fast",
       "network": false,
       "requires": [],
-      "equivalents": {},
+      "equivalents": {
+        "checkpoint-evasions": [
+          "anti-debug/misc/findwindow"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antidebug_windows"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 1,
@@ -8788,6 +9225,13 @@
         ],
         "al-khaser": [
           "vbox_window_class"
+        ],
+        "checkpoint-evasions": [
+          "anti-debug/misc/findwindow",
+          "evasions/ui-artifacts/check-windows-with-certain-class"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antidebug_windows"
         ]
       },
       "fix": {
@@ -8889,7 +9333,14 @@
       "cost": "fast",
       "network": false,
       "requires": [],
-      "equivalents": {},
+      "equivalents": {
+        "checkpoint-evasions": [
+          "evasions/filesystem/check-if-specific-directories-present"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-vm/vm-detection/check-for-windows-sandbox-via-registry"
+        ]
+      },
       "fix": {
         "layer": "guest-image",
         "effort": 1,
@@ -9009,6 +9460,12 @@
         "al-khaser": [
           "registry_services_disk_enum",
           "registry_disk_enum"
+        ],
+        "checkpoint-evasions": [
+          "evasions/registry/check-if-keys-contain-strings"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_generic_scsi"
         ]
       },
       "fix": {
@@ -9075,6 +9532,13 @@
         "pafish": [
           "qemu_reg_key1",
           "vbox_reg_key1"
+        ],
+        "checkpoint-evasions": [
+          "evasions/registry/check-if-keys-contain-strings"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_generic_bios",
+          "cape/modules/signatures/windows/antivm_generic_system"
         ]
       },
       "fix": {
@@ -9173,6 +9637,9 @@
         ],
         "al-khaser": [
           "vbox_network_share"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_vbox_provname"
         ]
       },
       "fix": {
@@ -9201,7 +9668,14 @@
       "requires": [
         "interactive"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "capa": [
+          "capa/anti-analysis/anti-vm/vm-detection/check-for-foreground-window-switch"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antisandbox_forehwnd"
+        ]
+      },
       "fix": {
         "layer": "analysis-engine",
         "effort": 2,
@@ -9251,6 +9725,12 @@
         "pafish": [
           "rtt_mouse_click",
           "rtt_mouse_double_click"
+        ],
+        "checkpoint-evasions": [
+          "evasions/hooks/check-user-clicks-via-mouse-hooks"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antisandbox_mouse_hook"
         ]
       },
       "fix": {

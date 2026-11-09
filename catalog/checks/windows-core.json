@@ -124,6 +124,16 @@
           "generic/MouseActive",
           "generic/MouseRawActive",
           "generic/UserInputActivity"
+        ],
+        "checkpoint-evasions": [
+          "evasions/human-like-behavior/check-user-presence-at-the-moment-of-executing"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-vm/vm-detection/check-for-unmoving-mouse-cursor",
+          "capa/anti-analysis/anti-vm/vm-detection/detect-mouse-movement-via-activity-checks-on-windows"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antisandbox_mousemovement"
         ]
       },
       "title": "Mouse movement",
@@ -184,6 +194,12 @@
         "invizzzible": [
           "generic/AV and Research tools Processes",
           "misc/Side Processes"
+        ],
+        "checkpoint-evasions": [
+          "evasions/processes/check-specific-running-processes-and-loaded-libraries"
+        ],
+        "capa": [
+          "capa/anti-analysis/reference-analysis-tools-strings"
         ]
       },
       "title": "Analysis tools running",
@@ -222,6 +238,20 @@
         ],
         "invizzzible": [
           "sandboxie/Injected sbiedll module"
+        ],
+        "checkpoint-evasions": [
+          "evasions/processes/check-if-specific-artifacts-are-present-in-process",
+          "evasions/processes/check-specific-running-processes-and-loaded-libraries"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-av/check-for-sandbox-and-av-modules"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antidebug_apioverride_libs",
+          "cape/modules/signatures/windows/antidebug_nthookengine_libs",
+          "cape/modules/signatures/windows/antisandbox_sunbelt_libs",
+          "cape/modules/signatures/windows/antivm_vbox_libs",
+          "cape/modules/signatures/windows/antivm_vmware_libs"
         ]
       },
       "title": "Sandbox DLLs loaded",
@@ -253,6 +283,12 @@
         ],
         "pafish": [
           "debug_isdebuggerpresent"
+        ],
+        "checkpoint-evasions": [
+          "anti-debug/debug-flags/using-win32-api"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-debugging/debugger-detection/check-for-debugger-via-api"
         ]
       },
       "reason": null,
@@ -288,6 +324,9 @@
         ],
         "invizzzible": [
           "misc/Sandbox User Names"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-vm/vm-detection/check-for-sandbox-username-or-hostname"
         ]
       },
       "title": "Sandbox user name",
@@ -329,6 +368,9 @@
         "invizzzible": [
           "vbox/Forbidden MACs",
           "vmware/Forbidden MACs"
+        ],
+        "checkpoint-evasions": [
+          "evasions/network/check-specific-network-properties"
         ]
       },
       "title": "Hypervisor MAC prefix",
@@ -383,6 +425,15 @@
       "equivalents": {
         "al-khaser": [
           "CheckRemoteDebuggerPresentAPI"
+        ],
+        "checkpoint-evasions": [
+          "anti-debug/debug-flags/using-win32-api"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-debugging/debugger-detection/check-for-debugger-via-api"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antidebug_checkremotedebuggerpresent"
         ]
       },
       "reason": null,
@@ -495,6 +546,12 @@
           "vbox/VBox Driver Files",
           "vmware/VMWare Files",
           "misc/Sandbox Specific Files"
+        ],
+        "checkpoint-evasions": [
+          "evasions/filesystem/check-if-specific-files-exist"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-vm/vm-detection/reference-anti-vm-strings"
         ]
       },
       "title": "Hypervisor files",
@@ -552,6 +609,12 @@
         ],
         "pafish": [
           "qemu_cpu_name"
+        ],
+        "checkpoint-evasions": [
+          "evasions/cpu/check-vendor-id-via-cpuid"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_generic_cpu"
         ]
       },
       "reason": null,
@@ -591,6 +654,9 @@
         ],
         "invizzzible": [
           "vmware/HypervisorBit"
+        ],
+        "checkpoint-evasions": [
+          "evasions/cpu/check-if-being-run-in-Hypervisor-via-cpuid"
         ]
       },
       "reason": null,
@@ -638,6 +704,9 @@
           "vmware/VMWare HypervisorID",
           "xen/Xen CPU HypervisorID",
           "xen/Xen CPU VendorID"
+        ],
+        "checkpoint-evasions": [
+          "evasions/cpu/check-vendor-id-via-cpuid"
         ]
       },
       "reason": null,
@@ -678,6 +747,9 @@
         "invizzzible": [
           "vbox/VBox Services Registry Keys",
           "xen/Xen Services Registry Keys"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_generic_services"
         ]
       },
       "title": "Guest tool services",
@@ -756,6 +828,9 @@
         ],
         "invizzzible": [
           "generic/RAM"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antivm_memory"
         ]
       },
       "title": "Low memory",
@@ -834,6 +909,12 @@
         "invizzzible": [
           "xen/Xen Hardware Device Registry Keys",
           "vbox/VBox Guest Additions Registry Key"
+        ],
+        "checkpoint-evasions": [
+          "evasions/registry/check-if-particular-registry-paths-exist"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-vm/vm-detection/reference-anti-vm-strings"
         ]
       },
       "title": "Hypervisor registry keys",
@@ -911,6 +992,9 @@
         "invizzzible": [
           "vbox/FirmwareSMBIOS Table",
           "vmware/FirmwareSMBIOS Table"
+        ],
+        "checkpoint-evasions": [
+          "evasions/firmware-tables/check-specific-strings-in-raw-firmware-table"
         ]
       },
       "title": "Raw SMBIOS table",
@@ -972,7 +1056,11 @@
         "how": "Calibrate on comparable bare metal and minimize exits and host scheduling noise. TSC offsetting/scaling and exit-cost compensation require coordinated hypervisor work; a static offset cannot remove per-exit cost and clock compensation must remain consistent across vCPUs and clocks.",
         "chimera": "Not fixable by configuration. cpuidmon -s rewrites CPUID values but turns every CPUID into a vm_event round trip to dom0 (about 35x the plain exit cost, see the G2 numbers); masking through the Xen CPUID policy instead (xl.cfg cpuid=, verify that Xen 4.19 honours clearing the bit for HVM) removes the monitor cost but not the ~2.5k-cycle exit. Hiding the exit itself needs Xen-side TSC compensation for CPUID exits, which Xen 4.19 does not have; tsc_mode, TSC scaling and vCPU pinning do not remove per-exit cost. CHIMERA G2 measurements (2026-10-29, i7-13700HX host): median RDTSC;CPUID;RDTSC 2398-3720 cycles on the Xen HVM guest without an introspection monitor and 92530-94514 cycles with DRAKVUF cpuidmon -s, which forwards every CPUID to the dom0 monitor; al-khaser's avg10 rule fired 1000/1000 in every configuration, dom0 included (1590-1964 cycles)."
       },
-      "equivalents": {},
+      "equivalents": {
+        "checkpoint-evasions": [
+          "anti-debug/timing/queryperformancecounter"
+        ]
+      },
       "reason": null,
       "cost": "medium",
       "network": false,
@@ -1014,6 +1102,10 @@
         ],
         "invizzzible": [
           "generic/SystemUptime"
+        ],
+        "checkpoint-evasions": [
+          "evasions/timing/check-system-boot-time",
+          "evasions/wmi/check-last-boot-time"
         ]
       },
       "reason": null,

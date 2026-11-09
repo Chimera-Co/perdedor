@@ -105,7 +105,33 @@
         "commit": "4cda4b058641cbf0dc14fe465368cd31fa196c91",
         "date": "2026-11-08",
         "released": "2024-07-09"
-      }
+      },
+      "out_of_scope": [
+        {
+          "pattern": "android/anti-analysis/*",
+          "reason": "APK and manifest malformations aimed at analysis tools; a property of the sample file, not of the device under test."
+        },
+        {
+          "pattern": "anti-debug/exceptions/hiding-cf-with-eh",
+          "reason": "Describes how the sample itself is built (packing, obfuscation, disassembly tricks), not anything the analysis environment shows; nothing to test in a sandbox."
+        },
+        {
+          "pattern": "anti-debug/interactive/blockinput",
+          "reason": "Blocks keyboard and mouse input to hinder an interactive debugger; changes system state and says nothing about the environment."
+        },
+        {
+          "pattern": "anti-debug/interactive/switchdesktop",
+          "reason": "Moves the sample to another desktop to hide from an interactive debugger; changes system state."
+        },
+        {
+          "pattern": "anti-debug/misc/ifeo-removal",
+          "reason": "An action the sample takes against monitoring or forensics (tampering, hiding, cleaning up), not a check of the environment; a sandbox records it as behaviour, and there is nothing read-only to test."
+        },
+        {
+          "pattern": "evasions/wmi/escape-from-tracking",
+          "reason": "An action the sample takes against monitoring or forensics (tampering, hiding, cleaning up), not a check of the environment; a sandbox records it as behaviour, and there is nothing read-only to test."
+        }
+      ]
     },
     {
       "id": "unprotect",
@@ -492,13 +518,51 @@
         ".yml"
       ],
       "name_prefix": "capa/",
-      "equivalents_key": "other",
+      "equivalents_key": "capa",
       "pinned": {
         "version": "v10.0.0",
         "commit": "805f9eaccfb6a4e1ddffc809d71d1e2b5ccc15e5",
         "date": "2026-11-08",
         "released": "2026-10-16"
-      }
+      },
+      "out_of_scope": [
+        {
+          "pattern": "capa/anti-analysis/packer/*",
+          "reason": "Describes how the sample itself is built (packing, obfuscation, disassembly tricks), not anything the analysis environment shows; nothing to test in a sandbox."
+        },
+        {
+          "pattern": "capa/anti-analysis/obfuscation/*",
+          "reason": "Describes how the sample itself is built (packing, obfuscation, disassembly tricks), not anything the analysis environment shows; nothing to test in a sandbox."
+        },
+        {
+          "pattern": "capa/anti-analysis/anti-disasm/*",
+          "reason": "Describes how the sample itself is built (packing, obfuscation, disassembly tricks), not anything the analysis environment shows; nothing to test in a sandbox."
+        },
+        {
+          "pattern": "capa/anti-analysis/anti-forensic/*",
+          "reason": "An action the sample takes against monitoring or forensics (tampering, hiding, cleaning up), not a check of the environment; a sandbox records it as behaviour, and there is nothing read-only to test."
+        },
+        {
+          "pattern": "capa/anti-analysis/anti-av/block-*",
+          "reason": "An action the sample takes against monitoring or forensics (tampering, hiding, cleaning up), not a check of the environment; a sandbox records it as behaviour, and there is nothing read-only to test."
+        },
+        {
+          "pattern": "capa/anti-analysis/anti-av/patch-*",
+          "reason": "An action the sample takes against monitoring or forensics (tampering, hiding, cleaning up), not a check of the environment; a sandbox records it as behaviour, and there is nothing read-only to test."
+        },
+        {
+          "pattern": "capa/anti-analysis/anti-av/protect-*",
+          "reason": "An action the sample takes against monitoring or forensics (tampering, hiding, cleaning up), not a check of the environment; a sandbox records it as behaviour, and there is nothing read-only to test."
+        },
+        {
+          "pattern": "capa/anti-analysis/anti-av/overwrite-dll-text-section-to-remove-hooks",
+          "reason": "An action the sample takes against monitoring or forensics (tampering, hiding, cleaning up), not a check of the environment; a sandbox records it as behaviour, and there is nothing read-only to test. Whether there are in-guest hooks to remove is what win.design.system_module_text_integrity tests."
+        },
+        {
+          "pattern": "capa/anti-analysis/anti-llm/*",
+          "reason": "Targets language-model assisted analysis, not the sandbox environment."
+        }
+      ]
     },
     {
       "id": "cape-community",
@@ -516,14 +580,32 @@
       ],
       "name_filter": "^anti(sandbox|vm|debug|dbg|emu)",
       "name_prefix": "cape/",
-      "equivalents_key": "other",
+      "equivalents_key": "cape",
       "branch": "master",
       "pinned": {
         "version": "9d9156384fd4",
         "commit": "9d9156384fd49dc18e6008c3e99116e40dae06eb",
         "date": "2026-11-08",
         "released": "2026-10-30"
-      }
+      },
+      "out_of_scope": [
+        {
+          "pattern": "cape/modules/signatures/windows/antisandbox_cuckoocrash",
+          "reason": "An action the sample takes against monitoring or forensics (tampering, hiding, cleaning up), not a check of the environment; a sandbox records it as behaviour, and there is nothing read-only to test."
+        },
+        {
+          "pattern": "cape/modules/signatures/windows/antisandbox_restart",
+          "reason": "Reboots the machine to outlast the analysis; behaviour, not an environment check. Long analyses (CHIMERA) are the countermeasure."
+        },
+        {
+          "pattern": "cape/modules/signatures/windows/antisandbox_suspend",
+          "reason": "An action the sample takes against monitoring or forensics (tampering, hiding, cleaning up), not a check of the environment; a sandbox records it as behaviour, and there is nothing read-only to test."
+        },
+        {
+          "pattern": "cape/modules/signatures/windows/antisandbox_unhook",
+          "reason": "An action the sample takes against monitoring or forensics (tampering, hiding, cleaning up), not a check of the environment; a sandbox records it as behaviour, and there is nothing read-only to test. Whether there are in-guest hooks to remove is what win.design.system_module_text_integrity tests."
+        }
+      ]
     },
     {
       "id": "vmware-hardened-loader",

@@ -83,8 +83,14 @@ docs/                   documentation; docs/notes/<area>.md = per-area implement
 
 `equivalents` keys: `al-khaser`, `pafish`, `vmaware`, `invizzzible`,
 `checkpoint-evasions`, `unprotect`, `anti-emulator`, `freerasp`, `rootbeer`,
-`iossecuritysuite`, `systemd-detect-virt`, `virt-what`, `other`. Values are the
-upstream's own function or technique names, spelt exactly as in its source.
+`iossecuritysuite`, `systemd-detect-virt`, `virt-what`, `capa`, `cape`, `other`. Values
+are the upstream's own function or technique names, spelt exactly as in its source (for capa and
+CAPE, the rule or signature path with the `capa/` or `cape/` prefix the inventory gives it).
+
+Upstream items that describe the sample rather than the environment (packers, obfuscators,
+anti-forensic actions, attacks on monitoring) are listed in that source's `out_of_scope` entry in
+`catalog/upstreams.json`, as a glob `pattern` and a `reason`. They count as not feasible, show their
+reason in `docs/CHECK_COVERAGE.md`, and never hide an item that a check does cover.
 
 Techniques an upstream tool tests that cannot be done safely or at all from user
 mode get a `not_feasible` entry with the reason (for example "needs a kernel

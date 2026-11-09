@@ -527,6 +527,31 @@ def test_not_feasible_is_excluded_from_feasible_percentage():
     assert s["covered_percent"] == 25.0 and s["feasible_covered_percent"] == round(100 / 3, 1)
 
 
+def test_out_of_scope_items_are_not_feasible_with_reason_but_never_override_a_check():
+    mapper = U.Mapper(
+        checks=[{"id": "a", "status": "implemented", "technique": "t1", "equivalents": {"tool": ["packer/upx"]}}],
+        techniques={"t1": {}},
+    )
+    source = {"id": "tool", "out_of_scope": [{"pattern": "packer/*", "reason": "property of the sample"}]}
+    items = [{"name": n} for n in ("packer/upx", "packer/themida", "anti-vm/cpuid")]
+    rows = {r["name"]: r for r in U.classify(source, items, mapper)}
+    assert rows["packer/upx"]["status"] == "covered" and "reason" not in rows["packer/upx"]
+    assert rows["packer/themida"]["status"] == "not_feasible"
+    assert rows["packer/themida"]["reason"] == "property of the sample"
+    assert rows["anti-vm/cpuid"]["status"] == "missing"
+
+
+def test_shipped_out_of_scope_patterns_each_match_an_inventory_item():
+    cat = Path(__file__).resolve().parents[1] / "catalog"
+    for src in U.load_upstreams(cat):
+        inv = U.load_inventory(cat, src["id"])
+        for entry in src.get("out_of_scope", []):
+            assert entry["reason"].strip(), (src["id"], entry)
+            assert inv and any(
+                P.glob_match(entry["pattern"], t["name"]) for t in inv["techniques"]
+            ), f"{src['id']}: out_of_scope pattern {entry['pattern']!r} matches nothing"
+
+
 # ------------------------------------------------------------------------- the shipped catalog data
 
 

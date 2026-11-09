@@ -54,6 +54,21 @@
           "Interrupt_3",
           "MemoryBreakpoints_PageGuard",
           "TrapFlag"
+        ],
+        "checkpoint-evasions": [
+          "anti-debug/assembly/int3",
+          "anti-debug/assembly/debugbreak",
+          "anti-debug/assembly/int2d",
+          "anti-debug/assembly/ice",
+          "anti-debug/assembly/popf_and_trap_flag"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-debugging/debugger-detection/check-for-trap-flag-exception",
+          "capa/anti-analysis/anti-debugging/debugger-detection/execute-anti-debugging-instructions"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antidebug_addvectoredexceptionhandler",
+          "cape/modules/signatures/windows/antidebug_guardpages"
         ]
       },
       "fix": {
@@ -79,7 +94,11 @@
       "references": [
         "https://learn.microsoft.com/en-us/windows/win32/toolhelp/taking-a-snapshot-and-viewing-processes"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "checkpoint-evasions": [
+          "anti-debug/misc/parent-process-check"
+        ]
+      },
       "fix": {
         "layer": "analysis-engine",
         "effort": 3,
@@ -133,6 +152,12 @@
       "equivalents": {
         "al-khaser": [
           "HardwareBreakpoints"
+        ],
+        "checkpoint-evasions": [
+          "anti-debug/process-memory/breakpoints"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-debugging/debugger-detection/check-for-hardware-breakpoints"
         ]
       },
       "fix": {
@@ -164,6 +189,9 @@
         "al-khaser": [
           "HeapFlags",
           "HeapForceFlags"
+        ],
+        "checkpoint-evasions": [
+          "anti-debug/debug-flags/manual-checks"
         ]
       },
       "fix": {
@@ -225,6 +253,12 @@
         "al-khaser": [
           "CloseHandle_InvalideHandle",
           "SetHandleInformatiom_ProtectedHandle"
+        ],
+        "checkpoint-evasions": [
+          "anti-debug/object-handles/closehandle"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-debugging/debugger-detection/check-for-protected-handle-exception"
         ]
       },
       "fix": {
@@ -256,6 +290,9 @@
         "al-khaser": [
           "SharedUserData_KernelDebugger",
           "NtQuerySystemInformation_SystemKernelDebuggerInformation"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-debugging/debugger-detection/check-for-kernel-debugger-via-shared-user-data-structure"
         ]
       },
       "fix": {
@@ -290,6 +327,12 @@
           "NtQueryInformationProcess_ProcessDebugPort",
           "NtQueryInformationProcess_ProcessDebugObject",
           "NtQueryInformationProcess_ProcessDebugFlags"
+        ],
+        "checkpoint-evasions": [
+          "anti-debug/debug-flags/using-win32-api"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-debugging/debugger-detection/check-processdebugport"
         ]
       },
       "fix": {
@@ -317,7 +360,12 @@
         "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html",
         "https://github.com/wine-mirror/wine/blob/master/dlls/ntdll/ntdll.spec"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "checkpoint-evasions": [
+          "evasions/hooks/check-incorrectly-hooked-functions",
+          "evasions/hooks/check-whether-hooks-are-set-within-system-functions"
+        ]
+      },
       "fix": {
         "layer": "analysis-engine",
         "effort": 3,
@@ -348,6 +396,15 @@
         ],
         "pafish": [
           "debug_outputdebugstring"
+        ],
+        "checkpoint-evasions": [
+          "anti-debug/interactive/outputdebugstring"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-debugging/debugger-detection/check-for-outputdebugstring-error"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antidebug_outputdebugstring"
         ]
       },
       "fix": {
@@ -382,6 +439,13 @@
         ],
         "pafish": [
           "debug_beingdebugged_peb"
+        ],
+        "checkpoint-evasions": [
+          "anti-debug/debug-flags/manual-checks"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-debugging/debugger-detection/check-for-peb-beingdebugged-flag",
+          "capa/anti-analysis/anti-debugging/debugger-detection/check-for-peb-ntglobalflag-flag"
         ]
       },
       "fix": {
@@ -439,6 +503,10 @@
           "check_hook_CreateProcessA_m1",
           "check_hook_DeleteFileW_m1",
           "check_hook_ShellExecuteExW_m1"
+        ],
+        "checkpoint-evasions": [
+          "evasions/hooks/check-incorrectly-hooked-functions",
+          "evasions/hooks/check-whether-hooks-are-set-within-system-functions"
         ]
       },
       "fix": {
@@ -464,7 +532,12 @@
       "references": [
         "https://learn.microsoft.com/en-us/windows/win32/debug/pe-format"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "checkpoint-evasions": [
+          "anti-debug/process-memory/other-memory-checks",
+          "evasions/hooks/check-whether-hooks-are-set-within-system-functions"
+        ]
+      },
       "fix": {
         "layer": "analysis-engine",
         "effort": 3,
@@ -492,6 +565,16 @@
       "equivalents": {
         "al-khaser": [
           "NtSetInformationThread_ThreadHideFromDebugger"
+        ],
+        "checkpoint-evasions": [
+          "anti-debug/interactive/ntsetinformationthread"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-debugging/debugger-evasion/hide-thread-from-debugger"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antidebug_ntcreatethreadex",
+          "cape/modules/signatures/windows/antidebug_ntsetinformationthread"
         ]
       },
       "fix": {
@@ -526,6 +609,9 @@
         ],
         "vmaware": [
           "DLL"
+        ],
+        "checkpoint-evasions": [
+          "evasions/processes/check-if-specific-artifacts-are-present-in-process"
         ]
       },
       "fix": {
@@ -587,6 +673,9 @@
         "vmaware": [
           "SYSTEM_REGISTERS",
           "VMWARE_STR"
+        ],
+        "checkpoint-evasions": [
+          "evasions/cpu/check-for-global-tables-location"
         ]
       },
       "fix": {
@@ -612,7 +701,11 @@
       "references": [
         "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "checkpoint-evasions": [
+          "evasions/cpu/using-exotic-instructions-to-fool-virtual-emulators"
+        ]
+      },
       "fix": {
         "layer": "hypervisor",
         "effort": 4,
@@ -827,6 +920,9 @@
       "equivalents": {
         "vmaware": [
           "VPC_INVALID"
+        ],
+        "checkpoint-evasions": [
+          "evasions/cpu/detecting-environment-via-illegal-instructions-virtualpc"
         ]
       },
       "fix": {
@@ -856,6 +952,9 @@
       "equivalents": {
         "invizzzible": [
           "vmware/HypervisorPort"
+        ],
+        "checkpoint-evasions": [
+          "evasions/cpu/detecting-environment-via-in-backdoor-port-vmware"
         ]
       },
       "fix": {
@@ -882,7 +981,11 @@
         "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html",
         "https://www.itl.nist.gov/div898/handbook/eda/section3/eda35h.htm"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "checkpoint-evasions": [
+          "evasions/timing/difference-vm-hosts"
+        ]
+      },
       "fix": {
         "layer": "hypervisor",
         "effort": 5,
@@ -967,6 +1070,10 @@
         ],
         "vmaware": [
           "TIMER"
+        ],
+        "checkpoint-evasions": [
+          "anti-debug/timing/rdpmc_rdtsc",
+          "evasions/timing/difference-vm-hosts"
         ]
       },
       "fix": {
@@ -1029,6 +1136,13 @@
         "invizzzible": [
           "generic/PerformanceCounter",
           "generic/DelaysAccumulation"
+        ],
+        "checkpoint-evasions": [
+          "evasions/timing/delayed-execution"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antisandbox_scripttimer",
+          "cape/modules/signatures/windows/antisandbox_sleep"
         ]
       },
       "fix": {
@@ -1077,6 +1191,12 @@
         ],
         "pafish": [
           "gensandbox_sleep_patched"
+        ],
+        "checkpoint-evasions": [
+          "evasions/timing/delayed-execution"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antisandbox_sleep"
         ]
       },
       "fix": {
@@ -1226,7 +1346,11 @@
       "references": [
         "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html"
       ],
-      "equivalents": {},
+      "equivalents": {
+        "checkpoint-evasions": [
+          "anti-debug/timing/rdpmc_rdtsc"
+        ]
+      },
       "fix": {
         "layer": "hypervisor",
         "effort": 4,
@@ -1281,6 +1405,13 @@
       "equivalents": {
         "al-khaser": [
           "SoftwareBreakpoints"
+        ],
+        "checkpoint-evasions": [
+          "anti-debug/assembly/int3",
+          "anti-debug/process-memory/breakpoints"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-debugging/debugger-detection/check-for-software-breakpoints"
         ]
       },
       "fix": {
@@ -1311,6 +1442,9 @@
       "equivalents": {
         "al-khaser": [
           "NtQueryObject_ObjectAllTypesInformation"
+        ],
+        "checkpoint-evasions": [
+          "anti-debug/object-handles/ntqueryobject"
         ]
       },
       "fix": {
@@ -1340,6 +1474,10 @@
       "equivalents": {
         "al-khaser": [
           "CanOpenCsrss"
+        ],
+        "checkpoint-evasions": [
+          "anti-debug/object-handles/openprocess",
+          "evasions/os-features/checking-debug-privileges"
         ]
       },
       "fix": {
@@ -1368,6 +1506,12 @@
       "equivalents": {
         "al-khaser": [
           "UnhandledExcepFilterTest"
+        ],
+        "checkpoint-evasions": [
+          "anti-debug/exceptions/unhandledexceptionfilter"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antidebug_setunhandledexceptionfilter"
         ]
       },
       "fix": {
@@ -1399,6 +1543,12 @@
           "VirtualAlloc_WriteWatch_APICalls",
           "VirtualAlloc_WriteWatch_IsDebuggerPresent",
           "VirtualAlloc_WriteWatch_CodeWrite"
+        ],
+        "checkpoint-evasions": [
+          "anti-debug/misc/getwritewatch"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-debugging/debugger-detection/check-for-unexpected-memory-writes"
         ]
       },
       "fix": {

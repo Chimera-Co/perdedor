@@ -407,6 +407,15 @@ def tool_key(source: Mapping) -> str:
     return source.get("equivalents_key") or source["id"]
 
 
+def out_of_scope_reason(source: Mapping, name: str) -> str | None:
+    """Reason an upstream item is outside what an environment self-test can check, if the source's
+    ``out_of_scope`` list (glob ``pattern`` + ``reason``) names it. Used only for items no check covers."""
+    for entry in source.get("out_of_scope", []):
+        if parsers.glob_match(entry["pattern"], name):
+            return entry["reason"]
+    return None
+
+
 def classify(source: Mapping, items: list[dict], mapper: Mapper) -> list[dict]:
     """Coverage status of each inventory item: covered | planned | not_feasible | missing."""
     mode = match_mode(source)
@@ -417,7 +426,12 @@ def classify(source: Mapping, items: list[dict], mapper: Mapper) -> list[dict]:
             status, ids = mapper.lookup_tool(key, it["name"])
         else:
             status, ids = mapper.lookup_taxonomy(mode, it["name"])
-        rows.append({"name": it["name"], "detail": it.get("detail", ""), "status": status, "checks": ids})
+        row = {"name": it["name"], "detail": it.get("detail", ""), "status": status, "checks": ids}
+        if status == "missing":
+            reason = out_of_scope_reason(source, it["name"])
+            if reason:
+                row.update(status="not_feasible", reason=reason)
+        rows.append(row)
     if mode in ("attack", "mbc"):  # a parent technique is covered when one of its sub-techniques is
         by_name = {r["name"]: r for r in rows}
         for r in rows:
@@ -526,6 +540,13 @@ def render_coverage_markdown(rep: dict) -> str:
                 "",
                 ", ".join(f"`{n}`" for n in missing),
             ]
+        by_reason: dict[str, list[str]] = {}
+        for t in inv["techniques"]:
+            if t.get("reason"):
+                by_reason.setdefault(t["reason"], []).append(t["name"])
+        if by_reason:
+            out += ["", f"## {inv['name']}: out of scope ({sum(map(len, by_reason.values()))})", ""]
+            out += [f"- {reason} {', '.join(f'`{n}`' for n in names)}" for reason, names in by_reason.items()]
     return "\n".join(out)
 
 
