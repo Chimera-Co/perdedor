@@ -52,9 +52,9 @@ as evidence of what malware does in practice.
 
 | Source | What it is | How Perdedor uses it |
 |---|---|---|
-| [Check Point Evasions encyclopedia](https://evasions.checkpoint.com/) | The largest public catalogue of sandbox, VM and anti-debug techniques, with code and countermeasures | Tracked upstream; each technique mapped to the Perdedor check that tests it, where one can |
-| [capa rules](https://github.com/mandiant/capa-rules) (anti-analysis) | Mandiant's rules for recognising anti-VM, anti-debug and anti-emulation code in binaries | Tracked upstream and mapped, so a capa hit on a sample leads to the Perdedor check that measures the same tell |
-| [CAPE community signatures](https://github.com/CAPESandbox/community) | Behavioural signatures that flag evasion attempts during detonation | Tracked upstream and mapped the same way |
+| [Check Point Evasions encyclopedia](https://evasions.checkpoint.com/) | The largest public catalogue of sandbox, VM and anti-debug techniques, with code and countermeasures | Tracked upstream; each technique mapped to the Perdedor check that tests it: 74 of 110 covered (72.5 % of feasible) |
+| [capa rules](https://github.com/mandiant/capa-rules) (anti-analysis) | Mandiant's rules for recognising anti-VM, anti-debug and anti-emulation code in binaries | Tracked upstream and mapped, so a capa hit on a sample leads to the Perdedor check that measures the same tell: 31 of 91 covered, 52 out of scope (packers, obfuscators, anti-forensics), 79.5 % of feasible |
+| [CAPE community signatures](https://github.com/CAPESandbox/community) | Behavioural signatures that flag evasion attempts during detonation | Tracked upstream and mapped the same way: 61 of 73 covered (88.4 % of feasible) |
 | [MITRE ATT&CK T1497](https://attack.mitre.org/techniques/T1497/) | Virtualization/Sandbox Evasion and its sub-techniques | Every technique carries its ATT&CK id |
 | [MBC](https://github.com/MBCProject/mbc-markdown) | The Malware Behavior Catalog's anti-behavioural-analysis objective | MBC ids where they exist |
 | [Unprotect Project](https://unprotect.it/) | A community database of evasion techniques with code snippets | Tracked; used as a reference while writing checks |
