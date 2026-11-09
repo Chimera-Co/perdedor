@@ -120,7 +120,8 @@ def test_test_windows_reports_clear_error_when_pwsh_missing(monkeypatch, capsys)
     is missing it must fail loudly with actionable guidance, not silently
     report an empty/wrong-platform result."""
     monkeypatch.setattr(cli_main.shutil, "which", lambda name: None)
-    exit_code = main(["test", "windows"])
+    # Pin the legacy engine: with a built native agent in the checkout, auto would run that instead.
+    exit_code = main(["test", "windows", "--engine", "legacy"])
     assert exit_code == 1
     err = capsys.readouterr().err
     assert "pwsh" in err

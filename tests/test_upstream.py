@@ -529,7 +529,9 @@ def test_not_feasible_is_excluded_from_feasible_percentage():
 
 def test_out_of_scope_items_are_not_feasible_with_reason_but_never_override_a_check():
     mapper = U.Mapper(
-        checks=[{"id": "a", "status": "implemented", "technique": "t1", "equivalents": {"tool": ["packer/upx"]}}],
+        checks=[
+            {"id": "a", "status": "implemented", "technique": "t1", "equivalents": {"tool": ["packer/upx"]}}
+        ],
         techniques={"t1": {}},
     )
     source = {"id": "tool", "out_of_scope": [{"pattern": "packer/*", "reason": "property of the sample"}]}
