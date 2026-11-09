@@ -1,0 +1,63 @@
+{
+  "provenance": {
+    "kind": "representative-command-transcript",
+    "capture": "Reconstructed and sanitized from documented output formats; not captured from hardware in this environment.",
+    "sources": [
+      "https://evasions.checkpoint.com/src/MacOS/macos.html",
+      "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/sysctl.8.html",
+      "https://support.corellium.com/devices/ios"
+    ]
+  },
+  "transport": {
+    "mode": "simulator",
+    "device": {
+      "udid": "12345678-1234-1234-1234-123456789ABC",
+      "deviceTypeIdentifier": "com.apple.CoreSimulator.SimDeviceType.iPhone-15",
+      "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-16-5",
+      "name": "iPhone 15",
+      "state": "Booted"
+    }
+  },
+  "commands": {
+    "echo": "perdedor-ok\n",
+    "sysctl": "hw.machine: arm64\nhw.model: MacBookPro18,3\nhw.memsize: 4294967296\nhw.ncpu: 6\nkern.osproductversion: 14.6.1\nkern.osversion: 20F66\nkern.version: Darwin Kernel Version 22.5.0 RELEASE_ARM64_T8110\nkern.hostname: Juniper-phone\nkern.hv_vmm_present: 0\nkern.boottime: { sec = 1730000000, usec = 0 }\nsecurity.mac.amfi.developer_mode_status: 0\n",
+    "date_epoch": "1731000000",
+    "uname_a": "Darwin Juniper-phone 22.5.0 RELEASE_ARM64_T8110\n",
+    "env": "SIMULATOR_DEVICE_NAME=iPhone 15\nSIMULATOR_UDID=12345678-1234-1234-1234-123456789ABC\n",
+    "ps": "1 0 4000 /sbin/launchd\n80 1 4000 /System/Library/CoreServices/SpringBoard.app/SpringBoard\n90 1 4000 /var/jb/usr/sbin/sshd\n",
+    "launchctl_list": "PID Status Label\n80 0 com.apple.SpringBoard\n",
+    "mount": "/dev/disk0s1s1 on / (apfs, local, read-only, journaled)\n",
+    "ifconfig": "en0: flags=8863<UP,BROADCAST,RUNNING> mtu 1500\n\tether a4:83:e7:12:34:56\n\tinet 192.168.1.10 netmask 0xffffff00 broadcast 192.168.1.255\n",
+    "netstat_listen": "tcp4 0 0 *.22 *.* LISTEN\n",
+    "lsof_springboard": "p80\nn/usr/lib/libSystem.B.dylib\nn/var/jb/usr/lib/libellekit.dylib\n",
+    "ioreg_baseband": "+-o IORegistryEntry\n +-o AppleBaseband\n",
+    "plist:/System/Library/CoreServices/SystemVersion.plist": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n\t<key>ProductVersion</key>\n\t<string>16.5</string>\n</dict>\n</plist>\n",
+    "plist:/private/var/preferences/SystemConfiguration/preferences.plist": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n\t<key>NetworkServices</key>\n\t<dict>\n\t\t<key>example</key>\n\t\t<dict>\n\t\t\t<key>Proxies</key>\n\t\t\t<dict>\n\t\t\t\t<key>HTTPEnable</key>\n\t\t\t\t<integer>0</integer>\n\t\t\t\t<key>HTTPSEnable</key>\n\t\t\t\t<integer>0</integer>\n\t\t\t</dict>\n\t\t</dict>\n\t</dict>\n</dict>\n</plist>\n",
+    "plist:/var/mobile/Library/Preferences/.GlobalPreferences.plist": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n\t<key>AppleLanguages</key>\n\t<array>\n\t\t<string>en-IN</string>\n\t</array>\n\t<key>LDMGlobalEnabled</key>\n\t<false/>\n</dict>\n</plist>\n",
+    "info_plists": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n\t<key>CFBundleURLTypes</key>\n\t<array>\n\t\t<dict>\n\t\t\t<key>CFBundleURLSchemes</key>\n\t\t\t<array>\n\t\t\t\t<string>sileo</string>\n\t\t\t</array>\n\t\t</dict>\n\t</array>\n</dict>\n</plist>\n",
+    "curl_dns": "000  rc=6\n",
+    "curl_http": "000  rc=6\n",
+    "getenv_DYLD_INSERT_LIBRARIES": "",
+    "getenv_DYLD_LIBRARY_PATH": "",
+    "getenv_DYLD_FRAMEWORK_PATH": "",
+    "count:/var/mobile/Library/AddressBook/AddressBook.sqlitedb:ABPerson": "42\n",
+    "count:/var/mobile/Library/SMS/sms.db:message": "42\n",
+    "count:/var/mobile/Library/CallHistoryDB/CallHistory.storedata:ZCALLRECORD": "42\n",
+    "count:/var/mobile/Library/Accounts/Accounts3.sqlite:ZACCOUNT": "42\n",
+    "count:/var/mobile/Library/Safari/History.db:history_items": "42\n",
+    "count:/private/var/protected/trustd/private/TrustStore.sqlite3:tsettings": "0\n",
+    "simctl_getenv_SIMULATOR_DEVICE_NAME": "iPhone 15",
+    "simctl_listapps": "{\n \"com.example.app\" = { ApplicationType = User; };\n \"com.apple.mobilesafari\" = { ApplicationType = System; };\n}\n",
+    "host_localtime": "/var/db/timezone/zoneinfo/Asia/Kolkata",
+    "scutil_proxy": "<dictionary> {\n HTTPEnable : 0\n HTTPSEnable : 0\n SOCKSEnable : 0\n}\n"
+  },
+  "fs": {
+    "/usr/lib/dyld_sim": {
+      "kind": "file"
+    },
+    "/var/mobile/Media/DCIM": {
+      "kind": "dir",
+      "entries": []
+    }
+  }
+}

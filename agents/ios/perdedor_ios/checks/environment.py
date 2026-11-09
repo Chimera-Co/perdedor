@@ -8,8 +8,6 @@ hw.machine and capability mismatches), freeRASP iOS ``simulator`` threat.
 
 from __future__ import annotations
 
-import re
-
 from perdedor_common.models import Platform, Severity
 from perdedor_common.registry import RunContext
 from perdedor_macos import parsing
@@ -20,8 +18,13 @@ from ..device import IosTarget
 
 P = Platform.IOS
 DEVICE_MACHINE_PREFIXES = ("iphone", "ipad", "ipod", "watch", "appletv", "realitydevice")
-SIMULATOR_VARIABLES = ("SIMULATOR_DEVICE_NAME", "SIMULATOR_UDID", "SIMULATOR_MODEL_IDENTIFIER",
-                       "SIMULATOR_RUNTIME_VERSION", "SIMULATOR_ROOT")
+SIMULATOR_VARIABLES = (
+    "SIMULATOR_DEVICE_NAME",
+    "SIMULATOR_UDID",
+    "SIMULATOR_MODEL_IDENTIFIER",
+    "SIMULATOR_RUNTIME_VERSION",
+    "SIMULATOR_ROOT",
+)
 SYSTEM_VERSION_PLIST = "/System/Library/CoreServices/SystemVersion.plist"
 
 
@@ -70,8 +73,9 @@ def probe_simulator_device_type(target: IosTarget, ctx: RunContext) -> Result:
     if not record:
         return Skip("not a Simulator target (no simctl device record)")
     type_id = str(record.get("deviceTypeIdentifier") or "")
-    return Verdict(True, {
-        "deviceTypeIdentifier": type_id, "runtime": record.get("runtime"), "name": record.get("name")})
+    return Verdict(
+        True, {"deviceTypeIdentifier": type_id, "runtime": record.get("runtime"), "name": record.get("name")}
+    )
 
 
 def probe_dyld_sim(target: IosTarget, ctx: RunContext) -> Result:
@@ -83,7 +87,11 @@ def probe_dyld_sim(target: IosTarget, ctx: RunContext) -> Result:
 
 def _system_version(target: IosTarget) -> str | None:
     document = target.read_plist(SYSTEM_VERSION_PLIST)
-    return str(document["ProductVersion"]) if isinstance(document, dict) and document.get("ProductVersion") else None
+    return (
+        str(document["ProductVersion"])
+        if isinstance(document, dict) and document.get("ProductVersion")
+        else None
+    )
 
 
 def probe_os_version_mismatch(target: IosTarget, ctx: RunContext) -> Result:
@@ -93,7 +101,9 @@ def probe_os_version_mismatch(target: IosTarget, ctx: RunContext) -> Result:
     userland = _system_version(target)
     if not kernel or not userland:
         return Skip("kern.osproductversion or SystemVersion.plist ProductVersion unavailable")
-    return Verdict(kernel.strip() != userland.strip(), {"kernel_reports": kernel, "system_version_plist": userland})
+    return Verdict(
+        kernel.strip() != userland.strip(), {"kernel_reports": kernel, "system_version_plist": userland}
+    )
 
 
 def probe_hv_vmm_present(target: IosTarget, ctx: RunContext) -> Result:
@@ -123,7 +133,9 @@ def probe_cpu_count(target: IosTarget, ctx: RunContext) -> Result:
     count = parsing.as_int(value)
     if count is None:
         return Fail("hw.ncpu missing")
-    return Verdict(count < sig.MIN_CPUS, {"hw.ncpu": count}, measurement={"value": count, "threshold": sig.MIN_CPUS})
+    return Verdict(
+        count < sig.MIN_CPUS, {"hw.ncpu": count}, measurement={"value": count, "threshold": sig.MIN_CPUS}
+    )
 
 
 def probe_memory(target: IosTarget, ctx: RunContext) -> Result:
@@ -135,8 +147,7 @@ def probe_memory(target: IosTarget, ctx: RunContext) -> Result:
         return Fail("hw.memsize missing")
     minimum = ctx.param("memory.min_bytes", sig.MIN_MEMORY_BYTES)
     implausible = size < minimum
-    return Verdict(implausible, {"hw.memsize": size},
-                   measurement={"value": size, "min": sig.MIN_MEMORY_BYTES, "max": sig.MAX_MEMORY_BYTES})
+    return Verdict(implausible, {"hw.memsize": size}, measurement={"value": size, "min": minimum})
 
 
 def probe_disk(target: IosTarget, ctx: RunContext) -> Result:
@@ -182,44 +193,121 @@ def _c(check_id, technique, name, description, severity, remediation, probe, **k
 _SIM_FIX = "Analyse evasive iOS samples on a physical device (or a virtual device that reports a real model)."
 
 CHECKS = [
-    _c("ios.env.hw_machine", "emulator.ios_simulator", "Device machine identifier",
-       "hw.machine is not an iPhone/iPad/iPod identifier (a Simulator reports the host's x86_64/arm64; MASTG-DEMO-0131).",
-       Severity.CRITICAL, _SIM_FIX, probe_hw_machine),
-    _c("ios.env.hw_model", "emulator.ios_simulator", "Board model",
-       "hw.model is a Mac model or a virtual platform name instead of an iOS board config (D63AP...).",
-       Severity.HIGH, _SIM_FIX, probe_hw_model),
-    _c("ios.env.simulator_environment", "emulator.ios_simulator", "Simulator environment variables",
-       "SIMULATOR_DEVICE_NAME / SIMULATOR_UDID / SIMULATOR_MODEL_IDENTIFIER set (IOSSecuritySuite amIRunInEmulator).",
-       Severity.CRITICAL, _SIM_FIX, probe_simulator_env),
-    _c("ios.env.simulator_device_type", "emulator.ios_simulator", "CoreSimulator device type",
-       "The target is a CoreSimulator device (simctl deviceTypeIdentifier).", Severity.CRITICAL, _SIM_FIX,
-       probe_simulator_device_type),
-    _c("ios.env.dyld_sim", "emulator.ios_simulator", "dyld_sim present",
-       "/usr/lib/dyld_sim exists: the Simulator's user-space loader, absent on devices.", Severity.CRITICAL,
-       _SIM_FIX, probe_dyld_sim),
-    _c("ios.env.os_version_mismatch", "emulator.ios_simulator", "Kernel / user-space version mismatch",
-       "kern.osproductversion (kernel) differs from SystemVersion.plist (user space): a Simulator runtime on a macOS kernel.",
-       Severity.HIGH, _SIM_FIX, probe_os_version_mismatch),
-    _c("ios.env.hv_vmm_present", "emulator.ios_simulator", "Kernel reports a hypervisor",
-       "kern.hv_vmm_present = 1: the iOS kernel runs virtualised (virtual iPhones; MASTG-KNOW-0135).",
-       Severity.CRITICAL, "Use a physical device, or a virtual platform that hides kern.hv_vmm_present.",
-       probe_hv_vmm_present),
-    _c("ios.env.virtual_vendor", "emulator.ios_simulator", "Virtual-device vendor strings",
-       "uname, kern.version, hw.targettype or launchd jobs name Corellium.", Severity.HIGH,
-       "Use a physical device for samples that look for virtual-device vendors.", probe_virtual_vendor),
-    _c("ios.env.cpu_count", "resources.cpu_count", "CPU count",
-       "Fewer cores than any device that runs current iOS.", Severity.MEDIUM,
-       "Give the virtual device the core count of the model it claims.", probe_cpu_count),
-    _c("ios.env.memory_size", "resources.memory_size", "Physical memory",
-       "hw.memsize below a configurable lower bound; future device memory sizes are not capped.",
-       Severity.HIGH, "Match memory to the claimed model.", probe_memory),
-    _c("ios.env.disk_size", "resources.disk_size", "Data volume size",
-       "Data volume smaller than any shipping storage tier.", Severity.LOW,
-       "Give the virtual device a realistic storage size.", probe_disk),
-    _c("ios.env.telephony_daemon", "mobile_device.telephony", "Telephony daemon",
-       "CommCenter (CoreTelephony) not registered with launchd: no cellular stack, as in Simulators and virtual devices.",
-       Severity.MEDIUM, "Use a device with a cellular modem (and a SIM).", probe_telephony),
-    _c("ios.env.radio_daemons", "mobile_device.radios", "Wi-Fi / Bluetooth daemons",
-       "wifid or bluetoothd not registered with launchd.", Severity.MEDIUM,
-       "Use a physical device.", probe_radios),
+    _c(
+        "ios.env.hw_machine",
+        "emulator.ios_simulator",
+        "Device machine identifier",
+        "hw.machine is not an iPhone/iPad/iPod identifier (a Simulator reports the host's x86_64/arm64; MASTG-DEMO-0131).",
+        Severity.CRITICAL,
+        _SIM_FIX,
+        probe_hw_machine,
+    ),
+    _c(
+        "ios.env.hw_model",
+        "emulator.ios_simulator",
+        "Board model",
+        "hw.model is a Mac model or a virtual platform name instead of an iOS board config (D63AP...).",
+        Severity.HIGH,
+        _SIM_FIX,
+        probe_hw_model,
+    ),
+    _c(
+        "ios.env.simulator_environment",
+        "emulator.ios_simulator",
+        "Simulator environment variables",
+        "SIMULATOR_DEVICE_NAME / SIMULATOR_UDID / SIMULATOR_MODEL_IDENTIFIER set (IOSSecuritySuite amIRunInEmulator).",
+        Severity.CRITICAL,
+        _SIM_FIX,
+        probe_simulator_env,
+    ),
+    _c(
+        "ios.env.simulator_device_type",
+        "emulator.ios_simulator",
+        "CoreSimulator device type",
+        "The target is a CoreSimulator device (simctl deviceTypeIdentifier).",
+        Severity.CRITICAL,
+        _SIM_FIX,
+        probe_simulator_device_type,
+    ),
+    _c(
+        "ios.env.dyld_sim",
+        "emulator.ios_simulator",
+        "dyld_sim present",
+        "/usr/lib/dyld_sim exists: the Simulator's user-space loader, absent on devices.",
+        Severity.CRITICAL,
+        _SIM_FIX,
+        probe_dyld_sim,
+    ),
+    _c(
+        "ios.env.os_version_mismatch",
+        "emulator.ios_simulator",
+        "Kernel / user-space version mismatch",
+        "kern.osproductversion (kernel) differs from SystemVersion.plist (user space): a Simulator runtime on a macOS kernel.",
+        Severity.HIGH,
+        _SIM_FIX,
+        probe_os_version_mismatch,
+    ),
+    _c(
+        "ios.env.hv_vmm_present",
+        "emulator.ios_simulator",
+        "Kernel reports a hypervisor",
+        "kern.hv_vmm_present = 1: the iOS kernel runs virtualised (virtual iPhones; MASTG-KNOW-0135).",
+        Severity.CRITICAL,
+        "Use a physical device, or a virtual platform that hides kern.hv_vmm_present.",
+        probe_hv_vmm_present,
+    ),
+    _c(
+        "ios.env.virtual_vendor",
+        "emulator.ios_simulator",
+        "Virtual-device vendor strings",
+        "uname, kern.version, hw.targettype or launchd jobs name Corellium.",
+        Severity.HIGH,
+        "Use a physical device for samples that look for virtual-device vendors.",
+        probe_virtual_vendor,
+    ),
+    _c(
+        "ios.env.cpu_count",
+        "resources.cpu_count",
+        "CPU count",
+        "CPU count below the configurable resource baseline.",
+        Severity.MEDIUM,
+        "Give the virtual device the core count of the model it claims.",
+        probe_cpu_count,
+    ),
+    _c(
+        "ios.env.memory_size",
+        "resources.memory_size",
+        "Physical memory",
+        "hw.memsize below a configurable lower bound; future device memory sizes are not capped.",
+        Severity.HIGH,
+        "Match memory to the claimed model.",
+        probe_memory,
+    ),
+    _c(
+        "ios.env.disk_size",
+        "resources.disk_size",
+        "Data volume size",
+        "Data volume smaller than the conservative local baseline.",
+        Severity.LOW,
+        "Give the virtual device a realistic storage size.",
+        probe_disk,
+    ),
+    _c(
+        "ios.env.telephony_daemon",
+        "mobile_device.telephony",
+        "Telephony daemon",
+        "CommCenter (CoreTelephony) not registered with launchd: no cellular stack, as in Simulators and virtual devices.",
+        Severity.MEDIUM,
+        "Use a device with a cellular modem (and a SIM).",
+        probe_telephony,
+    ),
+    _c(
+        "ios.env.radio_daemons",
+        "mobile_device.radios",
+        "Wi-Fi / Bluetooth daemons",
+        "wifid or bluetoothd not registered with launchd.",
+        Severity.MEDIUM,
+        "Use a physical device.",
+        probe_radios,
+    ),
 ]

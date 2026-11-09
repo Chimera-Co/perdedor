@@ -1,0 +1,186 @@
+{
+  "catalog_format": 2,
+  "platform": "ios",
+  "source": "Driver visibility and read-only safety limits",
+  "checks": [
+    {
+      "id": "ios.design.app_integrity",
+      "technique": "instrumentation.module_integrity",
+      "status": "not_feasible",
+      "reason": "Requires a chosen app, expected bundle/provision/signature hashes and in-process validation; SSH-wide receipt absence is not proof of tampering.",
+      "severity": "info",
+      "cost": "slow",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "iossecuritysuite": [
+          "amITampered"
+        ],
+        "freerasp": [
+          "onAppIntegrity",
+          "appIntegrity"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 5,
+        "how": "Validate this condition separately in an explicitly scoped, instrumented application or native test harness.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/IOSSecuritySuite.swift",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/JailbreakChecker.swift"
+      ]
+    },
+    {
+      "id": "ios.design.runtime_hooks",
+      "technique": "instrumentation.inline_hooks",
+      "status": "not_feasible",
+      "reason": "Requires inspecting the selected app functions and expected code in its own address space. A framework file or mapped dylib alone does not establish a runtime hook.",
+      "severity": "info",
+      "cost": "slow",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "iossecuritysuite": [
+          "amIRuntimeHooked"
+        ],
+        "freerasp": [
+          "onHooks",
+          "hooks"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 5,
+        "how": "Validate this condition separately in an explicitly scoped, instrumented application or native test harness.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/IOSSecuritySuite.swift",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/JailbreakChecker.swift"
+      ]
+    },
+    {
+      "id": "ios.design.sandbox_write_escape",
+      "technique": "integrity.jailbreak",
+      "status": "not_feasible",
+      "reason": "Writing outside an app container is excluded by the read-only contract. A root SSH shell and a writable root mount cannot test an app sandbox boundary.",
+      "severity": "info",
+      "cost": "slow",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 5,
+        "how": "Validate this condition separately in an explicitly scoped, instrumented application or native test harness.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/IOSSecuritySuite.swift",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/JailbreakChecker.swift"
+      ]
+    },
+    {
+      "id": "ios.design.app_device_binding",
+      "technique": "integrity.debuggable_build",
+      "status": "not_feasible",
+      "reason": "Requires an app-specific enrolled identity and device binding service. The shell exposes neither the expected binding nor an attestation verdict.",
+      "severity": "info",
+      "cost": "slow",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "freerasp": [
+          "onDeviceBinding",
+          "deviceBinding",
+          "deviceId"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 5,
+        "how": "Validate this condition separately in an explicitly scoped, instrumented application or native test harness.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/IOSSecuritySuite.swift",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/JailbreakChecker.swift"
+      ]
+    },
+    {
+      "id": "ios.design.screen_lock",
+      "technique": "integrity.developer_settings",
+      "status": "not_feasible",
+      "reason": "No stable supported standard-command interface determines a device passcode across iOS releases; do not infer it from preference file existence.",
+      "severity": "info",
+      "cost": "slow",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "freerasp": [
+          "onPasscode",
+          "passcode"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 5,
+        "how": "Validate this condition separately in an explicitly scoped, instrumented application or native test harness.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/IOSSecuritySuite.swift",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/JailbreakChecker.swift"
+      ]
+    },
+    {
+      "id": "ios.env.sensor_samples",
+      "technique": "mobile_device.sensor_activity",
+      "status": "not_feasible",
+      "reason": "CoreMotion samples and sensor enumeration require an entitled device application. The shell driver observes motion/location services only.",
+      "severity": "info",
+      "cost": "slow",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 5,
+        "how": "Validate this condition separately in an explicitly scoped, instrumented application or native test harness.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/IOSSecuritySuite.swift",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/JailbreakChecker.swift"
+      ]
+    },
+    {
+      "id": "ios.design.store_origin",
+      "technique": "integrity.jailbreak",
+      "status": "not_feasible",
+      "reason": "A missing iTunesMetadata.plist does not authenticate the installing store. App-scoped receipt and signing validation needs the selected application and a trusted baseline.",
+      "severity": "info",
+      "cost": "slow",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "freerasp": [
+          "onUnofficialStore",
+          "unofficialStore"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 5,
+        "how": "Validate this condition separately in an explicitly scoped, instrumented application or native test harness.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/IOSSecuritySuite.swift",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/JailbreakChecker.swift"
+      ]
+    }
+  ]
+}

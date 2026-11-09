@@ -1,10 +1,9 @@
-"""Timing tells on macOS: uptime, time zone, sleep acceleration and (with the
-native helper on Intel Macs) the CPUID VM-exit cost."""
+"""Timing tells on macOS: uptime, time zone and bounded sleep observations."""
 
 from __future__ import annotations
 
-import time
 import math
+import time
 
 from perdedor_common.models import Platform, Severity
 from perdedor_common.registry import RunContext
@@ -42,8 +41,9 @@ def probe_uptime(target: Target, ctx: RunContext) -> Result:
     if uptime < 0:
         return Fail("boot time is in the future")
     minimum = ctx.param("uptime.min_seconds", sig.MIN_UPTIME_SECONDS)
-    return Verdict(uptime < minimum, {"uptime_seconds": int(uptime)},
-                   measurement={"value": uptime, "threshold": minimum})
+    return Verdict(
+        uptime < minimum, {"uptime_seconds": int(uptime)}, measurement={"value": uptime, "threshold": minimum}
+    )
 
 
 def zone_from_localtime(link: str | None) -> str | None:
@@ -62,6 +62,8 @@ def probe_time_zone(target: Target, ctx: RunContext) -> Result:
     if entry is None:
         return Verdict(True, {"zone": None, "note": "/etc/localtime missing: system default UTC"})
     zone = zone_from_localtime(entry.target)
+    if zone is None:
+        return Skip("time zone file is not a readable zoneinfo link")
     return Verdict(zone in DEFAULT_TIME_ZONES, {"zone": zone})
 
 
@@ -86,11 +88,13 @@ def probe_sleep_acceleration(target: Target, ctx: RunContext) -> Result:
     skipped = host_elapsed < seconds * (1 - sig.SLEEP_SKEW_RATIO)
     return Verdict(
         fast or slow or skipped,
-        {"requested": seconds, "target_clock_elapsed": target_elapsed, "driver_elapsed": round(host_elapsed, 2)},
+        {
+            "requested": seconds,
+            "target_clock_elapsed": target_elapsed,
+            "driver_elapsed": round(host_elapsed, 2),
+        },
         measurement={"target": target_elapsed, "driver": host_elapsed, "requested": seconds},
     )
-
-
 
 
 def _c(check_id, technique, name, description, severity, remediation, probe, **kw):
@@ -98,15 +102,32 @@ def _c(check_id, technique, name, description, severity, remediation, probe, **k
 
 
 CHECKS = [
-    _c("macos.timing.uptime", "timing.uptime", "System uptime",
-       "Booted less than 12 minutes before the scan (Pafish gensandbox_uptime threshold).", Severity.LOW,
-       "Boot the VM and let it idle before detonation, or restore a snapshot taken hours after boot.", probe_uptime),
-    _c("macos.timing.time_zone", "timing.time_plausibility", "Time zone",
-       "Time zone is UTC/GMT, the default of freshly built images.", Severity.LOW,
-       "Set the image's time zone to the region the target population lives in.", probe_time_zone),
-    _c("macos.timing.sleep_acceleration", "timing.sleep_acceleration", "Sleep acceleration",
-       "The target's clock advances faster or slower than the driver's clock across a sleep.", Severity.HIGH,
-       "Keep guest wall-clock and monotonic time consistent when skipping sleeps.", probe_sleep_acceleration,
-       cost="slow"),
+    _c(
+        "macos.timing.uptime",
+        "timing.uptime",
+        "System uptime",
+        "Booted less than 12 minutes before the scan (Pafish gensandbox_uptime threshold).",
+        Severity.LOW,
+        "Boot the VM and let it idle before detonation, or restore a snapshot taken hours after boot.",
+        probe_uptime,
+    ),
+    _c(
+        "macos.timing.time_zone",
+        "timing.time_plausibility",
+        "Time zone",
+        "Time zone is UTC/GMT, the default of freshly built images.",
+        Severity.LOW,
+        "Set the image's time zone to the region the target population lives in.",
+        probe_time_zone,
+    ),
+    _c(
+        "macos.timing.sleep_acceleration",
+        "timing.sleep_acceleration",
+        "Sleep acceleration",
+        "The target's clock advances faster or slower than the driver's clock across a sleep.",
+        Severity.HIGH,
+        "Keep guest wall-clock and monotonic time consistent when skipping sleeps.",
+        probe_sleep_acceleration,
+        cost="slow",
+    ),
 ]
-

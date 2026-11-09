@@ -90,12 +90,11 @@ class Process:
     @property
     def executable(self) -> str:
         """Last path component of argv[0]."""
-        first = self.command.split(" ", 1)[0]
-        return first.rsplit("/", 1)[-1]
+        return self.command.rsplit("/", 1)[-1]
 
 
 def parse_ps(text: str) -> list[Process]:
-    """``ps -axo pid=,ppid=,flags=,command=`` (BSD ps prints flags in hex)."""
+    """``ps -axo pid=,ppid=,flags=,comm=`` (BSD ps prints flags in hex)."""
     procs = []
     for line in text.splitlines():
         parts = line.strip().split(None, 3)
@@ -298,7 +297,7 @@ def parse_launchctl_list(text: str) -> list[str]:
     """``launchctl list``: ``PID\\tStatus\\tLabel`` rows -> labels."""
     labels = []
     for line in text.splitlines():
-        parts = line.split("\t")
+        parts = line.split(None, 2)
         if len(parts) == 3 and parts[2] != "Label":
             labels.append(parts[2].strip())
     return labels

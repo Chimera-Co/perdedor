@@ -8,12 +8,13 @@ against a real Mac, an ssh target, the iOS Simulator and the test fakes.
 
 from __future__ import annotations
 
-import shlex
-import time
 import plistlib
 import re
+import shlex
+import time
 from collections.abc import Sequence
 from typing import Any
+from urllib.parse import quote
 
 from . import parsing
 from .transport import CommandResult, Listing, PathInfo, Transport
@@ -60,7 +61,9 @@ class Target:
 
     # -- commands ----------------------------------------------------------------
 
-    def run(self, key: str, command: str, *, timeout: float = 8.0, cache: bool = True) -> CommandResult | None:
+    def run(
+        self, key: str, command: str, *, timeout: float = 8.0, cache: bool = True
+    ) -> CommandResult | None:
         cache_key = f"run:{key}:{command}"
         if cache and cache_key in self._cache:
             return self._cache[cache_key]
@@ -96,13 +99,19 @@ class Target:
     def sysctl(self) -> dict[str, str] | None:
         if "sysctl" not in self._cache:
             result = self.run("sysctl", "sysctl " + " ".join(SYSCTL_NAMES) + " 2>/dev/null")
-            self._cache["sysctl"] = None if result is None or not result.stdout.strip() else (parsing.parse_sysctl(result.stdout) or None)
+            self._cache["sysctl"] = (
+                None
+                if result is None or not result.stdout.strip()
+                else (parsing.parse_sysctl(result.stdout) or None)
+            )
         return self._cache["sysctl"]
 
     def processes(self) -> list[parsing.Process] | None:
         if "ps" not in self._cache:
-            result = self.run("ps", "ps -axww -o pid=,ppid=,flags=,command=")
-            self._cache["ps"] = None if result is None or not result.ok else (parsing.parse_ps(result.stdout) or None)
+            result = self.run("ps", "ps -axww -o pid=,ppid=,flags=,comm=")
+            self._cache["ps"] = (
+                None if result is None or not result.ok else (parsing.parse_ps(result.stdout) or None)
+            )
         return self._cache["ps"]
 
     def launchd_labels(self) -> list[str] | None:
@@ -122,7 +131,7 @@ class Target:
         if key not in self._cache:
             text = self.out(
                 f"system_profiler_{data_type}",
-                f"system_profiler -json -detailLevel mini {shlex.quote(data_type)} 2>/dev/null",
+                f"system_profiler -json -detailLevel mini -timeout 8 {shlex.quote(data_type)} 2>/dev/null",
                 timeout=timeout,
             )
             doc = parsing.load_json(text)
@@ -138,7 +147,6 @@ class Target:
         if text is None:
             return None
         return text.strip()
-
 
     # -- filesystem ------------------------------------------------------------------
 
@@ -181,7 +189,15 @@ class Target:
         if not re.fullmatch(r"[A-Za-z][A-Za-z0-9_]*", table):
             return None
         mapped = self.transport.device_path(path)
+        # Immutable mode forbids journal/SHM creation. Counts reflect the database
+        # file snapshot and may omit recent WAL-only transactions.
+        # https://www.sqlite.org/uri.html#uriimmutable
         query = f'SELECT count(*) FROM "{table}";'
-        text = self.out("count:" + path + ":" + table,
-                        "sqlite3 -readonly " + shlex.quote(mapped) + " " + shlex.quote(query))
+        text = self.out(
+            "count:" + path + ":" + table,
+            "sqlite3 -readonly "
+            + shlex.quote("file:" + quote(mapped, safe="/") + "?mode=ro&immutable=1")
+            + " "
+            + shlex.quote(query),
+        )
         return int(text.strip()) if text and text.strip().isdigit() else None

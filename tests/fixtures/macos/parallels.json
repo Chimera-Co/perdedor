@@ -1,0 +1,208 @@
+{
+  "provenance": {
+    "kind": "representative-command-transcript",
+    "capture": "Reconstructed and sanitized from documented output formats; not captured from hardware in this environment.",
+    "sources": [
+      "https://evasions.checkpoint.com/src/MacOS/macos.html",
+      "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/sysctl.8.html",
+      "https://support.corellium.com/devices/ios"
+    ]
+  },
+  "transport": {
+    "mode": "ssh"
+  },
+  "commands": {
+    "echo": "perdedor-ok\n",
+    "uname_s": "Darwin\n",
+    "sysctl": "hw.model: Parallels17,1\nhw.machine: x86_64\nhw.optional.arm64: 0\nhw.memsize: 2147483648\nhw.ncpu: 2\nhw.physicalcpu: 2\nhw.logicalcpu: 2\nhw.nperflevels: 1\nhw.l2cachesize: 4194304\nhw.cachelinesize: 128\nmachdep.cpu.brand_string: Intel(R) Core(TM) i7 CPU\nkern.hv_vmm_present: 1\nkern.hv_support: 0\nkern.osproductversion: 14.6.1\nkern.osversion: 23G93\nkern.version: Darwin Kernel Version 23.6.0: RELEASE_ARM64_T6000\nkern.hostname: Juniper.local\nkern.boottime: { sec = 1730999940, usec = 0 }\nkern.bootargs: \nmachdep.cpu.features: SSE SSE2 VMX VMM\n",
+    "home": "/Users/juniper",
+    "date_epoch": "1731000000",
+    "ps": "1 0 4000 /sbin/launchd\n80 1 4000 /System/Library/CoreServices/WindowServer\n81 1 4000 /System/Library/CoreServices/Dock.app/Contents/MacOS/Dock\n82 1 4000 /System/Library/CoreServices/Finder.app/Contents/MacOS/Finder\n83 1 4000 /Applications/Safari.app/Contents/MacOS/Safari\n90 1 4000 /usr/local/bin/prl_tools_service\n",
+    "env": "LANG=en_US.UTF-8\nPATH=/usr/bin:/bin\n",
+    "launchctl_list": "PID\tStatus\tLabel\n80\t0\tcom.apple.WindowServer\n90\t0\tprl_tools_service\n",
+    "ioreg_platform": "+ -o IOPlatformExpertDevice\n \"IOPlatformSerialNumber\" = \"0\"\n \"IOPlatformUUID\" = \"00000000-0000-0000-0000-000000000000\"\n \"board-id\" = <\"Parallels\">\n \"manufacturer\" = <\"Parallels\">\n",
+    "ioreg_all": "+ -o IORegistryEntry\n \"manufacturer\" = <\"Parallels\">\n",
+    "ioreg_devicetree": "+ -o IORegistryEntry\n \"compatible\" = <\"Parallels Virtual Machine\">\n",
+    "ioreg_sep": "",
+    "ioreg_battery": "",
+    "ioreg_hid_sensors": "",
+    "ioreg_smc": "",
+    "ioreg_usb": "+-o USBDevice\n \"USB Vendor Name\" = \"Apple Inc.\"\n",
+    "ioreg_ethernet": "+-o AppleBCM5701Ethernet\n \"IOClass\" = \"AppleBCM5701Ethernet\"\n",
+    "df_root": "Filesystem 1024-blocks Used Available Capacity Mounted on\n/dev/disk3s1 488000000 12345 480000000 1% /\n",
+    "csrutil_status": "System Integrity Protection status: disabled.\n",
+    "csrutil_authroot": "Authenticated Root status: enabled\n",
+    "spctl_status": "assessments disabled\n",
+    "nvram_bootargs": {
+      "rc": 1,
+      "stderr": "Error getting variable"
+    },
+    "xprotect_version": "2200\n",
+    "kmutil_loaded": "1 0 0 0 0 com.parallels.kext.vnic (1.0)\n",
+    "system_extensions": "0 extension(s)\n",
+    "lsof_listen": "COMMAND PID USER FD TYPE DEVICE SIZE/OFF NODE NAME\n",
+    "netstat_listen": "Active Internet connections (including servers)\n",
+    "ifconfig": "en0: flags=8863<UP,BROADCAST,RUNNING> mtu 1500\n\tether 00:1c:42:12:34:56\n\tinet 192.168.64.2 netmask 0xffffff00\n",
+    "hardware_ports": "Hardware Port: Wi-Fi\nDevice: en0\nEthernet Address: a4:83:e7:12:34:56\n\nHardware Port: Thunderbolt Bridge\nDevice: bridge0\nEthernet Address: 82:00:00:00:00:01\n",
+    "route_default": "gateway: 192.168.1.1\n",
+    "scutil_proxy": "<dictionary> {\n HTTPEnable : 0\n HTTPSEnable : 0\n SOCKSEnable : 0\n}\n",
+    "keychain_certs": "\"labl\"<blob>=\"Apple Root CA\"\n",
+    "whoami": "juniper\n",
+    "scutil_ComputerName": "Juniper Mac\n",
+    "scutil_LocalHostName": "Juniper\n",
+    "scutil_HostName": {
+      "rc": 1,
+      "stderr": "No such key"
+    },
+    "console_user": "juniper\n",
+    "lsappinfo": "type=\"Foreground\"\ntype=\"Foreground\"\ntype=\"Foreground\"\n",
+    "hid_idle": "\"HIDIdleTime\" = 10000000000\n",
+    "dock_modcount": "30\n",
+    "diagnostics_size": "150000 /private/var/db/diagnostics\n",
+    "preferred_wifi": "Preferred networks on en0:\n\tExample\n",
+    "arp": "? (192.168.1.1) at aa:bb:cc:dd:ee:01 on en0\n? (192.168.1.11) at aa:bb:cc:dd:ee:02 on en0\n",
+    "lpstat": "printer Example is idle.\n",
+    "rosetta_brand": "VirtualApple @ 2.50GHz\n",
+    "login_items": "UUID: REDACTED\nUUID: REDACTED\n",
+    "plist:/System/Library/CoreServices/MRT.app/Contents/Info.plist": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n\t<key>CFBundleShortVersionString</key>\n\t<string>1.93</string>\n</dict>\n</plist>\n",
+    "curl_dns": "000  rc=6\n",
+    "curl_http": "000  rc=6\n",
+    "curl_metadata": "000  rc=7\n",
+    "getenv_DYLD_INSERT_LIBRARIES": "",
+    "getenv_DYLD_LIBRARY_PATH": "",
+    "getenv_DYLD_FRAMEWORK_PATH": "",
+    "getenv_DYLD_FALLBACK_LIBRARY_PATH": "",
+    "softwareupdate_AutomaticCheckEnabled": "1\n",
+    "softwareupdate_ConfigDataInstall": "1\n",
+    "softwareupdate_CriticalUpdateInstall": "1\n",
+    "system_profiler_SPHardwareDataType": "{\"SPHardwareDataType\": [{\"machine_model\": \"Parallels17,1\", \"machine_name\": \"Parallels\", \"boot_rom_version\": \"Parallels ROM\"}]}",
+    "system_profiler_SPDisplaysDataType": "{\"SPDisplaysDataType\": [{\"sppci_model\": \"Parallels paravirtual graphics\", \"spdisplays_ndrvs\": [{\"_name\": \"Display\", \"_spdisplays_resolution\": \"1024 x 768\"}]}]}",
+    "system_profiler_SPMemoryDataType": "{\"SPMemoryDataType\": [{\"_name\": \"Memory\", \"manufacturer\": \"Apple\"}]}",
+    "system_profiler_SPUSBDataType": "{\"SPUSBDataType\": []}",
+    "system_profiler_SPUSBHostDataType": "{\"SPUSBHostDataType\": []}",
+    "system_profiler_SPStorageDataType": "{\"SPStorageDataType\": [{\"physical_drive\": {\"device_name\": \"Parallels Virtual Disk\"}}]}",
+    "system_profiler_SPAudioDataType": "{\"SPAudioDataType\": []}",
+    "system_profiler_SPBluetoothDataType": "{\"SPBluetoothDataType\": []}",
+    "system_profiler_SPCameraDataType": "{\"SPCameraDataType\": [{\"_name\": \"FaceTime HD Camera\"}]}",
+    "system_profiler_SPNetworkDataType": "{\"SPNetworkDataType\": [{\"_name\": \"Wi-Fi\", \"hardware\": \"AirPort\"}]}",
+    "system_profiler_SPPowerDataType": "{\"SPPowerDataType\": [{\"_name\": \"Battery Information\", \"manufacturer\": \"Apple\"}]}",
+    "system_profiler_SPInstallHistoryDataType": "{\"SPInstallHistoryDataType\": [{\"_name\": \"XProtectPlistConfigData\", \"install_date\": \"2024-11-01T00:00:00Z\"}, {\"_name\": \"macOS 14.6.1\", \"install_date\": \"2024-10-01T00:00:00Z\"}]}",
+    "apple_locale": "en_US\n",
+    "apple_languages": "(\n \"en-US\",\n \"fr-FR\"\n)\n",
+    "input_sources": "{ \"KeyboardLayout Name\" = US; }\n"
+  },
+  "fs": {
+    "/Library/LaunchDaemons": {
+      "kind": "dir",
+      "entries": [
+        "parallels.tools.plist"
+      ]
+    },
+    "/Library/LaunchAgents": {
+      "kind": "dir",
+      "entries": []
+    },
+    "/Library/Application Support": {
+      "kind": "dir",
+      "entries": []
+    },
+    "/Library/Extensions": {
+      "kind": "dir",
+      "entries": []
+    },
+    "/Applications": {
+      "kind": "dir",
+      "entries": [
+        "Safari.app",
+        "Firefox.app",
+        "Pages.app",
+        "Numbers.app",
+        "VLC.app",
+        "Signal.app",
+        "LibreOffice.app",
+        "Zoom.app",
+        "Slack.app"
+      ]
+    },
+    "/Users/juniper/Applications": {
+      "kind": "dir",
+      "entries": []
+    },
+    "/Users/juniper/Desktop": {
+      "kind": "dir",
+      "entries": [
+        "item1",
+        "item2",
+        "item3"
+      ]
+    },
+    "/Users/juniper/Documents": {
+      "kind": "dir",
+      "entries": [
+        "item1",
+        "item2",
+        "item3"
+      ]
+    },
+    "/Users/juniper/Downloads": {
+      "kind": "dir",
+      "entries": [
+        "item1",
+        "item2",
+        "item3"
+      ]
+    },
+    "/Users/juniper/Library/Safari": {
+      "kind": "dir",
+      "entries": [
+        "History.db"
+      ]
+    },
+    "/Users/juniper/Library/Safari/History.db": {
+      "kind": "file",
+      "size": 262144
+    },
+    "/Users/juniper/Library/Application Support/Google/Chrome": {
+      "kind": "dir",
+      "entries": [
+        "Default"
+      ]
+    },
+    "/Users/juniper/Library/Application Support/Google/Chrome/Default/History": {
+      "size": 262144
+    },
+    "/Users/juniper/Library/Application Support/Firefox/Profiles": {
+      "kind": "dir",
+      "entries": [
+        "default"
+      ]
+    },
+    "/Users/juniper/Library/Application Support/Firefox/Profiles/default/places.sqlite": {
+      "size": 262144
+    },
+    "/Users/juniper/Library/Application Support/com.apple.sharedfilelist": {
+      "kind": "dir",
+      "entries": [
+        "Recent.sfl3",
+        "Favorites.sfl3"
+      ]
+    },
+    "/Users/juniper/.zsh_history": {
+      "size": 4000
+    },
+    "/var/db/.AppleSetupDone": {
+      "mtime": 1713720000
+    },
+    "/etc/localtime": {
+      "kind": "link",
+      "target": "/var/db/timezone/zoneinfo/Asia/Kolkata"
+    },
+    "/Library/Apple/System/Library/CoreServices/XProtect.bundle/Contents/Info.plist": {
+      "kind": "file"
+    },
+    "/Library/Apple/System/Library/CoreServices/XProtect.app": {
+      "kind": "dir",
+      "entries": []
+    }
+  }
+}

@@ -17,10 +17,13 @@ from "could not look".
 from __future__ import annotations
 
 import json
+import os
 import re
-import time
 import shlex
+import signal
 import subprocess
+import tempfile
+import time
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Any
@@ -119,7 +122,7 @@ class Transport:
         script = (
             'for p in "$@"; do parent=${p%/*}; '
             'while [ "$parent" != "" ]; do '
-            '[ -d "$parent" ] && [ ! -x "$parent" ] && exit 77; parent=${parent%/*}; done; '
+            '[ -d "$parent" ] && { [ ! -x "$parent" ] || [ ! -r "$parent" ]; } && exit 77; parent=${parent%/*}; done; '
             'if [ -e "$p" ] || [ -L "$p" ]; then printf "%s\\n" "$p"; fi; done'
         )
         command = f"sh -c {_q(script)} _ " + " ".join(_q(p) for p in mapped)
@@ -136,7 +139,7 @@ class Transport:
         script = (
             'for p in "$@"; do parent=${p%/*}; '
             'while [ "$parent" != "" ]; do '
-            '[ -d "$parent" ] && [ ! -x "$parent" ] && exit 77; parent=${parent%/*}; done; '
+            '[ -d "$parent" ] && { [ ! -x "$parent" ] || [ ! -r "$parent" ]; } && exit 77; parent=${parent%/*}; done; '
             'if [ -L "$p" ]; then k=link; elif [ -d "$p" ]; then k=dir; elif [ -e "$p" ]; then k=file; '
             "else continue; fi; "
             'm=$(stat -f %m "$p" 2>/dev/null || stat -c %Y "$p" 2>/dev/null); '
@@ -169,7 +172,7 @@ class Transport:
             'if [ ! -d "$1" ]; then echo "__PERDEDOR_MISSING__"; exit 0; fi; '
             'ls -1A "$1" 2>&1 || echo "__PERDEDOR_DENIED__"'
         )
-        result = self.run(f"sh -c {_q(script)} _ {_q(device)} | head -n {MAX_LIST_ENTRIES}", key="listdir")
+        result = self.run(f"sh -c {_q(script)} _ {_q(device)}", key="listdir")
         if result is None or not result.ok:
             return None
         if re.search(r"(?i)permission denied|operation not permitted", result.stdout + result.stderr):
@@ -178,11 +181,12 @@ class Transport:
         if lines and lines[0] == "__PERDEDOR_MISSING__":
             return Listing(None, "missing")
         if lines and lines[-1] == "__PERDEDOR_DENIED__":
-            return Listing(None, "permission denied (on macOS: grant Full Disk Access to the ssh/terminal process)")
+            return Listing(
+                None, "permission denied (on macOS: grant Full Disk Access to the ssh/terminal process)"
+            )
         if len(lines) >= MAX_LIST_ENTRIES:
             return Listing(None, "directory listing truncated")
         return Listing(tuple(lines))
-
 
     def read_text(self, path: str, max_bytes: int = MAX_READ_BYTES) -> str | None:
         """Bounded read; None if the file is missing or unreadable."""
@@ -199,14 +203,34 @@ def _int_or_none(value: str) -> int | None:
         return None
 
 
+# Hard output cap as well as a timeout: large ioreg trees cannot exhaust memory.
+MAX_OUTPUT_BYTES = 4 * 1024 * 1024
+
+
 def _subprocess(argv: list[str], timeout: float) -> CommandResult | None:
     try:
-        proc = subprocess.run(
-            argv, capture_output=True, text=True, errors="replace", timeout=timeout, check=False
-        )
+        with tempfile.TemporaryFile() as stdout, tempfile.TemporaryFile() as stderr:
+            proc = subprocess.Popen(argv, stdout=stdout, stderr=stderr, start_new_session=True)
+            try:
+                proc.wait(timeout=timeout)
+            except subprocess.TimeoutExpired:
+                try:
+                    os.killpg(proc.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+                proc.wait()
+                return None
+            if stdout.tell() + stderr.tell() > MAX_OUTPUT_BYTES:
+                return CommandResult(75, "", "command output exceeded limit")
+            stdout.seek(0)
+            stderr.seek(0)
+            return CommandResult(
+                proc.returncode,
+                stdout.read().decode(errors="replace"),
+                stderr.read().decode(errors="replace"),
+            )
     except (OSError, subprocess.SubprocessError):
         return None
-    return CommandResult(proc.returncode, proc.stdout, proc.stderr)
 
 
 class LocalTransport(Transport):
@@ -253,11 +277,6 @@ class SshTransport(Transport):
             return None
         return result
 
-    # Copies the helper into a private temporary file, runs it and deletes it in
-    # the same remote shell, so nothing is left on the target.
-    HELPER_SCRIPT = 'f=$(mktemp -t perdedor.XXXXXX) || exit 97; cat > "$f"; chmod 700 "$f"; "$f"; rc=$?; rm -f "$f"; exit $rc'
-
-
     def describe(self) -> dict[str, str]:
         doc = {"transport": "ssh", "destination": self.destination}
         if self.port:
@@ -281,7 +300,7 @@ class FakeTransport(Transport):
     fs: Mapping[str, Mapping[str, Any]] = field(default_factory=dict)
     unreachable: bool = False
     calls: list[tuple[str, str]] = field(default_factory=list)
-    # Which real transport the fixture was recorded through ("ssh", "local",
+    # Transport mode represented by the fixture ("ssh", "local",
     # "simulator") and, for the simulator, the simctl device record.
     mode: str = "fake"
     device: dict = field(default_factory=dict)
@@ -311,7 +330,6 @@ class FakeTransport(Transport):
         if answer.get("unreachable"):
             return None
         return CommandResult(int(answer.get("rc", 0)), answer.get("stdout", ""), answer.get("stderr", ""))
-
 
     def _entry(self, path: str) -> Mapping[str, Any] | None:
         entry = self.fs.get(path)
@@ -357,7 +375,9 @@ class FakeTransport(Transport):
         if entry is None or entry.get("kind", "dir") != "dir":
             return Listing(None, "missing")
         if entry.get("denied"):
-            return Listing(None, "permission denied (on macOS: grant Full Disk Access to the ssh/terminal process)")
+            return Listing(
+                None, "permission denied (on macOS: grant Full Disk Access to the ssh/terminal process)"
+            )
         return Listing(tuple(entry.get("entries", ())))
 
     def read_text(self, path: str, max_bytes: int = MAX_READ_BYTES) -> str | None:

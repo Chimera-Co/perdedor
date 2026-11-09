@@ -1,0 +1,1851 @@
+{
+  "catalog_format": 2,
+  "platform": "ios",
+  "source": "Read-only host driver; inventory revisions from catalog/upstreams.json; reviewed 2026-11-09",
+  "checks": [
+    {
+      "id": "ios.behavioural.installed_apps",
+      "technique": "wear_and_tear.installed_software",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Use a device with a lived-in user profile (apps, photos, contacts, messages) for detonation.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://www.sqlite.org/cli.html",
+        "https://mas.owasp.org/MASTG/knowledge/ios/MASVS-RESILIENCE/MASTG-KNOW-0084/"
+      ],
+      "description": "Fewer than ten user-installed apps."
+    },
+    {
+      "id": "ios.behavioural.photos",
+      "technique": "wear_and_tear.personal_data",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Use a device with a lived-in user profile (apps, photos, contacts, messages) for detonation.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://www.sqlite.org/cli.html",
+        "https://mas.owasp.org/MASTG/knowledge/ios/MASVS-RESILIENCE/MASTG-KNOW-0084/"
+      ],
+      "description": "Camera roll (DCIM) empty or nearly empty."
+    },
+    {
+      "id": "ios.behavioural.contacts",
+      "technique": "wear_and_tear.personal_data",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Use a device with a lived-in user profile (apps, photos, contacts, messages) for detonation.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://www.sqlite.org/cli.html",
+        "https://mas.owasp.org/MASTG/knowledge/ios/MASVS-RESILIENCE/MASTG-KNOW-0084/"
+      ],
+      "description": "AddressBook database empty when readable (counts only)."
+    },
+    {
+      "id": "ios.behavioural.messages",
+      "technique": "wear_and_tear.personal_data",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Use a device with a lived-in user profile (apps, photos, contacts, messages) for detonation.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://www.sqlite.org/cli.html",
+        "https://mas.owasp.org/MASTG/knowledge/ios/MASVS-RESILIENCE/MASTG-KNOW-0084/"
+      ],
+      "description": "sms.db empty when readable (counts only)."
+    },
+    {
+      "id": "ios.behavioural.call_history",
+      "technique": "wear_and_tear.personal_data",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Use a device with a lived-in user profile (apps, photos, contacts, messages) for detonation.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://www.sqlite.org/cli.html",
+        "https://mas.owasp.org/MASTG/knowledge/ios/MASVS-RESILIENCE/MASTG-KNOW-0084/"
+      ],
+      "description": "CallHistory store empty when readable (counts only)."
+    },
+    {
+      "id": "ios.behavioural.accounts",
+      "technique": "wear_and_tear.personal_data",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Use a device with a lived-in user profile (apps, photos, contacts, messages) for detonation.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://www.sqlite.org/cli.html",
+        "https://mas.owasp.org/MASTG/knowledge/ios/MASVS-RESILIENCE/MASTG-KNOW-0084/"
+      ],
+      "description": "Accounts database empty when readable (counts only) (no iCloud / mail accounts)."
+    },
+    {
+      "id": "ios.behavioural.safari_history",
+      "technique": "wear_and_tear.browser_history",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Use a device with a lived-in user profile (apps, photos, contacts, messages) for detonation.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://www.sqlite.org/cli.html",
+        "https://mas.owasp.org/MASTG/knowledge/ios/MASVS-RESILIENCE/MASTG-KNOW-0084/"
+      ],
+      "description": "Safari History.db missing or nearly empty."
+    },
+    {
+      "id": "ios.behavioural.keyboard_learning",
+      "technique": "wear_and_tear.usage_traces",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Use a device with a lived-in user profile (apps, photos, contacts, messages) for detonation.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://www.sqlite.org/cli.html",
+        "https://mas.owasp.org/MASTG/knowledge/ios/MASVS-RESILIENCE/MASTG-KNOW-0084/"
+      ],
+      "description": "No keyboard learning files: nobody has typed on the device."
+    },
+    {
+      "id": "ios.behavioural.media_files",
+      "technique": "wear_and_tear.user_files",
+      "status": "implemented",
+      "reason": null,
+      "severity": "info",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Use a device with a lived-in user profile (apps, photos, contacts, messages) for detonation.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://www.sqlite.org/cli.html",
+        "https://mas.owasp.org/MASTG/knowledge/ios/MASVS-RESILIENCE/MASTG-KNOW-0084/"
+      ],
+      "description": "No downloads or voice recordings in /var/mobile/Media."
+    },
+    {
+      "id": "ios.behavioural.system_age",
+      "technique": "wear_and_tear.system_age",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Set devices up well ahead of use.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://www.sqlite.org/cli.html",
+        "https://mas.owasp.org/MASTG/knowledge/ios/MASVS-RESILIENCE/MASTG-KNOW-0084/"
+      ],
+      "description": "Initial setup / user library younger than the limit."
+    },
+    {
+      "id": "ios.design.jb_rootless_prefix",
+      "technique": "integrity.jailbreak",
+      "status": "implemented",
+      "reason": null,
+      "severity": "critical",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "iossecuritysuite": [
+          "amIJailbroken",
+          "amIJailbrokenWithFailMessage",
+          "amIJailbrokenWithFailedChecks"
+        ],
+        "freerasp": [
+          "onPrivilegedAccess",
+          "privilegedAccess"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Use a non-jailbroken device for evasive samples, or hide the jailbreak (rootless + path hiding).",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/JailbreakChecker.swift",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/IOSSecuritySuite.swift",
+        "https://github.com/talsec/Free-RASP-Flutter/blob/48c6fc061ac22bcf3986421ee109dba67969d47d/lib/src/enums/threat.dart"
+      ],
+      "description": "/var/jb exists (symlink to the rootless bootstrap; IOSSecuritySuite checkSymbolicLinks)."
+    },
+    {
+      "id": "ios.design.jb_roothide",
+      "technique": "integrity.jailbreak",
+      "status": "implemented",
+      "reason": null,
+      "severity": "critical",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "iossecuritysuite": [
+          "amIJailbroken",
+          "amIJailbrokenWithFailMessage",
+          "amIJailbrokenWithFailedChecks"
+        ],
+        "freerasp": [
+          "onPrivilegedAccess",
+          "privilegedAccess"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Use a non-jailbroken device for evasive samples, or hide the jailbreak (rootless + path hiding).",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/JailbreakChecker.swift",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/IOSSecuritySuite.swift",
+        "https://github.com/talsec/Free-RASP-Flutter/blob/48c6fc061ac22bcf3986421ee109dba67969d47d/lib/src/enums/threat.dart"
+      ],
+      "description": "/var/.jbroot-<hex> directory of a RootHide jailbreak."
+    },
+    {
+      "id": "ios.design.jb_rootless_bootstrap",
+      "technique": "integrity.jailbreak",
+      "status": "implemented",
+      "reason": null,
+      "severity": "critical",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "iossecuritysuite": [
+          "amIJailbroken",
+          "amIJailbrokenWithFailMessage",
+          "amIJailbrokenWithFailedChecks"
+        ],
+        "freerasp": [
+          "onPrivilegedAccess",
+          "privilegedAccess"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Use a non-jailbroken device for evasive samples, or hide the jailbreak (rootless + path hiding).",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/JailbreakChecker.swift",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/IOSSecuritySuite.swift",
+        "https://github.com/talsec/Free-RASP-Flutter/blob/48c6fc061ac22bcf3986421ee109dba67969d47d/lib/src/enums/threat.dart"
+      ],
+      "description": "Files of the rootless bootstrap group from IOSSecuritySuite checkExistenceOfSuspiciousFiles."
+    },
+    {
+      "id": "ios.design.jb_dopamine",
+      "technique": "integrity.jailbreak",
+      "status": "implemented",
+      "reason": null,
+      "severity": "critical",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "iossecuritysuite": [
+          "amIJailbroken",
+          "amIJailbrokenWithFailMessage",
+          "amIJailbrokenWithFailedChecks"
+        ],
+        "freerasp": [
+          "onPrivilegedAccess",
+          "privilegedAccess"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Use a non-jailbroken device for evasive samples, or hide the jailbreak (rootless + path hiding).",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/JailbreakChecker.swift",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/IOSSecuritySuite.swift",
+        "https://github.com/talsec/Free-RASP-Flutter/blob/48c6fc061ac22bcf3986421ee109dba67969d47d/lib/src/enums/threat.dart"
+      ],
+      "description": "Files of the dopamine group from IOSSecuritySuite checkExistenceOfSuspiciousFiles."
+    },
+    {
+      "id": "ios.design.jb_palera1n",
+      "technique": "integrity.jailbreak",
+      "status": "implemented",
+      "reason": null,
+      "severity": "critical",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "iossecuritysuite": [
+          "amIJailbroken",
+          "amIJailbrokenWithFailMessage",
+          "amIJailbrokenWithFailedChecks"
+        ],
+        "freerasp": [
+          "onPrivilegedAccess",
+          "privilegedAccess"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Use a non-jailbroken device for evasive samples, or hide the jailbreak (rootless + path hiding).",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/JailbreakChecker.swift",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/IOSSecuritySuite.swift",
+        "https://github.com/talsec/Free-RASP-Flutter/blob/48c6fc061ac22bcf3986421ee109dba67969d47d/lib/src/enums/threat.dart"
+      ],
+      "description": "Files of the palera1n group from IOSSecuritySuite checkExistenceOfSuspiciousFiles."
+    },
+    {
+      "id": "ios.design.jb_checkra1n",
+      "technique": "integrity.jailbreak",
+      "status": "implemented",
+      "reason": null,
+      "severity": "critical",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "iossecuritysuite": [
+          "amIJailbroken",
+          "amIJailbrokenWithFailMessage",
+          "amIJailbrokenWithFailedChecks"
+        ],
+        "freerasp": [
+          "onPrivilegedAccess",
+          "privilegedAccess"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Use a non-jailbroken device for evasive samples, or hide the jailbreak (rootless + path hiding).",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/JailbreakChecker.swift",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/IOSSecuritySuite.swift",
+        "https://github.com/talsec/Free-RASP-Flutter/blob/48c6fc061ac22bcf3986421ee109dba67969d47d/lib/src/enums/threat.dart"
+      ],
+      "description": "Files of the checkra1n group from IOSSecuritySuite checkExistenceOfSuspiciousFiles."
+    },
+    {
+      "id": "ios.design.jb_unc0ver",
+      "technique": "integrity.jailbreak",
+      "status": "implemented",
+      "reason": null,
+      "severity": "critical",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "iossecuritysuite": [
+          "amIJailbroken",
+          "amIJailbrokenWithFailMessage",
+          "amIJailbrokenWithFailedChecks"
+        ],
+        "freerasp": [
+          "onPrivilegedAccess",
+          "privilegedAccess"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Use a non-jailbroken device for evasive samples, or hide the jailbreak (rootless + path hiding).",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/JailbreakChecker.swift",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/IOSSecuritySuite.swift",
+        "https://github.com/talsec/Free-RASP-Flutter/blob/48c6fc061ac22bcf3986421ee109dba67969d47d/lib/src/enums/threat.dart"
+      ],
+      "description": "Files of the unc0ver group from IOSSecuritySuite checkExistenceOfSuspiciousFiles."
+    },
+    {
+      "id": "ios.design.jb_electra",
+      "technique": "integrity.jailbreak",
+      "status": "implemented",
+      "reason": null,
+      "severity": "critical",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "iossecuritysuite": [
+          "amIJailbroken",
+          "amIJailbrokenWithFailMessage",
+          "amIJailbrokenWithFailedChecks"
+        ],
+        "freerasp": [
+          "onPrivilegedAccess",
+          "privilegedAccess"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Use a non-jailbroken device for evasive samples, or hide the jailbreak (rootless + path hiding).",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/JailbreakChecker.swift",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/IOSSecuritySuite.swift",
+        "https://github.com/talsec/Free-RASP-Flutter/blob/48c6fc061ac22bcf3986421ee109dba67969d47d/lib/src/enums/threat.dart"
+      ],
+      "description": "Files of the electra group from IOSSecuritySuite checkExistenceOfSuspiciousFiles."
+    },
+    {
+      "id": "ios.design.jb_package_managers",
+      "technique": "integrity.jailbreak",
+      "status": "implemented",
+      "reason": null,
+      "severity": "critical",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "iossecuritysuite": [
+          "amIJailbroken",
+          "amIJailbrokenWithFailMessage",
+          "amIJailbrokenWithFailedChecks"
+        ],
+        "freerasp": [
+          "onPrivilegedAccess",
+          "privilegedAccess"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Use a non-jailbroken device for evasive samples, or hide the jailbreak (rootless + path hiding).",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/JailbreakChecker.swift",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/IOSSecuritySuite.swift",
+        "https://github.com/talsec/Free-RASP-Flutter/blob/48c6fc061ac22bcf3986421ee109dba67969d47d/lib/src/enums/threat.dart"
+      ],
+      "description": "Files of the package managers group from IOSSecuritySuite checkExistenceOfSuspiciousFiles."
+    },
+    {
+      "id": "ios.design.jb_apt_dpkg",
+      "technique": "integrity.jailbreak",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "iossecuritysuite": [
+          "amIJailbroken",
+          "amIJailbrokenWithFailMessage",
+          "amIJailbrokenWithFailedChecks"
+        ],
+        "freerasp": [
+          "onPrivilegedAccess",
+          "privilegedAccess"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Use a non-jailbroken device for evasive samples, or hide the jailbreak (rootless + path hiding).",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/JailbreakChecker.swift",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/IOSSecuritySuite.swift",
+        "https://github.com/talsec/Free-RASP-Flutter/blob/48c6fc061ac22bcf3986421ee109dba67969d47d/lib/src/enums/threat.dart"
+      ],
+      "description": "Files of the apt dpkg group from IOSSecuritySuite checkExistenceOfSuspiciousFiles."
+    },
+    {
+      "id": "ios.design.jb_shell_binaries",
+      "technique": "integrity.jailbreak",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "iossecuritysuite": [
+          "amIJailbroken",
+          "amIJailbrokenWithFailMessage",
+          "amIJailbrokenWithFailedChecks"
+        ],
+        "freerasp": [
+          "onPrivilegedAccess",
+          "privilegedAccess"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Use a non-jailbroken device for evasive samples, or hide the jailbreak (rootless + path hiding).",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/JailbreakChecker.swift",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/IOSSecuritySuite.swift",
+        "https://github.com/talsec/Free-RASP-Flutter/blob/48c6fc061ac22bcf3986421ee109dba67969d47d/lib/src/enums/threat.dart"
+      ],
+      "description": "Files of the shell binaries group from IOSSecuritySuite checkExistenceOfSuspiciousFiles."
+    },
+    {
+      "id": "ios.design.jb_bypass_tweaks",
+      "technique": "integrity.jailbreak",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "iossecuritysuite": [
+          "amIJailbroken",
+          "amIJailbrokenWithFailMessage",
+          "amIJailbrokenWithFailedChecks"
+        ],
+        "freerasp": [
+          "onPrivilegedAccess",
+          "privilegedAccess"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Use a non-jailbroken device for evasive samples, or hide the jailbreak (rootless + path hiding).",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/JailbreakChecker.swift",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/IOSSecuritySuite.swift",
+        "https://github.com/talsec/Free-RASP-Flutter/blob/48c6fc061ac22bcf3986421ee109dba67969d47d/lib/src/enums/threat.dart"
+      ],
+      "description": "Files of the bypass tweaks group from IOSSecuritySuite checkExistenceOfSuspiciousFiles."
+    },
+    {
+      "id": "ios.design.jb_legacy_apps",
+      "technique": "integrity.jailbreak",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "iossecuritysuite": [
+          "amIJailbroken",
+          "amIJailbrokenWithFailMessage",
+          "amIJailbrokenWithFailedChecks"
+        ],
+        "freerasp": [
+          "onPrivilegedAccess",
+          "privilegedAccess"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Use a non-jailbroken device for evasive samples, or hide the jailbreak (rootless + path hiding).",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/JailbreakChecker.swift",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/IOSSecuritySuite.swift",
+        "https://github.com/talsec/Free-RASP-Flutter/blob/48c6fc061ac22bcf3986421ee109dba67969d47d/lib/src/enums/threat.dart"
+      ],
+      "description": "Files of the legacy apps group from IOSSecuritySuite checkExistenceOfSuspiciousFiles."
+    },
+    {
+      "id": "ios.design.jb_symlinks",
+      "technique": "integrity.jailbreak",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "iossecuritysuite": [
+          "amIJailbroken",
+          "amIJailbrokenWithFailMessage",
+          "amIJailbrokenWithFailedChecks"
+        ],
+        "freerasp": [
+          "onPrivilegedAccess",
+          "privilegedAccess"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Use a non-jailbroken device for evasive samples, or hide the jailbreak (rootless + path hiding).",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/JailbreakChecker.swift",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/IOSSecuritySuite.swift",
+        "https://github.com/talsec/Free-RASP-Flutter/blob/48c6fc061ac22bcf3986421ee109dba67969d47d/lib/src/enums/threat.dart"
+      ],
+      "description": "/Applications, /usr/libexec, /usr/share... are symlinks (IOSSecuritySuite checkSymbolicLinks)."
+    },
+    {
+      "id": "ios.design.jb_rootfs_writable",
+      "technique": "integrity.jailbreak",
+      "status": "implemented",
+      "reason": null,
+      "severity": "critical",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Use a non-jailbroken device for evasive samples, or hide the jailbreak (rootless + path hiding).",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/JailbreakChecker.swift"
+      ],
+      "description": "The root file system is mounted read-write (IOSSecuritySuite checkRestrictedDirectoriesWriteable, read-only variant)."
+    },
+    {
+      "id": "ios.design.jb_url_schemes",
+      "technique": "integrity.jailbreak",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Use a non-jailbroken device for evasive samples, or hide the jailbreak (rootless + path hiding).",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/JailbreakChecker.swift"
+      ],
+      "description": "An installed app registers undecimus://, sileo://, zbra://, filza://, dopamine:// or palera1n:// (IOSSecuritySuite checkURLSchemes)."
+    },
+    {
+      "id": "ios.design.jb_apps",
+      "technique": "integrity.jailbreak",
+      "status": "implemented",
+      "reason": null,
+      "severity": "critical",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Use a non-jailbroken device for evasive samples, or hide the jailbreak (rootless + path hiding).",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/JailbreakChecker.swift"
+      ],
+      "description": "Cydia, Sileo, Zebra, Filza, Dopamine, palera1n loader, unc0ver, Taurine, Odyssey... installed."
+    },
+    {
+      "id": "ios.design.trollstore",
+      "technique": "integrity.jailbreak",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Remove TrollStore and its apps from the analysis device.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/JailbreakChecker.swift"
+      ],
+      "description": "TrollStore (permanent sideloading through a CoreTrust bug) is installed."
+    },
+    {
+      "id": "ios.design.sideloaded_apps",
+      "technique": "integrity.jailbreak",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Install analysis-environment apps from the App Store.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/JailbreakChecker.swift"
+      ],
+      "description": "User apps without iTunesMetadata.plist: installed outside the App Store (freeRASP unofficialStore)."
+    },
+    {
+      "id": "ios.design.hook_substrate",
+      "technique": "instrumentation.hooking_frameworks",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Remove tweak injection from the analysis device; instrument from outside the device instead.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ReverseEngineeringToolsChecker.swift"
+      ],
+      "description": "Cydia Substrate hooking framework files present (IOSSecuritySuite suspicious files / dyld list)."
+    },
+    {
+      "id": "ios.design.hook_substitute",
+      "technique": "instrumentation.hooking_frameworks",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Remove tweak injection from the analysis device; instrument from outside the device instead.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ReverseEngineeringToolsChecker.swift"
+      ],
+      "description": "Substitute hooking framework files present (IOSSecuritySuite suspicious files / dyld list)."
+    },
+    {
+      "id": "ios.design.hook_libhooker",
+      "technique": "instrumentation.hooking_frameworks",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Remove tweak injection from the analysis device; instrument from outside the device instead.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ReverseEngineeringToolsChecker.swift"
+      ],
+      "description": "libhooker hooking framework files present (IOSSecuritySuite suspicious files / dyld list)."
+    },
+    {
+      "id": "ios.design.hook_ellekit",
+      "technique": "instrumentation.hooking_frameworks",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Remove tweak injection from the analysis device; instrument from outside the device instead.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ReverseEngineeringToolsChecker.swift"
+      ],
+      "description": "ElleKit hooking framework files present (IOSSecuritySuite suspicious files / dyld list)."
+    },
+    {
+      "id": "ios.design.tweak_dylibs",
+      "technique": "instrumentation.injected_libraries",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Remove tweak injection from the analysis device; instrument from outside the device instead.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ReverseEngineeringToolsChecker.swift"
+      ],
+      "description": "Dynamic libraries in MobileSubstrate/DynamicLibraries or TweakInject: injected into apps."
+    },
+    {
+      "id": "ios.design.ssl_kill_switch",
+      "technique": "network.proxy_mitm",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "network",
+        "effort": 3,
+        "how": "Remove TLS-bypass tweaks; intercept with a trusted CA where needed.",
+        "chimera": "CHIMERA INetSim and the isolated network may expose these signals. Keep interception outside the guest and validate DNS, proxy, routing and certificate state for the Apple target."
+      },
+      "references": [
+        "https://curl.se/docs/manpage.html",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ProxyChecker.swift"
+      ],
+      "description": "SSLKillSwitch / SSL bypass tweak installed (disables certificate validation for interception)."
+    },
+    {
+      "id": "ios.design.injected_images",
+      "technique": "instrumentation.injected_libraries",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Remove tweak injection from the analysis device; instrument from outside the device instead.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ReverseEngineeringToolsChecker.swift"
+      ],
+      "description": "SpringBoard has a jailbreak or instrumentation library mapped (IOSSecuritySuite checkDYLD, via lsof)."
+    },
+    {
+      "id": "ios.design.dyld_environment",
+      "technique": "instrumentation.injected_libraries",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Remove tweak injection from the analysis device; instrument from outside the device instead.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ReverseEngineeringToolsChecker.swift"
+      ],
+      "description": "DYLD_INSERT_LIBRARIES or related variables set in launchd's environment."
+    },
+    {
+      "id": "ios.design.frida_files",
+      "technique": "instrumentation.hooking_frameworks",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "iossecuritysuite": [
+          "amIReverseEngineered",
+          "amIReverseEngineeredWithFailedChecks"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Remove frida-server from the device; attach only for targeted debugging.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ReverseEngineeringToolsChecker.swift",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/IOSSecuritySuite.swift"
+      ],
+      "description": "frida-server binary, library directory or launch daemon present (IOSSecuritySuite)."
+    },
+    {
+      "id": "ios.design.frida_processes",
+      "technique": "instrumentation.hooking_frameworks",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Stop frida-server during detonation.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ReverseEngineeringToolsChecker.swift"
+      ],
+      "description": "frida-server or frida-helper running."
+    },
+    {
+      "id": "ios.design.cycript",
+      "technique": "instrumentation.hooking_frameworks",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "iossecuritysuite": [
+          "amIReverseEngineered",
+          "amIReverseEngineeredWithFailedChecks"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Remove tweak injection from the analysis device; instrument from outside the device instead.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ReverseEngineeringToolsChecker.swift",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/IOSSecuritySuite.swift"
+      ],
+      "description": "cycript / libcycript / cynject present (IOSSecuritySuite ReverseEngineeringToolsChecker)."
+    },
+    {
+      "id": "ios.design.listening_ports",
+      "technique": "analysis_tools.listening_ports",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "iossecuritysuite": [
+          "amIReverseEngineered",
+          "amIReverseEngineeredWithFailedChecks"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Close instrumentation and SSH ports during detonation (use USB-only access).",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ReverseEngineeringToolsChecker.swift",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/IOSSecuritySuite.swift"
+      ],
+      "description": "Ports 27042 (Frida), 4444 (Needle), 22 (OpenSSH) or 44 (checkra1n) listening (IOSSecuritySuite checkOpenedPorts)."
+    },
+    {
+      "id": "ios.design.analysis_processes",
+      "technique": "analysis_tools.processes",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Stop analysis tools on the device during detonation.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ReverseEngineeringToolsChecker.swift"
+      ],
+      "description": "debugserver, lldb, cycript, tcpdump, sslsplit or objection running."
+    },
+    {
+      "id": "ios.design.analysis_files",
+      "technique": "analysis_tools.files",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Remove analysis tools from the device image.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ReverseEngineeringToolsChecker.swift"
+      ],
+      "description": "debugserver, tcpdump, class-dump, lldb or gdb installed on the device."
+    },
+    {
+      "id": "ios.design.developer_mode",
+      "technique": "integrity.developer_settings",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "freerasp": [
+          "onDevMode",
+          "devMode"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Turn Developer Mode off on the analysis device.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/JailbreakChecker.swift",
+        "https://github.com/talsec/Free-RASP-Flutter/blob/48c6fc061ac22bcf3986421ee109dba67969d47d/lib/src/enums/threat.dart"
+      ],
+      "description": "security.mac.amfi.developer_mode_status = 1 (iOS 16+ Developer Mode on)."
+    },
+    {
+      "id": "ios.design.developer_disk_image",
+      "technique": "integrity.developer_settings",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Reboot the device after debugging to unmount the developer image.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/JailbreakChecker.swift"
+      ],
+      "description": "/Developer (DDI) or a personalized developer image is mounted: Xcode/debugging attached."
+    },
+    {
+      "id": "ios.design.traced_processes",
+      "technique": "debugger.tracer",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "iossecuritysuite": [
+          "amIDebugged"
+        ],
+        "freerasp": [
+          "onDebug",
+          "debug"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Do not attach debuggers during detonation.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/qa/qa1361/_index.html",
+        "https://www.elastic.co/security-labs/threat-command/beyond-the-wail",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/IOSSecuritySuite.swift",
+        "https://github.com/talsec/Free-RASP-Flutter/blob/48c6fc061ac22bcf3986421ee109dba67969d47d/lib/src/enums/threat.dart"
+      ],
+      "description": "Processes with P_TRACED set (IOSSecuritySuite amIDebugged)."
+    },
+    {
+      "id": "ios.design.app_parent_process",
+      "technique": "debugger.api_flags",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "iossecuritysuite": [
+          "isParentPidUnexpected"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Launch apps normally (SpringBoard / launchd).",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/qa/qa1361/_index.html",
+        "https://www.elastic.co/security-labs/threat-command/beyond-the-wail",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/IOSSecuritySuite.swift"
+      ],
+      "description": "An app process whose parent is not launchd (IOSSecuritySuite isParentPidUnexpected): spawned by a debugger or Frida."
+    },
+    {
+      "id": "ios.design.proxy_settings",
+      "technique": "network.proxy_mitm",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "iossecuritysuite": [
+          "amIProxied"
+        ]
+      },
+      "fix": {
+        "layer": "network",
+        "effort": 3,
+        "how": "Intercept transparently at the network layer instead of a device proxy.",
+        "chimera": "CHIMERA INetSim and the isolated network may expose these signals. Keep interception outside the guest and validate DNS, proxy, routing and certificate state for the Apple target."
+      },
+      "references": [
+        "https://curl.se/docs/manpage.html",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ProxyChecker.swift",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/IOSSecuritySuite.swift"
+      ],
+      "description": "System proxy keys present in SystemConfiguration preferences (IOSSecuritySuite amIProxied)."
+    },
+    {
+      "id": "ios.design.mitm_certificates",
+      "technique": "network.proxy_mitm",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "network",
+        "effort": 3,
+        "how": "Remove interception roots from the analysis device.",
+        "chimera": "CHIMERA INetSim and the isolated network may expose these signals. Keep interception outside the guest and validate DNS, proxy, routing and certificate state for the Apple target."
+      },
+      "references": [
+        "https://curl.se/docs/manpage.html",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ProxyChecker.swift"
+      ],
+      "description": "User trust records may permit interception; corporate certificates also match."
+    },
+    {
+      "id": "ios.design.mac_oui",
+      "technique": "network.mac_oui",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "network",
+        "effort": 3,
+        "how": "Give the virtual device a random or Apple MAC.",
+        "chimera": "CHIMERA INetSim and the isolated network may expose these signals. Keep interception outside the guest and validate DNS, proxy, routing and certificate state for the Apple target."
+      },
+      "references": [
+        "https://curl.se/docs/manpage.html",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ProxyChecker.swift"
+      ],
+      "description": "An interface MAC belongs to a hypervisor vendor (iOS private addresses are random, never a VM OUI)."
+    },
+    {
+      "id": "ios.design.dns_sinkhole",
+      "technique": "network.dns_sinkhole",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": true,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "network",
+        "effort": 3,
+        "how": "Return NXDOMAIN for names the simulated internet does not serve.",
+        "chimera": "CHIMERA INetSim and the isolated network may expose these signals. Keep interception outside the guest and validate DNS, proxy, routing and certificate state for the Apple target."
+      },
+      "references": [
+        "https://curl.se/docs/manpage.html",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ProxyChecker.swift"
+      ],
+      "description": "A random non-existent name resolves (fake DNS)."
+    },
+    {
+      "id": "ios.design.simulated_internet",
+      "technique": "network.simulated_internet",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": true,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "network",
+        "effort": 3,
+        "how": "Only answer HTTP for names that resolve.",
+        "chimera": "CHIMERA INetSim and the isolated network may expose these signals. Keep interception outside the guest and validate DNS, proxy, routing and certificate state for the Apple target."
+      },
+      "references": [
+        "https://curl.se/docs/manpage.html",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ProxyChecker.swift"
+      ],
+      "description": "A random non-existent host returns HTTP (simulated internet)."
+    },
+    {
+      "id": "ios.design.cis_locale",
+      "technique": "identity.locale",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Use the language of the target population.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://www.elastic.co/security-labs/threat-command/beyond-the-wail"
+      ],
+      "description": "Preferred languages include Russian or another CIS language (stealer guardrail)."
+    },
+    {
+      "id": "ios.env.hw_machine",
+      "technique": "emulator.ios_simulator",
+      "status": "implemented",
+      "reason": null,
+      "severity": "critical",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Analyse evasive iOS samples on a physical device (or a virtual device that reports a real model).",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/IDEs/Conceptual/iOS_Simulator_Guide/TestingontheiOSSimulator/TestingontheiOSSimulator.html"
+      ],
+      "description": "hw.machine is not an iPhone/iPad/iPod identifier (a Simulator reports the host's x86_64/arm64; MASTG-DEMO-0131)."
+    },
+    {
+      "id": "ios.env.hw_model",
+      "technique": "emulator.ios_simulator",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Analyse evasive iOS samples on a physical device (or a virtual device that reports a real model).",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/IDEs/Conceptual/iOS_Simulator_Guide/TestingontheiOSSimulator/TestingontheiOSSimulator.html"
+      ],
+      "description": "hw.model is a Mac model or a virtual platform name instead of an iOS board config (D63AP...)."
+    },
+    {
+      "id": "ios.env.simulator_environment",
+      "technique": "emulator.ios_simulator",
+      "status": "implemented",
+      "reason": null,
+      "severity": "critical",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "iossecuritysuite": [
+          "amIRunInEmulator"
+        ],
+        "freerasp": [
+          "onSimulator",
+          "simulator"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Analyse evasive iOS samples on a physical device (or a virtual device that reports a real model).",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/IDEs/Conceptual/iOS_Simulator_Guide/TestingontheiOSSimulator/TestingontheiOSSimulator.html",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/IOSSecuritySuite.swift",
+        "https://github.com/talsec/Free-RASP-Flutter/blob/48c6fc061ac22bcf3986421ee109dba67969d47d/lib/src/enums/threat.dart"
+      ],
+      "description": "SIMULATOR_DEVICE_NAME / SIMULATOR_UDID / SIMULATOR_MODEL_IDENTIFIER set (IOSSecuritySuite amIRunInEmulator)."
+    },
+    {
+      "id": "ios.env.simulator_device_type",
+      "technique": "emulator.ios_simulator",
+      "status": "implemented",
+      "reason": null,
+      "severity": "critical",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "freerasp": [
+          "onSimulator",
+          "simulator"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Analyse evasive iOS samples on a physical device (or a virtual device that reports a real model).",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/IDEs/Conceptual/iOS_Simulator_Guide/TestingontheiOSSimulator/TestingontheiOSSimulator.html",
+        "https://github.com/talsec/Free-RASP-Flutter/blob/48c6fc061ac22bcf3986421ee109dba67969d47d/lib/src/enums/threat.dart"
+      ],
+      "description": "The target is a CoreSimulator device (simctl deviceTypeIdentifier)."
+    },
+    {
+      "id": "ios.env.dyld_sim",
+      "technique": "emulator.ios_simulator",
+      "status": "implemented",
+      "reason": null,
+      "severity": "critical",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Analyse evasive iOS samples on a physical device (or a virtual device that reports a real model).",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/IDEs/Conceptual/iOS_Simulator_Guide/TestingontheiOSSimulator/TestingontheiOSSimulator.html"
+      ],
+      "description": "/usr/lib/dyld_sim exists: the Simulator's user-space loader, absent on devices."
+    },
+    {
+      "id": "ios.env.os_version_mismatch",
+      "technique": "emulator.ios_simulator",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Analyse evasive iOS samples on a physical device (or a virtual device that reports a real model).",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/IDEs/Conceptual/iOS_Simulator_Guide/TestingontheiOSSimulator/TestingontheiOSSimulator.html"
+      ],
+      "description": "kern.osproductversion (kernel) differs from SystemVersion.plist (user space): a Simulator runtime on a macOS kernel."
+    },
+    {
+      "id": "ios.env.hv_vmm_present",
+      "technique": "emulator.ios_simulator",
+      "status": "implemented",
+      "reason": null,
+      "severity": "critical",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Use a physical device, or a virtual platform that hides kern.hv_vmm_present.",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/IDEs/Conceptual/iOS_Simulator_Guide/TestingontheiOSSimulator/TestingontheiOSSimulator.html"
+      ],
+      "description": "kern.hv_vmm_present = 1: the iOS kernel runs virtualised (virtual iPhones; MASTG-KNOW-0135)."
+    },
+    {
+      "id": "ios.env.virtual_vendor",
+      "technique": "emulator.ios_simulator",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Use a physical device for samples that look for virtual-device vendors.",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/IDEs/Conceptual/iOS_Simulator_Guide/TestingontheiOSSimulator/TestingontheiOSSimulator.html"
+      ],
+      "description": "uname, kern.version, hw.targettype or launchd jobs name Corellium."
+    },
+    {
+      "id": "ios.env.cpu_count",
+      "technique": "resources.cpu_count",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "evasions/generic-os-queries/check-if-number-of-processors"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 2,
+        "how": "Give the virtual device the core count of the model it claims.",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/sysctl.8.html",
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ],
+      "description": "CPU count below the configurable resource baseline."
+    },
+    {
+      "id": "ios.env.memory_size",
+      "technique": "resources.memory_size",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "evasions/generic-os-queries/check-if-total-ram-is-low"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 2,
+        "how": "Match memory to the claimed model.",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/sysctl.8.html",
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ],
+      "description": "hw.memsize below a configurable lower bound; future device memory sizes are not capped.",
+      "params": {
+        "memory.min_bytes": {
+          "default": 1500000000,
+          "description": "Detect when physical RAM is below this limit."
+        }
+      }
+    },
+    {
+      "id": "ios.env.disk_size",
+      "technique": "resources.disk_size",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "evasions/generic-os-queries/check-if-hard-disk"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 2,
+        "how": "Give the virtual device a realistic storage size.",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/sysctl.8.html",
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ],
+      "description": "Data volume smaller than the conservative local baseline."
+    },
+    {
+      "id": "ios.env.telephony_daemon",
+      "technique": "mobile_device.telephony",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "host-hardware",
+        "effort": 4,
+        "how": "Use a device with a cellular modem (and a SIM).",
+        "chimera": "CHIMERA hidsim supplies mouse/keyboard input, not iOS sensors or cellular hardware. Use an appropriate physical Apple device for capabilities the virtual target cannot reproduce."
+      },
+      "references": [
+        "https://support.corellium.com/devices/ios",
+        "https://developer.apple.com/documentation/coremotion"
+      ],
+      "description": "CommCenter (CoreTelephony) not registered with launchd: no cellular stack, as in Simulators and virtual devices."
+    },
+    {
+      "id": "ios.env.radio_daemons",
+      "technique": "mobile_device.radios",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "host-hardware",
+        "effort": 4,
+        "how": "Use a physical device.",
+        "chimera": "CHIMERA hidsim supplies mouse/keyboard input, not iOS sensors or cellular hardware. Use an appropriate physical Apple device for capabilities the virtual target cannot reproduce."
+      },
+      "references": [
+        "https://support.corellium.com/devices/ios",
+        "https://developer.apple.com/documentation/coremotion"
+      ],
+      "description": "wifid or bluetoothd not registered with launchd."
+    },
+    {
+      "id": "ios.design.lockdown_mode",
+      "technique": "integrity.developer_settings",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "iossecuritysuite": [
+          "amIInLockdownMode"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Match Lockdown Mode to the intended device population.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/JailbreakChecker.swift",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/IOSSecuritySuite.swift",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ModesChecker.swift"
+      ],
+      "description": "The readable global preference enables Lockdown Mode, changing app capabilities."
+    },
+    {
+      "id": "ios.env.motion_services",
+      "technique": "mobile_device.sensors",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "host-hardware",
+        "effort": 4,
+        "how": "Use real sensor hardware and keep normal motion/location services available.",
+        "chimera": "CHIMERA hidsim supplies mouse/keyboard input, not iOS sensors or cellular hardware. Use an appropriate physical Apple device for capabilities the virtual target cannot reproduce."
+      },
+      "references": [
+        "https://support.corellium.com/devices/ios",
+        "https://developer.apple.com/documentation/coremotion"
+      ],
+      "description": "Motion/location service availability as a weak peripheral proxy; no sensor samples."
+    },
+    {
+      "id": "ios.env.baseband_registry",
+      "technique": "mobile_device.telephony",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "host-hardware",
+        "effort": 4,
+        "how": "Use a physical iPhone with its baseband hardware for modem-sensitive samples.",
+        "chimera": "CHIMERA hidsim supplies mouse/keyboard input, not iOS sensors or cellular hardware. Use an appropriate physical Apple device for capabilities the virtual target cannot reproduce."
+      },
+      "references": [
+        "https://support.corellium.com/devices/ios",
+        "https://developer.apple.com/documentation/coremotion"
+      ],
+      "description": "An iPhone identity lacks baseband markers in a readable device tree."
+    },
+    {
+      "id": "ios.design.vpn_interfaces",
+      "technique": "network.proxy_mitm",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "iossecuritysuite": [
+          "amIProxied"
+        ],
+        "freerasp": [
+          "onSystemVpn",
+          "systemVPN"
+        ]
+      },
+      "fix": {
+        "layer": "network",
+        "effort": 3,
+        "how": "Place analysis routing outside the guest and avoid unnecessary device VPNs.",
+        "chimera": "CHIMERA INetSim and the isolated network may expose these signals. Keep interception outside the guest and validate DNS, proxy, routing and certificate state for the Apple target."
+      },
+      "references": [
+        "https://curl.se/docs/manpage.html",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ProxyChecker.swift",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/IOSSecuritySuite.swift",
+        "https://github.com/talsec/Free-RASP-Flutter/blob/48c6fc061ac22bcf3986421ee109dba67969d47d/lib/src/enums/threat.dart"
+      ],
+      "description": "An active addressed tunnel can expose a VPN; private relay and system tunnels can also match."
+    },
+    {
+      "id": "ios.timing.uptime",
+      "technique": "timing.uptime",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "evasions/generic-os-queries/check-if-system-uptime"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Let the device run for a while before detonation.",
+        "chimera": "CHIMERA cpuidmon -s and optional time acceleration cover Xen x86 guests. They do not mask Apple Silicon kernel reports or provide an iOS hypervisor; validate timing and kernel-visible identity separately."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/sysctl.8.html",
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ],
+      "description": "Booted less than 12 minutes before the scan (Pafish gensandbox_uptime threshold).",
+      "params": {
+        "uptime.min_seconds": {
+          "default": 720,
+          "description": "Minimum elapsed seconds since boot."
+        }
+      }
+    },
+    {
+      "id": "ios.timing.time_zone",
+      "technique": "timing.time_plausibility",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Set the device time zone to the target region.",
+        "chimera": "CHIMERA cpuidmon -s and optional time acceleration cover Xen x86 guests. They do not mask Apple Silicon kernel reports or provide an iOS hypervisor; validate timing and kernel-visible identity separately."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/sysctl.8.html",
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ],
+      "description": "Time zone is UTC/GMT or unset."
+    },
+    {
+      "id": "ios.timing.sleep_acceleration",
+      "technique": "timing.sleep_acceleration",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "slow",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "evasions/timing/sleep-skipping-detection"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Keep the device clock consistent when accelerating time.",
+        "chimera": "CHIMERA cpuidmon -s and optional time acceleration cover Xen x86 guests. They do not mask Apple Silicon kernel reports or provide an iOS hypervisor; validate timing and kernel-visible identity separately."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/sysctl.8.html",
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ],
+      "description": "The device clock advances faster or slower than the driver's clock across a sleep.",
+      "params": {
+        "timing.sleep_seconds": {
+          "default": 3.0,
+          "description": "Requested sleep; finite and between 1 and 30 seconds."
+        }
+      }
+    }
+  ]
+}

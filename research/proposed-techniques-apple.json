@@ -1,0 +1,104 @@
+[
+  {
+    "key": "integrity.apple_lockdown_mode",
+    "class": "integrity",
+    "title": "Apple Lockdown Mode",
+    "attack": [
+      "T1633.001"
+    ],
+    "mbc": [
+      "B0007"
+    ],
+    "discrimination": 0.3,
+    "tier": "occasional",
+    "platforms": [
+      "ios"
+    ],
+    "why": "A restrictive security mode changes app capabilities; developer_settings is only an approximate existing key."
+  },
+  {
+    "key": "firmware.secure_enclave_presence",
+    "class": "firmware",
+    "title": "Secure Enclave availability",
+    "attack": [
+      "T1497.001"
+    ],
+    "mbc": [
+      "B0007"
+    ],
+    "discrimination": 0.3,
+    "tier": "occasional",
+    "platforms": [
+      "macos"
+    ],
+    "why": "Secure Enclave service presence is distinct from firmware boot mode; it varies with the claimed hardware."
+  },
+  {
+    "key": "integrity.app_install_source",
+    "class": "integrity",
+    "title": "Application installer provenance",
+    "attack": [
+      "T1633.001"
+    ],
+    "mbc": [
+      "B0007"
+    ],
+    "discrimination": 0.3,
+    "tier": "occasional",
+    "platforms": [
+      "ios"
+    ],
+    "why": "Receipt metadata absence is a low-confidence signal and is not the same condition as jailbreak status. App-scoped provenance remains unavailable."
+  },
+  {
+    "key": "integrity.app_device_binding",
+    "class": "integrity",
+    "title": "Application device binding",
+    "attack": [
+      "T1633.001"
+    ],
+    "mbc": [
+      "B0007"
+    ],
+    "discrimination": 0.3,
+    "tier": "occasional",
+    "platforms": [
+      "ios"
+    ],
+    "why": "An app-enrolled identity and attestation service are required. Shell-visible device identity cannot authenticate the binding."
+  },
+  {
+    "key": "network.active_vpn",
+    "class": "network",
+    "title": "Active VPN interface",
+    "attack": [
+      "T1633.001"
+    ],
+    "mbc": [
+      "B0007"
+    ],
+    "discrimination": 0.3,
+    "tier": "occasional",
+    "platforms": [
+      "ios"
+    ],
+    "why": "An addressed tunnel is distinct from an interception proxy. System tunnels and private relay can match the same condition."
+  },
+  {
+    "key": "integrity.screen_lock",
+    "class": "integrity",
+    "title": "Screen lock configuration",
+    "attack": [
+      "T1633.001"
+    ],
+    "mbc": [
+      "B0007"
+    ],
+    "discrimination": 0.3,
+    "tier": "occasional",
+    "platforms": [
+      "ios"
+    ],
+    "why": "No portable shell command establishes passcode state; the nearest developer_settings key is approximate."
+  }
+]

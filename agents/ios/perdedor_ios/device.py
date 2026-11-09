@@ -13,9 +13,10 @@ simulated launchd.
 
 from __future__ import annotations
 
-import shlex
-import re
+import os
 import posixpath
+import re
+import shlex
 from dataclasses import dataclass, field
 
 from perdedor_macos import parsing
@@ -24,14 +25,22 @@ from perdedor_macos.transport import CommandResult, LocalTransport, SshTransport
 
 # Rootless bootstraps (Dopamine, palera1n rootless) keep their binaries in
 # /var/jb; Procursus rootful installs use the standard paths.
-JB_PATH = "PATH=$PATH:/var/jb/usr/bin:/var/jb/bin:/var/jb/usr/sbin:/var/jb/sbin:/usr/sbin:/sbin; export PATH; "
+JB_PATH = (
+    "PATH=$PATH:/var/jb/usr/bin:/var/jb/bin:/var/jb/usr/sbin:/var/jb/sbin:/usr/sbin:/sbin; export PATH; "
+)
 
 
-def ios_ssh(destination: str, identity: str | None = None, port: int | None = None,
-            extra_options: tuple[str, ...] = ()) -> SshTransport:
+def ios_ssh(
+    destination: str,
+    identity: str | None = None,
+    port: int | None = None,
+    extra_options: tuple[str, ...] = (),
+) -> SshTransport:
     """ssh transport for jailbroken devices / Corellium (default port 22,
     or 2222 for iproxy-forwarded USB devices)."""
-    return SshTransport(destination, identity=identity, port=port, extra_options=extra_options, path_prefix=JB_PATH)
+    return SshTransport(
+        destination, identity=identity, port=port, extra_options=extra_options, path_prefix=JB_PATH
+    )
 
 
 @dataclass
@@ -43,7 +52,9 @@ class SimulatorTransport(LocalTransport):
     name = "simctl"
 
     def __post_init__(self):
-        if self.udid != "booted" and not re.fullmatch(r"[0-9A-Fa-f]{8}(?:-[0-9A-Fa-f]{4}){3}-[0-9A-Fa-f]{12}", self.udid):
+        if self.udid != "booted" and not re.fullmatch(
+            r"[0-9A-Fa-f]{8}(?:-[0-9A-Fa-f]{4}){3}-[0-9A-Fa-f]{12}", self.udid
+        ):
             raise ValueError("simulator must be a UDID or 'booted'")
 
     def resolve(self) -> bool:
@@ -57,8 +68,10 @@ class SimulatorTransport(LocalTransport):
         matches = []
         for runtime_id, entries in devices.get("devices", {}).items():
             for entry in entries:
-                if entry.get("state") == "Booted" and entry.get("isAvailable", True) and (
-                    self.udid == "booted" or entry.get("udid") == self.udid
+                if (
+                    entry.get("state") == "Booted"
+                    and entry.get("isAvailable", True)
+                    and (self.udid == "booted" or entry.get("udid") == self.udid)
                 ):
                     matches.append({**entry, "runtime": runtime_id})
         if len(matches) != 1:
@@ -68,12 +81,15 @@ class SimulatorTransport(LocalTransport):
         if not re.fullmatch(r"[0-9A-Fa-f-]{36}", self.udid):
             return False
         data = self.device.get("dataPath")
-        runtime = next((r for r in runtimes.get("runtimes", [])
-                        if r.get("identifier") == self.device["runtime"]), {})
+        runtime = next(
+            (r for r in runtimes.get("runtimes", []) if r.get("identifier") == self.device["runtime"]), {}
+        )
         root = runtime.get("runtimeRoot")
         if not root and runtime.get("bundlePath"):
             root = runtime["bundlePath"] + "/Contents/Resources/RuntimeRoot"
-        if not all(isinstance(p, str) and p.startswith("/") and posixpath.normpath(p) != "/" for p in (data, root)):
+        if not all(
+            isinstance(p, str) and p.startswith("/") and posixpath.normpath(p) != "/" for p in (data, root)
+        ):
             return False
         self.data_path, self.runtime_root = posixpath.normpath(data), posixpath.normpath(root)
         self.device["runtime_version"] = runtime.get("version", "")
@@ -83,7 +99,7 @@ class SimulatorTransport(LocalTransport):
         result = LocalTransport._exec(self, command, 8.0)
         return result.stdout if result is not None and result.ok else None
 
-    def device_path(self, path: str) -> str:
+    def _mapped_path(self, path: str) -> str:
         if not self.resolve():
             raise ValueError("simulator roots unavailable; host paths are never substituted")
         if not path.startswith("/") or ".." in path.split("/"):
@@ -92,14 +108,22 @@ class SimulatorTransport(LocalTransport):
         # directly. /var/containers is Data/Containers, not host /private/var.
         for prefix in ("/private/var/mobile", "/var/mobile"):
             if path == prefix or path.startswith(prefix + "/"):
-                return self.data_path + path[len(prefix):]
+                return self.data_path + path[len(prefix) :]
         for prefix in ("/private/var/containers", "/var/containers"):
             if path == prefix or path.startswith(prefix + "/"):
-                return self.data_path + "/Containers" + path[len(prefix):]
+                return self.data_path + "/Containers" + path[len(prefix) :]
         for prefix in ("/private/var", "/var"):
             if path == prefix or path.startswith(prefix + "/"):
-                return self.data_path + "/private/var" + path[len(prefix):]
+                return self.data_path + "/private/var" + path[len(prefix) :]
         return self.runtime_root + path
+
+    def device_path(self, path: str) -> str:
+        candidate = self._mapped_path(path)
+        resolved = os.path.realpath(candidate)
+        roots = [os.path.realpath(self.data_path), os.path.realpath(self.runtime_root)]
+        if not any(os.path.commonpath([resolved, root]) == root for root in roots):
+            raise ValueError("simulator symlink leaves the device roots")
+        return candidate
 
     def run(self, command, *, key="", timeout=8.0):
         if not self.resolve():

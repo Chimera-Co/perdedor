@@ -17,8 +17,12 @@ def all_checks() -> list[CheckSpec]:
 def collect_metadata(target: Target) -> dict[str, str]:
     metadata = dict(target.describe())
     values = target.sysctl() or {}
-    for key, name in (("hw.model", "hw_model"), ("kern.osproductversion", "os_version"),
-                      ("kern.osversion", "os_build"), ("hw.machine", "machine")):
+    for key, name in (
+        ("hw.model", "hw_model"),
+        ("kern.osproductversion", "os_version"),
+        ("kern.osversion", "os_build"),
+        ("hw.machine", "machine"),
+    ):
         if values.get(key):
             metadata[name] = values[key]
     if not target.reachable():

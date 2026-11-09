@@ -1,0 +1,2709 @@
+{
+  "catalog_format": 2,
+  "platform": "macos",
+  "source": "Read-only host driver; inventory revisions from catalog/upstreams.json; reviewed 2026-11-09",
+  "checks": [
+    {
+      "id": "macos.behavioural.hid_idle_time",
+      "technique": "human.idle_time",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Simulate user input (the macOS equivalent of hidsim) during detonation.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/sysctl.8.html"
+      ],
+      "description": "IOHIDSystem HIDIdleTime is about as long as the uptime: no keyboard or mouse event since boot."
+    },
+    {
+      "id": "macos.behavioural.input_activity",
+      "technique": "human.mouse_activity",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "slow",
+      "network": false,
+      "requires": [
+        "interactive"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Drive simulated mouse and keyboard input while the sample runs.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/sysctl.8.html"
+      ],
+      "description": "No keyboard or mouse event during the sampling window (deep profile).",
+      "params": {
+        "human.window_seconds": {
+          "default": 30.0,
+          "description": "Input sampling window; finite, greater than zero and at most 30 seconds."
+        }
+      }
+    },
+    {
+      "id": "macos.behavioural.gui_session",
+      "technique": "human.foreground_activity",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Detonate inside an auto-logged-in desktop session.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/sysctl.8.html"
+      ],
+      "description": "Nobody is logged in at the console, or WindowServer / Dock / Finder are not running."
+    },
+    {
+      "id": "macos.behavioural.running_apps",
+      "technique": "human.foreground_activity",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Open everyday apps (browser, mail, notes) in the session before detonation.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/sysctl.8.html"
+      ],
+      "description": "Fewer than three foreground (Dock) applications running."
+    },
+    {
+      "id": "macos.behavioural.recent_items",
+      "technique": "wear_and_tear.recent_files",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Age the golden image with real usage (documents, browsing, apps) before snapshotting.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://support.apple.com/guide/deployment/manage-login-items-background-tasks-depdca572563/web",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html"
+      ],
+      "description": "No or almost no shared file lists (Recent Documents / Applications / Servers)."
+    },
+    {
+      "id": "macos.behavioural.safari_history",
+      "technique": "wear_and_tear.browser_history",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Age the golden image with real usage (documents, browsing, apps) before snapshotting.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://support.apple.com/guide/deployment/manage-login-items-background-tasks-depdca572563/web",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html"
+      ],
+      "description": "Safari History.db missing or nearly empty."
+    },
+    {
+      "id": "macos.behavioural.chromium_history",
+      "technique": "wear_and_tear.browser_history",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Age the golden image with real usage (documents, browsing, apps) before snapshotting.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://support.apple.com/guide/deployment/manage-login-items-background-tasks-depdca572563/web",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html"
+      ],
+      "description": "No Chromium-family profile with a non-trivial History database."
+    },
+    {
+      "id": "macos.behavioural.firefox_history",
+      "technique": "wear_and_tear.browser_history",
+      "status": "implemented",
+      "reason": null,
+      "severity": "info",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Age the golden image with real usage (documents, browsing, apps) before snapshotting.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://support.apple.com/guide/deployment/manage-login-items-background-tasks-depdca572563/web",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html"
+      ],
+      "description": "No Firefox profile with a non-trivial places.sqlite."
+    },
+    {
+      "id": "macos.behavioural.desktop_files",
+      "technique": "wear_and_tear.user_files",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Age the golden image with real usage (documents, browsing, apps) before snapshotting.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://support.apple.com/guide/deployment/manage-login-items-background-tasks-depdca572563/web",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html"
+      ],
+      "description": "Desktop is empty."
+    },
+    {
+      "id": "macos.behavioural.documents_files",
+      "technique": "wear_and_tear.user_files",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Age the golden image with real usage (documents, browsing, apps) before snapshotting.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://support.apple.com/guide/deployment/manage-login-items-background-tasks-depdca572563/web",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html"
+      ],
+      "description": "Documents folder is empty."
+    },
+    {
+      "id": "macos.behavioural.downloads_files",
+      "technique": "wear_and_tear.user_files",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Age the golden image with real usage (documents, browsing, apps) before snapshotting.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://support.apple.com/guide/deployment/manage-login-items-background-tasks-depdca572563/web",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html"
+      ],
+      "description": "Downloads folder is empty."
+    },
+    {
+      "id": "macos.behavioural.third_party_apps",
+      "technique": "wear_and_tear.installed_software",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Install everyday apps (browsers, office, chat, media) in the image.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://support.apple.com/guide/deployment/manage-login-items-background-tasks-depdca572563/web",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html"
+      ],
+      "description": "Fewer than five applications beyond those Apple ships.",
+      "params": {
+        "apps.min_third_party": {
+          "default": 5,
+          "description": "Minimum non-bundled application count."
+        }
+      }
+    },
+    {
+      "id": "macos.behavioural.launch_agents",
+      "technique": "wear_and_tear.installed_software",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Installed everyday software brings its updaters; install it.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://support.apple.com/guide/deployment/manage-login-items-background-tasks-depdca572563/web",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html"
+      ],
+      "description": "No third-party LaunchAgents / LaunchDaemons at all (no updaters, sync clients...)."
+    },
+    {
+      "id": "macos.behavioural.dock_customisation",
+      "technique": "wear_and_tear.usage_traces",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Age the golden image with real usage (documents, browsing, apps) before snapshotting.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://support.apple.com/guide/deployment/manage-login-items-background-tasks-depdca572563/web",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html"
+      ],
+      "description": "com.apple.dock mod-count is small: the Dock was never rearranged."
+    },
+    {
+      "id": "macos.behavioural.shell_history",
+      "technique": "wear_and_tear.usage_traces",
+      "status": "implemented",
+      "reason": null,
+      "severity": "info",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Age the golden image with real usage (documents, browsing, apps) before snapshotting.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://support.apple.com/guide/deployment/manage-login-items-background-tasks-depdca572563/web",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html"
+      ],
+      "description": "No zsh/bash history and no saved Terminal sessions."
+    },
+    {
+      "id": "macos.behavioural.unified_log_volume",
+      "technique": "wear_and_tear.system_logs",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "root"
+      ],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Run the image for some time before snapshotting.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://support.apple.com/guide/deployment/manage-login-items-background-tasks-depdca572563/web",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html"
+      ],
+      "description": "The unified log store (/private/var/db/diagnostics) is small: a young system."
+    },
+    {
+      "id": "macos.behavioural.setup_age",
+      "technique": "wear_and_tear.system_age",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Build images well ahead of use, or backdate consistently.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://support.apple.com/guide/deployment/manage-login-items-background-tasks-depdca572563/web",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html"
+      ],
+      "description": "/var/db/.AppleSetupDone is younger than the limit: freshly installed system.",
+      "params": {
+        "age.min_days": {
+          "default": 14,
+          "description": "Minimum days since setup marker modification."
+        }
+      }
+    },
+    {
+      "id": "macos.behavioural.install_history",
+      "technique": "wear_and_tear.system_age",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Install updates and apps over the image's life.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://support.apple.com/guide/deployment/manage-login-items-background-tasks-depdca572563/web",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html"
+      ],
+      "description": "Few entries in the install history (no updates or apps installed over time)."
+    },
+    {
+      "id": "macos.behavioural.known_wifi_networks",
+      "technique": "wear_and_tear.network_history",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Add a few remembered networks to the image.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://support.apple.com/guide/deployment/manage-login-items-background-tasks-depdca572563/web",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html"
+      ],
+      "description": "Wi-Fi hardware present but no remembered networks."
+    },
+    {
+      "id": "macos.behavioural.arp_cache",
+      "technique": "wear_and_tear.network_history",
+      "status": "implemented",
+      "reason": null,
+      "severity": "info",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Put a few other hosts (printer, NAS, router) on the analysis LAN.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://support.apple.com/guide/deployment/manage-login-items-background-tasks-depdca572563/web",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html"
+      ],
+      "description": "Fewer than two neighbours in the ARP cache."
+    },
+    {
+      "id": "macos.behavioural.bluetooth_paired",
+      "technique": "wear_and_tear.peripherals_history",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Age the golden image with real usage (documents, browsing, apps) before snapshotting.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://support.apple.com/guide/deployment/manage-login-items-background-tasks-depdca572563/web",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html"
+      ],
+      "description": "Bluetooth controller present but nothing ever paired."
+    },
+    {
+      "id": "macos.behavioural.printers",
+      "technique": "wear_and_tear.peripherals_history",
+      "status": "implemented",
+      "reason": null,
+      "severity": "info",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Add a printer queue to the image.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://support.apple.com/guide/deployment/manage-login-items-background-tasks-depdca572563/web",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html"
+      ],
+      "description": "No printer configured."
+    },
+    {
+      "id": "macos.behavioural.process_count",
+      "technique": "wear_and_tear.process_count",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Detonate in a full desktop session with everyday apps running.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://support.apple.com/guide/deployment/manage-login-items-background-tasks-depdca572563/web",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html"
+      ],
+      "description": "Fewer processes than an idle macOS desktop session runs.",
+      "params": {
+        "processes.min": {
+          "default": 150,
+          "description": "Minimum visible process count."
+        }
+      }
+    },
+    {
+      "id": "macos.design.sip_status",
+      "technique": "os_config.uac_sip",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "MAC_SIP"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Keep SIP enabled; use signed system extensions (Endpoint Security) rather than unsigned kexts for monitoring.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://support.apple.com/guide/security/protecting-against-malware-sec469d47bd8/web",
+        "https://evasions.checkpoint.com/src/MacOS/macos.html",
+        "https://github.com/NotRequiem/VMAware/blob/a3cc54f7da798819d305fd1415daf1b8cd140c70/src/vmaware.hpp"
+      ],
+      "description": "csrutil status reports SIP disabled or partly disabled (VMAware MAC_SIP, Check Point)."
+    },
+    {
+      "id": "macos.design.sip_dtrace",
+      "technique": "instrumentation.tracing_facilities",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Re-enable SIP fully; trace from outside the guest.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://objective-see.org/tools.html",
+        "https://github.com/frida/frida"
+      ],
+      "description": "SIP's DTrace restrictions are disabled, which is what dtrace-based tracing needs."
+    },
+    {
+      "id": "macos.design.authenticated_root",
+      "technique": "os_config.uac_sip",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Re-enable authenticated root.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://support.apple.com/guide/security/protecting-against-malware-sec469d47bd8/web",
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ],
+      "description": "csrutil authenticated-root is disabled (sealed system volume broken for modification)."
+    },
+    {
+      "id": "macos.design.gatekeeper",
+      "technique": "os_config.uac_sip",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Keep Gatekeeper enabled; open samples the way a user would (right-click Open).",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://support.apple.com/guide/security/protecting-against-malware-sec469d47bd8/web",
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ],
+      "description": "spctl --status reports assessments disabled."
+    },
+    {
+      "id": "macos.design.boot_args_debug",
+      "technique": "debugger.kernel_debugger",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Clear debug boot-args from NVRAM in the analysis image.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/qa/qa1361/_index.html",
+        "https://www.elastic.co/security-labs/threat-command/beyond-the-wail"
+      ],
+      "description": "kern.bootargs / nvram boot-args enable kernel debugging (debug=, kdp_match_name, development kernel)."
+    },
+    {
+      "id": "macos.design.boot_args_amfi",
+      "technique": "os_config.uac_sip",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Remove amfi/cs_enforcement boot-args.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://support.apple.com/guide/security/protecting-against-malware-sec469d47bd8/web",
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ],
+      "description": "Boot arguments that disable AMFI / code-signing enforcement."
+    },
+    {
+      "id": "macos.design.xprotect",
+      "technique": "os_config.security_software",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Keep XProtect and XProtect Remediator installed.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://support.apple.com/guide/security/protecting-against-malware-sec469d47bd8/web",
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ],
+      "description": "XProtect bundle missing (deleted or stripped image)."
+    },
+    {
+      "id": "macos.design.security_data_age",
+      "technique": "os_config.security_software",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Refresh the golden image's security data before each snapshot.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://support.apple.com/guide/security/protecting-against-malware-sec469d47bd8/web",
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ],
+      "description": "Last XProtect / Gatekeeper data update older than the limit (image frozen in time).",
+      "params": {
+        "updates.max_age_days": {
+          "default": 120,
+          "description": "Maximum age of the most recent recognized update record."
+        }
+      }
+    },
+    {
+      "id": "macos.design.software_update_disabled",
+      "technique": "os_config.activation_updates",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Leave automatic security updates on in the image (block the network instead).",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://support.apple.com/guide/security/protecting-against-malware-sec469d47bd8/web",
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ],
+      "description": "SoftwareUpdate AutomaticCheckEnabled / ConfigDataInstall / CriticalUpdateInstall set to 0."
+    },
+    {
+      "id": "macos.design.os_update_age",
+      "technique": "os_config.activation_updates",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Patch the golden image regularly.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://support.apple.com/guide/security/protecting-against-malware-sec469d47bd8/web",
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ],
+      "description": "Last macOS / Rapid Security Response install older than the limit.",
+      "params": {
+        "updates.max_age_days": {
+          "default": 120,
+          "description": "Maximum age of the most recent recognized update record."
+        }
+      }
+    },
+    {
+      "id": "macos.design.processes_debuggers",
+      "technique": "analysis_tools.processes",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Remove analysis tools from the detonation image; run them from the host or the hypervisor instead.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://objective-see.org/tools.html",
+        "https://github.com/frida/frida"
+      ],
+      "description": "Running processes of debuggers tools: lldb, debugserver, gdb, lldb-rpc-server, hopperv4, Hopper Disassembler v4..."
+    },
+    {
+      "id": "macos.design.processes_tracers",
+      "technique": "instrumentation.tracing_facilities",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Remove analysis tools from the detonation image; run them from the host or the hypervisor instead.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://objective-see.org/tools.html",
+        "https://github.com/frida/frida"
+      ],
+      "description": "Running processes of tracers tools: dtrace, dtruss, fs_usage, sc_usage, opensnoop, execsnoop..."
+    },
+    {
+      "id": "macos.design.processes_sniffers",
+      "technique": "analysis_tools.processes",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Remove analysis tools from the detonation image; run them from the host or the hypervisor instead.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://objective-see.org/tools.html",
+        "https://github.com/frida/frida"
+      ],
+      "description": "Running processes of sniffers tools: Wireshark, tshark, dumpcap, tcpdump, termshark..."
+    },
+    {
+      "id": "macos.design.processes_proxies",
+      "technique": "analysis_tools.processes",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Remove analysis tools from the detonation image; run them from the host or the hypervisor instead.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://objective-see.org/tools.html",
+        "https://github.com/frida/frida"
+      ],
+      "description": "Running processes of proxies tools: mitmproxy, mitmdump, mitmweb, Charles, Proxyman, Burp Suite..."
+    },
+    {
+      "id": "macos.design.processes_objective_see",
+      "technique": "analysis_tools.processes",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Remove analysis tools from the detonation image; run them from the host or the hypervisor instead.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://objective-see.org/tools.html",
+        "https://github.com/frida/frida"
+      ],
+      "description": "Running processes of objective see tools: LuLu, BlockBlock, BlockBlock Helper, KnockKnock, TaskExplorer, ProcessMonitor..."
+    },
+    {
+      "id": "macos.design.processes_firewalls",
+      "technique": "analysis_tools.processes",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Remove analysis tools from the detonation image; run them from the host or the hypervisor instead.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://objective-see.org/tools.html",
+        "https://github.com/frida/frida"
+      ],
+      "description": "Running processes of firewalls tools: Little Snitch, Little Snitch Agent, littlesnitch, Radio Silence, Vallum..."
+    },
+    {
+      "id": "macos.design.processes_disassemblers",
+      "technique": "analysis_tools.processes",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Remove analysis tools from the detonation image; run them from the host or the hypervisor instead.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://objective-see.org/tools.html",
+        "https://github.com/frida/frida"
+      ],
+      "description": "Running processes of disassemblers tools: ida, ida64, idat, idat64, ghidraRun, Ghidra..."
+    },
+    {
+      "id": "macos.design.processes_instrumentation",
+      "technique": "instrumentation.hooking_frameworks",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Remove analysis tools from the detonation image; run them from the host or the hypervisor instead.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://objective-see.org/tools.html",
+        "https://github.com/frida/frida"
+      ],
+      "description": "Running processes of instrumentation tools: frida-server, frida, frida-helper, frida-trace, objection..."
+    },
+    {
+      "id": "macos.design.processes_sandbox_agents",
+      "technique": "analysis_tools.processes",
+      "status": "implemented",
+      "reason": null,
+      "severity": "critical",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Remove analysis tools from the detonation image; run them from the host or the hypervisor instead.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://objective-see.org/tools.html",
+        "https://github.com/frida/frida"
+      ],
+      "description": "Running processes of sandbox agents tools: agent.py, /cuckoo, /cape, analyzer.py..."
+    },
+    {
+      "id": "macos.design.apps_disassemblers",
+      "technique": "analysis_tools.files",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Remove analysis tools from the detonation image; run them from the host or the hypervisor instead.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://objective-see.org/tools.html",
+        "https://github.com/frida/frida"
+      ],
+      "description": "Application bundles of disassemblers tools in /Applications or ~/Applications."
+    },
+    {
+      "id": "macos.design.apps_network",
+      "technique": "analysis_tools.files",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Remove analysis tools from the detonation image; run them from the host or the hypervisor instead.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://objective-see.org/tools.html",
+        "https://github.com/frida/frida"
+      ],
+      "description": "Application bundles of network tools in /Applications or ~/Applications."
+    },
+    {
+      "id": "macos.design.apps_objective_see",
+      "technique": "analysis_tools.files",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Remove analysis tools from the detonation image; run them from the host or the hypervisor instead.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://objective-see.org/tools.html",
+        "https://github.com/frida/frida"
+      ],
+      "description": "Application bundles of objective see tools in /Applications or ~/Applications."
+    },
+    {
+      "id": "macos.design.apps_firewalls",
+      "technique": "analysis_tools.files",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Remove analysis tools from the detonation image; run them from the host or the hypervisor instead.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://objective-see.org/tools.html",
+        "https://github.com/frida/frida"
+      ],
+      "description": "Application bundles of firewalls tools in /Applications or ~/Applications."
+    },
+    {
+      "id": "macos.design.apps_inspection",
+      "technique": "analysis_tools.files",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Remove analysis tools from the detonation image; run them from the host or the hypervisor instead.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://objective-see.org/tools.html",
+        "https://github.com/frida/frida"
+      ],
+      "description": "Application bundles of inspection tools in /Applications or ~/Applications."
+    },
+    {
+      "id": "macos.design.cli_tools",
+      "technique": "analysis_tools.files",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Remove analysis tools from the detonation image; run them from the host or the hypervisor instead.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://objective-see.org/tools.html",
+        "https://github.com/frida/frida"
+      ],
+      "description": "frida, objection, radare2, mitmproxy, class-dump... in Homebrew / MacPorts / user bin directories."
+    },
+    {
+      "id": "macos.design.system_extensions",
+      "technique": "analysis_tools.drivers_services",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Monitor from the hypervisor instead of in-guest extensions.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://objective-see.org/tools.html",
+        "https://github.com/frida/frida"
+      ],
+      "description": "Activated system extensions of monitoring tools (LuLu, Little Snitch, Objective-See ES clients)."
+    },
+    {
+      "id": "macos.design.dyld_environment",
+      "technique": "instrumentation.injected_libraries",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Do not inject monitoring libraries via DYLD variables.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://objective-see.org/tools.html",
+        "https://github.com/frida/frida"
+      ],
+      "description": "DYLD_INSERT_LIBRARIES (and related) set in the launchd or session environment."
+    },
+    {
+      "id": "macos.design.traced_processes",
+      "technique": "debugger.tracer",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Do not attach debuggers inside the guest.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/qa/qa1361/_index.html",
+        "https://www.elastic.co/security-labs/threat-command/beyond-the-wail"
+      ],
+      "description": "ps flags show processes with P_TRACED set: a debugger is attached (BANSHEE sysctl check, IOSSecuritySuite amIDebugged)."
+    },
+    {
+      "id": "macos.design.listening_ports",
+      "technique": "analysis_tools.listening_ports",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Stop in-guest agents; drive the guest from outside.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://objective-see.org/tools.html",
+        "https://github.com/frida/frida"
+      ],
+      "description": "Frida (27042) or Cuckoo/CAPE agent (8000) ports listening."
+    },
+    {
+      "id": "macos.design.mac_oui",
+      "technique": "network.mac_oui",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "network",
+        "effort": 3,
+        "how": "Set the VM MAC to an Apple OUI.",
+        "chimera": "CHIMERA INetSim and the isolated network may expose these signals. Keep interception outside the guest and validate DNS, proxy, routing and certificate state for the Apple target."
+      },
+      "references": [
+        "https://curl.se/docs/manpage.html",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ProxyChecker.swift"
+      ],
+      "description": "An interface MAC belongs to VMware, Parallels, VirtualBox, QEMU or Xen."
+    },
+    {
+      "id": "macos.design.mac_locally_administered",
+      "technique": "network.mac_oui",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "network",
+        "effort": 3,
+        "how": "Assign a fixed MAC with an Apple OUI to the VM's network device.",
+        "chimera": "CHIMERA INetSim and the isolated network may expose these signals. Keep interception outside the guest and validate DNS, proxy, routing and certificate state for the Apple target."
+      },
+      "references": [
+        "https://curl.se/docs/manpage.html",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ProxyChecker.swift"
+      ],
+      "description": "A wired interface uses a locally administered (random) MAC, as Virtualization.framework assigns by default."
+    },
+    {
+      "id": "macos.design.default_subnets",
+      "technique": "network.default_subnets",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "network",
+        "effort": 3,
+        "how": "Use an addressing plan that looks like a home or office LAN.",
+        "chimera": "CHIMERA INetSim and the isolated network may expose these signals. Keep interception outside the guest and validate DNS, proxy, routing and certificate state for the Apple target."
+      },
+      "references": [
+        "https://curl.se/docs/manpage.html",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ProxyChecker.swift"
+      ],
+      "description": "An interface address is in a hypervisor's default NAT range (Parallels 10.211.55/24, VZ 192.168.64/24...)."
+    },
+    {
+      "id": "macos.design.wifi_hardware",
+      "technique": "network.adapter_count",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "network",
+        "effort": 3,
+        "how": "Pass through a Wi-Fi adapter, or accept on bare-metal desktops with Wi-Fi removed.",
+        "chimera": "CHIMERA INetSim and the isolated network may expose these signals. Keep interception outside the guest and validate DNS, proxy, routing and certificate state for the Apple target."
+      },
+      "references": [
+        "https://curl.se/docs/manpage.html",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ProxyChecker.swift"
+      ],
+      "description": "No Wi-Fi hardware port: every current Mac has Wi-Fi."
+    },
+    {
+      "id": "macos.design.adapter_count",
+      "technique": "network.adapter_count",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "network",
+        "effort": 3,
+        "how": "Present both an Ethernet and a Wi-Fi interface.",
+        "chimera": "CHIMERA INetSim and the isolated network may expose these signals. Keep interception outside the guest and validate DNS, proxy, routing and certificate state for the Apple target."
+      },
+      "references": [
+        "https://curl.se/docs/manpage.html",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ProxyChecker.swift"
+      ],
+      "description": "Fewer than two physical (en*) interfaces."
+    },
+    {
+      "id": "macos.design.default_route",
+      "technique": "network.connectivity",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "network",
+        "effort": 3,
+        "how": "Give the analysis network a default route (to the simulated internet).",
+        "chimera": "CHIMERA INetSim and the isolated network may expose these signals. Keep interception outside the guest and validate DNS, proxy, routing and certificate state for the Apple target."
+      },
+      "references": [
+        "https://curl.se/docs/manpage.html",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ProxyChecker.swift"
+      ],
+      "description": "No default gateway: the machine is offline."
+    },
+    {
+      "id": "macos.design.dns_sinkhole",
+      "technique": "network.dns_sinkhole",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": true,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "network",
+        "effort": 3,
+        "how": "Return NXDOMAIN for names the simulated internet does not serve.",
+        "chimera": "CHIMERA INetSim and the isolated network may expose these signals. Keep interception outside the guest and validate DNS, proxy, routing and certificate state for the Apple target."
+      },
+      "references": [
+        "https://curl.se/docs/manpage.html",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ProxyChecker.swift"
+      ],
+      "description": "A random non-existent .com name resolves (fake DNS such as INetSim)."
+    },
+    {
+      "id": "macos.design.simulated_internet",
+      "technique": "network.simulated_internet",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": true,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "network",
+        "effort": 3,
+        "how": "Only answer HTTP for names that resolve.",
+        "chimera": "CHIMERA INetSim and the isolated network may expose these signals. Keep interception outside the guest and validate DNS, proxy, routing and certificate state for the Apple target."
+      },
+      "references": [
+        "https://curl.se/docs/manpage.html",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ProxyChecker.swift"
+      ],
+      "description": "A random non-existent host returns an HTTP response (simulated internet)."
+    },
+    {
+      "id": "macos.design.cloud_metadata",
+      "technique": "network.cloud_metadata",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": true,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "network",
+        "effort": 3,
+        "how": "Block the metadata address from the analysis guest (or require IMDSv2 tokens).",
+        "chimera": "CHIMERA INetSim and the isolated network may expose these signals. Keep interception outside the guest and validate DNS, proxy, routing and certificate state for the Apple target."
+      },
+      "references": [
+        "https://curl.se/docs/manpage.html",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ProxyChecker.swift"
+      ],
+      "description": "169.254.169.254 answers (EC2 Mac or another cloud host)."
+    },
+    {
+      "id": "macos.design.proxy_settings",
+      "technique": "network.proxy_mitm",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "network",
+        "effort": 3,
+        "how": "Intercept transparently at the network layer instead of a configured proxy.",
+        "chimera": "CHIMERA INetSim and the isolated network may expose these signals. Keep interception outside the guest and validate DNS, proxy, routing and certificate state for the Apple target."
+      },
+      "references": [
+        "https://curl.se/docs/manpage.html",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ProxyChecker.swift"
+      ],
+      "description": "scutil --proxy shows an HTTP/HTTPS/SOCKS proxy or PAC (IOSSecuritySuite amIProxied on Darwin)."
+    },
+    {
+      "id": "macos.design.mitm_certificates",
+      "technique": "network.proxy_mitm",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "network",
+        "effort": 3,
+        "how": "Remove interception CA certificates from the image.",
+        "chimera": "CHIMERA INetSim and the isolated network may expose these signals. Keep interception outside the guest and validate DNS, proxy, routing and certificate state for the Apple target."
+      },
+      "references": [
+        "https://curl.se/docs/manpage.html",
+        "https://github.com/securing/IOSSecuritySuite/blob/7436aea705a6c7ad6013edaaeaf051667cdd4beb/IOSSecuritySuite/ProxyChecker.swift"
+      ],
+      "description": "Keychains hold mitmproxy / Charles / Proxyman / PortSwigger / HTTP Toolkit / Fiddler roots."
+    },
+    {
+      "id": "macos.design.username",
+      "technique": "identity.username",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "evasions/generic-os-queries/check-if-username-is-specific"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Use a realistic first-name account in the image.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://www.elastic.co/security-labs/threat-command/beyond-the-wail",
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ],
+      "description": "User name is generic or a known VM/CI image default (admin, runner, ec2-user, vagrant...)."
+    },
+    {
+      "id": "macos.design.hostname",
+      "technique": "identity.hostname",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "evasions/generic-os-queries/check-if-host-name-is-specific"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Give the image a realistic host name (e.g. Annas-MacBook-Pro).",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://www.elastic.co/security-labs/threat-command/beyond-the-wail",
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ],
+      "description": "LocalHostName / HostName names a VM, sandbox or CI runner."
+    },
+    {
+      "id": "macos.design.computer_name",
+      "technique": "identity.hostname",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Rename the computer in System Settings > General > About.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://www.elastic.co/security-labs/threat-command/beyond-the-wail"
+      ],
+      "description": "ComputerName contains 'Virtual Machine' (the initial setup default in VZ guests) or a sandbox name."
+    },
+    {
+      "id": "macos.design.environment_variables",
+      "technique": "identity.environment_variables",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Start samples from a clean user session.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://www.elastic.co/security-labs/threat-command/beyond-the-wail"
+      ],
+      "description": "The session environment has CI or VM-image variables (CI, GITHUB_ACTIONS, CIRRUS_CI...)."
+    },
+    {
+      "id": "macos.design.cis_locale",
+      "technique": "identity.locale",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Use the language and keyboard of the target population in the analysis image.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://www.elastic.co/security-labs/threat-command/beyond-the-wail"
+      ],
+      "description": "Russian/CIS language or keyboard: stealers such as BANSHEE and AMOS exit on these."
+    },
+    {
+      "id": "macos.design.default_locale",
+      "technique": "identity.locale",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Configure locale, languages and keyboards like a real user.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://www.elastic.co/security-labs/threat-command/beyond-the-wail"
+      ],
+      "description": "Only en_US with a single keyboard layout: the untouched installer default."
+    },
+    {
+      "id": "macos.env.hw_model",
+      "technique": "emulator.macos_virtual_model",
+      "status": "implemented",
+      "reason": null,
+      "severity": "critical",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "HWMODEL"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Run macOS analysis on bare-metal Apple hardware, or patch the VM's platform identity (model, board-id, serial) to a real Mac's values.",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/src/MacOS/macos.html",
+        "https://github.com/NotRequiem/VMAware/blob/a3cc54f7da798819d305fd1415daf1b8cd140c70/src/vmaware.hpp"
+      ],
+      "description": "sysctl hw.model names a virtual Mac (VirtualMac2,1, VMware7,1, Parallels) or lacks 'Mac' (VMAware HWMODEL, MacRansom)."
+    },
+    {
+      "id": "macos.env.profiler_model",
+      "technique": "emulator.macos_virtual_model",
+      "status": "implemented",
+      "reason": null,
+      "severity": "critical",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "MAC_SYS"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Run macOS analysis on bare-metal Apple hardware, or patch the VM's platform identity (model, board-id, serial) to a real Mac's values.",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/src/MacOS/macos.html",
+        "https://github.com/NotRequiem/VMAware/blob/a3cc54f7da798819d305fd1415daf1b8cd140c70/src/vmaware.hpp"
+      ],
+      "description": "SPHardwareDataType Model Identifier / Model Name contains 'Virtual' (BANSHEE, VMAware MAC_SYS) or a hypervisor name."
+    },
+    {
+      "id": "macos.env.hv_vmm_present",
+      "technique": "container.virtualisation_report",
+      "status": "implemented",
+      "reason": null,
+      "severity": "critical",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "MAC_SIP"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Hide the VMM flag in the hypervisor (CPUID leaf 1 ECX[31] on Intel; not configurable in Virtualization.framework).",
+        "chimera": "CHIMERA cpuidmon -s and optional time acceleration cover Xen x86 guests. They do not mask Apple Silicon kernel reports or provide an iOS hypervisor; validate timing and kernel-visible identity separately."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/sysctl.8.html",
+        "https://github.com/NotRequiem/VMAware/blob/a3cc54f7da798819d305fd1415daf1b8cd140c70/src/vmaware.hpp"
+      ],
+      "description": "The kernel reports it runs under a hypervisor (VMAware MAC_SIP first test)."
+    },
+    {
+      "id": "macos.env.cpu_features_vmm",
+      "technique": "cpu.hypervisor_bit",
+      "status": "implemented",
+      "reason": null,
+      "severity": "critical",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "HYPERVISOR_BIT"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Mask CPUID leaf 1 ECX bit 31 in the hypervisor CPUID policy.",
+        "chimera": "CHIMERA cpuidmon -s and optional time acceleration cover Xen x86 guests. They do not mask Apple Silicon kernel reports or provide an iOS hypervisor; validate timing and kernel-visible identity separately."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/src/MacOS/macos.html",
+        "https://github.com/NotRequiem/VMAware/blob/a3cc54f7da798819d305fd1415daf1b8cd140c70/src/vmaware.hpp"
+      ],
+      "description": "Intel Macs list CPUID feature flags in machdep.cpu.features; 'VMM' is the hypervisor-present bit."
+    },
+    {
+      "id": "macos.env.cpu_brand",
+      "technique": "cpu.brand_string",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "CPU_BRAND"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Pass the host CPU model through to the guest.",
+        "chimera": "CHIMERA cpuidmon -s and optional time acceleration cover Xen x86 guests. They do not mask Apple Silicon kernel reports or provide an iOS hypervisor; validate timing and kernel-visible identity separately."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/src/MacOS/macos.html",
+        "https://github.com/NotRequiem/VMAware/blob/a3cc54f7da798819d305fd1415daf1b8cd140c70/src/vmaware.hpp"
+      ],
+      "description": "machdep.cpu.brand_string names a virtual CPU ('Apple M2 (Virtual)', QEMU, KVM)."
+    },
+    {
+      "id": "macos.env.hv_support",
+      "technique": "cpu.feature_consistency",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Enable nested virtualisation where the host supports it, or use bare metal.",
+        "chimera": "CHIMERA cpuidmon -s and optional time acceleration cover Xen x86 guests. They do not mask Apple Silicon kernel reports or provide an iOS hypervisor; validate timing and kernel-visible identity separately."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ],
+      "description": "kern.hv_support is 0 although the CPU supports virtualisation: guests normally cannot nest Hypervisor.framework."
+    },
+    {
+      "id": "macos.env.cpu_topology",
+      "technique": "cpu.topology_consistency",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Give the VM a topology matching the claimed model (threads per core, core types).",
+        "chimera": "CHIMERA cpuidmon -s and optional time acceleration cover Xen x86 guests. They do not mask Apple Silicon kernel reports or provide an iOS hypervisor; validate timing and kernel-visible identity separately."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ],
+      "description": "Apple Silicon reports two performance levels (P and E cores); hyper-threaded Intel Macs report logical = 2 x physical (Check Point)."
+    },
+    {
+      "id": "macos.env.cpu_count",
+      "technique": "resources.cpu_count",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "evasions/generic-os-queries/check-if-number-of-processors"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 2,
+        "how": "Assign at least 4 vCPUs (8 to match an M1).",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ],
+      "description": "Fewer logical CPUs than any current Mac (VMAware THREAD_COUNT).",
+      "params": {
+        "cpu.min": {
+          "default": 3,
+          "description": "Minimum logical CPUs; a scarcity heuristic."
+        }
+      }
+    },
+    {
+      "id": "macos.env.memsize",
+      "technique": "resources.memory_size",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "MAC_MEMSIZE"
+        ],
+        "checkpoint-evasions": [
+          "evasions/generic-os-queries/check-if-total-ram-is-low"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 2,
+        "how": "Assign at least 8 GB of memory to the VM.",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/src/MacOS/macos.html",
+        "https://github.com/NotRequiem/VMAware/blob/a3cc54f7da798819d305fd1415daf1b8cd140c70/src/vmaware.hpp"
+      ],
+      "description": "hw.memsize at or below 4 GB (VMAware MAC_MEMSIZE, Check Point memory size method).",
+      "params": {
+        "memory.min_bytes": {
+          "default": 4000000000,
+          "description": "Detect when physical RAM is at or below this limit."
+        }
+      }
+    },
+    {
+      "id": "macos.env.disk_size",
+      "technique": "resources.disk_size",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "evasions/generic-os-queries/check-if-hard-disk"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 2,
+        "how": "Give the VM disk at least 256 GB (thin-provisioned).",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ],
+      "description": "Boot volume smaller than the smallest Mac SSD.",
+      "params": {
+        "disk.min_gb": {
+          "default": 100,
+          "description": "Minimum root-volume size in decimal GB."
+        }
+      }
+    },
+    {
+      "id": "macos.env.display_resolution",
+      "technique": "resources.screen",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "evasions/generic-os-queries/check-if-screen-res"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 2,
+        "how": "Configure a Retina-class virtual display (e.g. 2560x1600).",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ],
+      "description": "Largest display below 1280x720: default VMware SVGA / QEMU framebuffer sizes."
+    },
+    {
+      "id": "macos.env.display_present",
+      "technique": "resources.screen",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "evasions/generic-os-queries/check-if-quantity-of-monitors"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 2,
+        "how": "Attach a virtual display or a dummy HDMI plug on bare metal.",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ],
+      "description": "No display reported at all (headless VM)."
+    },
+    {
+      "id": "macos.env.gpu_identity",
+      "technique": "hardware.gpu_identity",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Present real or passthrough devices, or rename the virtual device in the hypervisor configuration.",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/ioreg.8.html",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html"
+      ],
+      "description": "SPDisplaysDataType chipset is a paravirtual adapter ('Apple Paravirtual device', VMware SVGA, Parallels Display Adapter)."
+    },
+    {
+      "id": "macos.env.platform_serial",
+      "technique": "firmware.smbios_serials_uuid",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "MAC_IOKIT"
+        ]
+      },
+      "fix": {
+        "layer": "firmware",
+        "effort": 4,
+        "how": "Set a plausible Apple serial in the VM configuration (VMware serialNumber, UTM/VZ machine identifier).",
+        "chimera": "CHIMERA patched hvmloader firmware_override and SMBIOS OEM identity apply to Xen guests. Apple I/O Registry and Virtualization.framework identity require their own platform configuration."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/src/MacOS/macos.html",
+        "https://github.com/NotRequiem/VMAware/blob/a3cc54f7da798819d305fd1415daf1b8cd140c70/src/vmaware.hpp"
+      ],
+      "description": "IOPlatformSerialNumber is '0', empty, vendor-named, malformed, or on the AMOS sandbox serial list."
+    },
+    {
+      "id": "macos.env.platform_uuid",
+      "technique": "firmware.smbios_serials_uuid",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "firmware",
+        "effort": 4,
+        "how": "Generate a random RFC 4122 UUID for the VM (VMware uuid.bios, VZ machine identifier).",
+        "chimera": "CHIMERA patched hvmloader firmware_override and SMBIOS OEM identity apply to Xen guests. Apple I/O Registry and Virtualization.framework identity require their own platform configuration."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ],
+      "description": "IOPlatformUUID all-zero or with the VMware 564D prefix."
+    },
+    {
+      "id": "macos.env.board_id",
+      "technique": "firmware.smbios_strings",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "MAC_IOKIT"
+        ]
+      },
+      "fix": {
+        "layer": "firmware",
+        "effort": 4,
+        "how": "Run macOS analysis on bare-metal Apple hardware, or patch the VM's platform identity (model, board-id, serial) to a real Mac's values.",
+        "chimera": "CHIMERA patched hvmloader firmware_override and SMBIOS OEM identity apply to Xen guests. Apple I/O Registry and Virtualization.framework identity require their own platform configuration."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/src/MacOS/macos.html",
+        "https://github.com/NotRequiem/VMAware/blob/a3cc54f7da798819d305fd1415daf1b8cd140c70/src/vmaware.hpp"
+      ],
+      "description": "board-id, target-type or compatible names a hypervisor (VirtualBox, VMware, VMA2MACOS, AppleVirtualPlatform) (VMAware MAC_IOKIT)."
+    },
+    {
+      "id": "macos.env.platform_manufacturer",
+      "technique": "firmware.smbios_strings",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "MAC_IOKIT"
+        ]
+      },
+      "fix": {
+        "layer": "firmware",
+        "effort": 4,
+        "how": "Run macOS analysis on bare-metal Apple hardware, or patch the VM's platform identity (model, board-id, serial) to a real Mac's values.",
+        "chimera": "CHIMERA patched hvmloader firmware_override and SMBIOS OEM identity apply to Xen guests. Apple I/O Registry and Virtualization.framework identity require their own platform configuration."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/src/MacOS/macos.html",
+        "https://github.com/NotRequiem/VMAware/blob/a3cc54f7da798819d305fd1415daf1b8cd140c70/src/vmaware.hpp"
+      ],
+      "description": "IOPlatformExpertDevice manufacturer is not Apple (VMAware MAC_IOKIT: innotek GmbH)."
+    },
+    {
+      "id": "macos.env.boot_rom_version",
+      "technique": "firmware.smbios_strings",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "IOREG_GREP"
+        ]
+      },
+      "fix": {
+        "layer": "firmware",
+        "effort": 4,
+        "how": "Use firmware that reports an Apple Boot ROM version, or bare metal.",
+        "chimera": "CHIMERA patched hvmloader firmware_override and SMBIOS OEM identity apply to Xen guests. Apple I/O Registry and Virtualization.framework identity require their own platform configuration."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/src/MacOS/macos.html",
+        "https://github.com/NotRequiem/VMAware/blob/a3cc54f7da798819d305fd1415daf1b8cd140c70/src/vmaware.hpp"
+      ],
+      "description": "SPHardwareDataType Boot ROM Version names a hypervisor firmware (Check Point; OceanLotus)."
+    },
+    {
+      "id": "macos.env.ioreg_hypervisor_strings",
+      "technique": "emulator.macos_virtual_model",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Present real or passthrough devices, or rename the virtual device in the hypervisor configuration.",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ],
+      "description": "ioreg -l contains hypervisor or paravirtual device names (Check Point ioreg -l grep)."
+    },
+    {
+      "id": "macos.env.device_tree_virtual",
+      "technique": "emulator.macos_virtual_model",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "MAC_IOKIT"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Run macOS analysis on bare-metal Apple hardware, or patch the VM's platform identity (model, board-id, serial) to a real Mac's values.",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/src/MacOS/macos.html",
+        "https://github.com/NotRequiem/VMAware/blob/a3cc54f7da798819d305fd1415daf1b8cd140c70/src/vmaware.hpp"
+      ],
+      "description": "IODeviceTree contains 'Virtual Machine' (VMAware MAC_IOKIT keyboard test) or the VZ platform names."
+    },
+    {
+      "id": "macos.env.memory_module_vendor",
+      "technique": "hardware.memory_modules",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Report a real DRAM vendor in the VM's SMBIOS type 17 strings.",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/ioreg.8.html",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html"
+      ],
+      "description": "SPMemoryDataType names QEMU, VMware or KVM (AMOS anti-VM AppleScript)."
+    },
+    {
+      "id": "macos.env.secure_enclave",
+      "technique": "firmware.boot_mode",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "firmware",
+        "effort": 4,
+        "how": "Accept as a residual Virtualization.framework gap or use bare metal.",
+        "chimera": "CHIMERA patched hvmloader firmware_override and SMBIOS OEM identity apply to Xen guests. Apple I/O Registry and Virtualization.framework identity require their own platform configuration."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ],
+      "description": "Apple Silicon without an AppleSEPManager: no Secure Enclave, unlike every Apple Silicon Mac."
+    },
+    {
+      "id": "macos.env.usb_vendor_names",
+      "technique": "hardware.usb_devices",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "IOREG_GREP"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Present real or passthrough devices, or rename the virtual device in the hypervisor configuration.",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/ioreg.8.html",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html",
+        "https://github.com/NotRequiem/VMAware/blob/a3cc54f7da798819d305fd1415daf1b8cd140c70/src/vmaware.hpp"
+      ],
+      "description": "IOUSBHostDevice 'USB Vendor Name' names a hypervisor (Check Point, VMAware IOREG_GREP)."
+    },
+    {
+      "id": "macos.env.usb_devices",
+      "technique": "hardware.usb_devices",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Pass through or emulate ordinary USB peripherals.",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/ioreg.8.html",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html"
+      ],
+      "description": "No USB devices at all, or virtual ones, in system_profiler."
+    },
+    {
+      "id": "macos.env.storage_identity",
+      "technique": "hardware.disk_identity",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Present real or passthrough devices, or rename the virtual device in the hypervisor configuration.",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/ioreg.8.html",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html"
+      ],
+      "description": "Boot drive model names a virtual disk (virtio, VMware Virtual, QEMU HARDDISK, VBOX)."
+    },
+    {
+      "id": "macos.env.nic_identity",
+      "technique": "hardware.nic_identity",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Present real or passthrough devices, or rename the virtual device in the hypervisor configuration.",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/ioreg.8.html",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html"
+      ],
+      "description": "Ethernet controller is a virtio / vmxnet / Parallels adapter."
+    },
+    {
+      "id": "macos.env.audio_devices",
+      "technique": "hardware.audio_devices",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "evasions/hardware/check-if-audio-device-is-absent"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Attach a virtual sound device with a realistic name.",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/ioreg.8.html",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html",
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ],
+      "description": "No audio device, or a virtual one."
+    },
+    {
+      "id": "macos.env.thermal_sensors",
+      "technique": "hardware.thermal_sensors",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "evasions/hardware/check-if-cpu-temperature-information-is-available"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Not configurable in common hypervisors; use bare metal or accept the residual risk.",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/ioreg.8.html",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html",
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ],
+      "description": "No Apple temperature sensors (Apple Silicon HID usage 0xff00/5) or no SMC (Intel)."
+    },
+    {
+      "id": "macos.env.battery",
+      "technique": "hardware.battery_power",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Do not claim a laptop model in a VM, or emulate a battery.",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/ioreg.8.html",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html"
+      ],
+      "description": "A MacBook model without a battery (AppleSmartBattery)."
+    },
+    {
+      "id": "macos.env.bluetooth_controller",
+      "technique": "mobile_device.radios",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "host-hardware",
+        "effort": 4,
+        "how": "Pass through a USB Bluetooth adapter or use bare metal.",
+        "chimera": "CHIMERA hidsim supplies mouse/keyboard input, not iOS sensors or cellular hardware. Use an appropriate physical Apple device for capabilities the virtual target cannot reproduce."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/ioreg.8.html",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html"
+      ],
+      "description": "No Bluetooth controller: every Mac since 2011 has one."
+    },
+    {
+      "id": "macos.env.camera",
+      "technique": "mobile_device.camera",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "host-hardware",
+        "effort": 4,
+        "how": "Pass through a USB camera, or do not claim a model with a built-in camera.",
+        "chimera": "CHIMERA hidsim supplies mouse/keyboard input, not iOS sensors or cellular hardware. Use an appropriate physical Apple device for capabilities the virtual target cannot reproduce."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/ioreg.8.html",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html"
+      ],
+      "description": "A MacBook / iMac model without a camera, or a virtual camera."
+    },
+    {
+      "id": "macos.env.cpu_cache",
+      "technique": "hardware.cpu_cache_clock",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Expose the host cache topology to the guest.",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/ioreg.8.html",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html"
+      ],
+      "description": "hw.l2cachesize or hw.cachelinesize is zero or missing."
+    },
+    {
+      "id": "macos.env.kext_vmware",
+      "technique": "guest_tools.drivers_modules",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Uninstall VMware Tools from the analysis image.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://docs.getutm.app/guest-support/macos/",
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/ioreg.8.html"
+      ],
+      "description": "Loaded com.vmware.kext.* drivers (VMware Tools)."
+    },
+    {
+      "id": "macos.env.kext_parallels",
+      "technique": "guest_tools.drivers_modules",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Uninstall Parallels Tools from the analysis image.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://docs.getutm.app/guest-support/macos/",
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/ioreg.8.html"
+      ],
+      "description": "Loaded com.parallels.* drivers (Parallels Tools)."
+    },
+    {
+      "id": "macos.env.kext_virtualbox",
+      "technique": "guest_tools.drivers_modules",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Uninstall the VirtualBox Guest Additions.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://docs.getutm.app/guest-support/macos/",
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/ioreg.8.html"
+      ],
+      "description": "Loaded org.virtualbox.kext.* drivers (Guest Additions)."
+    },
+    {
+      "id": "macos.env.kext_apple_virtualization",
+      "technique": "guest_tools.drivers_modules",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Unavoidable in a Virtualization.framework guest; use bare metal for evasive samples.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://docs.getutm.app/guest-support/macos/",
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/ioreg.8.html"
+      ],
+      "description": "AppleVirtIO / AppleParavirtGPU / AppleVirtualPlatform kexts are loaded (they only load inside VZ guests)."
+    },
+    {
+      "id": "macos.env.guest_tools_processes",
+      "technique": "guest_tools.processes",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Remove guest tools from the analysis image.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://docs.getutm.app/guest-support/macos/",
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/ioreg.8.html"
+      ],
+      "description": "vmware-tools-daemon, prl_tools_service, VBoxService, spice-vdagent or qemu-ga running."
+    },
+    {
+      "id": "macos.env.guest_tools_launchd",
+      "technique": "guest_tools.services",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Remove guest tools and their launchd plists.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://docs.getutm.app/guest-support/macos/",
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/ioreg.8.html"
+      ],
+      "description": "launchctl list shows VMware / Parallels / VirtualBox / SPICE / QEMU jobs."
+    },
+    {
+      "id": "macos.env.guest_tools_files",
+      "technique": "artifacts.files",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Delete the leftover guest-tool files from the image.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/sysctl.8.html"
+      ],
+      "description": "LaunchDaemons, LaunchAgents, Application Support, Extensions or Applications entries of hypervisor tools."
+    },
+    {
+      "id": "macos.env.rosetta_cpu_brand",
+      "technique": "cpu.brand_string",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "None on Apple Silicon; analyse x86_64-only samples on Intel hardware if they key on it.",
+        "chimera": "CHIMERA cpuidmon -s and optional time acceleration cover Xen x86 guests. They do not mask Apple Silicon kernel reports or provide an iOS hypervisor; validate timing and kernel-visible identity separately."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ],
+      "description": "Under Rosetta 2, x86_64 code reads the CPU brand 'VirtualApple @ 2.50GHz processor'."
+    },
+    {
+      "id": "macos.design.mrt_version",
+      "technique": "os_config.security_software",
+      "status": "implemented",
+      "reason": null,
+      "severity": "info",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Maintain the supported XProtect components through Software Update.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://support.apple.com/guide/security/protecting-against-malware-sec469d47bd8/web",
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ],
+      "description": "MRT or successor XProtect version inventory; no external update lookup."
+    },
+    {
+      "id": "macos.env.power_identity",
+      "technique": "hardware.battery_power",
+      "status": "implemented",
+      "reason": null,
+      "severity": "medium",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Use power devices consistent with the advertised Mac hardware.",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/ioreg.8.html",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html"
+      ],
+      "description": "Power profile explicitly names virtual hardware."
+    },
+    {
+      "id": "macos.env.network_profile",
+      "technique": "hardware.nic_identity",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "vm-config",
+        "effort": 4,
+        "how": "Use physical adapter passthrough or coherent device identities.",
+        "chimera": "CHIMERA phantom-device removal does not provide Apple peripherals. Configure the Apple VM devices and resources consistently with its advertised hardware."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/ioreg.8.html",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html"
+      ],
+      "description": "Network hardware profile explicitly names a virtual adapter."
+    },
+    {
+      "id": "macos.behavioural.login_items",
+      "technique": "wear_and_tear.usage_traces",
+      "status": "implemented",
+      "reason": null,
+      "severity": "info",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Install and use ordinary applications with their usual background components.",
+        "chimera": "CHIMERA Windows/Debian image hardening does not configure Apple images. Apply this setting to the Apple guest or device and preserve it in the baseline snapshot."
+      },
+      "references": [
+        "https://support.apple.com/guide/deployment/manage-login-items-background-tasks-depdca572563/web",
+        "https://keith.github.io/xcode-man-pages/system_profiler.8.html"
+      ],
+      "description": "Counts background task records without collecting task names."
+    },
+    {
+      "id": "macos.timing.uptime",
+      "technique": "timing.uptime",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "evasions/generic-os-queries/check-if-system-uptime"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Boot the VM and let it idle before detonation, or restore a snapshot taken hours after boot.",
+        "chimera": "CHIMERA cpuidmon -s and optional time acceleration cover Xen x86 guests. They do not mask Apple Silicon kernel reports or provide an iOS hypervisor; validate timing and kernel-visible identity separately."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/sysctl.8.html",
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ],
+      "description": "Booted less than 12 minutes before the scan (Pafish gensandbox_uptime threshold).",
+      "params": {
+        "uptime.min_seconds": {
+          "default": 720,
+          "description": "Minimum elapsed seconds since boot."
+        }
+      }
+    },
+    {
+      "id": "macos.timing.time_zone",
+      "technique": "timing.time_plausibility",
+      "status": "implemented",
+      "reason": null,
+      "severity": "low",
+      "cost": "medium",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Set the image's time zone to the region the target population lives in.",
+        "chimera": "CHIMERA cpuidmon -s and optional time acceleration cover Xen x86 guests. They do not mask Apple Silicon kernel reports or provide an iOS hypervisor; validate timing and kernel-visible identity separately."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/sysctl.8.html",
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ],
+      "description": "Time zone is UTC/GMT, the default of freshly built images."
+    },
+    {
+      "id": "macos.timing.sleep_acceleration",
+      "technique": "timing.sleep_acceleration",
+      "status": "implemented",
+      "reason": null,
+      "severity": "high",
+      "cost": "slow",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "evasions/timing/sleep-skipping-detection"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Keep guest wall-clock and monotonic time consistent when skipping sleeps.",
+        "chimera": "CHIMERA cpuidmon -s and optional time acceleration cover Xen x86 guests. They do not mask Apple Silicon kernel reports or provide an iOS hypervisor; validate timing and kernel-visible identity separately."
+      },
+      "references": [
+        "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/sysctl.8.html",
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ],
+      "description": "The target's clock advances faster or slower than the driver's clock across a sleep.",
+      "params": {
+        "timing.sleep_seconds": {
+          "default": 3.0,
+          "description": "Requested sleep; finite and between 1 and 30 seconds."
+        }
+      }
+    }
+  ]
+}

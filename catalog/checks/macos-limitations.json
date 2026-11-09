@@ -1,0 +1,81 @@
+{
+  "catalog_format": 2,
+  "platform": "macos",
+  "source": "Driver visibility and read-only safety limits",
+  "checks": [
+    {
+      "id": "macos.env.raw_cpuid",
+      "technique": "cpu.hypervisor_vendor_leaf",
+      "status": "not_feasible",
+      "reason": "Raw CPUID leaves require executing native code; the standard-command driver deliberately installs no helper. machdep.cpu features and brand remain available.",
+      "severity": "info",
+      "cost": "slow",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "VMID",
+          "HYPERVISOR_STR",
+          "CPUID_SIGNATURE",
+          "KGT_SIGNATURE"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 5,
+        "how": "Validate this condition separately in an explicitly scoped, instrumented application or native test harness.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://github.com/NotRequiem/VMAware/blob/a3cc54f7da798819d305fd1415daf1b8cd140c70/src/vmaware.hpp",
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ]
+    },
+    {
+      "id": "macos.timing.vmexit_cycles",
+      "technique": "timing.cpuid_vmexit",
+      "status": "not_feasible",
+      "reason": "Cycle-accurate VM-exit timing requires a guarded native instruction probe. SSH latency and wall-clock sleep cannot substitute for it.",
+      "severity": "info",
+      "cost": "slow",
+      "network": false,
+      "requires": [],
+      "equivalents": {
+        "vmaware": [
+          "TIMER"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 5,
+        "how": "Validate this condition separately in an explicitly scoped, instrumented application or native test harness.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://github.com/NotRequiem/VMAware/blob/a3cc54f7da798819d305fd1415daf1b8cd140c70/src/vmaware.hpp",
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ]
+    },
+    {
+      "id": "macos.env.fan_rpm",
+      "technique": "hardware.thermal_sensors",
+      "status": "not_feasible",
+      "reason": "Standard macOS commands do not expose a stable portable fan-RPM interface. Fanless Macs are legitimate; the thermal checks observe HID temperature service or SMC presence.",
+      "severity": "info",
+      "cost": "slow",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 5,
+        "how": "Validate this condition separately in an explicitly scoped, instrumented application or native test harness.",
+        "chimera": "CHIMERA uses agentless Xen+DRAKVUF observation. On an Apple target, keep tracing and debugging outside the observed process where the platform supports it; these drivers do not add a guest component."
+      },
+      "references": [
+        "https://github.com/NotRequiem/VMAware/blob/a3cc54f7da798819d305fd1415daf1b8cd140c70/src/vmaware.hpp",
+        "https://evasions.checkpoint.com/src/MacOS/macos.html"
+      ]
+    }
+  ]
+}

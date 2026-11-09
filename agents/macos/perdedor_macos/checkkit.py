@@ -13,9 +13,9 @@ An unreachable target always yields ``error``, never ``clean``.
 
 from __future__ import annotations
 
+import time
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
-import time
 from typing import Any
 
 from perdedor_common import FindingFactory
@@ -25,6 +25,10 @@ from perdedor_common.registry import CLASS_CATEGORY, CheckSpec, RunContext, spec
 from . import parsing
 from .target import Target
 from .transport import join_paths
+
+# Runtime budgets reserve headroom below the DESIGN-V2 10/120-second cost limits.
+MEDIUM_BUDGET_SECONDS = 9
+SLOW_BUDGET_SECONDS = 100
 
 UNREACHABLE = "target unreachable: ssh/simctl failed or the command timed out"
 
@@ -102,7 +106,9 @@ def build(
         target = ctx.target
         if target is None:
             return to_finding(platform, meta, Fail("no target configured"))
-        target.deadline = time.monotonic() + (100 if cost == "slow" else 9)
+        target.deadline = time.monotonic() + (
+            SLOW_BUDGET_SECONDS if cost == "slow" else MEDIUM_BUDGET_SECONDS
+        )
         if not target.reachable():
             return to_finding(platform, meta, Fail(UNREACHABLE))
         target.transport.deadline = target.deadline

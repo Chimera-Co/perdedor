@@ -27,8 +27,13 @@ def add_target_arguments(parser: argparse.ArgumentParser) -> None:
     group.add_argument("--ssh", metavar="USER@HOST", help="probe a remote target over ssh (key auth only)")
     parser.add_argument("-i", "--identity", help="ssh private key")
     parser.add_argument("-p", "--port", type=int, help="ssh port")
-    parser.add_argument("--ssh-option", action="append", default=[], metavar="OPT",
-                        help="extra ssh -o option (repeatable), e.g. StrictHostKeyChecking=accept-new")
+    parser.add_argument(
+        "--ssh-option",
+        action="append",
+        default=[],
+        metavar="OPT",
+        help="extra ssh -o option (repeatable), e.g. StrictHostKeyChecking=accept-new",
+    )
 
 
 def make_transport(args):
@@ -65,8 +70,9 @@ def main(argv: list[str] | None = None) -> int:
     except ValueError as exc:
         parser.error(str(exc))
     if args.list_checks:
-        chosen = select(all_checks(), profile=args.profile, only=args.only, skip=args.skip,
-                        network=not args.no_network)
+        chosen = select(
+            all_checks(), profile=args.profile, only=args.only, skip=args.skip, network=not args.no_network
+        )
         print(json.dumps(list_doc(chosen), indent=2))
         return 0
     if not args.local and not args.ssh:
@@ -74,8 +80,14 @@ def main(argv: list[str] | None = None) -> int:
     target = Target(make_transport(args), platform="macos")
     if not target.reachable():
         print("warning: target unreachable -- every check will report as errored", file=sys.stderr)
-    report = run_scan(target, profile=args.profile, only=args.only, skip=args.skip, params=params,
-                      network=not args.no_network).to_dict()
+    report = run_scan(
+        target,
+        profile=args.profile,
+        only=args.only,
+        skip=args.skip,
+        params=params,
+        network=not args.no_network,
+    ).to_dict()
     emit(report, args.output, "macos")
     return 0
 

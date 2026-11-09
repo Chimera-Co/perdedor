@@ -1,0 +1,269 @@
+{
+  "provenance": {
+    "kind": "representative-command-transcript",
+    "capture": "Reconstructed and sanitized from documented output formats; not captured from hardware in this environment.",
+    "sources": [
+      "https://evasions.checkpoint.com/src/MacOS/macos.html",
+      "https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/sysctl.8.html",
+      "https://support.corellium.com/devices/ios"
+    ]
+  },
+  "transport": {
+    "mode": "ssh"
+  },
+  "commands": {
+    "echo": "perdedor-ok\n",
+    "sysctl": "hw.machine: iPhone14,5\nhw.model: D17AP\nhw.memsize: 4294967296\nhw.ncpu: 6\nkern.osproductversion: 16.5\nkern.osversion: 20F66\nkern.version: Darwin Kernel Version 22.5.0 RELEASE_ARM64_T8110\nkern.hostname: Juniper-phone\nkern.hv_vmm_present: 0\nkern.boottime: { sec = 1730000000, usec = 0 }\nsecurity.mac.amfi.developer_mode_status: 0\n",
+    "date_epoch": "1731000000",
+    "uname_a": "Darwin Juniper-phone 22.5.0 RELEASE_ARM64_T8110\n",
+    "env": "PATH=/usr/bin:/bin:/var/jb/usr/bin\n",
+    "ps": "1 0 4000 /sbin/launchd\n80 1 4000 /System/Library/CoreServices/SpringBoard.app/SpringBoard\n90 1 4000 /var/jb/usr/sbin/sshd\n",
+    "launchctl_list": "PID Status Label\n10 0 com.apple.CommCenter\n11 0 com.apple.wifid\n12 0 com.apple.bluetoothd\n13 0 com.apple.motiontrackingd\n",
+    "mount": "/dev/disk0s1s1 on / (apfs, local, read-only, journaled)\n",
+    "ifconfig": "en0: flags=8863<UP,BROADCAST,RUNNING> mtu 1500\n\tether a4:83:e7:12:34:56\n\tinet 192.168.1.10 netmask 0xffffff00 broadcast 192.168.1.255\n",
+    "netstat_listen": "tcp4 0 0 *.22 *.* LISTEN\n",
+    "lsof_springboard": "p80\nn/usr/lib/libSystem.B.dylib\nn/var/jb/usr/lib/libellekit.dylib\n",
+    "ioreg_baseband": "+-o IORegistryEntry\n +-o AppleBaseband\n",
+    "plist:/System/Library/CoreServices/SystemVersion.plist": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n\t<key>ProductVersion</key>\n\t<string>16.5</string>\n</dict>\n</plist>\n",
+    "plist:/private/var/preferences/SystemConfiguration/preferences.plist": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n\t<key>NetworkServices</key>\n\t<dict>\n\t\t<key>example</key>\n\t\t<dict>\n\t\t\t<key>Proxies</key>\n\t\t\t<dict>\n\t\t\t\t<key>HTTPEnable</key>\n\t\t\t\t<integer>0</integer>\n\t\t\t\t<key>HTTPSEnable</key>\n\t\t\t\t<integer>0</integer>\n\t\t\t</dict>\n\t\t</dict>\n\t</dict>\n</dict>\n</plist>\n",
+    "plist:/var/mobile/Library/Preferences/.GlobalPreferences.plist": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n\t<key>AppleLanguages</key>\n\t<array>\n\t\t<string>en-IN</string>\n\t</array>\n\t<key>LDMGlobalEnabled</key>\n\t<false/>\n</dict>\n</plist>\n",
+    "info_plists": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n\t<key>CFBundleURLTypes</key>\n\t<array>\n\t\t<dict>\n\t\t\t<key>CFBundleURLSchemes</key>\n\t\t\t<array>\n\t\t\t\t<string>sileo</string>\n\t\t\t</array>\n\t\t</dict>\n\t</array>\n</dict>\n</plist>\n",
+    "curl_dns": "000  rc=6\n",
+    "curl_http": "000  rc=6\n",
+    "getenv_DYLD_INSERT_LIBRARIES": "",
+    "getenv_DYLD_LIBRARY_PATH": "",
+    "getenv_DYLD_FRAMEWORK_PATH": "",
+    "count:/var/mobile/Library/AddressBook/AddressBook.sqlitedb:ABPerson": "42\n",
+    "count:/var/mobile/Library/SMS/sms.db:message": "42\n",
+    "count:/var/mobile/Library/CallHistoryDB/CallHistory.storedata:ZCALLRECORD": "42\n",
+    "count:/var/mobile/Library/Accounts/Accounts3.sqlite:ZACCOUNT": "42\n",
+    "count:/var/mobile/Library/Safari/History.db:history_items": "42\n",
+    "count:/private/var/protected/trustd/private/TrustStore.sqlite3:tsettings": "0\n"
+  },
+  "fs": {
+    "/var/jb": {
+      "kind": "link",
+      "target": "/private/preboot/EXAMPLE/jb"
+    },
+    "/var/jb/usr/bin": {
+      "kind": "dir",
+      "entries": [
+        "sh"
+      ]
+    },
+    "/var/jb/usr/lib/libellekit.dylib": {
+      "kind": "file"
+    },
+    "/var/jb/Library/LaunchDaemons": {
+      "kind": "dir",
+      "entries": []
+    },
+    "/var/jb/etc/rc.d": {
+      "kind": "dir",
+      "entries": []
+    },
+    "/var": {
+      "kind": "dir",
+      "entries": [
+        "mobile",
+        "jb",
+        "containers"
+      ]
+    },
+    "/Applications": {
+      "kind": "dir",
+      "entries": []
+    },
+    "/var/jb/Applications": {
+      "kind": "dir",
+      "entries": [
+        "Sileo.app"
+      ]
+    },
+    "/var/containers/Bundle/Application": {
+      "kind": "dir",
+      "entries": [
+        "container0",
+        "container1",
+        "container2",
+        "container3",
+        "container4",
+        "container5",
+        "container6",
+        "container7",
+        "container8",
+        "container9",
+        "container10",
+        "container11"
+      ]
+    },
+    "/var/mobile/Library": {
+      "kind": "dir",
+      "entries": [
+        "Safari",
+        "Keyboard"
+      ],
+      "mtime": 1715448000
+    },
+    "/var/mobile/Media/DCIM": {
+      "kind": "dir",
+      "entries": [
+        "100APPLE"
+      ]
+    },
+    "/var/mobile/Media/DCIM/100APPLE": {
+      "kind": "dir",
+      "entries": [
+        "photo0.HEIC",
+        "photo1.HEIC",
+        "photo2.HEIC",
+        "photo3.HEIC",
+        "photo4.HEIC",
+        "photo5.HEIC",
+        "photo6.HEIC",
+        "photo7.HEIC",
+        "photo8.HEIC",
+        "photo9.HEIC",
+        "photo10.HEIC",
+        "photo11.HEIC",
+        "photo12.HEIC",
+        "photo13.HEIC",
+        "photo14.HEIC",
+        "photo15.HEIC",
+        "photo16.HEIC",
+        "photo17.HEIC",
+        "photo18.HEIC",
+        "photo19.HEIC",
+        "photo20.HEIC",
+        "photo21.HEIC",
+        "photo22.HEIC",
+        "photo23.HEIC",
+        "photo24.HEIC",
+        "photo25.HEIC",
+        "photo26.HEIC",
+        "photo27.HEIC",
+        "photo28.HEIC",
+        "photo29.HEIC",
+        "photo30.HEIC",
+        "photo31.HEIC",
+        "photo32.HEIC",
+        "photo33.HEIC",
+        "photo34.HEIC"
+      ]
+    },
+    "/var/mobile/Media": {
+      "kind": "dir",
+      "entries": [
+        "DCIM",
+        "Downloads",
+        "Recordings"
+      ]
+    },
+    "/var/mobile/Media/Downloads": {
+      "kind": "dir",
+      "entries": [
+        "item"
+      ]
+    },
+    "/var/mobile/Media/Recordings": {
+      "kind": "dir",
+      "entries": [
+        "item"
+      ]
+    },
+    "/var/mobile/Library/Keyboard": {
+      "kind": "dir",
+      "entries": [
+        "dynamic-text.dat"
+      ]
+    },
+    "/etc/localtime": {
+      "kind": "link",
+      "target": "/var/db/timezone/zoneinfo/Asia/Kolkata"
+    },
+    "/var/containers/Bundle/Application/container0": {
+      "kind": "dir",
+      "entries": [
+        "Example.app",
+        "iTunesMetadata.plist"
+      ]
+    },
+    "/var/containers/Bundle/Application/container1": {
+      "kind": "dir",
+      "entries": [
+        "Example.app",
+        "iTunesMetadata.plist"
+      ]
+    },
+    "/var/containers/Bundle/Application/container2": {
+      "kind": "dir",
+      "entries": [
+        "Example.app",
+        "iTunesMetadata.plist"
+      ]
+    },
+    "/var/containers/Bundle/Application/container3": {
+      "kind": "dir",
+      "entries": [
+        "Example.app",
+        "iTunesMetadata.plist"
+      ]
+    },
+    "/var/containers/Bundle/Application/container4": {
+      "kind": "dir",
+      "entries": [
+        "Example.app",
+        "iTunesMetadata.plist"
+      ]
+    },
+    "/var/containers/Bundle/Application/container5": {
+      "kind": "dir",
+      "entries": [
+        "Example.app",
+        "iTunesMetadata.plist"
+      ]
+    },
+    "/var/containers/Bundle/Application/container6": {
+      "kind": "dir",
+      "entries": [
+        "Example.app",
+        "iTunesMetadata.plist"
+      ]
+    },
+    "/var/containers/Bundle/Application/container7": {
+      "kind": "dir",
+      "entries": [
+        "Example.app",
+        "iTunesMetadata.plist"
+      ]
+    },
+    "/var/containers/Bundle/Application/container8": {
+      "kind": "dir",
+      "entries": [
+        "Example.app",
+        "iTunesMetadata.plist"
+      ]
+    },
+    "/var/containers/Bundle/Application/container9": {
+      "kind": "dir",
+      "entries": [
+        "Example.app",
+        "iTunesMetadata.plist"
+      ]
+    },
+    "/var/containers/Bundle/Application/container10": {
+      "kind": "dir",
+      "entries": [
+        "Example.app",
+        "iTunesMetadata.plist"
+      ]
+    },
+    "/var/containers/Bundle/Application/container11": {
+      "kind": "dir",
+      "entries": [
+        "Example.app",
+        "iTunesMetadata.plist"
+      ]
+    }
+  }
+}

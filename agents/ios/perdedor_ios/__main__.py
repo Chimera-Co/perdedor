@@ -28,11 +28,15 @@ from .runner import all_checks, run_scan
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="perdedor-ios")
     group = parser.add_mutually_exclusive_group()
-    group.add_argument("--ssh", metavar="USER@HOST", help="jailbroken or Corellium device over ssh (key auth only)")
+    group.add_argument(
+        "--ssh", metavar="USER@HOST", help="jailbroken or Corellium device over ssh (key auth only)"
+    )
     group.add_argument("--simulator", metavar="UDID", help="iOS Simulator device UDID (or 'booted')")
     parser.add_argument("-i", "--identity", help="ssh private key")
     parser.add_argument("-p", "--port", type=int, help="ssh port (2222 with iproxy)")
-    parser.add_argument("--ssh-option", action="append", default=[], metavar="OPT", help="extra ssh -o option")
+    parser.add_argument(
+        "--ssh-option", action="append", default=[], metavar="OPT", help="extra ssh -o option"
+    )
     parser.add_argument("-o", "--output", help="write the JSON report here instead of stdout")
     add_selection_arguments(parser)
     args = parser.parse_args(argv)
@@ -41,8 +45,9 @@ def main(argv: list[str] | None = None) -> int:
     except ValueError as exc:
         parser.error(str(exc))
     if args.list_checks:
-        chosen = select(all_checks(), profile=args.profile, only=args.only, skip=args.skip,
-                        network=not args.no_network)
+        chosen = select(
+            all_checks(), profile=args.profile, only=args.only, skip=args.skip, network=not args.no_network
+        )
         print(json.dumps(list_doc(chosen), indent=2))
         return 0
     if args.simulator:
@@ -57,8 +62,14 @@ def main(argv: list[str] | None = None) -> int:
     target = IosTarget(transport)
     if not target.reachable():
         print("warning: target unreachable -- every check will report as errored", file=sys.stderr)
-    report = run_scan(target, profile=args.profile, only=args.only, skip=args.skip, params=params,
-                      network=not args.no_network).to_dict()
+    report = run_scan(
+        target,
+        profile=args.profile,
+        only=args.only,
+        skip=args.skip,
+        params=params,
+        network=not args.no_network,
+    ).to_dict()
     emit(report, args.output, "ios")
     return 0
 

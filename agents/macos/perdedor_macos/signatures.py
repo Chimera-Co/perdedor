@@ -124,16 +124,13 @@ DEFAULT_SUBNETS = {
 
 # VMAware MAC_MEMSIZE: hw.memsize <= 4,000,000,000 bytes is treated as a VM.
 MIN_MEMSIZE_BYTES = 4_000_000_000
-# VMAware THREAD_COUNT flags <= 2 logical CPUs; every Apple Silicon Mac has >= 8
-# cores (M1) and every Intel Mac since 2011 has >= 2 cores / 4 threads.
-MIN_LOGICAL_CPUS = 4
-# Apple has not sold a Mac with less than 128 GB of internal storage since 2017
-# (MacBook Air 128 GB); Apple Silicon Macs start at 256 GB. A volume group under
-# 100 GB therefore points at a VM disk. Overridable with param disk.min_gb.
+# Local resource policy (overridable where exposed); not a hardware guarantee.
+# VMAware THREAD_COUNT uses <=2 logical CPUs, so <3 is the equivalent boundary.
+# https://github.com/NotRequiem/VMAware/blob/a3cc54f7da798819d305fd1415daf1b8cd140c70/src/vmaware.hpp
+MIN_LOGICAL_CPUS = 3
 MIN_DISK_BYTES = 100 * 1000**3
-# Default framebuffers of VMware SVGA / QEMU / VirtualBox: 1024x768 or 800x600.
-# The smallest display Apple has shipped in a Mac since 2010 is 1366x768
-# (11-inch MacBook Air).
+# Local small-framebuffer policy; real external displays can also fall below it.
+# Interface: https://keith.github.io/xcode-man-pages/system_profiler.8.html
 MIN_SCREEN_WIDTH = 1280
 MIN_SCREEN_HEIGHT = 720
 
@@ -163,7 +160,18 @@ ANALYSIS_PROCESS_GROUPS = {
         "RansomWhere",
     ),
     "firewalls": ("Little Snitch", "Little Snitch Agent", "littlesnitch", "Radio Silence", "Vallum"),
-    "disassemblers": ("ida", "ida64", "idat", "idat64", "ghidraRun", "Ghidra", "Binary Ninja", "Cutter", "r2", "radare2"),
+    "disassemblers": (
+        "ida",
+        "ida64",
+        "idat",
+        "idat64",
+        "ghidraRun",
+        "Ghidra",
+        "Binary Ninja",
+        "Cutter",
+        "r2",
+        "radare2",
+    ),
     "instrumentation": ("frida-server", "frida", "frida-helper", "frida-trace", "objection"),
     "sandbox_agents": ("agent.py", "/cuckoo", "/cape", "analyzer.py"),
 }
@@ -181,8 +189,15 @@ ANALYSIS_APP_GROUPS = {
         "IDA Professional.app",
         "IDA Freeware.app",
     ),
-    "network": ("Wireshark.app", "Charles.app", "Proxyman.app", "Burp Suite Community Edition.app",
-                "Burp Suite Professional.app", "HTTP Toolkit.app", "mitmproxy.app"),
+    "network": (
+        "Wireshark.app",
+        "Charles.app",
+        "Proxyman.app",
+        "Burp Suite Community Edition.app",
+        "Burp Suite Professional.app",
+        "HTTP Toolkit.app",
+        "mitmproxy.app",
+    ),
     "objective_see": (
         "LuLu.app",
         "BlockBlock Helper.app",
@@ -201,12 +216,34 @@ ANALYSIS_APP_GROUPS = {
     "inspection": ("Suspicious Package.app", "Apparency.app", "Xcode.app"),
 }
 # Command-line analysis tools installed by Homebrew / pip (not shipped with macOS).
-ANALYSIS_CLI_TOOLS = ("frida", "frida-trace", "frida-ps", "objection", "r2", "radare2", "rizin", "mitmdump",
-                      "mitmproxy", "class-dump", "jtool2", "ghidraRun", "volatility", "yara")
+ANALYSIS_CLI_TOOLS = (
+    "frida",
+    "frida-trace",
+    "frida-ps",
+    "objection",
+    "r2",
+    "radare2",
+    "rizin",
+    "mitmdump",
+    "mitmproxy",
+    "class-dump",
+    "jtool2",
+    "ghidraRun",
+    "volatility",
+    "yara",
+)
 ANALYSIS_CLI_DIRS = ("/usr/local/bin", "/opt/homebrew/bin", "/opt/local/bin")
 
 # Interception-proxy root certificate common names.
-MITM_CERT_TOKENS = ("mitmproxy", "charles proxy", "proxyman", "portswigger", "http toolkit", "fiddler", "burp")
+MITM_CERT_TOKENS = (
+    "mitmproxy",
+    "charles proxy",
+    "proxyman",
+    "portswigger",
+    "http toolkit",
+    "fiddler",
+    "burp",
+)
 
 # Default agent / instrumentation ports: Frida 27042/27043 (frida-server default),
 # Cuckoo / CAPE guest agent 8000 (agent.py default port).
@@ -234,11 +271,30 @@ SANDBOX_USERNAMES = (
     "john",
     "currentuser",
 )
-SANDBOX_HOSTNAME_TOKENS = ("virtual machine", "vmware", "parallels", "-vm", "sandbox", "malware", "cuckoo",
-                           "analysis", "admins-virtual", "runner")
+SANDBOX_HOSTNAME_TOKENS = (
+    "virtual machine",
+    "vmware",
+    "parallels",
+    "-vm",
+    "sandbox",
+    "malware",
+    "cuckoo",
+    "analysis",
+    "admins-virtual",
+    "runner",
+)
 # Environment variables set by CI / VM image tooling.
-SANDBOX_ENV_VARS = ("CI", "GITHUB_ACTIONS", "CIRRUS_CI", "BUILDKITE", "TF_BUILD", "JENKINS_URL",
-                    "TART_VM", "VAGRANT_HOME", "PERDEDOR_SANDBOX")
+SANDBOX_ENV_VARS = (
+    "CI",
+    "GITHUB_ACTIONS",
+    "CIRRUS_CI",
+    "BUILDKITE",
+    "TF_BUILD",
+    "JENKINS_URL",
+    "TART_VM",
+    "VAGRANT_HOME",
+    "PERDEDOR_SANDBOX",
+)
 
 # CIS / Russian-language guardrails: Banshee and AMOS-family stealers exit when the
 # system language or keyboard is Russian (see docs/notes/apple.md for sources).
@@ -247,14 +303,15 @@ CIS_INPUT_TOKENS = ("russian", "belarusian", "kazakh", "ukrainian", "armenian", 
 
 # -- timing / wear ---------------------------------------------------------------------
 
-# Pafish gensandbox_uptime(): uptime under 12 minutes is a sandbox tell.
+# Pafish gensandbox_uptime uses a 12-minute boundary.
+# https://github.com/a0rtega/pafish/blob/b497899ff355ea7b9ecc1f5cd34a9fd1def02aec/pafish/gensandbox.c
 MIN_UPTIME_SECONDS = 12 * 60
 # Setup / install younger than this is a freshly built image.
 MIN_SYSTEM_AGE_DAYS = 14
 # Last software / security data update older than this: image not maintained.
 MAX_UPDATE_AGE_DAYS = 120
 # Wear-and-tear minimums: an everyday user account has at least this many items.
-# Chosen far below what a used Mac holds so that any real account passes.
+# Local scarcity policy; sparse real accounts can trigger it. See docs/notes/apple.md.
 MIN_RECENT_ITEMS_FILES = 2
 MIN_BROWSER_HISTORY_BYTES = 64 * 1024  # an empty Safari/Chrome History DB is ~20-40 KB
 MIN_USER_FOLDER_ENTRIES = 2
@@ -266,17 +323,19 @@ MIN_INSTALL_HISTORY_ENTRIES = 5
 # HID idle longer than this share of the uptime: nobody has touched the machine.
 IDLE_UPTIME_RATIO = 0.95
 MIN_IDLE_SECONDS_FOR_VERDICT = 30 * 60
-# Pafish / CPUID timing: RDTSC around CPUID averaging above 1000 cycles means a
-# trapping hypervisor (pafish cpu_rdtsc_force_vmexit).
-CPUID_VMEXIT_CYCLES = 1000
 # Sleep acceleration: target clock advancing this much faster or slower than the
 # host clock over the sleep window.
 SLEEP_SKEW_RATIO = 0.25
 
 # Local scarcity policy, not universal device limits. See docs/notes/apple.md.
-# The underlying inspection interfaces: https://ss64.com/mac/ and Apple man pages.
+# The underlying inspection interfaces: https://developer.apple.com/library/archive/documentation/Darwin/Reference/ManPages/man8/sysctl.8.html
 MIN_LOG_KIB = 50 * 1024
 MIN_FOREGROUND_APPS = 3
 MIN_ARP_ENTRIES = 2
 INPUT_IDLE_RATIO = 0.9
 MIN_SHELL_HISTORY_BYTES = 1024
+
+# Supporting scarcity/topology policies, not universal physical-Mac invariants.
+# Interface and caveats: https://evasions.checkpoint.com/src/MacOS/macos.html
+MIN_NETWORK_PORTS = 2
+MIN_ARM_PERFORMANCE_LEVELS = 2
