@@ -2502,7 +2502,10 @@
           "checkForSuBinary",
           "checkSuExists",
           "checkForBinary",
-          "checkForRootNative"
+          "checkForRootNative",
+          "isRooted",
+          "isRootedWithBusyBoxCheck",
+          "isRootedWithoutBusyBoxCheck"
         ],
         "freerasp": [
           "onPrivilegedAccess",
@@ -3620,6 +3623,9 @@
         "freerasp": [
           "onAdbEnabled",
           "adbEnabled"
+        ],
+        "anti-emulator": [
+          "hasEmulatorAdb"
         ]
       },
       "fix": {
@@ -5132,6 +5138,267 @@
         }
       ],
       "description": "Runs the static Linux helper over adb. Research side channel. Batched (8 calls per clock read) latency of a failing call that registry/file monitors trace (Windows: NtOpenKey on a random absent key; Linux: openat of a random absent name in /), of a cheap syscall (NtQueryInformationProcess / getpid) and of a user-mode arithmetic reference. Detected when a median exceeds the traced floor or the traced call is far slower than the cheap one. Moderate confidence; cannot name a monitor."
+    },
+    {
+      "id": "android.design.policy_obfuscation_issues",
+      "technique": "instrumentation.module_integrity",
+      "status": "not_feasible",
+      "reason": "Out of scope by policy: Application code obfuscation checks inspect package build attributes rather than the execution environment.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "description": "freeRASP onObfuscationIssues: Checks whether application source code was obfuscated or symbols stripped.",
+      "severity": "info",
+      "references": [
+        "https://docs.talsec.app/freerasp/wiki/threat-detection"
+      ],
+      "equivalents": {
+        "freerasp": [
+          "onObfuscationIssues",
+          "obfuscationIssues"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Obfuscate application builds using standard compiler tooling.",
+        "chimera": "Application compilation attribute; not an environment configuration."
+      },
+      "params": []
+    },
+    {
+      "id": "android.env.qemu_arm_breakpoint",
+      "technique": "cpu.emulation_quirks",
+      "status": "planned",
+      "reason": "Requires executing ARM BKPT instructions and measuring signal delivery; planned for ARM Android test harness.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "adb",
+        "native-helper"
+      ],
+      "description": "anti-emulator checkQemuBreakpoint: Executes ARM BKPT instructions under signal handling to detect QEMU instruction translation skipping. Detected when the BKPT instruction does not trigger the expected SIGTRAP signal.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/strazzere/anti-emulator"
+      ],
+      "equivalents": {
+        "anti-emulator": [
+          "checkQemuBreakpoint",
+          "qemuBkpt"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Ensure emulator CPU instruction translator faithfully delivers BKPT debug exceptions.",
+        "chimera": "Android-x86 uses VT-x hardware execution; validate when testing on ARM emulation hosts."
+      },
+      "params": []
+    },
+    {
+      "id": "android.design.screen_recording_detection",
+      "technique": "instrumentation.tracing_facilities",
+      "status": "planned",
+      "reason": "Requires listening for MediaProjection and VirtualDisplay service events; planned for Android agent.",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "description": "freeRASP onScreenRecording: Checks DisplayManager and MediaProjection service state for active virtual displays or screen capture sessions. Detected when a virtual display or screen capture session is active.",
+      "severity": "medium",
+      "references": [
+        "https://docs.talsec.app/freerasp/wiki/threat-detection"
+      ],
+      "equivalents": {
+        "freerasp": [
+          "onScreenRecording",
+          "screenRecording"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Perform frame capture out-of-band at the hypervisor or host frame buffer level rather than via Android user-space recording.",
+        "chimera": "CHIMERA captures video via hypervisor VNC/spice framebuffer stream without in-guest display recording."
+      },
+      "params": []
+    },
+    {
+      "id": "android.design.screenshot_detection",
+      "technique": "instrumentation.tracing_facilities",
+      "status": "planned",
+      "reason": "Requires content observer on MediaStore images; planned for Android agent.",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "description": "freeRASP onScreenshot: Monitors MediaStore.Images.Media content URI notifications to detect automated screenshot captures during execution. Detected when screenshot capture artifacts are created in the media store during analysis.",
+      "severity": "low",
+      "references": [
+        "https://docs.talsec.app/freerasp/wiki/threat-detection"
+      ],
+      "equivalents": {
+        "freerasp": [
+          "onScreenshot",
+          "screenshot"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Avoid in-guest screencap commands that write to MediaStore; capture screens via host hypervisor frame buffer.",
+        "chimera": "DRAKVUF capture avoids invoking in-guest screencap binaries."
+      },
+      "params": []
+    },
+    {
+      "id": "android.timing.time_spoofing_detection",
+      "technique": "timing.time_plausibility",
+      "status": "planned",
+      "reason": "Requires querying Settings.Global auto_time and comparing with network time; planned for Android agent.",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "description": "freeRASP onTimeSpoofing: Checks if automatic time/timezone synchronization is disabled and compares device system time against network time. Detected when device system time is manually configured or diverges from network time.",
+      "severity": "medium",
+      "references": [
+        "https://docs.talsec.app/freerasp/wiki/threat-detection"
+      ],
+      "equivalents": {
+        "freerasp": [
+          "onTimeSpoofing",
+          "timeSpoofing"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Enable automatic network time synchronization (auto_time=1) and ensure RTC clock is synchronized to real time.",
+        "chimera": "Sync guest time to host chrony NTP clock on guest initialization."
+      },
+      "params": []
+    },
+    {
+      "id": "android.network.unsecure_wifi_detection",
+      "technique": "network.connectivity",
+      "status": "planned",
+      "reason": "Requires inspecting active WifiConfiguration and proxy properties; planned for Android agent.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "description": "freeRASP onUnsecureWifi: Inspects active Wi-Fi network capabilities to detect unencrypted (open) networks, WEP, or captive portals. Detected when connected to an open, unencrypted, or captive Wi-Fi network.",
+      "severity": "low",
+      "references": [
+        "https://docs.talsec.app/freerasp/wiki/threat-detection"
+      ],
+      "equivalents": {
+        "freerasp": [
+          "onUnsecureWifi",
+          "unsecureWiFi"
+        ]
+      },
+      "fix": {
+        "layer": "network",
+        "effort": 2,
+        "how": "Configure emulated or physical Wi-Fi interfaces with WPA2/WPA3 encryption.",
+        "chimera": "CHIMERA isolated network namespace simulates private secured Wi-Fi network."
+      },
+      "params": []
+    },
+    {
+      "id": "android.design.malware_packages_detected",
+      "technique": "analysis_tools.processes",
+      "status": "planned",
+      "reason": "Requires querying installed applications against blacklisted malware hashes and package names; planned for Android agent.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "description": "freeRASP onMalware: Queries PackageManager for presence of blacklisted malicious package names or analysis tooling APKs. Detected when installed packages match blacklisted malware or tool application IDs.",
+      "severity": "medium",
+      "references": [
+        "https://docs.talsec.app/freerasp/wiki/threat-detection"
+      ],
+      "equivalents": {
+        "freerasp": [
+          "onMalware"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Remove third-party test tools and known APK identifiers from the guest image.",
+        "chimera": "Clean Android golden snapshot contains only standard system packages."
+      },
+      "params": []
+    },
+    {
+      "id": "android.design.rootbeer_native_load",
+      "technique": "integrity.root",
+      "status": "planned",
+      "reason": "Requires deploying an in-process native JNI shared library on the device; planned for Android native module.",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "adb",
+        "native-helper"
+      ],
+      "description": "RootBeer canLoadNativeLibrary: Verifies whether an in-app native shared library can be loaded and linked to run native root detection. Detected when native library loading is blocked or fails.",
+      "severity": "low",
+      "references": [
+        "https://github.com/scottyab/rootbeer"
+      ],
+      "equivalents": {
+        "rootbeer": [
+          "canLoadNativeLibrary"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Ensure normal JNI native shared library loading is permitted without sandbox security restrictions.",
+        "chimera": "Android-x86 supports standard bionic linker shared library loading."
+      },
+      "params": []
+    },
+    {
+      "id": "android.design.rootbeer_native_read_access",
+      "technique": "integrity.root",
+      "status": "planned",
+      "reason": "Requires invoking native open() syscalls against restricted paths from an unprivileged process; planned for Android native module.",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "adb",
+        "native-helper"
+      ],
+      "description": "RootBeer checkForNativeLibraryReadAccess: Uses native system calls to test read access on protected root filesystem paths. Detected when native open() syscall succeeds on restricted root files.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/scottyab/rootbeer"
+      ],
+      "equivalents": {
+        "rootbeer": [
+          "checkForNativeLibraryReadAccess"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Enforce standard Android filesystem permissions and SELinux policies so unprivileged processes cannot read root paths.",
+        "chimera": "Android-x86 SELinux enforcing mode blocks unprivileged DAC/MAC access to root paths."
+      },
+      "params": []
     }
   ]
 }

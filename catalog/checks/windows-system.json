@@ -9807,6 +9807,84 @@
         "https://github.com/a0rtega/pafish",
         "https://github.com/ayoubfaouzi/al-khaser"
       ]
+    },
+    {
+      "id": "win.env.cuckoo_agent_artifacts",
+      "technique": "artifacts.files",
+      "status": "planned",
+      "reason": "Requires inspecting filesystem paths for Cuckoo agent installation files; planned for Windows agent.",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "description": "InviZzzible cuckoo/AgentArtifacts: Checks for filesystem artifacts left by Cuckoo/CAPE guest analysis agents (e.g. C:\\agent.py, analyzer dumps). Detected when Cuckoo agent files or logs are present on disk.",
+      "severity": "high",
+      "references": [
+        "https://github.com/CheckPointSW/InviZzzible"
+      ],
+      "equivalents": {
+        "invizzzible": [
+          "cuckoo/AgentArtifacts"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Do not place in-guest agent files on disk; run agentless analysis where possible.",
+        "chimera": "CHIMERA uses DRAKVUF agentless VMI and leaves no agent binaries on guest disks."
+      },
+      "params": []
+    },
+    {
+      "id": "win.env.cuckoo_agent_listener",
+      "technique": "analysis_tools.processes",
+      "status": "planned",
+      "reason": "Requires detecting agent.py listener process or its bound localhost port; planned for Windows agent.",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "description": "InviZzzible cuckoo/AgentListener: Checks for running Cuckoo agent.py XML-RPC or HTTP listener process on localhost:8000. Detected when the Python Cuckoo agent process or its listening port is active.",
+      "severity": "high",
+      "references": [
+        "https://github.com/CheckPointSW/InviZzzible"
+      ],
+      "equivalents": {
+        "invizzzible": [
+          "cuckoo/AgentListener"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Avoid in-guest listening server agents. Monitor guest activity entirely out-of-band.",
+        "chimera": "DRAKVUF introspection needs no guest-side listening socket."
+      },
+      "params": []
+    },
+    {
+      "id": "win.env.cuckoo_cuckoomon_config",
+      "technique": "artifacts.files",
+      "status": "planned",
+      "reason": "Requires searching for cuckoomon.ini or capemon configuration files; planned for Windows agent.",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "description": "InviZzzible cuckoo/CuckoomonConfiguration: Searches for cuckoomon.ini or capemon.ini configuration files left in system or temporary folders. Detected when Cuckoo monitor configuration files exist.",
+      "severity": "high",
+      "references": [
+        "https://github.com/CheckPointSW/InviZzzible"
+      ],
+      "equivalents": {
+        "invizzzible": [
+          "cuckoo/CuckoomonConfiguration"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Do not deploy in-guest monitor configuration files.",
+        "chimera": "DRAKVUF monitors from dom0; no monitor configs exist inside guest."
+      },
+      "params": []
     }
   ]
 }

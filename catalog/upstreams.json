@@ -202,7 +202,25 @@
         "commit": "0aa720aa318924b8b102107ee0f004b5993bc8ad",
         "date": "2026-11-08",
         "released": "2024-12-09"
-      }
+      },
+      "out_of_scope": [
+        {
+          "pattern": "B0002",
+          "reason": "Out of scope by policy: Active debugger evasion behaviours manipulate debugging state rather than test the environment."
+        },
+        {
+          "pattern": "B0005",
+          "reason": "Out of scope by policy: Emulator evasion instruction tricks and crashes are malware functionality rather than an environment test."
+        },
+        {
+          "pattern": "B0006",
+          "reason": "Out of scope by policy: Memory dump evasion tricks alter in-memory PE structures rather than testing the environment."
+        },
+        {
+          "pattern": "B0036",
+          "reason": "Out of scope by policy: Capture evasion actively impedes network and screen capture rather than measuring the environment."
+        }
+      ]
     },
     {
       "id": "mbc-stix",
