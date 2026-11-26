@@ -5,6 +5,11 @@ may add checks and fields, major releases change the format or the score's meani
 
 ## Unreleased
 
+- Sandbox integration contract (#6 section 3, docs/INTEGRATION.md): native agents take `--report` and
+  `--progress FILE`; the progress file has one JSON event per line (begin, start/end per probe with its budget
+  and outcome, done or failed), flushed to disk after every line, so a host can tell where a frozen guest
+  stopped. `perdedor_common.driver` is the reference host driver (stage, run, collect, read progress, score).
+
 - Hardening planner (#5 section 6): `perdedor plan` names each step's layer (hypervisor, firmware, device
   model, guest OS, user profile, monitor, network) and where its recipe goes; `--markdown` writes a reviewable
   change list and `--previous` reports what improved or regressed since an earlier report. Perdedor never

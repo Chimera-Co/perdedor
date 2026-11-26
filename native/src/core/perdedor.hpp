@@ -12,6 +12,7 @@
 // common/python/perdedor_common/registry.py (tests pin both).
 #pragma once
 
+#include <cstdio>
 #include <cstdint>
 #include <functional>
 #include <map>
@@ -61,6 +62,9 @@ struct Context {
     std::string profile = "standard";
     std::map<std::string, std::string> params;
     bool network = true;
+    // --progress: one JSON object per line (docs/INTEGRATION.md), flushed to disk after every line so a host
+    // can see which probe a frozen guest was running. nullptr when not requested.
+    std::FILE* progress = nullptr;
 
     bool deep() const { return profile == "deep"; }
     std::string param(const std::string& key, const std::string& def) const;
@@ -131,7 +135,12 @@ Json host_facts();        // os_build, cpu_model, core_count
 // Run fn on a separate thread; false if it did not finish within seconds.
 bool run_with_timeout(const std::function<void()>& fn, double seconds);
 [[noreturn]] void hard_exit(int code);
+// Flush a stdio stream through the OS cache to the disk (fsync / _commit).
+void flush_to_disk(std::FILE* f);
 }  // namespace platform
+
+// Write one progress event (adds "t_ms" since the scan began) when ctx.progress is set.
+void progress_event(Context& ctx, Json event);
 
 constexpr const char* kVersion = "2.1.0";
 

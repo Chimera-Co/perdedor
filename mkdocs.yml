@@ -76,6 +76,7 @@ nav:
       - Upstream notes: notes/upstream.md
   - Contributing:
       - Design and rules: DESIGN-V2.md
+      - Sandbox integration: INTEGRATION.md
       - Self-test: SELFTEST.md
       - Releases and deployments: RELEASING.md
 

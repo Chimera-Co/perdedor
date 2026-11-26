@@ -109,5 +109,11 @@ void hard_exit(int code) {
     _exit(code);
 }
 
+void flush_to_disk(std::FILE* f) {
+    if (!f) return;
+    std::fflush(f);
+    fsync(fileno(f));
+}
+
 }  // namespace platform
 }  // namespace perdedor

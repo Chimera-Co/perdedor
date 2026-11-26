@@ -3,6 +3,7 @@
 #include <windows.h>
 
 #include <cstdio>
+#include <io.h>
 #include <memory>
 
 #include "../core/perdedor.hpp"
@@ -112,6 +113,12 @@ bool run_with_timeout(const std::function<void()>& fn, double seconds) {
 void hard_exit(int code) {
     std::fflush(nullptr);
     ExitProcess(static_cast<UINT>(code));
+}
+
+void flush_to_disk(std::FILE* f) {
+    if (!f) return;
+    std::fflush(f);
+    _commit(_fileno(f));
 }
 
 }  // namespace platform

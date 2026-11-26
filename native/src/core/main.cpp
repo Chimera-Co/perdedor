@@ -62,7 +62,8 @@ static std::string generate_uuid_v4(uint64_t s) {
 static int usage(const char* why) {
     if (why) std::fprintf(stderr, "perdedor: %s\n", why);
     std::fprintf(stderr,
-                 "usage: perdedor [-o FILE] [--profile quick|standard|deep] [--only PATTERN ...]\n"
+                 "usage: perdedor [-o|--report FILE] [--progress FILE] [--profile quick|standard|deep]\n"
+                 "                [--only PATTERN ...]\n"
                  "                [--skip PATTERN ...] [--param KEY=VALUE ...] [--no-network]\n"
                  "                [--seed N] [--env-name NAME] [--env-image-id ID]\n"
                  "                [--env-hypervisor HYPERVISOR] [--env-monitor MONITOR]\n"
@@ -112,7 +113,7 @@ int main(int argc, char** argv) {
         std::string err;
         if (!expand_args(argc, argv, args, err)) return usage(err.c_str());
     }
-    std::string output, profile = "standard";
+    std::string output, profile = "standard", progress_path;
     std::vector<std::string> only, skip;
     std::map<std::string, std::string> params;
     bool network = true, list = false, pretty = false;
@@ -154,7 +155,10 @@ int main(int argc, char** argv) {
         current = nullptr;
         current_is_param = false;
         current_is_env_label = false;
-        if (a == "-o" || a == "--output") {
+        if (a == "--progress") {
+            if (++i >= nargs) return usage("--progress needs a file");
+            progress_path = args[i];
+        } else if (a == "-o" || a == "--output" || a == "--report") {
             if (++i >= nargs) return usage("-o needs a file");
             output = args[i];
         } else if (a == "--profile") {
@@ -258,6 +262,22 @@ int main(int argc, char** argv) {
     ctx.profile = profile;
     ctx.params = params;
     ctx.network = network;
+    if (!progress_path.empty()) {
+        ctx.progress = std::fopen(progress_path.c_str(), "wb");
+        if (!ctx.progress) {
+            std::fprintf(stderr, "perdedor: could not open %s\n", progress_path.c_str());
+            platform::hard_exit(1);
+        }
+        Json ev = Json::object();
+        ev.set("event", "begin");
+        ev.set("version", kVersion);
+        ev.set("platform", platform::name());
+        ev.set("scan_id", scan_id);
+        ev.set("profile", profile);
+        ev.set("total", static_cast<unsigned>(chosen.size()));
+        ev.set("report", output);
+        progress_event(ctx, ev);
+    }
     std::vector<Finding> findings = run_checks(chosen, ctx);
 
     Json report = Json::object();
@@ -312,6 +332,11 @@ int main(int argc, char** argv) {
         out.close();
         if (!out) {
             std::fprintf(stderr, "perdedor: could not write %s\n", output.c_str());
+            Json ev = Json::object();
+            ev.set("event", "failed");
+            ev.set("reason", "could not write the report");
+            ev.set("exit_code", 1);
+            progress_event(ctx, ev);
             platform::hard_exit(1);
         }
         std::fprintf(stderr, "Wrote report to %s\n", output.c_str());
@@ -326,6 +351,15 @@ int main(int argc, char** argv) {
                  platform::name(), summary["raw_score"].str().c_str(), summary["detected"].number(),
                  summary["errored"].number(), summary["skipped"].number());
     std::fflush(stderr);
+    {
+        Json ev = Json::object();
+        ev.set("event", "done");
+        ev.set("exit_code", 0);
+        ev.set("findings", static_cast<unsigned>(findings.size()));
+        ev.set("detected", summary["detected"].number());
+        ev.set("errored", summary["errored"].number());
+        progress_event(ctx, ev);
+    }
     // Abandoned (timed-out) probe threads must not keep the process alive.
     platform::hard_exit(0);
 }

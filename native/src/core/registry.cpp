@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cstdio>
 #include <chrono>
 #include <cmath>
 #include <memory>
@@ -257,9 +258,33 @@ double timeout_seconds_for(const std::string& cost, const Context& ctx) {
     return ctx.param_double("watchdog." + cost + "_s", base);
 }
 
+namespace {
+const auto kScanStart = std::chrono::steady_clock::now();
+}
+
+void progress_event(Context& ctx, Json event) {
+    if (!ctx.progress) return;
+    double t = std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - kScanStart).count();
+    event.set("t_ms", std::round(t));
+    std::string line = event.dump(-1) + "\n";
+    std::fwrite(line.data(), 1, line.size(), ctx.progress);
+    platform::flush_to_disk(ctx.progress);
+}
+
 std::vector<Finding> run_checks(const std::vector<const CheckSpec*>& checks, Context& ctx) {
     std::vector<Finding> all;
+    size_t index = 0;
     for (const CheckSpec* c : checks) {
+        ++index;
+        {
+            Json ev = Json::object();
+            ev.set("event", "start");
+            ev.set("probe", c->ids[0]);
+            ev.set("index", static_cast<unsigned>(index));
+            ev.set("total", static_cast<unsigned>(checks.size()));
+            ev.set("budget_s", timeout_seconds_for(c->cost, ctx));
+            progress_event(ctx, ev);
+        }
         // Heap-held so an abandoned (timed-out) probe thread never touches a dead stack frame.
         auto produced = std::make_shared<std::vector<Finding>>();
         auto failure = std::make_shared<std::string>();
@@ -289,6 +314,16 @@ std::vector<Finding> run_checks(const std::vector<const CheckSpec*>& checks, Con
                                     *failure));
         } else {
             results = *produced;
+        }
+        {
+            Json ev = Json::object();
+            ev.set("event", "end");
+            ev.set("probe", c->ids[0]);
+            ev.set("index", static_cast<unsigned>(index));
+            ev.set("ms", std::round(ms));
+            ev.set("outcome", !finished ? "timed_out" : (!failure->empty() ? "raised" : "ok"));
+            ev.set("findings", static_cast<unsigned>(results.size()));
+            progress_event(ctx, ev);
         }
         double share = std::round(ms * 100.0 / std::max<size_t>(1, results.size())) / 100.0;
         for (auto& f : results) {
