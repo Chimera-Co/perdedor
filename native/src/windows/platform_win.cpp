@@ -31,7 +31,8 @@ Json metadata() {
         reinterpret_cast<void*>(GetProcAddress(GetModuleHandleW(L"ntdll.dll"), "RtlGetVersion")));
     if (fn && fn(&v) == 0) {
         char buf[64];
-        std::snprintf(buf, sizeof buf, "%lu.%lu.%lu", v.dwMajorVersion, v.dwMinorVersion, v.dwBuildNumber);
+        std::snprintf(buf, sizeof buf, "%lu.%lu.%lu", static_cast<unsigned long>(v.dwMajorVersion),
+                      static_cast<unsigned long>(v.dwMinorVersion), static_cast<unsigned long>(v.dwBuildNumber));
         m.set("os_release", buf);
     }
     SYSTEM_INFO si{};
@@ -60,7 +61,8 @@ Json host_facts() {
         reinterpret_cast<void*>(GetProcAddress(GetModuleHandleW(L"ntdll.dll"), "RtlGetVersion")));
     if (fn && fn(&v) == 0) {
         char buf[64];
-        std::snprintf(buf, sizeof buf, "%lu.%lu.%lu", v.dwMajorVersion, v.dwMinorVersion, v.dwBuildNumber);
+        std::snprintf(buf, sizeof buf, "%lu.%lu.%lu", static_cast<unsigned long>(v.dwMajorVersion),
+                      static_cast<unsigned long>(v.dwMinorVersion), static_cast<unsigned long>(v.dwBuildNumber));
         facts.set("os_build", buf);
     } else {
         facts.set("os_build", "unknown");
