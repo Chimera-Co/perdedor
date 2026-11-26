@@ -304,6 +304,30 @@ On the H3b scan above, four fixes take the score from 42 to 66:
 Fixing every detection reaches 70. The rest is held back by untested techniques, which is the cue to
 run a deeper profile.
 
+### The plan as a change list
+
+Every step names its layer in operator terms and where its recipe goes:
+
+| Layer | Catalog `fix.layer` | Where the change is made |
+|---|---|---|
+| hypervisor | `hypervisor` | Xen hypervisor and domain options (`xl.cfg` `cpuid=`, `viridian=`, HAP/altp2m, boot options) |
+| firmware | `firmware` | SMBIOS and ACPI tables (`smbios_firmware=`, `acpi_firmware=`, hvmloader) |
+| device model | `vm-config` | VM config and QEMU device model (NIC model, VGA, disk vendor, USB, `device_model_args`) |
+| guest OS | `guest-image` | Windows registry and policy, or the Linux image (DMI-facing files, udev rules, packages) |
+| user profile | `guest-image` (wear-and-tear and human techniques) | documents, history, recent files, installed apps |
+| monitor | `analysis-engine` | out-of-guest introspection plugins, in-guest agent, hooks |
+| network | `network` | DNS, simulated internet, routing |
+
+```bash
+perdedor plan report.json --previous last-week.json --markdown plan.md --json plan.json
+```
+
+`--markdown` writes a reviewable change list: a checkbox per change in the order to apply them, with the
+recipe, the CHIMERA note and the checks that fire. `--previous` adds what improved (checks that stopped
+firing) and what regressed since an earlier report of the same environment, with both scores. The JSON
+carries the same fields (`layer_group`, `target`, `since_previous`) and `"applies_fixes": false`:
+**Perdedor never applies a fix itself.** A person reviews the list, applies it, and re-scans.
+
 ## Parameters and where they come from
 
 | Parameter | Source | Notes |

@@ -132,6 +132,7 @@ def render_assessment(a: dict) -> str:
 def render_plan(p: dict) -> str:
     if p.get("start") is None:
         return "Nothing to plan: no applicable findings."
+    # Perdedor never applies a fix; the plan is for review (see --markdown)
     L = [
         f"Hardening roadmap ({p['platform']}): {p['start']:.1f} -> {p['end']:.1f} if every step is applied",
         "",
@@ -140,10 +141,19 @@ def render_plan(p: dict) -> str:
     for s in p["steps"]:
         L.append(
             f"{s['step']:>2} {s['gain']:5.1f} {s['score_after']:6.1f}  {s['effort']:>6}  "
-            f"{(s['layer'] or '?'):<16} {s['technique']} - {s['title']}"
+            f"{(s.get('layer_group') or s['layer'] or '?'):<16} {s['technique']} - {s['title']}"
         )
         if s.get("how"):
             L.append(f"      how: {s['how']}")
+    since = p.get("since_previous")
+    if since:
+        before = since.get("score_before")
+        L += [
+            "",
+            "Since the previous report: "
+            + (f"exposure {before:.1f} -> {since['score_now']:.1f}, " if before is not None else "")
+            + f"{len(since['improved'])} checks stopped firing, {len(since['regressed'])} started firing",
+        ]
     if p["measure_next"]:
         L += ["", "Then measure (no check ran; estimated from similar techniques):"]
         for m in p["measure_next"]:
@@ -173,13 +183,15 @@ def _cmd_score(args: argparse.Namespace) -> int:
 
 
 def _cmd_plan(args: argparse.Namespace) -> int:
-    from perdedor_common.exposure import plan
+    from perdedor_common.planner import hardening_plan, render_markdown
 
     doc = _load(args.report)
-    p = plan(
+    previous = _load(args.previous)["findings"] if args.previous else None
+    p = hardening_plan(
         doc["findings"],
         _platform(doc, args.platform),
         _catalog(args.catalog),
+        previous=previous,
         max_steps=args.max_steps,
         baseline=args.baseline,
         baseline_store=args.store,
@@ -187,6 +199,9 @@ def _cmd_plan(args: argparse.Namespace) -> int:
     if args.json:
         Path(args.json).write_text(json.dumps(p, indent=2), encoding="utf-8")
         print(f"Wrote plan to {args.json}", file=sys.stderr)
+    if args.markdown:
+        Path(args.markdown).write_text(render_markdown(p), encoding="utf-8")
+        print(f"Wrote the change list to {args.markdown}", file=sys.stderr)
     print(render_plan(p))
     return 0
 
@@ -216,4 +231,8 @@ def register(subparsers) -> None:
     pl.add_argument("--store", default=None, help="baselines directory")
     pl.add_argument("--max-steps", type=int, default=25)
     pl.add_argument("--json", help="also write the plan as JSON")
+    pl.add_argument("--markdown", help="also write the plan as a reviewable Markdown change list")
+    pl.add_argument(
+        "--previous", help="an earlier report of the same environment: say what improved or regressed since"
+    )
     pl.set_defaults(func=_cmd_plan)
