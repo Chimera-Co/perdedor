@@ -28,8 +28,28 @@ SEVERITY_WEIGHT: dict[Severity, float] = {
 }
 
 
+def _field(finding, name: str, default=None):
+    """A Finding's attribute, or the same key of a finding read from JSON (a dict): reports read with
+    report_reader stay plain dicts. Status and Severity are str enums, so their string values compare equal."""
+    if isinstance(finding, dict):
+        return finding.get(name, default)
+    return getattr(finding, name, default)
+
+
+class _View:
+    __slots__ = ("status", "severity")
+
+    def __init__(self, finding):
+        self.status = _field(finding, "status")
+        severity = _field(finding, "severity") or Severity.MEDIUM
+        try:  # enum members hash by name, so a plain "low" would miss SEVERITY_WEIGHT
+            self.severity = Severity(severity)
+        except ValueError:
+            self.severity = Severity.MEDIUM
+
+
 def score_report(findings: Iterable[Finding]) -> dict:
-    findings = list(findings)
+    findings = [_View(f) for f in findings]
     total = len(findings)
     clean = sum(1 for f in findings if f.status == Status.CLEAN)
     detected = sum(1 for f in findings if f.status == Status.DETECTED)

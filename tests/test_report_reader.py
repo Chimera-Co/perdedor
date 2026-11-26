@@ -3,9 +3,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-import pytest
 from perdedor_common.report_reader import read_report
-from perdedor_common.validation import ValidationError, validate_report
+from perdedor_common.validation import validate_report
 
 
 def test_reader_handles_v1_report(tmp_path: Path) -> None:
@@ -162,3 +161,19 @@ def test_reader_handles_v3_report() -> None:
     assert rep["seed"] == 42
     assert rep["environment"]["monitor"] == "out-of-guest"
     validate_report(rep)
+
+
+def test_minimal_report_with_plain_findings_is_scored():
+    """A report read from JSON keeps its findings as dicts; scoring them must not need Finding objects
+    (the packaged `perdedor score r.json` check in CI)."""
+    from perdedor_common.report_reader import read_report
+
+    doc = read_report(
+        {"platform": "linux", "findings": [
+            {"id": "a", "technique": "cpu.hypervisor_bit", "status": "detected", "severity": "high"},
+            {"id": "b", "technique": "cpu.hypervisor_bit", "status": "clean"},
+        ]},
+        validate=False,
+    )
+    assert doc["summary"]["detected"] == 1 and doc["summary"]["clean"] == 1
+    assert doc["summary"]["weighted_score"] < 100

@@ -14,7 +14,6 @@ import hashlib
 import json
 import uuid
 from pathlib import Path
-from typing import Any
 
 from .scoring import score_report
 from .validation import validate_report

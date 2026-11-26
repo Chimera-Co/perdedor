@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-import pytest
 from perdedor_cli.__main__ import main
 from perdedor_common.gate import evaluate_gate
 from perdedor_common.history import HistoryStore

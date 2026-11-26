@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
 import pytest
 from perdedor_android.runner import run_scan as android_run_scan
-from perdedor_common.report_reader import read_report
 from perdedor_common.validation import ValidationError, validate_report
 from perdedor_ios.device import IosTarget
 from perdedor_ios.runner import run_scan as ios_run_scan

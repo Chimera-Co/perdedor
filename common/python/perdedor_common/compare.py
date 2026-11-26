@@ -207,7 +207,7 @@ def render_compare_text(diff: dict) -> str:
         "Categories                        A      B   raw delta   net delta",
         "-------------------------------------------------------------------------",
     ]
-    for cat, cd in diff["categories"].items():
+    for _cat, cd in diff["categories"].items():
         sa = f"{cd['score_a']:5.1f}" if cd["score_a"] is not None else "  n/a"
         sb = f"{cd['score_b']:5.1f}" if cd["score_b"] is not None else "  n/a"
         d = f"{cd['raw_delta']:+6.1f}" if cd["raw_delta"] is not None else "   n/a"
@@ -219,7 +219,7 @@ def render_compare_text(diff: dict) -> str:
         "Classes                           A      B   raw delta   net delta",
         "-------------------------------------------------------------------------",
     ]
-    for k, cd in sorted(diff["classes"].items(), key=lambda kv: kv[1]["title"]):
+    for _k, cd in sorted(diff["classes"].items(), key=lambda kv: kv[1]["title"]):
         sa = f"{cd['score_a']:5.1f}" if cd["score_a"] is not None else "  n/a"
         sb = f"{cd['score_b']:5.1f}" if cd["score_b"] is not None else "  n/a"
         d = f"{cd['raw_delta']:+6.1f}" if cd["raw_delta"] is not None else "   n/a"
@@ -275,14 +275,14 @@ def render_compare_markdown(diff: dict) -> str:
         "| Category | A | B | Raw Delta | Net Delta |",
         "|---|---|---|---|---|",
     ]
-    for cat, cd in diff["categories"].items():
+    for _cat, cd in diff["categories"].items():
         sa = f"{cd['score_a']:.1f}" if cd["score_a"] is not None else "n/a"
         sb = f"{cd['score_b']:.1f}" if cd["score_b"] is not None else "n/a"
         d = f"{cd['raw_delta']:+.1f}" if cd["raw_delta"] is not None else "n/a"
         L.append(f"| {cd['title']} | {sa} | {sb} | {d} | {cd['net_delta']} |")
 
     L += ["", "### Classes", "| Class | A | B | Raw Delta | Net Delta |", "|---|---|---|---|---|"]
-    for k, cd in sorted(diff["classes"].items(), key=lambda kv: kv[1]["title"]):
+    for _k, cd in sorted(diff["classes"].items(), key=lambda kv: kv[1]["title"]):
         sa = f"{cd['score_a']:.1f}" if cd["score_a"] is not None else "n/a"
         sb = f"{cd['score_b']:.1f}" if cd["score_b"] is not None else "n/a"
         d = f"{cd['raw_delta']:+.1f}" if cd["raw_delta"] is not None else "n/a"
