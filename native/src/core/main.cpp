@@ -6,11 +6,13 @@
 //
 // Lists accept repeated flags or comma-separated values. The JSON report goes to
 // FILE or stdout; a one-line summary goes to stderr.
+#include <algorithm>
 #include <cstdio>
 #include <cstring>
 #include <ctime>
 #include <fstream>
 #include <iostream>
+#include <random>
 #include <stdexcept>
 
 #include "perdedor.hpp"
@@ -41,11 +43,30 @@ static std::string iso_now() {
     return buf;
 }
 
+static std::string generate_uuid_v4(uint64_t s) {
+    std::mt19937_64 rng(s ^ 0x9e3779b97f4a7c15ULL);
+    uint64_t w1 = rng();
+    uint64_t w2 = rng();
+    w1 = (w1 & 0xFFFFFFFFFFFF0FFFULL) | 0x0000000000004000ULL;
+    w2 = (w2 & 0x3FFFFFFFFFFFFFFFULL) | 0x8000000000000000ULL;
+    char buf[40];
+    std::snprintf(buf, sizeof buf, "%08x-%04x-%04x-%04x-%012llx",
+                  static_cast<unsigned int>(w1 >> 32),
+                  static_cast<unsigned int>((w1 >> 16) & 0xFFFF),
+                  static_cast<unsigned int>(w1 & 0xFFFF),
+                  static_cast<unsigned int>(w2 >> 48),
+                  static_cast<unsigned long long>(w2 & 0xFFFFFFFFFFFFULL));
+    return buf;
+}
+
 static int usage(const char* why) {
     if (why) std::fprintf(stderr, "perdedor: %s\n", why);
     std::fprintf(stderr,
                  "usage: perdedor [-o FILE] [--profile quick|standard|deep] [--only PATTERN ...]\n"
                  "                [--skip PATTERN ...] [--param KEY=VALUE ...] [--no-network]\n"
+                 "                [--seed N] [--env-name NAME] [--env-image-id ID]\n"
+                 "                [--env-hypervisor HYPERVISOR] [--env-monitor MONITOR]\n"
+                 "                [--env-instrumentation INSTRUMENTATION] [--env-label KEY=VALUE ...]\n"
                  "                [--list-checks] [--pretty] [--version] [--args-file FILE]\n"
                  "PATTERN: id glob (win.timing.*) or class:X, category:X, technique:X, cost:X, tag:X\n");
     return 2;
@@ -95,14 +116,20 @@ int main(int argc, char** argv) {
     std::vector<std::string> only, skip;
     std::map<std::string, std::string> params;
     bool network = true, list = false, pretty = false;
+    uint64_t seed = 0;
+    bool seed_specified = false;
+    std::string scan_id;
+    std::string env_name, env_image_id, env_hypervisor, env_monitor, env_instrumentation;
+    std::map<std::string, std::string> env_labels;
     std::vector<std::string>* current = nullptr;  // list flag consuming following values
     bool current_is_param = false;
+    bool current_is_env_label = false;
 
     const int nargs = static_cast<int>(args.size());
     for (int i = 0; i < nargs; ++i) {
         std::string a = args[i];
         bool is_flag = a.size() > 1 && a[0] == '-' && !(a.size() > 1 && (std::isdigit(static_cast<unsigned char>(a[1]))));
-        if (!is_flag && (current || current_is_param)) {
+        if (!is_flag && (current || current_is_param || current_is_env_label)) {
             if (current_is_param) {
                 std::vector<std::string> pairs;
                 split_into(a, pairs);
@@ -111,6 +138,14 @@ int main(int argc, char** argv) {
                     if (eq == std::string::npos || eq == 0) return usage(("--param expects key=value, got '" + p + "'").c_str());
                     params[p.substr(0, eq)] = p.substr(eq + 1);
                 }
+            } else if (current_is_env_label) {
+                std::vector<std::string> pairs;
+                split_into(a, pairs);
+                for (auto& p : pairs) {
+                    auto eq = p.find('=');
+                    if (eq == std::string::npos || eq == 0) return usage(("--env-label expects key=value, got '" + p + "'").c_str());
+                    env_labels[p.substr(0, eq)] = p.substr(eq + 1);
+                }
             } else {
                 split_into(a, *current);
             }
@@ -118,6 +153,7 @@ int main(int argc, char** argv) {
         }
         current = nullptr;
         current_is_param = false;
+        current_is_env_label = false;
         if (a == "-o" || a == "--output") {
             if (++i >= nargs) return usage("-o needs a file");
             output = args[i];
@@ -132,6 +168,37 @@ int main(int argc, char** argv) {
             current_is_param = true;
         } else if (a == "--no-network") {
             network = false;
+        } else if (a == "--seed") {
+            if (++i >= nargs) return usage("--seed needs a value");
+            try {
+                seed = std::stoull(args[i]);
+                seed_specified = true;
+            } catch (...) {
+                return usage("--seed expects an integer");
+            }
+        } else if (a == "--scan-id") {
+            if (++i >= nargs) return usage("--scan-id needs a value");
+            scan_id = args[i];
+        } else if (a == "--env-name") {
+            if (++i >= nargs) return usage("--env-name needs a value");
+            env_name = args[i];
+        } else if (a == "--env-image-id") {
+            if (++i >= nargs) return usage("--env-image-id needs a value");
+            env_image_id = args[i];
+        } else if (a == "--env-hypervisor") {
+            if (++i >= nargs) return usage("--env-hypervisor needs a value");
+            env_hypervisor = args[i];
+        } else if (a == "--env-monitor") {
+            if (++i >= nargs) return usage("--env-monitor needs a value");
+            env_monitor = args[i];
+            if (env_monitor != "none" && env_monitor != "out-of-guest" && env_monitor != "in-guest") {
+                return usage("--env-monitor must be none, out-of-guest, or in-guest");
+            }
+        } else if (a == "--env-instrumentation") {
+            if (++i >= nargs) return usage("--env-instrumentation needs a value");
+            env_instrumentation = args[i];
+        } else if (a == "--env-label") {
+            current_is_env_label = true;
         } else if (a == "--list-checks") {
             list = true;
         } else if (a == "--pretty") {
@@ -145,6 +212,15 @@ int main(int argc, char** argv) {
         } else {
             return usage(("unknown argument " + a).c_str());
         }
+    }
+
+    if (!seed_specified) {
+        std::random_device rd;
+        seed = (static_cast<uint64_t>(rd()) << 32) ^ rd();
+        if (seed == 0) seed = static_cast<uint64_t>(std::time(nullptr));
+    }
+    if (scan_id.empty()) {
+        scan_id = generate_uuid_v4(seed);
     }
 
     std::vector<const CheckSpec*> chosen;
@@ -172,6 +248,12 @@ int main(int argc, char** argv) {
         platform::hard_exit(0);
     }
 
+    // Deterministic shuffle based on seed:
+    {
+        std::mt19937_64 rng(seed);
+        std::shuffle(chosen.begin(), chosen.end(), rng);
+    }
+
     Context ctx;
     ctx.profile = profile;
     ctx.params = params;
@@ -179,14 +261,34 @@ int main(int argc, char** argv) {
     std::vector<Finding> findings = run_checks(chosen, ctx);
 
     Json report = Json::object();
-    report.set("schema_version", 2);
+    report.set("schema_version", 3);
+    report.set("scan_id", scan_id);
     report.set("perdedor_version", kVersion);
+    report.set("agent_version", kVersion);
+    report.set("catalog_version", kVersion);
     report.set("platform", platform::name());
     report.set("hostname", platform::hostname());
     report.set("generated_at", iso_now());
     Json meta = platform::metadata();
     meta.set("agent", "native");
     report.set("agent_metadata", meta);
+    report.set("seed", static_cast<unsigned long long>(seed));
+    report.set("host_facts", platform::host_facts());
+
+    Json env = Json::object();
+    env.set("name", env_name);
+    env.set("os", platform::name());
+    env.set("image_id", env_image_id);
+    env.set("hypervisor", env_hypervisor);
+    env.set("monitor", env_monitor.empty() ? "none" : env_monitor);
+    env.set("instrumentation", env_instrumentation.empty() ? "none" : env_instrumentation);
+    Json labels_obj = Json::object();
+    for (const auto& kv : env_labels) {
+        labels_obj.set(kv.first, kv.second);
+    }
+    env.set("labels", labels_obj);
+    report.set("environment", env);
+
     Json sel = Json::object();
     sel.set("profile", profile);
     sel.set("only", Json(only));
@@ -195,6 +297,7 @@ int main(int argc, char** argv) {
     for (const auto& kv : params) pj.set(kv.first, kv.second);
     sel.set("params", pj);
     sel.set("network", network);
+    sel.set("seed", static_cast<unsigned long long>(seed));
     report.set("selection", sel);
     Json arr = Json::array();
     for (const auto& f : findings) arr.push(finding_json(f));

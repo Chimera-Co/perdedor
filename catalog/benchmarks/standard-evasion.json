@@ -1,0 +1,20 @@
+{
+  "name": "standard-evasion",
+  "version": "1.0.0",
+  "catalog_version": "2.0.1",
+  "description": "Standard evasion benchmark set pinned to catalog version 2.0.1.",
+  "selection": {
+    "profile": "standard",
+    "network": false
+  },
+  "checks": [
+    "win.env.cpuid_hypervisor_bit",
+    "win.env.cpuid_hypervisor_vendor",
+    "win.env.smbios_vendor",
+    "win.env.acpi_oem_strings",
+    "linux.env.cpuid_hypervisor_bit",
+    "linux.env.cpuid_hypervisor_vendor",
+    "linux.env.dmi_sys_vendor",
+    "linux.timing.clock_source"
+  ]
+}

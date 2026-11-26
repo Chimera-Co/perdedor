@@ -2,9 +2,10 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://perdedor.chimera.local/schema/perdedor-report.schema.json",
   "title": "PERDEDOR Platform Report",
-  "description": "Unified report format emitted by every PERDEDOR agent (Windows, Linux, Android, macOS, iOS). Schema version 2 adds optional technique/class/confidence/measurement fields; version-1 reports remain valid.",
+  "description": "Unified report format emitted by every PERDEDOR agent (Windows, Linux, Android, macOS, iOS). Schema version 3 adds versioned tracking, host facts, environment profiles, and reproducibility seeds; versions 1 and 2 remain supported by the reader.",
   "type": "object",
   "required": [
+    "schema_version",
     "perdedor_version",
     "platform",
     "hostname",
@@ -14,8 +15,28 @@
   ],
   "additionalProperties": false,
   "properties": {
+    "schema_version": {
+      "type": "integer",
+      "enum": [
+        1,
+        2,
+        3
+      ]
+    },
+    "scan_id": {
+      "type": "string",
+      "description": "Stable unique identifier for the scan run."
+    },
     "perdedor_version": {
       "type": "string"
+    },
+    "agent_version": {
+      "type": "string",
+      "description": "Version of the agent binary or script that produced the report."
+    },
+    "catalog_version": {
+      "type": "string",
+      "description": "Version of the technique/check catalog the agent or scan was pinned to."
     },
     "platform": {
       "type": "string",
@@ -41,6 +62,73 @@
         "type": "string"
       }
     },
+    "seed": {
+      "type": "integer",
+      "description": "Random seed used for deterministic check ordering."
+    },
+    "host_facts": {
+      "type": "object",
+      "description": "Host environment facts captured during the scan.",
+      "properties": {
+        "os_build": {
+          "type": "string",
+          "description": "Operating system build or release version."
+        },
+        "cpu_model": {
+          "type": "string",
+          "description": "Processor model string (CPUID or OS-reported)."
+        },
+        "core_count": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of logical CPU cores."
+        }
+      },
+      "additionalProperties": true
+    },
+    "environment": {
+      "type": "object",
+      "description": "Environment profile block describing sandbox platform, hypervisor and instrumentation.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Human-readable environment profile name."
+        },
+        "os": {
+          "type": "string",
+          "description": "Guest operating system name."
+        },
+        "image_id": {
+          "type": "string",
+          "description": "Snapshot or golden image identifier."
+        },
+        "hypervisor": {
+          "type": "string",
+          "description": "Underlying hypervisor (e.g. Xen, KVM, VirtualBox, VMware, None)."
+        },
+        "monitor": {
+          "type": "string",
+          "enum": [
+            "none",
+            "out-of-guest",
+            "in-guest"
+          ],
+          "description": "Malware monitoring mode."
+        },
+        "instrumentation": {
+          "type": "string",
+          "description": "Active in-guest or out-of-guest instrumentation (e.g. none, sysmon, drakvuf)."
+        },
+        "labels": {
+          "type": "object",
+          "description": "Free-form key-value labels for tracking and filtering.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
     "findings": {
       "type": "array",
       "items": {
@@ -49,13 +137,6 @@
     },
     "summary": {
       "$ref": "#/definitions/summary"
-    },
-    "schema_version": {
-      "type": "integer",
-      "enum": [
-        1,
-        2
-      ]
     },
     "selection": {
       "type": "object",

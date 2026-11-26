@@ -1,4 +1,5 @@
 #define WIN32_LEAN_AND_MEAN
+#include <string>
 #include <windows.h>
 
 #include <cstdio>
@@ -30,8 +31,8 @@ Json metadata() {
     auto fn = reinterpret_cast<RtlGetVersionFn>(
         reinterpret_cast<void*>(GetProcAddress(GetModuleHandleW(L"ntdll.dll"), "RtlGetVersion")));
     if (fn && fn(&v) == 0) {
-        char buf[64];
-        std::snprintf(buf, sizeof buf, "%lu.%lu.%lu", v.dwMajorVersion, v.dwMinorVersion, v.dwBuildNumber);
+        const std::string buf = std::to_string(v.dwMajorVersion) + "." + std::to_string(v.dwMinorVersion) + "." +
+                                std::to_string(v.dwBuildNumber);
         m.set("os_release", buf);
     }
     SYSTEM_INFO si{};
@@ -49,6 +50,39 @@ Json metadata() {
     m.set("wow64", static_cast<bool>(wow));
 #endif
     return m;
+}
+
+Json host_facts() {
+    Json facts = Json::object();
+    typedef LONG(WINAPI * RtlGetVersionFn)(PRTL_OSVERSIONINFOW);
+    RTL_OSVERSIONINFOW v{};
+    v.dwOSVersionInfoSize = sizeof v;
+    auto fn = reinterpret_cast<RtlGetVersionFn>(
+        reinterpret_cast<void*>(GetProcAddress(GetModuleHandleW(L"ntdll.dll"), "RtlGetVersion")));
+    if (fn && fn(&v) == 0) {
+        const std::string buf = std::to_string(v.dwMajorVersion) + "." + std::to_string(v.dwMinorVersion) + "." +
+                                std::to_string(v.dwBuildNumber);
+        facts.set("os_build", buf);
+    } else {
+        facts.set("os_build", "unknown");
+    }
+
+    SYSTEM_INFO si{};
+    GetNativeSystemInfo(&si);
+    facts.set("core_count", si.dwNumberOfProcessors > 0 ? static_cast<long long>(si.dwNumberOfProcessors) : 1LL);
+
+    std::string cpu_model = "unknown";
+    HKEY hkey;
+    if (RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0", 0, KEY_READ, &hkey) == ERROR_SUCCESS) {
+        wchar_t buf[256] = {0};
+        DWORD sz = sizeof(buf);
+        if (RegQueryValueExW(hkey, L"ProcessorNameString", nullptr, nullptr, reinterpret_cast<LPBYTE>(buf), &sz) == ERROR_SUCCESS) {
+            cpu_model = win::narrow(buf);
+        }
+        RegCloseKey(hkey);
+    }
+    facts.set("cpu_model", cpu_model);
+    return facts;
 }
 
 namespace {

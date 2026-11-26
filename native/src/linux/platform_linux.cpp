@@ -5,6 +5,7 @@
 
 #include <cerrno>
 #include <cstdlib>
+#include <fstream>
 #include <memory>
 
 #include "../core/perdedor.hpp"
@@ -33,6 +34,39 @@ Json metadata() {
         m.set("os", "Linux");
     }
     return m;
+}
+
+Json host_facts() {
+    Json facts = Json::object();
+    struct utsname u {};
+    if (uname(&u) == 0) {
+        facts.set("os_build", u.release);
+    } else {
+        facts.set("os_build", "unknown");
+    }
+
+    std::string cpu_model = "unknown";
+    std::ifstream f("/proc/cpuinfo");
+    std::string line;
+    while (std::getline(f, line)) {
+        if (line.rfind("model name", 0) == 0) {
+            auto colon = line.find(':');
+            if (colon != std::string::npos) {
+                cpu_model = line.substr(colon + 1);
+                while (!cpu_model.empty() && (cpu_model.front() == ' ' || cpu_model.front() == '\t')) cpu_model.erase(0, 1);
+                break;
+            }
+        }
+    }
+    if (cpu_model == "unknown" && u.machine[0]) {
+        cpu_model = u.machine;
+    }
+    facts.set("cpu_model", cpu_model);
+
+    long cores = sysconf(_SC_NPROCESSORS_ONLN);
+    if (cores <= 0) cores = 1;
+    facts.set("core_count", static_cast<long long>(cores));
+    return facts;
 }
 
 namespace {

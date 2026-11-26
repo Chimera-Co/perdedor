@@ -1,0 +1,21 @@
+{
+  "name": "anti-vm-core",
+  "version": "1.0.0",
+  "catalog_version": "2.0.1",
+  "description": "Core anti-virtualization indicators across CPU, firmware, and hardware.",
+  "selection": {
+    "profile": "standard",
+    "only": [
+      "class:cpu",
+      "class:firmware",
+      "class:hardware"
+    ],
+    "network": false
+  },
+  "checks": [
+    "win.env.cpuid_hypervisor_bit",
+    "win.env.cpuid_hypervisor_vendor",
+    "linux.env.cpuid_hypervisor_bit",
+    "linux.env.cpuid_hypervisor_vendor"
+  ]
+}

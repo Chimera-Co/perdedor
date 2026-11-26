@@ -28,6 +28,7 @@ sandbox. This page records the candidates, the tests, the evidence and the decis
 - [Trustworthiness pillars](#trustworthiness-pillars)
 - [Hardening roadmap](#hardening-roadmap)
 - [Parameters and where they come from](#parameters-and-where-they-come-from)
+- [Comparing reports and gating regressions](#comparing-reports-and-gating-regressions)
 - [Limits](#limits)
 
 ## Why the old score had to go
@@ -311,6 +312,23 @@ run a deeper profile.
 | *h* (hit) | the finding's `confidence`, default 1.0 for a detection | Agents set lower confidence for timing and statistical checks |
 | Families *T_f*, *w_f* | `catalog/threats.json` | Sourced entries only: every technique of a family cites a public analysis |
 | Shrinkage, interval width | `SHRINK = 2`, `KAPPA = 12` in `exposure.py` | Lab-checked; changing them requires rerunning the lab |
+
+## Comparing reports and gating regressions
+
+### Report comparison
+
+`perdedor compare <A> <B>` compares two scan reports (from file paths or scan IDs stored in history):
+- **Findings transition**: Identifies checks that **newly fire** (clean in A, detected in B), **stopped firing** (detected in A, clean in B), or **changed measurement** (differences in numeric measurements, timing values, or execution status).
+- **Score deltas**: Computes category and class exposure score differences ($\Delta = \text{score}_B - \text{score}_A$).
+- **Net exposure slot**: Reports currently display raw exposure score deltas and reserve a dedicated field for net exposure (`"net: no baseline"`) until baseline-calibrated net exposure modeling is incorporated.
+
+### Regression gating
+
+`perdedor gate <report> --baseline <baseline>` validates whether an environment meets detection regression criteria:
+- **Default rule**: Fails (exit code 1) if any check newly fires compared to the baseline.
+- `--max-increase N`: Allows at most $N$ points increase in raw exposure before failing (accounting for measurement noise).
+- `--fail-on-new-class`: Fails if any check fires in a class where the baseline was completely clean.
+- **Behavior**: The command acts strictly as a check gate; it emits a concise reason on standard error and never modifies reports or history stores.
 
 ## Limits
 

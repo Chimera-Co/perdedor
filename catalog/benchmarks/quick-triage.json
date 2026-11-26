@@ -1,0 +1,16 @@
+{
+  "name": "quick-triage",
+  "version": "1.0.0",
+  "catalog_version": "2.0.1",
+  "description": "Fast check benchmark set for rapid sandbox health verification.",
+  "selection": {
+    "profile": "quick",
+    "network": false
+  },
+  "checks": [
+    "win.env.cpuid_hypervisor_bit",
+    "win.env.cpuid_hypervisor_vendor",
+    "linux.env.cpuid_hypervisor_bit",
+    "linux.env.cpuid_hypervisor_vendor"
+  ]
+}

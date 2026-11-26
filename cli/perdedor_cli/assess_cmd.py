@@ -21,15 +21,17 @@ CATEGORY_TITLES = {
 
 
 def _load(path: str) -> dict:
+    from perdedor_common.report_reader import read_report
+
     try:
-        doc = json.loads(Path(path).read_text(encoding="utf-8"))
+        raw = json.loads(Path(path).read_text(encoding="utf-8"))
+        if isinstance(raw, list):
+            return {"platform": None, "findings": raw}
+        return read_report(raw, validate=False)
     except (OSError, json.JSONDecodeError) as exc:
         raise SystemExit(f"error: could not read {path}: {exc}") from exc
-    if isinstance(doc, list):
-        return {"platform": None, "findings": doc}
-    if "findings" not in doc:
-        raise SystemExit(f"error: {path} has no findings list")
-    return doc
+    except Exception as exc:
+        raise SystemExit(f"error: invalid report format in {path}: {exc}") from exc
 
 
 def _platform(doc: dict, override: str | None) -> str:

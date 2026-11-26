@@ -1,6 +1,8 @@
 // Core tests. The selection cases mirror tests/test_registry.py so the native
 // agent and the Python/PowerShell agents select identically.
+#include <algorithm>
 #include <cstdio>
+#include <random>
 #include <stdexcept>
 
 #include "../src/core/perdedor.hpp"
@@ -78,6 +80,80 @@ int main() {
     j.set("y", Json::array());
     j["y"].push("z");
     CHECK(j.dump() == "{\"x\":1,\"y\":[\"z\"]}");
+
+    // Test platform host_facts
+    Json facts = platform::host_facts();
+    CHECK(!facts["os_build"].str().empty());
+    CHECK(!facts["cpu_model"].str().empty());
+    CHECK(facts["core_count"].number() >= 1);
+
+    // Test seeded check order reproducibility and determinism
+    std::vector<CheckSpec> order_checks = {
+        mk("linux.env.1", "cpu.hypervisor_bit", "fast"),
+        mk("linux.env.2", "firmware.smbios_vendor", "fast"),
+        mk("linux.env.3", "hardware.pci_devices", "fast"),
+        mk("linux.env.4", "guest_tools.drivers", "fast"),
+        mk("linux.env.5", "artifacts.registry", "fast"),
+        mk("linux.env.6", "container.docker", "fast"),
+        mk("linux.env.7", "timing.clock_source", "fast"),
+        mk("linux.env.8", "human.mouse_activity", "fast"),
+        mk("linux.env.9", "identity.hostname", "fast"),
+        mk("linux.env.10", "network.dns_sinkhole", "fast"),
+    };
+    std::vector<const CheckSpec*> base_ptrs;
+    for (const auto& c : order_checks) base_ptrs.push_back(&c);
+
+    std::vector<const CheckSpec*> run1 = base_ptrs;
+    std::vector<const CheckSpec*> run2 = base_ptrs;
+    std::vector<const CheckSpec*> run3 = base_ptrs;
+
+    uint64_t seed1 = 42ULL;
+    uint64_t seed2 = 9999ULL;
+
+    {
+        std::mt19937_64 rng(seed1);
+        std::shuffle(run1.begin(), run1.end(), rng);
+    }
+    {
+        std::mt19937_64 rng(seed1);
+        std::shuffle(run2.begin(), run2.end(), rng);
+    }
+    {
+        std::mt19937_64 rng(seed2);
+        std::shuffle(run3.begin(), run3.end(), rng);
+    }
+
+    CHECK(ids(run1) == ids(run2));  // Same seed gives identical check order
+    CHECK(ids(run1) != ids(run3));  // Different seed gives different check order
+    CHECK(run1.size() == order_checks.size());
+
+    // Test v3 report fields serialization
+    Json report = Json::object();
+    report.set("schema_version", 3);
+    report.set("scan_id", "test-scan-id-1234");
+    report.set("perdedor_version", kVersion);
+    report.set("agent_version", kVersion);
+    report.set("catalog_version", kVersion);
+    report.set("seed", static_cast<unsigned long long>(seed1));
+    report.set("host_facts", facts);
+
+    Json env = Json::object();
+    env.set("name", "test-env");
+    env.set("os", platform::name());
+    env.set("image_id", "img-123");
+    env.set("hypervisor", "xen");
+    env.set("monitor", "out-of-guest");
+    env.set("instrumentation", "drakvuf");
+    Json labels = Json::object();
+    labels.set("tier", "staging");
+    env.set("labels", labels);
+    report.set("environment", env);
+
+    CHECK(report["schema_version"].number() == 3.0);
+    CHECK(report["scan_id"].str() == "test-scan-id-1234");
+    CHECK(report["seed"].number() == 42.0);
+    CHECK(report["environment"]["monitor"].str() == "out-of-guest");
+    CHECK(report["environment"]["labels"]["tier"].str() == "staging");
 
     if (failures) {
         std::fprintf(stderr, "%d failure(s)\n", failures);

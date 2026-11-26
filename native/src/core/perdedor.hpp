@@ -127,6 +127,7 @@ const char* name();       // "windows" | "linux"
 const char* id_prefix();  // "win" | "linux"
 std::string hostname();
 Json metadata();          // os, os_release, machine, ...
+Json host_facts();        // os_build, cpu_model, core_count
 // Run fn on a separate thread; false if it did not finish within seconds.
 bool run_with_timeout(const std::function<void()>& fn, double seconds);
 [[noreturn]] void hard_exit(int code);
