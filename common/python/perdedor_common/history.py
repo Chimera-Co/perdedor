@@ -53,8 +53,7 @@ class HistoryStore:
 
     def _init_db(self) -> None:
         with self._get_connection() as conn:
-            conn.execute(
-                """
+            conn.execute("""
                 CREATE TABLE IF NOT EXISTS reports (
                     scan_id TEXT PRIMARY KEY,
                     schema_version INTEGER,
@@ -77,8 +76,7 @@ class HistoryStore:
                     report_json TEXT NOT NULL,
                     created_at TEXT NOT NULL
                 );
-                """
-            )
+                """)
             conn.execute("CREATE INDEX IF NOT EXISTS idx_reports_profile ON reports (profile);")
             conn.execute("CREATE INDEX IF NOT EXISTS idx_reports_platform ON reports (platform);")
             conn.execute("CREATE INDEX IF NOT EXISTS idx_reports_generated ON reports (generated_at);")
