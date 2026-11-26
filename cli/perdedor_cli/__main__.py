@@ -174,19 +174,30 @@ def _run_agent(args: argparse.Namespace) -> dict | None:
     return _run_windows_legacy()
 
 
-def _exposure_summary(report: dict) -> str | None:
+def _exposure_summary(report: dict, baseline: str | None = None) -> str | None:
     """Two-line exposure headline for the human-readable output, or None if it cannot be scored."""
     try:
         from perdedor_common.catalog import load_catalog
         from perdedor_common.exposure import assess
 
-        a = assess(report["findings"], report["platform"], load_catalog())
+        a = assess(report["findings"], report["platform"], load_catalog(), baseline=baseline)
     except Exception:  # noqa: BLE001 - the summary is extra; the report itself already printed
         return None
     if a.get("score") is None:
         return None
+    if a.get("net_score") not in (None, "no baseline") and isinstance(a.get("net"), dict):
+        b = a.get("baseline") or {}
+        b_str = (
+            f", baseline: {b.get('profile', 'custom')} ({b.get('os', '-')}, {str(b.get('date', '-'))[:10]})"
+        )
+        return (
+            f"Exposure: raw {a['score']:.1f}/100 [{a['verdict'].upper()}], "
+            f"net {a['net_score']:.1f}/100 [{a['net']['verdict'].upper()}]{b_str} "
+            f"(trust {a['pillars']['overall']})\n"
+            "  Detail: perdedor score <report.json>    Fix order: perdedor plan <report.json>"
+        )
     return (
-        f"Exposure: {a['score']:.1f}/100 [{a['verdict'].upper()}] "
+        f"Exposure: {a['score']:.1f}/100 [{a['verdict'].upper()}] (net: no baseline) "
         f"(90 % interval {a['interval'][0]:.1f}-{a['interval'][1]:.1f}, "
         f"trust {a['pillars']['overall']})\n"
         "  Detail: perdedor score <report.json>    Fix order: perdedor plan <report.json>"
@@ -223,7 +234,7 @@ def _cmd_test(args: argparse.Namespace) -> int:
         from perdedor_common.text_format import render_platform_text
 
         print(render_platform_text(report, use_color=use_color, verbose=args.verbose))
-        summary = _exposure_summary(report)
+        summary = _exposure_summary(report, baseline=getattr(args, "baseline", None))
         if summary:
             print(summary)
 
@@ -306,6 +317,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     test.add_argument("--env-instrumentation", default=None, help="active instrumentation")
     test.add_argument("--env-label", action="append", default=[], help="environment label KEY=VALUE")
+    test.add_argument(
+        "--baseline",
+        default=None,
+        help="bare-metal baseline profile or file to compute net exposure",
+    )
     test.set_defaults(func=_cmd_test)
 
     report = subparsers.add_parser(
@@ -337,6 +353,10 @@ def build_parser() -> argparse.ArgumentParser:
     from perdedor_cli import gate_cmd
 
     gate_cmd.register(subparsers)
+
+    from perdedor_cli import baseline_cmd
+
+    baseline_cmd.register(subparsers)
 
     from perdedor_cli import upstream
 

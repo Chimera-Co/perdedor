@@ -4,11 +4,7 @@ import json
 from pathlib import Path
 
 from perdedor_cli.__main__ import main
-from perdedor_common.history import (
-    HistoryStore,
-    render_history_markdown,
-    render_history_text,
-)
+from perdedor_common.history import HistoryStore, render_history_markdown, render_history_text
 
 
 def _sample_report(

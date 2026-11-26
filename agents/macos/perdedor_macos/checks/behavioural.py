@@ -189,7 +189,7 @@ def _chromium_paths(target: Target, home: str):
         listing = target.listdir(base)
         if listing is None or (listing.entries is None and listing.error != "missing"):
             return None, "browser profile directory unreadable"
-        for entry in (listing.entries if listing and listing.entries else ()):
+        for entry in listing.entries if listing and listing.entries else ():
             if entry == "Default" or entry.startswith("Profile "):
                 out.append(f"{base}/{entry}/History")
     return out, None

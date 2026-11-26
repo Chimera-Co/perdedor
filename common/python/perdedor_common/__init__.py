@@ -1,3 +1,11 @@
+from .baseline import (
+    VMRefusalError,
+    apply_baseline_to_findings,
+    list_baselines,
+    record_baseline,
+    resolve_baseline,
+    show_baseline,
+)
 from .finding_factory import FindingFactory
 from .models import Category, Finding, PlatformReport, Severity, Status
 from .report_reader import read_report
@@ -11,10 +19,16 @@ __all__ = [
     "PlatformReport",
     "Severity",
     "Status",
+    "VMRefusalError",
+    "apply_baseline_to_findings",
+    "list_baselines",
     "read_report",
+    "record_baseline",
     "render_banner",
     "render_platform_text",
+    "resolve_baseline",
     "score_report",
+    "show_baseline",
 ]
 
 __version__ = "2.0.1"

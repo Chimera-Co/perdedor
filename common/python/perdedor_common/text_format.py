@@ -39,7 +39,9 @@ _BANNER_ART = r"""
 █      █      █ █    █   █  █      █   █  █   █  █ █
 █      █      █  █   █  █   █      █  █   █   █  █  █
 █      █████  █   █  ███    █████  ███     ███   █   █
-""".strip("\n")
+""".strip(
+    "\n"
+)
 
 _BANNER_TAGLINE = "Cross-Platform Sandbox-Evasion Self-Test Suite"
 _BANNER_WIDTH = max(len(line) for line in _BANNER_ART.splitlines())

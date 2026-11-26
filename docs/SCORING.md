@@ -163,6 +163,7 @@ Classes                                    score  lost  tested/all det
 | A9 | The number has a plain meaning | Interpretability |
 | A10 | The score uses its range (clean = 100; more detections = clearly lower) | Resolution |
 | A11 | Conclusions survive catalog values that are off by up to 2× | Robustness to our own guesses |
+| A12 | Net exposure is never lower than raw exposure; trivial checks move neither | Calibration against physical hardware |
 
 ### Synthetic results
 
@@ -313,22 +314,102 @@ run a deeper profile.
 | Families *T_f*, *w_f* | `catalog/threats.json` | Sourced entries only: every technique of a family cites a public analysis |
 | Shrinkage, interval width | `SHRINK = 2`, `KAPPA = 12` in `exposure.py` | Lab-checked; changing them requires rerunning the lab |
 
+## Bare-metal baselines and net exposure
+
+### Why bare-metal calibration matters
+
+Physical computers are not zero-tell machines. On real, non-virtual hardware, a subset of evasion checks
+regularly fire: instruction timing jitter from power management, OEM ACPI and SMBIOS table quirks,
+hardware performance counter nuances, or wear-and-tear thresholds. Because evasive malware running on
+physical hardware observes those exact same signals without aborting, penalizing a sandbox for signals
+that also appear on bare metal distorts exposure assessment.
+
+PERDEDOR addresses this through two exposure scores reported side by side:
+
+1. **RAW exposure score**: Evaluates all applicable check detections against the catalog and threat model.
+2. **NET exposure score**: Leaves out (ignores) checks that also fire on bare metal for the same OS,
+   evaluating only the evasion tells attributable to virtualization and sandbox instrumentation.
+
+### Direction of the score
+
+In PERDEDOR's exposure model, **HIGHER IS BETTER** (0–100 represents the share of known evasive malware
+expected to see no sign of analysis and run normally).
+
+Because net exposure leaves out false-positive tells that appear on bare metal, **the net score is never
+lower than the raw score**:
+
+$$S_{\text{net}} \ge S_{\text{raw}}$$
+
+Furthermore, under Axiom A2 and A12, trivial clean checks or checks of techniques with zero prevalence
+or discrimination cannot move either score. Both raw and net exposure carry their own 90 % credible
+intervals and coverage figures. Until a bare-metal baseline is supplied via `--baseline`, the net score
+reports `"no baseline"`.
+
+### Worked example
+
+Consider a Windows 10 analysis environment under test evaluated against the 104-technique Windows catalog:
+
+- **Raw evaluation**:
+  Ten checks detect evasion tells, including the CPUID hypervisor bit (`cpu.hypervisor_bit`, prevalence $p=0.30$,
+  discrimination $q=0.95$), RDTSC VM-exit cycle timing (`timing.cpuid_vmexit`, $p=0.20, q=0.70$), and an OEM
+  firmware table signature (`artifacts.acpi`, $p=0.15, q=0.60$).
+  ```text
+  Perdedor exposure score (windows): 41.8/100 [FAIL]  (net: no baseline)
+    Raw: 41.8/100 [FAIL], 90 % interval 20.6-63.2; coverage 75% (53/104 techniques tested, 10 detected)
+    Net: no baseline (pass --baseline <profile|file> to calculate net exposure)
+  ```
+
+- **Recording a bare-metal baseline**:
+  An agent run on a physical, non-virtual Windows 10 machine records which checks fire on real hardware:
+  ```bash
+  perdedor baseline record --profile bare-metal-win10 real-hw-report.json
+  ```
+  On this physical PC, two checks fire: `timing.cpuid_vmexit` (due to CPU power-saving frequency scaling)
+  and `artifacts.acpi` (OEM hardware vendor table).
+
+- **Net evaluation**:
+  Scoring the analysis environment with `--baseline bare-metal-win10`:
+  ```bash
+  perdedor score guest-report.json --baseline bare-metal-win10
+  ```
+  Output:
+  ```text
+  Perdedor exposure score (windows): raw 41.8/100 [FAIL], net 62.5/100 [WARN]
+    Raw: 41.8/100 [FAIL], 90 % interval 20.6-63.2; coverage 75% (53/104 techniques tested, 10 detected)
+    Net: 62.5/100 [WARN], 90 % interval 45.0-78.2; coverage 75% (53/104 techniques tested, 8 detected)
+    Baseline: bare-metal-win10 (scan: 3a2f8c..., os: windows 10.0.19045, date: 2026-11-20T12:00:00Z)
+  ```
+  The operator sees that while raw exposure is 41.8, the net exposure attributable strictly to virtualization
+  is 62.5. The 20.7-point gap represents benign hardware behavior rather than sandbox leakage.
+
+### Baseline management and VM protection
+
+- `perdedor baseline record --profile <name> <report.json>`: Extracts firing checks, measurements, host facts
+  (OS build, CPU model), and scan ID into standard-library JSON under `~/.local/share/perdedor/baselines/<profile>.json`
+  (overridable with `--store`).
+- **VM refusal**: The command refuses reports whose environment block (`hypervisor != "none"`) or host facts
+  (known CPU/hypervisor markers such as `qemu`, `kvm`, `vmware`, `xen`, `hyper-v`, `parallels`, `bhyve`)
+  indicate execution inside a virtual machine, failing with a clear error unless `--force` is explicitly passed.
+- `perdedor baseline list`: Lists stored baseline profiles with OS, CPU, date, and count of firing checks.
+- `perdedor baseline show <profile>`: Shows detailed firing checks and measurements for the profile.
+- **Integrity rule**: No baseline files are ever committed or shipped within the repository.
+
 ## Comparing reports and gating regressions
 
 ### Report comparison
 
-`perdedor compare <A> <B>` compares two scan reports (from file paths or scan IDs stored in history):
+`perdedor compare <A> <B> [--baseline <baseline>]` compares two scan reports (from file paths or scan IDs stored in history):
 - **Findings transition**: Identifies checks that **newly fire** (clean in A, detected in B), **stopped firing** (detected in A, clean in B), or **changed measurement** (differences in numeric measurements, timing values, or execution status).
 - **Score deltas**: Computes category and class exposure score differences ($\Delta = \text{score}_B - \text{score}_A$).
-- **Net exposure slot**: Reports currently display raw exposure score deltas and reserve a dedicated field for net exposure (`"net: no baseline"`) until baseline-calibrated net exposure modeling is incorporated.
+- **Net exposure deltas**: When `--baseline <profile|file>` is provided, computes net exposure scores for both reports and fills the net delta column with numeric differences. Without `--baseline`, displays `"net: no baseline"`.
 
 ### Regression gating
 
-`perdedor gate <report> --baseline <baseline>` validates whether an environment meets detection regression criteria:
+`perdedor gate <report> --baseline <baseline>` validates whether an environment meets detection regression criteria against a baseline report or bare-metal baseline profile:
 - **Default rule**: Fails (exit code 1) if any check newly fires compared to the baseline.
-- `--max-increase N`: Allows at most $N$ points increase in raw exposure before failing (accounting for measurement noise).
+- `--max-increase N`: Allows at most $N$ newly firing checks before failing (accounting for measurement noise).
 - `--fail-on-new-class`: Fails if any check fires in a class where the baseline was completely clean.
-- **Behavior**: The command acts strictly as a check gate; it emits a concise reason on standard error and never modifies reports or history stores.
+- **Behavior**: The command acts strictly as a check gate; it emits a concise reason on standard error and never modifies reports, baselines, or history stores.
 
 ## Limits
 

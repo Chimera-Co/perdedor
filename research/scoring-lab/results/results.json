@@ -236,6 +236,53 @@
     "hit_66": 0.47,
     "spread_10_33": 31.52
    }
+  },
+  "A12_net_exposure": {
+   "M0 severity penalty": {
+    "never_lower": 1.0,
+    "strictly_higher": 1.0,
+    "trivial_invariant": 0.058333333333333334
+   },
+   "M1 weighted pass rate": {
+    "never_lower": 1.0,
+    "strictly_higher": 1.0,
+    "trivial_invariant": 0.016666666666666666
+   },
+   "M2 points (VMAware-style)": {
+    "never_lower": 1.0,
+    "strictly_higher": 0.025,
+    "trivial_invariant": 1.0
+   },
+   "M3 noisy-OR exposure": {
+    "never_lower": 1.0,
+    "strictly_higher": 0.5,
+    "trivial_invariant": 1.0
+   },
+   "M4 family survival": {
+    "never_lower": 1.0,
+    "strictly_higher": 0.375,
+    "trivial_invariant": 1.0
+   },
+   "M5 hybrid (point)": {
+    "never_lower": 1.0,
+    "strictly_higher": 0.375,
+    "trivial_invariant": 1.0
+   },
+   "M5 hybrid (coverage-imputed)": {
+    "never_lower": 1.0,
+    "strictly_higher": 0.5,
+    "trivial_invariant": 1.0
+   },
+   "M6 weakest class": {
+    "never_lower": 1.0,
+    "strictly_higher": 0.075,
+    "trivial_invariant": 1.0
+   },
+   "PEM-2 production (perdedor_common.exposure)": {
+    "never_lower": 1.0,
+    "strictly_higher": 0.5,
+    "trivial_invariant": 1.0
+   }
   }
  }
 }

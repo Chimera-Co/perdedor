@@ -55,18 +55,47 @@ def _bar(score: float, width: int = 20) -> str:
 def render_assessment(a: dict) -> str:
     if a.get("score") is None:
         return f"No score: {a.get('reason')}"
+
+    has_net = a.get("net_score") not in (None, "no baseline") and isinstance(a.get("net"), dict)
+    if has_net:
+        b = a.get("baseline") or {}
+        headline_line = (
+            f"Perdedor exposure score ({a['platform']}): raw {a['raw_score']:.1f}/100 [{a['verdict'].upper()}], "
+            f"net {a['net_score']:.1f}/100 [{a['net']['verdict'].upper()}]"
+        )
+    else:
+        headline_line = (
+            f"Perdedor exposure score ({a['platform']}): {a['score']:.1f}/100  [{a['verdict'].upper()}]"
+        )
+
     L = [
-        f"Perdedor exposure score ({a['platform']}): {a['score']:.1f}/100  [{a['verdict'].upper()}]",
+        headline_line,
         f"  {a['meaning']}",
-        f"  90 % interval {a['interval'][0]:.1f}-{a['interval'][1]:.1f}; measured techniques only: "
+        f"  Raw: 90 % interval {a['interval'][0]:.1f}-{a['interval'][1]:.1f}; measured techniques only: "
         f"{a['observed']:.1f}; coverage {a['coverage']:.0%} "
         f"({a['techniques']['tested']}/{a['techniques']['platform']} techniques tested, "
         f"{a['techniques']['detected']} detected)",
-        f"  threat model: {a['threat_model']['source']}"
-        + (f" ({a['threat_model']['families']} families)" if a["threat_model"]["families"] else ""),
-        "",
-        "Categories                    score  points lost  tested/all  detected",
     ]
+    if has_net:
+        b = a.get("baseline") or {}
+        net_t = a["net"]["techniques"]
+        L.append(
+            f"  Net: 90 % interval {a['net']['interval'][0]:.1f}-{a['net']['interval'][1]:.1f}; "
+            f"measured techniques only: {a['net']['observed']:.1f}; coverage {a['net']['coverage']:.0%} "
+            f"({net_t['tested']}/{net_t['platform']} techniques tested, {net_t['detected']} detected)"
+        )
+        L.append(
+            f"  Baseline: {b.get('profile', 'custom')} (scan: {b.get('scan_id', '-')}, os: {b.get('os', '-')}, date: {b.get('date', '-')})"
+        )
+    else:
+        L.append("  Net: no baseline (pass --baseline <profile|file> to calculate net exposure)")
+
+    L.append(
+        f"  threat model: {a['threat_model']['source']}"
+        + (f" ({a['threat_model']['families']} families)" if a["threat_model"]["families"] else "")
+    )
+    L.append("")
+    L.append("Categories                    score  points lost  tested/all  detected")
     for cat, v in sorted(a["categories"].items(), key=lambda kv: -kv[1]["points_lost"]):
         L.append(
             f"  {CATEGORY_TITLES.get(cat, cat):<26} {v['score']:6.1f}  {v['points_lost']:11.1f}  "
@@ -128,7 +157,14 @@ def _cmd_score(args: argparse.Namespace) -> int:
 
     doc = _load(args.report)
     runs = [doc["findings"]] + [_load(r)["findings"] for r in args.runs] if args.runs else None
-    a = assess(doc["findings"], _platform(doc, args.platform), _catalog(args.catalog), runs=runs)
+    a = assess(
+        doc["findings"],
+        _platform(doc, args.platform),
+        _catalog(args.catalog),
+        runs=runs,
+        baseline=args.baseline,
+        baseline_store=args.store,
+    )
     if args.json:
         Path(args.json).write_text(json.dumps(a, indent=2), encoding="utf-8")
         print(f"Wrote assessment to {args.json}", file=sys.stderr)
@@ -140,7 +176,14 @@ def _cmd_plan(args: argparse.Namespace) -> int:
     from perdedor_common.exposure import plan
 
     doc = _load(args.report)
-    p = plan(doc["findings"], _platform(doc, args.platform), _catalog(args.catalog), max_steps=args.max_steps)
+    p = plan(
+        doc["findings"],
+        _platform(doc, args.platform),
+        _catalog(args.catalog),
+        max_steps=args.max_steps,
+        baseline=args.baseline,
+        baseline_store=args.store,
+    )
     if args.json:
         Path(args.json).write_text(json.dumps(p, indent=2), encoding="utf-8")
         print(f"Wrote plan to {args.json}", file=sys.stderr)
@@ -154,6 +197,10 @@ def register(subparsers) -> None:
     score.add_argument("--runs", nargs="*", default=[], help="repeated runs of the same environment")
     score.add_argument("--platform", help="override the platform named in the report")
     score.add_argument("--catalog", help="catalog directory (default: the repository catalog)")
+    score.add_argument(
+        "--baseline", default=None, help="bare-metal baseline profile or file to compute net exposure"
+    )
+    score.add_argument("--store", default=None, help="baselines directory")
     score.add_argument("--json", help="also write the full assessment as JSON")
     score.set_defaults(func=_cmd_score)
 
@@ -163,6 +210,10 @@ def register(subparsers) -> None:
     pl.add_argument("report", help="a Perdedor JSON report (or a JSON list of findings)")
     pl.add_argument("--platform", help="override the platform named in the report")
     pl.add_argument("--catalog", help="catalog directory (default: the repository catalog)")
+    pl.add_argument(
+        "--baseline", default=None, help="bare-metal baseline profile or file to compute net roadmap"
+    )
+    pl.add_argument("--store", default=None, help="baselines directory")
     pl.add_argument("--max-steps", type=int, default=25)
     pl.add_argument("--json", help="also write the plan as JSON")
     pl.set_defaults(func=_cmd_plan)

@@ -152,6 +152,55 @@ def axiom_range(P: Params, names: Sequence[str], rng: random.Random) -> Dict[str
     return out
 
 
+def axiom_net_exposure(P: Params, names: Sequence[str], trials: int, rng: random.Random) -> Dict[str, dict]:
+    """A12: Net exposure vs Raw exposure.
+    1. Net score (ignoring checks that also fire on bare metal) is never LOWER than raw score.
+       In PERDEDOR higher score = less detectable = better; ignoring tells present on bare metal
+       means the environment cannot look more detectable than raw.
+    2. Trivial checks (redundant checks or checks that fire on bare metal but were already clean)
+       cannot move either score.
+    """
+    res = {n: {"never_lower": 0, "strictly_higher": 0, "trivial_invariant": 0, "n": 0} for n in names}
+    for _ in range(trials):
+        env = synthetic_env(P, rng)
+        detected_checks = [f["id"] for f in env if f.get("status") == "detected"]
+        if not detected_checks:
+            continue
+        k = rng.randint(1, min(3, len(detected_checks)))
+        bm_checks = set(rng.sample(detected_checks, k))
+
+        # Net env: ignore checks that also fire on bare metal
+        env_net = [dict(f, status="clean") if f["id"] in bm_checks else f for f in env]
+
+        # Trivial clean check padding
+        tested = sorted({f["technique"] for f in env})
+        padding = [
+            {"tool": "padding", "id": f"pad.{i}", "technique": rng.choice(tested), "status": "clean"}
+            for i in range(10)
+        ]
+
+        for n in names:
+            s_raw = score(n, env, P)
+            s_net = score(n, env_net, P)
+            s_net_pad = score(n, env_net + padding, P)
+
+            if s_raw is not None and s_net is not None:
+                res[n]["n"] += 1
+                res[n]["never_lower"] += s_net >= s_raw - 1e-9
+                res[n]["strictly_higher"] += s_net > s_raw + 1e-9
+                if s_net_pad is not None:
+                    res[n]["trivial_invariant"] += abs(s_net_pad - s_net) <= 0.05
+
+    return {
+        n: {
+            "never_lower": r["never_lower"] / r["n"] if r["n"] else 1.0,
+            "strictly_higher": r["strictly_higher"] / r["n"] if r["n"] else 0.0,
+            "trivial_invariant": r["trivial_invariant"] / r["n"] if r["n"] else 1.0,
+        }
+        for n, r in res.items()
+    }
+
+
 # ---------------------------------------------------------------------------------------------
 # labelled hardening arms
 # ---------------------------------------------------------------------------------------------
@@ -374,22 +423,23 @@ def markdown(results: Dict) -> str:
     L += [
         "## Synthetic axioms",
         "",
-        "| Model | A1 never up | A1 strictly down | A2 mean gain from padding | A3 one strong < five weak | A3 one strong < 90 | A8 mean rise with 40 % fewer techniques | A10 score at 10 % / 33 % hits |",
-        "|---|---|---|---|---|---|---|---|",
+        "| Model | A1 never up | A1 strictly down | A2 mean gain from padding | A3 one strong < five weak | A3 one strong < 90 | A8 mean rise with 40 % fewer techniques | A10 score at 10 % / 33 % hits | A12 net >= raw |",
+        "|---|---|---|---|---|---|---|---|---|",
     ]
     ax = results["axioms"]
     for n in names:
-        a1, a2, a3, a8, a10 = (
+        a1, a2, a3, a8, a10, a12 = (
             ax["A1_monotonic"][n],
             ax["A2_no_dilution"][n],
             ax["A3_severity"][n],
             ax["A8_coverage"][n],
             ax["A10_range"][n],
+            ax.get("A12_net_exposure", {}).get(n, {"never_lower": 1.0}),
         )
         L.append(
             f"| {n} | {a1['never_up']:.0%} | {a1['strictly_down']:.0%} | {a2['mean_gain']:+.2f} | "
             f"{fmt(a3['dominance'])} ({a3['one_strong']:.1f} vs {a3['five_weak']:.1f}) | {fmt(a3['below_warn'])} | "
-            f"{a8['mean_rise']:+.2f} | {a10['hit_10']:.1f} / {a10['hit_33']:.1f} |"
+            f"{a8['mean_rise']:+.2f} | {a10['hit_10']:.1f} / {a10['hit_33']:.1f} | {a12['never_lower']:.0%} |"
         )
     if "arms" in results:
         A = results["arms"]
@@ -451,6 +501,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         "A3_severity": axiom_severity(P, names),
         "A8_coverage": axiom_coverage(P, names, a.trials // 2, rng),
         "A10_range": axiom_range(P, names, rng),
+        "A12_net_exposure": axiom_net_exposure(P, names, a.trials, rng),
     }
     if a.arms:
         arms, unmapped = load_arms(a.arms, ToolMap())

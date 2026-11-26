@@ -19,17 +19,7 @@ from perdedor_common.registry import RunContext
 
 from .. import parsing
 from .. import signatures as sig
-from ..checkkit import (
-    UNREACHABLE,
-    Fail,
-    Meta,
-    Result,
-    Skip,
-    Verdict,
-    app_bundles,
-    build,
-    process_probe,
-)
+from ..checkkit import UNREACHABLE, Fail, Meta, Result, Skip, Verdict, app_bundles, build, process_probe
 from ..target import Target
 
 P = Platform.MACOS

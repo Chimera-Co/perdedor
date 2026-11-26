@@ -12,11 +12,7 @@ import argparse
 import json
 from pathlib import Path
 
-from perdedor_common.compare import (
-    compare_reports,
-    render_compare_markdown,
-    render_compare_text,
-)
+from perdedor_common.compare import compare_reports, render_compare_markdown, render_compare_text
 from perdedor_common.history import HistoryStore
 from perdedor_common.report_reader import read_report
 
@@ -36,7 +32,7 @@ def _cmd_compare(args: argparse.Namespace) -> int:
     doc_a = _resolve_report(args.report_a, store)
     doc_b = _resolve_report(args.report_b, store)
 
-    diff = compare_reports(doc_a, doc_b)
+    diff = compare_reports(doc_a, doc_b, baseline=args.baseline, baseline_store=args.store)
 
     fmt = args.format.lower()
     if args.json or fmt == "json":
@@ -53,6 +49,11 @@ def register(subparsers) -> None:
     parser = subparsers.add_parser("compare", help="compare two reports: new tells, fixes, score deltas")
     parser.add_argument("report_a", help="baseline report (file path, scan_id, or profile)")
     parser.add_argument("report_b", help="target report (file path, scan_id, or profile)")
+    parser.add_argument(
+        "--baseline",
+        default=None,
+        help="bare-metal baseline profile or file to evaluate net exposure deltas",
+    )
     parser.add_argument(
         "--format", choices=("text", "json", "markdown", "md"), default="text", help="output format"
     )
