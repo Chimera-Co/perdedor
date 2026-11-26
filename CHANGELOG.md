@@ -3,6 +3,13 @@
 Releases follow [docs/RELEASING.md](docs/RELEASING.md): patch releases keep the report format, minor releases
 may add checks and fields, major releases change the format or the score's meaning.
 
+## Unreleased
+
+- Hardening planner (#5 section 6): `perdedor plan` names each step's layer (hypervisor, firmware, device
+  model, guest OS, user profile, monitor, network) and where its recipe goes; `--markdown` writes a reviewable
+  change list and `--previous` reports what improved or regressed since an earlier report. Perdedor never
+  applies a fix.
+
 ## v2.1.0 (2026-11-27)
 
 - Coverage triage: every upstream technique Perdedor does not check has a recorded decision (implement,
