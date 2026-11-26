@@ -2329,8 +2329,8 @@
     {
       "id": "win.timing.clock_jitter_vmaware",
       "technique": "timing.clock_source",
-      "status": "planned",
-      "reason": "Requires multi-interval RTC vs performance counter drift sampling; planned for timing suite.",
+      "status": "implemented",
+      "reason": null,
       "cost": "medium",
       "network": false,
       "requires": [
@@ -2817,8 +2817,8 @@
     {
       "id": "win.timing.create_timer_queue_timer",
       "technique": "timing.sleep_acceleration",
-      "status": "planned",
-      "reason": "Requires measuring timer queue callback latency with CreateTimerQueueTimer; planned for timing suite.",
+      "status": "implemented",
+      "reason": null,
       "cost": "medium",
       "network": false,
       "requires": [
@@ -2845,8 +2845,8 @@
     {
       "id": "win.timing.create_waitable_timer",
       "technique": "timing.sleep_acceleration",
-      "status": "planned",
-      "reason": "Requires measuring kernel waitable timer delay with CreateWaitableTimer; planned for timing suite.",
+      "status": "implemented",
+      "reason": null,
       "cost": "medium",
       "network": false,
       "requires": [
@@ -2873,10 +2873,10 @@
     {
       "id": "win.timing.icmp_send_echo_delay",
       "technique": "timing.sleep_acceleration",
-      "status": "planned",
-      "reason": "Requires measuring IcmpSendEcho timeout accuracy; planned for timing suite.",
+      "status": "implemented",
+      "reason": null,
       "cost": "medium",
-      "network": false,
+      "network": true,
       "requires": [
         "native-helper"
       ],
@@ -2901,8 +2901,8 @@
     {
       "id": "win.timing.user32_set_timer",
       "technique": "timing.sleep_acceleration",
-      "status": "planned",
-      "reason": "Requires message pump timer dispatch measurement with SetTimer; planned for timing suite.",
+      "status": "implemented",
+      "reason": null,
       "cost": "medium",
       "network": false,
       "requires": [
@@ -2929,8 +2929,8 @@
     {
       "id": "win.timing.wait_for_multiple_objects",
       "technique": "timing.sleep_acceleration",
-      "status": "planned",
-      "reason": "Requires measuring timeout on unsignaled multiple object handles; planned for timing suite.",
+      "status": "implemented",
+      "reason": null,
       "cost": "medium",
       "network": false,
       "requires": [
@@ -2957,8 +2957,8 @@
     {
       "id": "win.timing.sleep_loop",
       "technique": "timing.sleep_acceleration",
-      "status": "planned",
-      "reason": "Requires cumulative loop sleep timing measurements; planned for timing suite.",
+      "status": "implemented",
+      "reason": null,
       "cost": "medium",
       "network": false,
       "requires": [
@@ -2985,8 +2985,8 @@
     {
       "id": "win.timing.timesetevent_delay",
       "technique": "timing.sleep_acceleration",
-      "status": "planned",
-      "reason": "Requires multimedia timer callback latency sampling with timeSetEvent; planned for timing suite.",
+      "status": "implemented",
+      "reason": null,
       "cost": "medium",
       "network": false,
       "requires": [
@@ -3069,8 +3069,8 @@
     {
       "id": "win.timing.cuckoo_delay_interval",
       "technique": "timing.sleep_acceleration",
-      "status": "planned",
-      "reason": "Requires inspecting in-out memory buffer of NtDelayExecution; planned for timing suite.",
+      "status": "implemented",
+      "reason": null,
       "cost": "fast",
       "network": false,
       "requires": [
@@ -3097,8 +3097,8 @@
     {
       "id": "win.timing.cuckoo_infinite_delay",
       "technique": "timing.sleep_acceleration",
-      "status": "planned",
-      "reason": "Requires timing INFINITE timeout wait behavior; planned for timing suite.",
+      "status": "implemented",
+      "reason": null,
       "cost": "fast",
       "network": false,
       "requires": [
@@ -3240,8 +3240,8 @@
     {
       "id": "win.timing.cuckoo_socket_timeout",
       "technique": "timing.sleep_acceleration",
-      "status": "planned",
-      "reason": "Requires comparing socket timeouts with sleep delays; planned for timing suite.",
+      "status": "implemented",
+      "reason": null,
       "cost": "medium",
       "network": false,
       "requires": [
@@ -3324,8 +3324,8 @@
     {
       "id": "win.timing.kuser_tickcount_drift",
       "technique": "timing.uptime",
-      "status": "planned",
-      "reason": "Requires comparing API tick count with raw KUSER_SHARED_DATA; planned for timing suite.",
+      "status": "implemented",
+      "reason": null,
       "cost": "fast",
       "network": false,
       "requires": [
@@ -3467,8 +3467,8 @@
     {
       "id": "win.timing.external_time_tampering",
       "technique": "timing.time_plausibility",
-      "status": "planned",
-      "reason": "Requires comparing guest time against HTTP Date headers and NTP time servers; planned for time plausibility suite.",
+      "status": "implemented",
+      "reason": null,
       "cost": "fast",
       "network": true,
       "requires": [
@@ -3865,8 +3865,8 @@
     {
       "id": "win.timing.get_local_time_delay",
       "technique": "timing.sleep_acceleration",
-      "status": "planned",
-      "reason": "Requires measuring delay using GetLocalTime; planned for timing suite.",
+      "status": "implemented",
+      "reason": null,
       "cost": "fast",
       "network": false,
       "requires": [
@@ -3893,8 +3893,8 @@
     {
       "id": "win.timing.get_system_time_delay",
       "technique": "timing.sleep_acceleration",
-      "status": "planned",
-      "reason": "Requires measuring delay using GetSystemTime; planned for timing suite.",
+      "status": "implemented",
+      "reason": null,
       "cost": "fast",
       "network": false,
       "requires": [
@@ -3921,8 +3921,8 @@
     {
       "id": "win.timing.get_tick_count_delay",
       "technique": "timing.sleep_acceleration",
-      "status": "planned",
-      "reason": "Requires measuring delay using GetTickCount; planned for timing suite.",
+      "status": "implemented",
+      "reason": null,
       "cost": "fast",
       "network": false,
       "requires": [
@@ -3955,8 +3955,8 @@
     {
       "id": "win.timing.kernel_kuser_tick_timing",
       "technique": "timing.clock_source",
-      "status": "planned",
-      "reason": "Requires reading KiGetTickCount and KUSER_SHARED_DATA; planned for clock source suite.",
+      "status": "implemented",
+      "reason": null,
       "cost": "fast",
       "network": false,
       "requires": [
@@ -3983,8 +3983,8 @@
     {
       "id": "win.timing.time_get_time_delay",
       "technique": "timing.sleep_acceleration",
-      "status": "planned",
-      "reason": "Requires measuring execution delays with winmm!timeGetTime; planned for timing suite.",
+      "status": "implemented",
+      "reason": null,
       "cost": "fast",
       "network": false,
       "requires": [
@@ -4039,8 +4039,8 @@
     {
       "id": "win.timing.network_adapter_reset_time",
       "technique": "timing.uptime",
-      "status": "planned",
-      "reason": "Requires querying Win32_NetworkAdapter TimeOfLastReset via WMI; planned for uptime suite.",
+      "status": "implemented",
+      "reason": null,
       "cost": "fast",
       "network": false,
       "requires": [
@@ -4067,8 +4067,8 @@
     {
       "id": "win.timing.dotnet_time_delay",
       "technique": "timing.sleep_acceleration",
-      "status": "planned",
-      "reason": "Requires measuring .NET Thread.Sleep and Stopwatch timing; planned for managed runtime suite.",
+      "status": "implemented",
+      "reason": null,
       "cost": "medium",
       "network": false,
       "requires": [
@@ -4095,8 +4095,8 @@
     {
       "id": "win.timing.qpc_time_delay_loop",
       "technique": "timing.sleep_acceleration",
-      "status": "planned",
-      "reason": "Requires measuring QueryPerformanceCounter timing loop accuracy; planned for timing suite.",
+      "status": "implemented",
+      "reason": null,
       "cost": "medium",
       "network": false,
       "requires": [

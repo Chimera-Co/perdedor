@@ -5,6 +5,10 @@ may add checks and fields, major releases change the format or the score's meani
 
 ## Unreleased
 
+- 21 Windows timing checks from the coverage backlog (#5 section 1): sleep, timer, wait, ICMP, QPC, .NET and
+  kernel-tick delay checks (al-khaser, Check Point, InviZzzible, capa, VMAware CLOCK) with bounded waits and robust
+  statistics. `timing.external_time_tampering` only runs against a host given with `--param timing.time_server`.
+
 - `linux.env.acpi_boot_logo` implemented: CRC-32C of the ACPI BGRT boot logo against the TianoCore EDK2 and
   Hyper-V digests VMAware publishes; skipped without a BGRT table or without root.
 

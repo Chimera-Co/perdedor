@@ -25,6 +25,8 @@ class Handle {
     Handle& operator=(const Handle&) = delete;
     HANDLE get() const { return value_; }
     bool valid() const { return value_ && value_ != INVALID_HANDLE_VALUE; }
+    // Give up ownership without closing (for a handle a still-running worker thread keeps using).
+    HANDLE release() { HANDLE h = value_; value_ = nullptr; return h; }
   private:
     HANDLE value_;
 };
