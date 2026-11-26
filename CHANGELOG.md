@@ -5,6 +5,11 @@ may add checks and fields, major releases change the format or the score's meani
 
 ## Unreleased
 
+- 18 Windows environment checks from the coverage backlog (#5 section 1): hypervisor exception quirks (single
+  step, MOV SS interrupt shadow, CPUID step), EPT hook timing, Gamarue volume serial, TPM measured boot, UEFI
+  variables, CPU topology, Office and Windows Sandbox, Defender emulator, VMware mutexes, Cuckoo/CAPE agent
+  artefacts, Azure metadata, hosting provider (only against `--param network.ip_info_host`), NetValidateName.
+
 - 21 Windows timing checks from the coverage backlog (#5 section 1): sleep, timer, wait, ICMP, QPC, .NET and
   kernel-tick delay checks (al-khaser, Check Point, InviZzzible, capa, VMAware CLOCK) with bounded waits and robust
   statistics. `timing.external_time_tampering` only runs against a host given with `--param timing.time_server`.

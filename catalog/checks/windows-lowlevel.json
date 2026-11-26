@@ -1683,8 +1683,8 @@
     {
       "id": "win.env.hypervisor_exception_quirks",
       "technique": "cpu.undefined_instruction_behaviour",
-      "status": "planned",
-      "reason": "Needs multi-trap instruction sequences whose mishandling on a buggy hypervisor can wedge a vCPU; deferred until validated on the CHIMERA Xen guest under the guard.",
+      "status": "implemented",
+      "reason": null,
       "cost": "fast",
       "network": false,
       "requires": [
@@ -1713,8 +1713,8 @@
     {
       "id": "win.env.ept_hook_timing",
       "technique": "instrumentation.vmi_side_channel",
-      "status": "planned",
-      "reason": "Research probe; needs calibration on the CHIMERA host before it can carry a threshold.",
+      "status": "implemented",
+      "reason": null,
       "cost": "medium",
       "network": false,
       "requires": [
@@ -2301,8 +2301,8 @@
     {
       "id": "win.env.azure_cloud",
       "technique": "network.cloud_metadata",
-      "status": "planned",
-      "reason": "Requires probing Azure IMDS metadata endpoints and Azure DMI identifiers; planned for cloud detection profile.",
+      "status": "implemented",
+      "reason": null,
       "cost": "fast",
       "network": true,
       "requires": [
@@ -2357,8 +2357,8 @@
     {
       "id": "win.env.gamarue_volume_serial",
       "technique": "hardware.disk_identity",
-      "status": "planned",
-      "reason": "Requires volume serial enumeration against Gamarue and CAPE sandbox signature lists; planned for disk identity checks.",
+      "status": "implemented",
+      "reason": null,
       "cost": "fast",
       "network": false,
       "requires": [
@@ -2388,8 +2388,8 @@
     {
       "id": "win.env.tpm_measured_boot",
       "technique": "firmware.boot_mode",
-      "status": "planned",
-      "reason": "Requires parsing TCG event logs via Tbsi_Get_TCG_Log; planned for firmware integrity checks.",
+      "status": "implemented",
+      "reason": null,
       "cost": "fast",
       "network": false,
       "requires": [
@@ -2416,8 +2416,8 @@
     {
       "id": "win.env.uefi_nvram_variables",
       "technique": "firmware.bios_metadata",
-      "status": "planned",
-      "reason": "Requires enumerating UEFI firmware environment variables via GetFirmwareEnvironmentVariableW; planned for firmware checks.",
+      "status": "implemented",
+      "reason": null,
       "cost": "fast",
       "network": false,
       "requires": [
@@ -2444,8 +2444,8 @@
     {
       "id": "win.env.thread_mismatch",
       "technique": "cpu.topology_consistency",
-      "status": "planned",
-      "reason": "Requires comparing GetLogicalProcessorInformation with CPUID APIC IDs; planned for CPU topology suite.",
+      "status": "implemented",
+      "reason": null,
       "cost": "fast",
       "network": false,
       "requires": [
@@ -2786,8 +2786,8 @@
     {
       "id": "win.network.hosting_provider_check",
       "technique": "network.public_ip_reputation",
-      "status": "planned",
-      "reason": "Requires external IP lookup and ASN verification against cloud datacenter ranges; planned for network profile.",
+      "status": "implemented",
+      "reason": null,
       "cost": "fast",
       "network": true,
       "requires": [
@@ -3439,8 +3439,8 @@
     {
       "id": "win.env.big_ram_alloc",
       "technique": "resources.memory_size",
-      "status": "planned",
-      "reason": "Requires testing allocation of multi-gigabyte memory blocks; planned for resource sizing suite.",
+      "status": "implemented",
+      "reason": null,
       "cost": "medium",
       "network": false,
       "requires": [
@@ -4011,10 +4011,10 @@
     {
       "id": "win.network.net_validate_name_emulation",
       "technique": "network.connectivity",
-      "status": "planned",
-      "reason": "Requires calling NetValidateName with invalid domain names; planned for network emulation suite.",
-      "cost": "fast",
-      "network": false,
+      "status": "implemented",
+      "reason": null,
+      "cost": "medium",
+      "network": true,
       "requires": [
         "native-helper"
       ],
@@ -4123,8 +4123,8 @@
     {
       "id": "win.env.office_emulation_artifacts",
       "technique": "container.app_sandbox",
-      "status": "planned",
-      "reason": "Requires detecting Microsoft Office VBA sandbox and emulation environment markers; planned for office sandbox suite.",
+      "status": "implemented",
+      "reason": null,
       "cost": "fast",
       "network": false,
       "requires": [
@@ -4151,8 +4151,8 @@
     {
       "id": "win.env.windows_sandbox_vsgpu",
       "technique": "container.app_sandbox",
-      "status": "planned",
-      "reason": "Requires opening \\\\.\\vsgpu device handle; planned for container sandbox suite.",
+      "status": "implemented",
+      "reason": null,
       "cost": "fast",
       "network": false,
       "requires": [
@@ -4179,8 +4179,8 @@
     {
       "id": "win.env.windows_sandbox_dns_suffix",
       "technique": "container.app_sandbox",
-      "status": "planned",
-      "reason": "Requires checking adapter DNS suffix for container defaults; planned for container sandbox suite.",
+      "status": "implemented",
+      "reason": null,
       "cost": "fast",
       "network": false,
       "requires": [
@@ -4235,8 +4235,8 @@
     {
       "id": "win.env.windefend_emulator_artifacts",
       "technique": "cpu.emulation_quirks",
-      "status": "planned",
-      "reason": "Requires detecting Windows Defender MpEngine emulator signatures; planned for emulation suite.",
+      "status": "implemented",
+      "reason": null,
       "cost": "fast",
       "network": false,
       "requires": [
@@ -4291,8 +4291,8 @@
     {
       "id": "win.env.vmware_mutexes",
       "technique": "artifacts.named_objects",
-      "status": "planned",
-      "reason": "Requires opening VMware Tools named mutexes and events; planned for VM artifacts suite.",
+      "status": "implemented",
+      "reason": null,
       "cost": "fast",
       "network": false,
       "requires": [

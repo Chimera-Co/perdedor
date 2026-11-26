@@ -9811,8 +9811,8 @@
     {
       "id": "win.env.cuckoo_agent_artifacts",
       "technique": "artifacts.files",
-      "status": "planned",
-      "reason": "Requires inspecting filesystem paths for Cuckoo agent installation files; planned for Windows agent.",
+      "status": "implemented",
+      "reason": null,
       "cost": "fast",
       "network": false,
       "requires": [],
@@ -9837,8 +9837,8 @@
     {
       "id": "win.env.cuckoo_agent_listener",
       "technique": "analysis_tools.processes",
-      "status": "planned",
-      "reason": "Requires detecting agent.py listener process or its bound localhost port; planned for Windows agent.",
+      "status": "implemented",
+      "reason": null,
       "cost": "fast",
       "network": false,
       "requires": [],
@@ -9863,8 +9863,8 @@
     {
       "id": "win.env.cuckoo_cuckoomon_config",
       "technique": "artifacts.files",
-      "status": "planned",
-      "reason": "Requires searching for cuckoomon.ini or capemon configuration files; planned for Windows agent.",
+      "status": "implemented",
+      "reason": null,
       "cost": "fast",
       "network": false,
       "requires": [],
