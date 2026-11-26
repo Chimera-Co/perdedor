@@ -3,12 +3,20 @@
 Releases follow [docs/RELEASING.md](docs/RELEASING.md): patch releases keep the report format, minor releases
 may add checks and fields, major releases change the format or the score's meaning.
 
-## Unreleased
+## v2.1.0 (2026-11-27)
 
+- Coverage triage: every upstream technique Perdedor does not check has a recorded decision (implement,
+  covered by an equivalent, or out of scope with a reason) (#7).
+- Versioned reports with `perdedor history`, `perdedor compare` and `perdedor gate`, so a sandbox change can be
+  checked against the previous scan and fail a pipeline when exposure drops (#8).
+- Upstream review of 2026-11-23: seven more upstream techniques mapped; the watcher falls back cleanly when
+  GitHub returns 403; `github_pat_` tokens are redacted from logs (#9).
+- Bare-metal baselines: `perdedor baseline record/list/show`, and a net exposure score that discounts checks
+  which also fire on the physical reference machine. Net exposure is never lower than raw exposure (#10).
 - Linux: `linux.behavioural.desktop_session` (an X/Wayland/desktop session process is running) and
   `linux.behavioural.active_sessions` (USER_PROCESS records in utmp, what `who` lists). Together with
   `linux.timing.rdtsc_cpuid_vmexit`, which already records the raw RDTSC/CPUID statistics, PERDEDOR now covers
-  every check of CHIMERA's separate Linux VM check and CPUID timing harness, so CHIMERA can retire both.
+  every check of CHIMERA's separate Linux VM check and CPUID timing harness, so CHIMERA can retire both (#11).
 - `design.analysis_tools_running` and `design.analysis_tool_cmdline` also name `drakshell`, `chimera-agent` and
   `sandbox-agent`.
 
