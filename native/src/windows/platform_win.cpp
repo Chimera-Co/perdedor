@@ -1,4 +1,5 @@
 #define WIN32_LEAN_AND_MEAN
+#include <string>
 #include <windows.h>
 
 #include <cstdio>
@@ -30,9 +31,8 @@ Json metadata() {
     auto fn = reinterpret_cast<RtlGetVersionFn>(
         reinterpret_cast<void*>(GetProcAddress(GetModuleHandleW(L"ntdll.dll"), "RtlGetVersion")));
     if (fn && fn(&v) == 0) {
-        char buf[64];
-        std::snprintf(buf, sizeof buf, "%lu.%lu.%lu", static_cast<unsigned long>(v.dwMajorVersion),
-                      static_cast<unsigned long>(v.dwMinorVersion), static_cast<unsigned long>(v.dwBuildNumber));
+        const std::string buf = std::to_string(v.dwMajorVersion) + "." + std::to_string(v.dwMinorVersion) + "." +
+                                std::to_string(v.dwBuildNumber);
         m.set("os_release", buf);
     }
     SYSTEM_INFO si{};
@@ -60,9 +60,8 @@ Json host_facts() {
     auto fn = reinterpret_cast<RtlGetVersionFn>(
         reinterpret_cast<void*>(GetProcAddress(GetModuleHandleW(L"ntdll.dll"), "RtlGetVersion")));
     if (fn && fn(&v) == 0) {
-        char buf[64];
-        std::snprintf(buf, sizeof buf, "%lu.%lu.%lu", static_cast<unsigned long>(v.dwMajorVersion),
-                      static_cast<unsigned long>(v.dwMinorVersion), static_cast<unsigned long>(v.dwBuildNumber));
+        const std::string buf = std::to_string(v.dwMajorVersion) + "." + std::to_string(v.dwMinorVersion) + "." +
+                                std::to_string(v.dwBuildNumber);
         facts.set("os_build", buf);
     } else {
         facts.set("os_build", "unknown");
