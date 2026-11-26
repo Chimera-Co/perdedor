@@ -20,6 +20,7 @@ bool run_with_timeout(const std::function<void()>& fn, double) {
     return true;
 }
 void hard_exit(int code) { std::exit(code); }
+std::FILE* open_for_write(const std::string& path) { return std::fopen(path.c_str(), "wb"); }
 void flush_to_disk(std::FILE* f) {
     if (f) std::fflush(f);
 }

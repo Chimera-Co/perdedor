@@ -115,6 +115,12 @@ void hard_exit(int code) {
     ExitProcess(static_cast<UINT>(code));
 }
 
+std::FILE* open_for_write(const std::string& path) {
+    // Windows ACLs are inherited from the directory; there is no POSIX mode to restrict.
+    std::FILE* f = nullptr;
+    return fopen_s(&f, path.c_str(), "wb") == 0 ? f : nullptr;
+}
+
 void flush_to_disk(std::FILE* f) {
     if (!f) return;
     std::fflush(f);

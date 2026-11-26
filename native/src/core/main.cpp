@@ -263,7 +263,7 @@ int main(int argc, char** argv) {
     ctx.params = params;
     ctx.network = network;
     if (!progress_path.empty()) {
-        ctx.progress = std::fopen(progress_path.c_str(), "wb");
+        ctx.progress = platform::open_for_write(progress_path);
         if (!ctx.progress) {
             std::fprintf(stderr, "perdedor: could not open %s\n", progress_path.c_str());
             platform::hard_exit(1);

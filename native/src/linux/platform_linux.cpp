@@ -1,3 +1,4 @@
+#include <fcntl.h>
 #include <pthread.h>
 #include <sys/utsname.h>
 #include <time.h>
@@ -107,6 +108,14 @@ bool run_with_timeout(const std::function<void()>& fn, double seconds) {
 void hard_exit(int code) {
     std::fflush(nullptr);
     _exit(code);
+}
+
+std::FILE* open_for_write(const std::string& path) {
+    int fd = ::open(path.c_str(), O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC, 0640);
+    if (fd < 0) return nullptr;
+    std::FILE* f = fdopen(fd, "wb");
+    if (!f) ::close(fd);
+    return f;
 }
 
 void flush_to_disk(std::FILE* f) {

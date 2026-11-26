@@ -137,6 +137,8 @@ bool run_with_timeout(const std::function<void()>& fn, double seconds);
 [[noreturn]] void hard_exit(int code);
 // Flush a stdio stream through the OS cache to the disk (fsync / _commit).
 void flush_to_disk(std::FILE* f);
+// Create or truncate a file for writing, readable by the owner and group only (never world-writable).
+std::FILE* open_for_write(const std::string& path);
 }  // namespace platform
 
 // Write one progress event (adds "t_ms" since the scan began) when ctx.progress is set.

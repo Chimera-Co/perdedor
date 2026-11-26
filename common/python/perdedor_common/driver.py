@@ -120,11 +120,14 @@ def read_progress(path: str | Path) -> Progress:
 class Transport(Protocol):
     """A guest channel. Paths on the guest side are strings in the guest's own syntax."""
 
-    def put(self, local: Path, remote: str) -> None: ...
+    def put(self, local: Path, remote: str) -> None:
+        """Copy the local file to the guest path."""
 
-    def run(self, argv: list[str], timeout: float) -> int: ...
+    def run(self, argv: list[str], timeout: float) -> int:
+        """Run argv in the guest; return its exit code (-1 if it did not finish within timeout)."""
 
-    def get(self, remote: str, local: Path) -> bool: ...
+    def get(self, remote: str, local: Path) -> bool:
+        """Copy the guest file to the local path; False if it does not exist or cannot be read."""
 
 
 class LocalTransport:
@@ -133,7 +136,7 @@ class LocalTransport:
     def put(self, local: Path, remote: str) -> None:
         Path(remote).parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(local, remote)
-        os.chmod(remote, 0o755)
+        os.chmod(remote, 0o700)
 
     def run(self, argv: list[str], timeout: float) -> int:
         try:
