@@ -3,6 +3,7 @@
 #include "../common/x86.hpp"
 #include "winutil.hpp"
 
+#include <atomic>
 #include <psapi.h>
 #include <tlhelp32.h>
 #include <winsvc.h>
@@ -35,6 +36,34 @@ bool contains_ci(const std::wstring& hay, const std::wstring& needle) {
             return towlower(c1) == towlower(c2);
         });
     return it != hay.end();
+}
+
+// UNICODE_STRING as ntdll returns it (used by the loader-walk probes).
+struct NtUnicodeString { USHORT length = 0, maximum = 0; PWSTR buffer = nullptr; };
+
+// Raises one software exception and reports whether this process's own handler saw it. A vectored handler,
+// installed first and removed before returning, recognises exactly that code and continues execution. With a
+// user-mode debugger attached, the debugger gets the first chance; one that consumes the exception means the
+// handler never runs. Exceptions are only raised here, never left to the fault guard (which does not recover
+// arbitrary software codes).
+std::atomic<DWORD> g_veh_code{0};
+std::atomic<bool> g_veh_seen{false};
+LONG WINAPI exact_code_veh(PEXCEPTION_POINTERS info) {
+    if (info && info->ExceptionRecord && info->ExceptionRecord->ExceptionCode == g_veh_code.load()) {
+        g_veh_seen = true;
+        return EXCEPTION_CONTINUE_EXECUTION;
+    }
+    return EXCEPTION_CONTINUE_SEARCH;
+}
+bool raised_exception_reaches_handler(DWORD code, DWORD argc, const ULONG_PTR* args) {
+    g_veh_code = code;
+    g_veh_seen = false;
+    PVOID handler = AddVectoredExceptionHandler(1, exact_code_veh);
+    if (!handler) return true;  // cannot observe: treat as delivered (clean), never as a detection
+    RaiseException(code, 0, argc, args);
+    RemoveVectoredExceptionHandler(handler);
+    g_veh_code = 0;
+    return g_veh_seen.load();
 }
 
 // Known monitoring / sandbox DLL names
@@ -139,126 +168,6 @@ std::vector<Finding> check_write_watch(Context&) {
 }
 
 // ---------------------------------------------------------------------------
-// 3. win.design.nt_query_object_type_information
-// ---------------------------------------------------------------------------
-struct NtUnicodeString { USHORT length = 0, maximum = 0; PWSTR buffer = nullptr; };
-struct ObjectTypeInfo { NtUnicodeString name; ULONG total_objects = 0, total_handles = 0; };
-
-std::vector<Finding> check_nt_query_object_type_information(Context&) {
-    const char* id = "design.nt_query_object_type_information";
-    const char* name = "NtQueryObject ObjectTypeInformation handle scan";
-
-    using QueryObject = LONG (NTAPI*)(HANDLE, ULONG, PVOID, ULONG, PULONG);
-    const auto query = nt<QueryObject>("NtQueryObject");
-    if (!query) {
-        return {unavailable(id, name, "NtQueryObject unavailable", Severity::High)};
-    }
-
-    constexpr ULONG kObjectTypeInformation = 2;
-    std::vector<unsigned char> buf(2048);
-    unsigned checked = 0, valid_handles = 0, debug_objects = 0;
-
-    // Scan handles 4..2048 in steps of 4
-    for (uintptr_t h = 4; h <= 2048; h += 4) {
-        ++checked;
-        ULONG needed = 0;
-        LONG status = query(reinterpret_cast<HANDLE>(h), kObjectTypeInformation, buf.data(), static_cast<ULONG>(buf.size()), &needed);
-        if (status >= 0) {
-            ++valid_handles;
-            const auto* info = reinterpret_cast<const ObjectTypeInfo*>(buf.data());
-            if (info->name.length >= 22 && info->name.buffer) {
-                if (std::memcmp(info->name.buffer, L"DebugObject", 22) == 0) {
-                    ++debug_objects;
-                }
-            }
-        }
-    }
-
-    const bool has_debug_handle = (debug_objects > 0);
-    Json m = numbers({
-        {"handles_checked", static_cast<double>(checked)},
-        {"valid_handles", static_cast<double>(valid_handles)},
-        {"debug_objects_found", static_cast<double>(debug_objects)}
-    });
-
-    Json ev = Json::object();
-    ev.set("handles_checked", static_cast<double>(checked));
-    ev.set("valid_handles", static_cast<double>(valid_handles));
-    ev.set("debug_objects_found", static_cast<double>(debug_objects));
-
-    return {measured(id, name,
-        "Queries ObjectTypeInformation on system handles via NtQueryObject to detect open DebugObject instances.",
-        Severity::High, has_debug_handle, ev, m, 0.9)};
-}
-
-// ---------------------------------------------------------------------------
-// 4. win.design.nt_yield_execution
-// ---------------------------------------------------------------------------
-struct YieldWorkerCtx {
-    volatile bool stop = false;
-    volatile LONG counter = 0;
-};
-
-static DWORD WINAPI yield_worker(void* p) {
-    auto* ctx = static_cast<YieldWorkerCtx*>(p);
-    while (!ctx->stop) {
-        InterlockedIncrement(&ctx->counter);
-        Sleep(0);
-    }
-    return 0;
-}
-
-std::vector<Finding> check_nt_yield_execution(Context&) {
-    const char* id = "design.nt_yield_execution";
-    const char* name = "NtYieldExecution thread switch detection";
-
-    using NtYieldExecutionFn = LONG (NTAPI*)();
-    const auto fn = nt<NtYieldExecutionFn>("NtYieldExecution");
-    if (!fn) {
-        return {unavailable(id, name, "NtYieldExecution unavailable", Severity::Medium)};
-    }
-
-    // Spawn companion thread so there is always a runnable thread ready to receive a yield
-    YieldWorkerCtx ctx;
-    Handle worker(CreateThread(nullptr, 0, yield_worker, &ctx, 0, nullptr));
-
-    constexpr int kIterations = 100;
-    int no_yield_count = 0;
-    constexpr uint32_t kStatusNoYield = 0x40000024u;
-
-    for (int i = 0; i < kIterations; ++i) {
-        LONG st = fn();
-        if (static_cast<uint32_t>(st) == kStatusNoYield) {
-            ++no_yield_count;
-        }
-    }
-
-    if (worker.valid()) {
-        ctx.stop = true;
-        WaitForSingleObject(worker.get(), 1000);
-    }
-
-    // Under single-stepping or certain emulators, NtYieldExecution fails to yield every time
-    const bool always_no_yield = (no_yield_count == kIterations);
-
-    Json m = numbers({
-        {"iterations", static_cast<double>(kIterations)},
-        {"no_yield_count", static_cast<double>(no_yield_count)},
-        {"worker_cycles", static_cast<double>(ctx.counter)}
-    });
-
-    Json ev = Json::object();
-    ev.set("iterations", static_cast<double>(kIterations));
-    ev.set("no_yield_count", static_cast<double>(no_yield_count));
-    ev.set("always_no_yield", always_no_yield);
-
-    return {measured(id, name,
-        "Calls NtYieldExecution in a loop with an active companion thread. Under debuggers or emulators, "
-        "STATUS_NO_YIELD_PERFORMED is returned continuously.",
-        Severity::Medium, always_no_yield, ev, m, 0.75)};
-}
-
-// ---------------------------------------------------------------------------
 // 5. win.design.page_exception_breakpoint
 // ---------------------------------------------------------------------------
 std::vector<Finding> check_page_exception_breakpoint(Context&) {
@@ -329,9 +238,10 @@ std::vector<Finding> check_process_job_object(Context&) {
     Json ev = Json::object();
     ev.set("is_in_job", detected);
 
+    // Weak: Task Scheduler, terminals, SSH sessions and many launchers also run processes inside job objects.
     return {measured(id, name,
-        "Checks whether the current process is assigned to a Windows Job Object used by analysis sandboxes.",
-        Severity::Medium, detected, ev, m, 0.8)};
+        "Checks whether the current process is assigned to a Windows Job Object (also common outside sandboxes).",
+        Severity::Low, detected, ev, m, 0.3)};
 }
 
 // ---------------------------------------------------------------------------
@@ -623,6 +533,12 @@ std::vector<Finding> check_scan_modules_memory_walk_gmi(Context&) {
     const char* id = "design.scan_modules_memory_walk_gmi";
     const char* name = "VirtualQuery and GetModuleInformation memory walk";
 
+    // A 32-bit process under WOW64 also maps the 64-bit ntdll and the wow64 images, which are executable
+    // MEM_IMAGE but never in its own module list: every clean host would look like it has hidden modules.
+    BOOL wow64 = FALSE;
+    if (IsWow64Process(GetCurrentProcess(), &wow64) && wow64)
+        return {skipped(id, name, "VirtualQuery image walk against the module list.", Severity::High,
+                        "32-bit process under WOW64 (64-bit system images are mapped but not listed)")};
     unsigned regions_checked = 0, unlinked_images = 0;
     uintptr_t address = 0;
     MEMORY_BASIC_INFORMATION mbi{};
@@ -757,65 +673,6 @@ std::vector<Finding> check_cuckoo_tls_hooks(Context&) {
 }
 
 // ---------------------------------------------------------------------------
-// 15. win.design.cuckoo_invalid_hook_esp
-// ---------------------------------------------------------------------------
-std::vector<Finding> check_cuckoo_invalid_hook_esp(Context&) {
-    const char* id = "design.cuckoo_invalid_hook_esp";
-    const char* name = "Cuckoo hook stack ESP balance check";
-
-    using NtLoadKeyExFn = LONG (NTAPI*)(PVOID, PVOID, ULONG, PVOID, PVOID, ULONG, PVOID, PVOID);
-    const auto fn = nt<NtLoadKeyExFn>("NtLoadKeyEx");
-    if (!fn) {
-        return {unavailable(id, name, "NtLoadKeyEx unavailable", Severity::High)};
-    }
-
-    bool esp_corrupted = false;
-
-#if defined(__i386__)
-    uintptr_t esp_before = 0, esp_after = 0;
-    asm volatile(
-        "movl %%esp, %0\n"
-        "pushl $0\n pushl $0\n pushl $0\n pushl $0\n pushl $0\n pushl $0\n pushl $0\n pushl $0\n"
-        "call *%2\n"
-        "movl %%esp, %1\n"
-        : "=&r"(esp_before), "=&r"(esp_after)
-        : "r"(fn)
-        : "eax", "ecx", "edx", "memory"
-    );
-    esp_corrupted = (esp_before != esp_after);
-#elif defined(__x86_64__)
-    uintptr_t rsp_before = 0, rsp_after = 0;
-    asm volatile(
-        "movq %%rsp, %0\n"
-        "subq $0x48, %%rsp\n"
-        "xorq %%rcx, %%rcx\n"
-        "xorq %%rdx, %%rdx\n"
-        "xorq %%r8, %%r8\n"
-        "xorq %%r9, %%r9\n"
-        "movq $0, 0x20(%%rsp)\n"
-        "movq $0, 0x28(%%rsp)\n"
-        "movq $0, 0x30(%%rsp)\n"
-        "movq $0, 0x38(%%rsp)\n"
-        "call *%2\n"
-        "addq $0x48, %%rsp\n"
-        "movq %%rsp, %1\n"
-        : "=&r"(rsp_before), "=&r"(rsp_after)
-        : "r"(fn)
-        : "rax", "rcx", "rdx", "r8", "r9", "r10", "r11", "memory"
-    );
-    esp_corrupted = (rsp_before != rsp_after);
-#endif
-
-    Json m = numbers({
-        {"stack_corrupted", static_cast<double>(esp_corrupted ? 1 : 0)}
-    });
-
-    return {measured(id, name,
-        "Calls hooked system call NtLoadKeyEx and tests for stack pointer imbalance caused by faulty trampoline cleanup.",
-        Severity::High, esp_corrupted, Json::object(), m, 0.9)};
-}
-
-// ---------------------------------------------------------------------------
 // 16. win.design.cuckoo_argument_checks
 // ---------------------------------------------------------------------------
 std::vector<Finding> check_cuckoo_argument_checks(Context&) {
@@ -856,129 +713,26 @@ std::vector<Finding> check_cuckoo_argument_checks(Context&) {
 }
 
 // ---------------------------------------------------------------------------
-// 17. win.design.cuckoo_pid_reuse
-// ---------------------------------------------------------------------------
-std::vector<Finding> check_cuckoo_pid_reuse(Context&) {
-    const char* id = "design.cuckoo_pid_reuse";
-    const char* name = "Rapid process creation and PID reuse";
-
-    STARTUPINFOW si{};
-    si.cb = sizeof(si);
-    PROCESS_INFORMATION pi{};
-
-    wchar_t cmd[] = L"cmd.exe /c exit 0";
-    BOOL spawned = CreateProcessW(nullptr, cmd, nullptr, nullptr, FALSE, CREATE_NO_WINDOW, nullptr, nullptr, &si, &pi);
-
-    DWORD pid = 0;
-    bool exited_cleanly = false;
-    if (spawned) {
-        pid = pi.dwProcessId;
-        DWORD wait_res = WaitForSingleObject(pi.hProcess, 1000);
-        exited_cleanly = (wait_res == WAIT_OBJECT_0);
-        CloseHandle(pi.hThread);
-        CloseHandle(pi.hProcess);
-    } else {
-        return {unavailable(id, name, "CreateProcess failed to launch test helper", Severity::Medium)};
-    }
-
-    // Verify handle table and process query after quick child termination
-    HANDLE reopen = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid);
-    bool still_open = (reopen != nullptr);
-    if (reopen) CloseHandle(reopen);
-
-    Json m = numbers({
-        {"child_pid", static_cast<double>(pid)},
-        {"exited_cleanly", static_cast<double>(exited_cleanly ? 1 : 0)},
-        {"reopened_after_exit", static_cast<double>(still_open ? 1 : 0)}
-    });
-
-    return {measured(id, name,
-        "Measures child process creation and termination lifecycle tracking for PID reuse anomalies.",
-        Severity::Medium, false, Json::object(), m, 0.7)};
-}
-
-// ---------------------------------------------------------------------------
 // 18. win.design.cuckoo_raised_exceptions
 // ---------------------------------------------------------------------------
 std::vector<Finding> check_cuckoo_raised_exceptions(Context&) {
     const char* id = "design.cuckoo_raised_exceptions";
     const char* name = "Raised exception delivery under monitoring";
-
-    unsigned caught = 0, unexpected = 0;
-
-    // 1. Divide by zero
-    auto r1 = guard::run([](void*) {
-        volatile int zero = 0;
-        volatile int val = 100 / zero;
-        (void)val;
-    });
-    if (r1.faulted && r1.code == EXCEPTION_INT_DIVIDE_BY_ZERO) ++caught; else ++unexpected;
-
-    // 2. Illegal instruction
-    auto r2 = guard::run([](void*) {
-        asm volatile("ud2" : : : "memory");
-    });
-    if (r2.faulted && r2.code == EXCEPTION_ILLEGAL_INSTRUCTION) ++caught; else ++unexpected;
-
-    // 3. Custom exception code
-    auto r3 = guard::run([](void*) {
-        RaiseException(0x40010008, 0, 0, nullptr);
-    });
-    if (r3.faulted && r3.code == 0x40010008) ++caught; else ++unexpected;
-
-    const bool broken = (unexpected > 0 || caught < 3);
-
-    Json m = numbers({
-        {"caught", static_cast<double>(caught)},
-        {"unexpected", static_cast<double>(unexpected)}
-    });
-
+    // Only exceptions the fault guard recovers from: an illegal instruction and a breakpoint. Both must come back
+    // to this process with their own code; a monitor that swallows or rewrites them breaks delivery.
+    unsigned caught = 0;
+    auto r1 = guard::run([](void*) { asm volatile("ud2" : : : "memory"); });
+    if (r1.faulted && r1.code == EXCEPTION_ILLEGAL_INSTRUCTION) ++caught;
+    auto r2 = guard::run([](void*) { asm volatile("int3" : : : "memory"); });
+    if (r2.faulted && r2.code == EXCEPTION_BREAKPOINT) ++caught;
+    const bool broken = caught < 2;
+    Json ev = Json::object();
+    ev.set("ud2_code", hex(r1.code));
+    ev.set("int3_code", hex(r2.code));
+    Json m = numbers({{"caught", static_cast<double>(caught)}, {"expected", 2.0}});
     return {measured(id, name,
-        "Raises a series of controlled CPU and software exceptions to check whether monitoring hooks crash or suppress delivery.",
-        Severity::Medium, broken, Json::object(), m, 0.85)};
-}
-
-// ---------------------------------------------------------------------------
-// 19. win.design.cuckoo_suspended_thread
-// ---------------------------------------------------------------------------
-static DWORD WINAPI suspended_dummy_worker(void* p) {
-    auto* val = static_cast<volatile LONG*>(p);
-    InterlockedIncrement(val);
-    return 0;
-}
-
-std::vector<Finding> check_cuckoo_suspended_thread(Context&) {
-    const char* id = "design.cuckoo_suspended_thread";
-    const char* name = "Suspended thread creation and context hijacking";
-
-    volatile LONG executed = 0;
-    Handle thread(CreateThread(nullptr, 0, suspended_dummy_worker, const_cast<LONG*>(&executed), CREATE_SUSPENDED, nullptr));
-
-    if (!thread.valid()) {
-        return {unavailable(id, name, "CreateThread in CREATE_SUSPENDED state failed", Severity::Medium)};
-    }
-
-    CONTEXT ctx{};
-    ctx.ContextFlags = CONTEXT_CONTROL;
-    const bool ctx_read = GetThreadContext(thread.get(), &ctx) != FALSE;
-
-    // Read executed flag while still suspended
-    const bool executed_early = (executed != 0);
-
-    // Resume and finish thread
-    ResumeThread(thread.get());
-    WaitForSingleObject(thread.get(), 500);
-
-    const bool detected = (!ctx_read || executed_early);
-
-    Json m = numbers({
-        {"context_read", static_cast<double>(ctx_read ? 1 : 0)},
-        {"executed_while_suspended", static_cast<double>(executed_early ? 1 : 0)}
-    });
-
-    return {measured(id, name,
-        "Creates a secondary thread in a suspended state to test if sandbox injection hooks alter thread execution prematurely.",
-        Severity::Medium, detected, Json::object(), m, 0.85)};
+        "Raises an illegal instruction and a breakpoint under the fault guard; both must be delivered back with their own codes.",
+        Severity::Medium, broken, ev, m, 0.8)};
 }
 
 // ---------------------------------------------------------------------------
@@ -1239,95 +993,61 @@ std::vector<Finding> check_instruction_prefixes(Context&) {
 // ---------------------------------------------------------------------------
 // 26. win.design.popf_and_cpuid
 // ---------------------------------------------------------------------------
+// After POPF sets TF, the trap fires after the instruction that FOLLOWS the POPF, so the instruction under test
+// comes directly after it and its setup comes before. TF is cleared at the end; that only runs if no trap fired.
+#if defined(__x86_64__)
+#define PD_TF_ON "pushfq\n orq $0x100, (%%rsp)\n popfq\n"
+#define PD_TF_OFF "pushfq\n andq $~0x100, (%%rsp)\n popfq\n"
+#else
+#define PD_TF_ON "pushfl\n orl $0x100, (%%esp)\n popfl\n"
+#define PD_TF_OFF "pushfl\n andl $~0x100, (%%esp)\n popfl\n"
+#endif
+
+void popf_cpuid_probe(void*) {
+#if defined(__x86_64__)
+    asm volatile("xorl %%eax, %%eax\n xorl %%ecx, %%ecx\n" PD_TF_ON "cpuid\n" PD_TF_OFF
+                 : : : "rax", "rbx", "rcx", "rdx", "cc", "memory");
+#else
+    asm volatile("pushl %%ebx\n xorl %%eax, %%eax\n xorl %%ecx, %%ecx\n" PD_TF_ON "cpuid\n" PD_TF_OFF "popl %%ebx\n"
+                 : : : "eax", "ecx", "edx", "cc", "memory");
+#endif
+}
+
 std::vector<Finding> check_popf_and_cpuid(Context&) {
     const char* id = "design.popf_and_cpuid";
     const char* name = "POPF and CPUID trap flag preservation";
-
-    auto r = guard::run([](void*) {
-#if defined(__x86_64__)
-        asm volatile(
-            "pushfq\n"
-            "orq $0x100, (%%rsp)\n"
-            "popfq\n"
-            "xorl %%eax, %%eax\n"
-            "cpuid\n"
-            "nop\n"
-            : : : "rax", "rbx", "rcx", "rdx", "cc", "memory"
-        );
-#else
-        asm volatile(
-            "pushfl\n"
-            "orl $0x100, (%%esp)\n"
-            "popfl\n"
-            "xorl %%eax, %%eax\n"
-            "pushl %%ebx\n"
-            "cpuid\n"
-            "popl %%ebx\n"
-            "nop\n"
-            : : : "eax", "ecx", "edx", "cc", "memory"
-        );
-#endif
-    });
-
-    // Native hardware raises EXCEPTION_SINGLE_STEP immediately after CPUID.
-    // Flawed hypervisors lose the trap flag on VM-exit.
+    const auto r = guard::run(popf_cpuid_probe);
+    // Bare metal raises the single-step trap right after CPUID; a hypervisor that drops TF on the VM exit does not.
     const bool trap_lost = (!r.faulted || r.code != EXCEPTION_SINGLE_STEP);
-
-    Json m = numbers({
-        {"faulted", static_cast<double>(r.faulted ? 1 : 0)},
-        {"code", static_cast<double>(r.code)},
-        {"trap_lost", static_cast<double>(trap_lost ? 1 : 0)}
-    });
-
+    Json m = numbers({{"faulted", r.faulted ? 1.0 : 0.0}, {"code", static_cast<double>(r.code)}});
     return {measured(id, name,
-        "Sets the trap flag via POPF immediately followed by CPUID to test if hypervisor VM-exit clears the trap flag.",
-        Severity::Medium, trap_lost, Json::object(), m, 0.85)};
+        "Sets the trap flag with POPF directly before CPUID; the single-step trap must survive the CPUID VM exit.",
+        Severity::Medium, trap_lost, Json::object(), m, 0.8)};
 }
 
-// ---------------------------------------------------------------------------
-// 27. win.design.ss_register_trap
-// ---------------------------------------------------------------------------
+void ss_shadow_probe(void* p) {
+    auto* stage = static_cast<int*>(p);
+    // MOV SS holds the trap past the next instruction: bare metal traps after "movl $1" (stage 1).
+#if defined(__x86_64__)
+    asm volatile("movw %%ss, %%ax\n" PD_TF_ON "movw %%ax, %%ss\n movl $1, %0\n movl $2, %0\n" PD_TF_OFF
+                 : "=m"(*stage) : : "rax", "cc", "memory");
+#else
+    asm volatile("movw %%ss, %%ax\n" PD_TF_ON "movw %%ax, %%ss\n movl $1, %0\n movl $2, %0\n" PD_TF_OFF
+                 : "=m"(*stage) : : "eax", "cc", "memory");
+#endif
+}
+
 std::vector<Finding> check_ss_register_trap(Context&) {
     const char* id = "design.ss_register_trap";
     const char* name = "SS register interruptibility shadow";
-
-    // Instructions immediately after MOV SS / POP SS execute in the interruptibility shadow.
-    auto r = guard::run([](void*) {
-#if defined(__x86_64__)
-        asm volatile(
-            "pushfq\n"
-            "orq $0x100, (%%rsp)\n"
-            "popfq\n"
-            "mov %%ss, %%ax\n"
-            "mov %%ax, %%ss\n"
-            "nop\n"
-            : : : "rax", "cc", "memory"
-        );
-#else
-        asm volatile(
-            "pushfl\n"
-            "orl $0x100, (%%esp)\n"
-            "popfl\n"
-            "mov %%ss, %%ax\n"
-            "mov %%ax, %%ss\n"
-            "nop\n"
-            : : : "eax", "cc", "memory"
-        );
-#endif
-    });
-
-    // Real hardware raises single-step after the shadow instruction (nop).
-    const bool faulted_normally = (r.faulted && r.code == EXCEPTION_SINGLE_STEP);
-    const bool detected = !faulted_normally;
-
-    Json m = numbers({
-        {"faulted", static_cast<double>(r.faulted ? 1 : 0)},
-        {"code", static_cast<double>(r.code)}
-    });
-
+    int stage = 0;
+    const auto r = guard::run(ss_shadow_probe, &stage);
+    const bool normal = r.faulted && r.code == EXCEPTION_SINGLE_STEP && stage == 1;
+    Json m = numbers({{"faulted", r.faulted ? 1.0 : 0.0}, {"code", static_cast<double>(r.code)},
+                      {"stage", static_cast<double>(stage)}});
     return {measured(id, name,
-        "Verifies that the hardware SS register interruptibility shadow suppresses single-step traps as expected.",
-        Severity::Medium, detected, Json::object(), m, 0.8)};
+        "MOV SS directly after POPF sets TF: bare metal delays the trap by one instruction (stage 1); stage 0 means the shadow was lost.",
+        Severity::Medium, !normal, Json::object(), m, 0.8)};
 }
 
 // ---------------------------------------------------------------------------
@@ -1336,137 +1056,12 @@ std::vector<Finding> check_ss_register_trap(Context&) {
 std::vector<Finding> check_raise_exception_inspection(Context&) {
     const char* id = "design.raise_exception_inspection";
     const char* name = "RaiseException first-chance exception handling";
-
-    constexpr DWORD kTestCode = 0x40010006;
-    auto r = guard::run([](void*) {
-        RaiseException(kTestCode, 0, 0, nullptr);
-    });
-
-    // If an attached debugger intercepts and swallows the exception, guard::run will not catch it.
-    const bool swallowed = (!r.faulted || r.code != kTestCode);
-
-    Json m = numbers({
-        {"faulted", static_cast<double>(r.faulted ? 1 : 0)},
-        {"code", static_cast<double>(r.code)},
-        {"expected_code", static_cast<double>(kTestCode)}
-    });
-
+    constexpr DWORD kTestCode = 0xE0505244u;  // application-defined code ("PRD"), never a system code
+    const bool delivered = raised_exception_reaches_handler(kTestCode, 0, nullptr);
+    Json m = numbers({{"delivered", delivered ? 1.0 : 0.0}, {"code", static_cast<double>(kTestCode)}});
     return {measured(id, name,
-        "Raises a software exception with RaiseException and tests if an attached debugger consumes it before application handlers.",
-        Severity::Medium, swallowed, Json::object(), m, 0.85)};
-}
-
-// ---------------------------------------------------------------------------
-// 29. win.design.generate_console_ctrl_event
-// ---------------------------------------------------------------------------
-static volatile LONG s_ctrl_c_handled = 0;
-static BOOL WINAPI console_ctrl_handler(DWORD type) {
-    if (type == CTRL_C_EVENT || type == CTRL_BREAK_EVENT) {
-        InterlockedIncrement(&s_ctrl_c_handled);
-        return TRUE;
-    }
-    return FALSE;
-}
-
-std::vector<Finding> check_generate_console_ctrl_event(Context&) {
-    const char* id = "design.generate_console_ctrl_event";
-    const char* name = "GenerateConsoleCtrlEvent handler interception";
-
-    s_ctrl_c_handled = 0;
-    SetConsoleCtrlHandler(console_ctrl_handler, TRUE);
-    GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
-    Sleep(50);
-    SetConsoleCtrlHandler(console_ctrl_handler, FALSE);
-
-    // If a debugger intercepted and swallowed the console control event, s_ctrl_c_handled is 0.
-    const bool swallowed = (s_ctrl_c_handled == 0);
-
-    Json m = numbers({
-        {"handler_called", static_cast<double>(s_ctrl_c_handled)}
-    });
-
-    return {measured(id, name,
-        "Sends CTRL_C_EVENT via GenerateConsoleCtrlEvent to test if console signals are intercepted by a debugger.",
-        Severity::Low, swallowed, Json::object(), m, 0.75)};
-}
-
-// ---------------------------------------------------------------------------
-// 30. win.design.process_suspension_detection
-// ---------------------------------------------------------------------------
-struct SuspendWatchdogCtx {
-    volatile bool stop = false;
-    volatile LONG ticks = 0;
-};
-
-static DWORD WINAPI suspend_watchdog_thread(void* p) {
-    auto* ctx = static_cast<SuspendWatchdogCtx*>(p);
-    while (!ctx->stop) {
-        InterlockedIncrement(&ctx->ticks);
-        Sleep(5);
-    }
-    return 0;
-}
-
-std::vector<Finding> check_process_suspension_detection(Context&) {
-    const char* id = "design.process_suspension_detection";
-    const char* name = "Execution pause and process suspension detection";
-
-    SuspendWatchdogCtx ctx;
-    Handle thread(CreateThread(nullptr, 0, suspend_watchdog_thread, &ctx, 0, nullptr));
-
-    const double t0 = monotonic_ns();
-    Sleep(30);
-    const double elapsed_ms = (monotonic_ns() - t0) / 1000000.0;
-
-    if (thread.valid()) {
-        ctx.stop = true;
-        WaitForSingleObject(thread.get(), 500);
-    }
-
-    // A suspension gap (> 300 ms for a 30 ms sleep) indicates external process freezing
-    const bool suspended = (elapsed_ms > 300.0);
-
-    Json m = numbers({
-        {"elapsed_ms", elapsed_ms},
-        {"expected_ms", 30.0},
-        {"watchdog_ticks", static_cast<double>(ctx.ticks)}
-    });
-
-    return {measured(id, name,
-        "Measures thread execution continuity with a companion watchdog to detect debugger pauses or external process suspension.",
-        Severity::Medium, suspended, Json::object(), m, 0.75)};
-}
-
-// ---------------------------------------------------------------------------
-// 31. win.design.self_debugging_attach
-// ---------------------------------------------------------------------------
-std::vector<Finding> check_self_debugging_attach(Context&) {
-    const char* id = "design.self_debugging_attach";
-    const char* name = "Self-debugging attach via DebugActiveProcess";
-
-    using DebugActiveProcessStopFn = BOOL (WINAPI*)(DWORD);
-    auto stop_fn = symbol<DebugActiveProcessStopFn>(GetModuleHandleW(L"kernel32.dll"), "DebugActiveProcessStop");
-
-    const DWORD pid = GetCurrentProcessId();
-    SetLastError(0);
-    BOOL attached = DebugActiveProcess(pid);
-    DWORD err = GetLastError();
-
-    if (attached && stop_fn) {
-        stop_fn(pid);
-    }
-
-    // If another debugger is already attached, DebugActiveProcess fails with ERROR_ACCESS_DENIED (5).
-    const bool already_debugged = (!attached && err == ERROR_ACCESS_DENIED);
-
-    Json m = numbers({
-        {"attached", static_cast<double>(attached ? 1 : 0)},
-        {"last_error", static_cast<double>(err)}
-    });
-
-    return {measured(id, name,
-        "Attempts to attach to own process via DebugActiveProcess; ERROR_ACCESS_DENIED indicates another debugger is attached.",
-        Severity::High, already_debugged, Json::object(), m, 0.9)};
+        "Raises an application-defined exception; an attached debugger that consumes it keeps it from this process's own handler.",
+        Severity::Medium, !delivered, Json::object(), m, 0.8)};
 }
 
 // ---------------------------------------------------------------------------
@@ -1475,50 +1070,15 @@ std::vector<Finding> check_self_debugging_attach(Context&) {
 std::vector<Finding> check_dbgprint_exception(Context&) {
     const char* id = "design.dbgprint_exception";
     const char* name = "DbgPrint / DBG_PRINTEXCEPTION_C exception delivery";
-
-    constexpr DWORD kDbgPrintExceptionC = 0x40010006;
-    auto r = guard::run([](void*) {
-        RaiseException(kDbgPrintExceptionC, 0, 0, nullptr);
-    });
-
-    // A user-mode debugger consumes DBG_PRINTEXCEPTION_C, so guard does not catch it.
-    const bool consumed = (!r.faulted);
-
-    Json m = numbers({
-        {"faulted", static_cast<double>(r.faulted ? 1 : 0)},
-        {"code", static_cast<double>(r.code)}
-    });
-
+    // DBG_PRINTEXCEPTION_C with the arguments OutputDebugStringA passes (length including NUL, then the text).
+    constexpr DWORD kDbgPrintExceptionC = 0x40010006u;
+    static const char kText[] = "perdedor\n";
+    const ULONG_PTR args[2] = {sizeof(kText), reinterpret_cast<ULONG_PTR>(kText)};
+    const bool delivered = raised_exception_reaches_handler(kDbgPrintExceptionC, 2, args);
+    Json m = numbers({{"delivered", delivered ? 1.0 : 0.0}});
     return {measured(id, name,
-        "Raises DBG_PRINTEXCEPTION_C to verify whether an attached user-mode debugger consumes OutputDebugString exceptions.",
-        Severity::Medium, consumed, Json::object(), m, 0.85)};
-}
-
-// ---------------------------------------------------------------------------
-// 33. win.design.dbg_set_debug_filter_state
-// ---------------------------------------------------------------------------
-std::vector<Finding> check_dbg_set_debug_filter_state(Context&) {
-    const char* id = "design.dbg_set_debug_filter_state";
-    const char* name = "DbgSetDebugFilterState kernel debugger check";
-
-    using DbgSetDebugFilterStateFn = LONG (NTAPI*)(ULONG, ULONG, BOOLEAN);
-    const auto fn = nt<DbgSetDebugFilterStateFn>("DbgSetDebugFilterState");
-    if (!fn) {
-        return {unavailable(id, name, "ntdll!DbgSetDebugFilterState unavailable", Severity::High)};
-    }
-
-    LONG status = fn(0, 0, TRUE);
-    // Returns STATUS_SUCCESS (0) if a kernel debugger is present and responsive.
-    const bool kd_present = (status == 0);
-
-    Json m = numbers({
-        {"nt_status", static_cast<double>(static_cast<uint32_t>(status))},
-        {"kd_present", static_cast<double>(kd_present ? 1 : 0)}
-    });
-
-    return {measured(id, name,
-        "Calls DbgSetDebugFilterState to detect whether an active Windows kernel debugger is attached.",
-        Severity::High, kd_present, Json::object(), m, 0.9)};
+        "Raises DBG_PRINTEXCEPTION_C as OutputDebugString does; a user-mode debugger consumes it before this process's handler.",
+        Severity::Medium, !delivered, Json::object(), m, 0.8)};
 }
 
 // ---------------------------------------------------------------------------
@@ -1544,7 +1104,8 @@ std::vector<Finding> check_selector_register_values(Context&) {
     }
 #else
     // Windows x86 standard user selectors: CS=0x1b or 0x23, SS=0x23, DS=0x23, ES=0x23, FS=0x3b, GS=0
-    if ((cs != 0x1b && cs != 0x23) || ss != 0x23 || ds != 0x23) {
+    // Native 32-bit Windows: CS=0x1b, SS=DS=0x23. A 32-bit process under WOW64: CS=0x23, SS=DS=0x2b.
+    if ((cs != 0x1b && cs != 0x23) || (ss != 0x23 && ss != 0x2b) || (ds != 0x23 && ds != 0x2b)) {
         abnormal = true;
     }
 #endif
@@ -1562,68 +1123,6 @@ std::vector<Finding> check_selector_register_values(Context&) {
     return {measured(id, name,
         "Reads segment selector registers (CS, SS, DS, ES, FS, GS) to detect emulator or hypervisor selector anomalies.",
         Severity::Medium, abnormal, Json::object(), m, 0.85)};
-}
-
-// ---------------------------------------------------------------------------
-// 35. win.design.exclusive_create_file
-// ---------------------------------------------------------------------------
-std::vector<Finding> check_exclusive_create_file(Context&) {
-    const char* id = "design.exclusive_create_file";
-    const char* name = "Exclusive CreateFile sharing lock check";
-
-    std::array<wchar_t, MAX_PATH> path{};
-    GetModuleFileNameW(nullptr, path.data(), MAX_PATH);
-
-    // Open own executable with dwShareMode = 0 (exclusive access)
-    HANDLE h = CreateFileW(path.data(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
-    DWORD err = GetLastError();
-
-    bool locked = false;
-    if (h != INVALID_HANDLE_VALUE) {
-        CloseHandle(h);
-    } else if (err == ERROR_SHARING_VIOLATION) {
-        locked = true;
-    }
-
-    Json m = numbers({
-        {"sharing_violation", static_cast<double>(locked ? 1 : 0)},
-        {"last_error", static_cast<double>(err)}
-    });
-
-    return {measured(id, name,
-        "Opens the process executable exclusively with dwShareMode=0 to detect analysis tools holding conflicting file locks.",
-        Severity::Medium, locked, Json::object(), m, 0.85)};
-}
-
-// ---------------------------------------------------------------------------
-// 36. win.design.exclusive_load_library
-// ---------------------------------------------------------------------------
-std::vector<Finding> check_exclusive_load_library(Context&) {
-    const char* id = "design.exclusive_load_library";
-    const char* name = "Loaded DLL module exclusive sharing lock check";
-
-    HMODULE h_mod = GetModuleHandleW(L"kernel32.dll");
-    std::array<wchar_t, MAX_PATH> path{};
-    GetModuleFileNameW(h_mod, path.data(), MAX_PATH);
-
-    HANDLE h = CreateFileW(path.data(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
-    DWORD err = GetLastError();
-
-    bool locked = false;
-    if (h != INVALID_HANDLE_VALUE) {
-        CloseHandle(h);
-    } else if (err == ERROR_SHARING_VIOLATION) {
-        locked = true;
-    }
-
-    Json m = numbers({
-        {"sharing_violation", static_cast<double>(locked ? 1 : 0)},
-        {"last_error", static_cast<double>(err)}
-    });
-
-    return {measured(id, name,
-        "Attempts exclusive access on loaded system DLLs to detect monitoring instrumentation locking module files.",
-        Severity::Medium, locked, Json::object(), m, 0.85)};
 }
 
 // ---------------------------------------------------------------------------
@@ -1687,8 +1186,14 @@ std::vector<Finding> check_rtt_confirm_dialog(Context& ctx) {
         return {unavailable(id, name, "MessageBoxTimeoutW unavailable", Severity::Medium)};
     }
 
-    // Dismissal under 50 ms indicates automated programmatic clicking / UI scraper bot
-    const bool bot_dismissed = (duration_ms < 50.0);
+    // Only a dialog that was actually shown and answered counts: IDOK, or 32000 (timed out). 0 means it could not
+    // be displayed (service session, no interactive desktop); then nothing was measured.
+    constexpr int kTimedOut = 32000;
+    if (res != IDOK && res != kTimedOut)
+        return {skipped(id, name, "Confirmation dialog reaction time.", Severity::Medium,
+                        "the dialog could not be shown (no interactive desktop)")};
+    // Dismissal under 50 ms means programmatic clicking (UI automation), not a person.
+    const bool bot_dismissed = res == IDOK && duration_ms < 50.0;
 
     Json m = numbers({
         {"response_time_ms", duration_ms},
@@ -1751,8 +1256,6 @@ std::vector<Finding> check_system_parameters_info(Context&) {
 // Group 1: Debugger Exception & Low-Level Memory Checks
 PERDEDOR_REGISTER(check_unhandled_exception_filter, "debugger.exception_tricks", "fast", false, "design.unhandled_exception_filter");
 PERDEDOR_REGISTER(check_write_watch, "debugger.api_flags", "fast", false, "design.write_watch");
-PERDEDOR_REGISTER(check_nt_query_object_type_information, "debugger.debug_objects", "fast", false, "design.nt_query_object_type_information");
-PERDEDOR_REGISTER(check_nt_yield_execution, "debugger.api_flags", "fast", false, "design.nt_yield_execution");
 PERDEDOR_REGISTER(check_page_exception_breakpoint, "debugger.hardware_breakpoints", "fast", false, "design.page_exception_breakpoint");
 PERDEDOR_REGISTER(check_process_job_object, "debugger.api_flags", "fast", false, "design.process_job_object");
 
@@ -1767,11 +1270,8 @@ PERDEDOR_REGISTER(check_scan_modules_memory_walk_hidden, "analysis_tools.loaded_
 
 // Group 3: Cuckoo / CAPE Hook & Trampoline Probes
 PERDEDOR_REGISTER(check_cuckoo_tls_hooks, "instrumentation.inline_hooks", "fast", false, "design.cuckoo_tls_hooks");
-PERDEDOR_REGISTER(check_cuckoo_invalid_hook_esp, "instrumentation.inline_hooks", "fast", false, "design.cuckoo_invalid_hook_esp");
 PERDEDOR_REGISTER(check_cuckoo_argument_checks, "instrumentation.inline_hooks", "fast", false, "design.cuckoo_argument_checks");
-PERDEDOR_REGISTER(check_cuckoo_pid_reuse, "analysis_tools.processes", "medium", false, "design.cuckoo_pid_reuse");
 PERDEDOR_REGISTER(check_cuckoo_raised_exceptions, "debugger.exception_tricks", "fast", false, "design.cuckoo_raised_exceptions");
-PERDEDOR_REGISTER(check_cuckoo_suspended_thread, "instrumentation.tracing_facilities", "fast", false, "design.cuckoo_suspended_thread");
 PERDEDOR_REGISTER(check_cuckoo_taskscheduler_process, "instrumentation.tracing_facilities", "medium", false, "design.cuckoo_taskscheduler_process");
 PERDEDOR_REGISTER(check_cuckoo_unbalanced_stack, "instrumentation.inline_hooks", "fast", false, "design.cuckoo_unbalanced_stack");
 PERDEDOR_REGISTER(check_cuckoo_wmi_process, "instrumentation.tracing_facilities", "medium", false, "design.cuckoo_wmi_process");
@@ -1783,14 +1283,8 @@ PERDEDOR_REGISTER(check_instruction_prefixes, "cpu.undefined_instruction_behavio
 PERDEDOR_REGISTER(check_popf_and_cpuid, "debugger.exception_tricks", "fast", false, "design.popf_and_cpuid");
 PERDEDOR_REGISTER(check_ss_register_trap, "debugger.exception_tricks", "fast", false, "design.ss_register_trap");
 PERDEDOR_REGISTER(check_raise_exception_inspection, "debugger.exception_tricks", "fast", false, "design.raise_exception_inspection");
-PERDEDOR_REGISTER(check_generate_console_ctrl_event, "debugger.tracer", "fast", false, "design.generate_console_ctrl_event");
-PERDEDOR_REGISTER(check_process_suspension_detection, "debugger.tracer", "medium", false, "design.process_suspension_detection");
-PERDEDOR_REGISTER(check_self_debugging_attach, "debugger.api_flags", "fast", false, "design.self_debugging_attach");
 PERDEDOR_REGISTER(check_dbgprint_exception, "debugger.api_flags", "fast", false, "design.dbgprint_exception");
-PERDEDOR_REGISTER(check_dbg_set_debug_filter_state, "debugger.kernel_debugger", "fast", false, "design.dbg_set_debug_filter_state");
 PERDEDOR_REGISTER(check_selector_register_values, "cpu.descriptor_tables", "fast", false, "design.selector_register_values");
-PERDEDOR_REGISTER(check_exclusive_create_file, "debugger.debug_objects", "fast", false, "design.exclusive_create_file");
-PERDEDOR_REGISTER(check_exclusive_load_library, "debugger.debug_objects", "fast", false, "design.exclusive_load_library");
 PERDEDOR_REGISTER(check_debugger_device_objects, "debugger.debug_objects", "fast", false, "design.debugger_device_objects");
 
 // Group 5: Behavioural Checks
