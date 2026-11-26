@@ -1,4 +1,5 @@
 #include "lowlevel.hpp"
+#include "x86.hpp"
 #include <array>
 #include <cstring>
 #ifdef _WIN32
@@ -188,12 +189,24 @@ std::vector<Finding> caches(Context&) {
 #pragma pack(push, 1)
 struct TableRegister { uint16_t limit = 0; uintptr_t base = 0; };
 #pragma pack(pop)
+#if PERDEDOR_X86
 void sidt_probe(void* p) { asm volatile("sidt %0" : "=m"(*static_cast<TableRegister*>(p))); }
 void sgdt_probe(void* p) { asm volatile("sgdt %0" : "=m"(*static_cast<TableRegister*>(p))); }
 void sldt_probe(void* p) { asm volatile("sldt %0" : "=m"(*static_cast<uint16_t*>(p))); }
 void str_probe(void* p) { asm volatile("str %0" : "=m"(*static_cast<uint16_t*>(p))); }
 void smsw_probe(void* p) { asm volatile("smsw %0" : "=m"(*static_cast<uint16_t*>(p))); }
+#else
+// Not x86: the descriptor-table instructions do not exist; the probes do nothing and the check reports skipped.
+void sidt_probe(void*) {}
+void sgdt_probe(void*) {}
+void sldt_probe(void*) {}
+void str_probe(void*) {}
+void smsw_probe(void*) {}
+#endif
 std::vector<Finding> descriptors(Context&) {
+    if (!PERDEDOR_X86)
+        return {skipped("env.cpu_descriptor_tables", "Descriptor tables", "Guarded SIDT/SGDT/SLDT/STR/SMSW.",
+                        Severity::Low, "not an x86 processor")};
     TableRegister idt{}, gdt{}; uint16_t ldt = 0, tr = 0, msw = 0;
     const auto a = guard::run(sidt_probe, &idt), b = guard::run(sgdt_probe, &gdt), c = guard::run(sldt_probe, &ldt),
                d = guard::run(str_probe, &tr), e = guard::run(smsw_probe, &msw);
@@ -224,10 +237,15 @@ struct Port { uint32_t command = 0, a = 0, b = 0, c = 0, d = 0; };
 void vmware_port(void* p) {
     auto& r = *static_cast<Port*>(p);
     uint32_t a = 0x564d5868, b = ~0x564d5868u, c = r.command, d = 0x5658;
+#if PERDEDOR_X86
     asm volatile("inl %%dx,%%eax" : "+a"(a), "+b"(b), "+c"(c), "+d"(d) : : "memory");
+#else
+    (void)c; (void)d;
+#endif
     r.a = a; r.b = b; r.c = c; r.d = d;
 }
 std::vector<Finding> backdoor(Context&) {
+    if (!PERDEDOR_X86) return {skipped("env.vmware_backdoor", "VMware backdoor", "x86 instruction probe.", Severity::High, "not an x86 processor")};
     Port version{0x0a}, memory{0x14}; const auto a = guard::run(vmware_port, &version), b = guard::run(vmware_port, &memory);
     if (a.code == guard::kUnavailable || b.code == guard::kUnavailable) return {fault_skip("env.vmware_backdoor", "VMware backdoor", Severity::High, a)};
     const bool match = !a.faulted && version.b == 0x564d5868 && version.a != 0xffffffff;
@@ -237,10 +255,15 @@ std::vector<Finding> backdoor(Context&) {
 }
 void virtualpc_probe(void* p) {
     uint32_t a = 1, b = 0, c = 0, d = 0;
+#if PERDEDOR_X86
     asm volatile(".byte 0x0f,0x3f,0x07,0x0b" : "+a"(a), "+b"(b), "+c"(c), "+d"(d) : : "cc", "memory");
+#else
+    (void)a; (void)c; (void)d;
+#endif
     *static_cast<uint32_t*>(p) = b;
 }
 std::vector<Finding> virtualpc(Context&) {
+    if (!PERDEDOR_X86) return {skipped("env.virtualpc_opcode", "VirtualPC opcode", "x86 instruction probe.", Severity::High, "not an x86 processor")};
     uint32_t reply = ~0u; const auto r = guard::run(virtualpc_probe, &reply);
     if (r.code == guard::kUnavailable) return {fault_skip("env.virtualpc_opcode", "VirtualPC opcode", Severity::High, r)};
     return {measured("env.virtualpc_opcode", "VirtualPC opcode", "Guarded 0F 3F 07 0B signature; unsupported instructions should fault.", Severity::High,
@@ -251,15 +274,24 @@ std::vector<Finding> virtualpc(Context&) {
 constexpr uintptr_t kInvalidHypercall = 0x0badc0de;
 void vmcall_probe(void* p) {
     uintptr_t a = kInvalidHypercall, b = 0, c = 0, d = 0;
+#if PERDEDOR_X86
     asm volatile(".byte 0x0f,0x01,0xc1" : "+a"(a), "+b"(b), "+c"(c), "+d"(d) : : "cc", "memory");
+#else
+    (void)b; (void)c; (void)d;
+#endif
     *static_cast<uintptr_t*>(p) = a;
 }
 void vmmcall_probe(void* p) {
     uintptr_t a = kInvalidHypercall, b = 0, c = 0, d = 0;
+#if PERDEDOR_X86
     asm volatile(".byte 0x0f,0x01,0xd9" : "+a"(a), "+b"(b), "+c"(c), "+d"(d) : : "cc", "memory");
+#else
+    (void)b; (void)c; (void)d;
+#endif
     *static_cast<uintptr_t*>(p) = a;
 }
 std::vector<Finding> hypercalls(Context&) {
+    if (!PERDEDOR_X86) return {skipped("env.hypercall_behavior", "Hypercall behaviour", "x86 instruction probe.", Severity::Medium, "not an x86 processor")};
     uintptr_t a = kInvalidHypercall, b = kInvalidHypercall; const auto x = guard::run(vmcall_probe, &a), y = guard::run(vmmcall_probe, &b);
     if (x.code == guard::kUnavailable || y.code == guard::kUnavailable) return {fault_skip("env.hypercall_behavior", "Hypercall behaviour", Severity::Medium, x)};
     Json ev = Json::object(); ev.set("vmcall_return", hex(a)); ev.set("vmmcall_return", hex(b)); ev.set("call_number", hex(kInvalidHypercall));
@@ -271,11 +303,20 @@ std::vector<Finding> hypercalls(Context&) {
 struct Quirks { uint32_t bsf = 0x12345678, bsr = 0x12345678, shifted = 0x1234; unsigned char zf_bsf = 0, zf_bsr = 0; };
 void quirks_probe(void* p) {
     auto& q = *static_cast<Quirks*>(p); uint32_t zero = 0, source = 0xabcd;
+#if PERDEDOR_X86
     asm volatile("bsfl %2,%0; setz %1" : "+r"(q.bsf), "=qm"(q.zf_bsf) : "r"(zero) : "cc");
+#endif
+#if PERDEDOR_X86
     asm volatile("bsrl %2,%0; setz %1" : "+r"(q.bsr), "=qm"(q.zf_bsr) : "r"(zero) : "cc");
+#endif
+#if PERDEDOR_X86
     asm volatile("shldw $17,%w1,%w0" : "+r"(q.shifted) : "r"(source) : "cc");
+#else
+    (void)q; (void)zero; (void)source;
+#endif
 }
 std::vector<Finding> quirks(Context&) {
+    if (!PERDEDOR_X86) return {skipped("env.cpu_emulation_quirks", "CPU emulation quirks", "x86 instruction probe.", Severity::Low, "not an x86 processor")};
     Quirks q; const auto r = guard::run(quirks_probe, &q);
     if (r.faulted) return {fault_skip("env.cpu_emulation_quirks", "Instruction semantics", Severity::Low, r)};
     // Intel SDM BSF/BSR define ZF for source zero but leave destination undefined;

@@ -17,16 +17,29 @@ WINSRC   := $(wildcard src/windows/*.cpp)
 LINUX_CXX ?= g++
 WIN64_CXX ?= x86_64-w64-mingw32-g++
 WIN32_CXX ?= i686-w64-mingw32-g++
+LINUX_I686_CXX ?= i686-linux-gnu-g++
+LINUX_ARM64_CXX ?= aarch64-linux-gnu-g++
 
 WINLIBS  := -lole32 -loleaut32 -lwbemuuid -luuid -liphlpapi -lws2_32 -ladvapi32 -lsetupapi -lpsapi \
             -lversion -lshlwapi -lpowrprof -lcfgmgr32 -luser32 -lgdi32 -ldnsapi -lwinhttp -lshell32 \
             -lwtsapi32 -lnetapi32 -lwintrust -lcrypt32 -lbcrypt -lntdll
 VERSION  := $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 
-.PHONY: test-linux all linux win64 win32 test clean
+.PHONY: test-linux all linux linux-i686 linux-aarch64 win64 win32 test clean
 all: $(if $(shell command -v $(LINUX_CXX)),linux) $(if $(shell command -v $(WIN64_CXX)),win64) $(if $(shell command -v $(WIN32_CXX)),win32)
 
 linux: $(BUILD)/perdedor-linux-x86_64
+linux-i686: $(BUILD)/perdedor-linux-i686
+linux-aarch64: $(BUILD)/perdedor-linux-aarch64
+
+# Other Linux architectures: the same sources; x86-only probes report skipped on aarch64 (src/common/x86.hpp).
+$(BUILD)/perdedor-linux-i686: $(CORE) $(COMMON) $(LINUXSRC) $(wildcard src/*/*.hpp)
+	@mkdir -p $(BUILD)
+	$(LINUX_I686_CXX) $(CXXSTD) $(OPT) $(WARN) -DPERDEDOR_BUILD=\"$(VERSION)\" -static -pthread -o $@ $(CORE) $(COMMON) $(LINUXSRC)
+
+$(BUILD)/perdedor-linux-aarch64: $(CORE) $(COMMON) $(LINUXSRC) $(wildcard src/*/*.hpp)
+	@mkdir -p $(BUILD)
+	$(LINUX_ARM64_CXX) $(CXXSTD) $(OPT) $(WARN) -DPERDEDOR_BUILD=\"$(VERSION)\" -static -pthread -o $@ $(CORE) $(COMMON) $(LINUXSRC)
 win64: $(BUILD)/perdedor-windows-x64.exe
 win32: $(BUILD)/perdedor-windows-x86.exe
 

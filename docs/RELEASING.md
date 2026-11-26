@@ -13,6 +13,7 @@ build-provenance attestation.
 |---|---|
 | `perdedor-windows-x64.exe`, `perdedor-windows-x86.exe` | the native Windows agents, copied into a guest |
 | `perdedor-linux-x86_64` | the native Linux agent (static, also pushed to x86 Android devices) |
+| `perdedor-linux-i686`, `perdedor-linux-aarch64` | the native Linux agent for 32-bit x86 and 64-bit ARM (static; x86-only probes report skipped on ARM) |
 | `perdedor-X.Y.Z-py3-none-any.whl`, `perdedor-X.Y.Z.tar.gz` | the analyst CLI and the Python agents (`pip install`) |
 | `perdedor-windows-ps7-agent-vX.Y.Z.zip` | the v1 PowerShell agent, kept as a fallback |
 | `perdedor-deploy-vX.Y.Z.tar.gz` | the whole tagged tree with the three native agents already in `native/build/` |

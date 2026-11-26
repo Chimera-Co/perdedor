@@ -89,15 +89,24 @@ jobs:
         run: |
           sudo apt-get update -q
           sudo apt-get install -y -q --no-install-recommends g++ make \
-            g++-mingw-w64-x86-64-win32 g++-mingw-w64-i686-win32 binutils-mingw-w64
+            g++-mingw-w64-x86-64-win32 g++-mingw-w64-i686-win32 binutils-mingw-w64 \
+            g++-i686-linux-gnu g++-aarch64-linux-gnu qemu-user-static
       - name: Build
         run: >
-          make -C native -j"$(nproc)" linux win64 win32
+          make -C native -j"$(nproc)" linux linux-i686 linux-aarch64 win64 win32
           WIN64_CXX=x86_64-w64-mingw32-g++-win32 WIN32_CXX=i686-w64-mingw32-g++-win32
       - name: Core unit tests
         run: make -C native test
-      - name: Linux binary is fully static
-        run: file native/build/perdedor-linux-x86_64 | tee /dev/stderr | grep -q "statically linked"
+      - name: Linux binaries are fully static
+        run: |
+          for b in perdedor-linux-x86_64 perdedor-linux-i686 perdedor-linux-aarch64; do
+            file "native/build/$b" | tee /dev/stderr | grep -q "statically linked"
+          done
+      - name: i686 and aarch64 agents run (aarch64 under qemu-user)
+        run: |
+          native/build/perdedor-linux-i686 --profile quick --no-network --report i686.json
+          qemu-aarch64-static native/build/perdedor-linux-aarch64 --profile quick --no-network --report arm64.json
+          python3 -c "import json,sys; [json.load(open(f)) for f in ('i686.json','arm64.json')]"
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: "3.12"
@@ -125,6 +134,8 @@ jobs:
           name: native-agents
           path: |
             native/build/perdedor-linux-x86_64
+            native/build/perdedor-linux-i686
+            native/build/perdedor-linux-aarch64
             native/build/perdedor-windows-x64.exe
             native/build/perdedor-windows-x86.exe
           if-no-files-found: error

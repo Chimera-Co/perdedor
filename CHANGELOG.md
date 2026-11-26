@@ -5,6 +5,11 @@ may add checks and fields, major releases change the format or the score's meani
 
 ## Unreleased
 
+- Native Linux agents for i686 and aarch64 (#6 section 1), static like x86_64. On ARM the x86 instruction probes
+  (descriptor tables, VMware backdoor, VirtualPC opcode, hypercalls, emulation quirks) report `skipped` instead
+  of running; CPUID-based probes already skipped through `x86::available()`. CI builds both, runs a quick scan
+  with each (aarch64 under qemu-user), and releases them.
+
 - Sandbox integration contract (#6 section 3, docs/INTEGRATION.md): native agents take `--report` and
   `--progress FILE`; the progress file has one JSON event per line (begin, start/end per probe with its budget
   and outcome, done or failed), flushed to disk after every line, so a host can tell where a frozen guest
