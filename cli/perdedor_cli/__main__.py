@@ -362,6 +362,10 @@ def build_parser() -> argparse.ArgumentParser:
 
     upstream.register(subparsers)
 
+    from perdedor_cli import selftest_cmd
+
+    selftest_cmd.register(subparsers)
+
     return parser
 
 
