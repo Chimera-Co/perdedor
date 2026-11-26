@@ -30,7 +30,8 @@ SEVERITY_WEIGHT: dict[Severity, float] = {
 
 def _field(finding, name: str, default=None):
     """A Finding's attribute, or the same key of a finding read from JSON (a dict): reports read with
-    report_reader stay plain dicts. Status and Severity are str enums, so their string values compare equal."""
+    report_reader stay plain dicts. Status and Severity are str enums, so their string values compare equal.
+    """
     if isinstance(finding, dict):
         return finding.get(name, default)
     return getattr(finding, name, default)

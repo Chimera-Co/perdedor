@@ -53,8 +53,7 @@ class HistoryStore:
 
     def _init_db(self) -> None:
         with self._get_connection() as conn:
-            conn.execute(
-                """
+            conn.execute("""
                 CREATE TABLE IF NOT EXISTS reports (
                     scan_id TEXT PRIMARY KEY,
                     schema_version INTEGER,
@@ -77,8 +76,7 @@ class HistoryStore:
                     report_json TEXT NOT NULL,
                     created_at TEXT NOT NULL
                 );
-                """
-            )
+                """)
             conn.execute("CREATE INDEX IF NOT EXISTS idx_reports_profile ON reports (profile);")
             conn.execute("CREATE INDEX IF NOT EXISTS idx_reports_platform ON reports (platform);")
             conn.execute("CREATE INDEX IF NOT EXISTS idx_reports_generated ON reports (generated_at);")
@@ -205,9 +203,7 @@ class HistoryStore:
         """Fetch report by exact scan_id, scan_id prefix, or profile name (latest)."""
         with self._get_connection() as conn:
             # 1. Exact scan_id match
-            row = conn.execute(
-                "SELECT report_json FROM reports WHERE scan_id = ?", (identifier,)
-            ).fetchone()
+            row = conn.execute("SELECT report_json FROM reports WHERE scan_id = ?", (identifier,)).fetchone()
             if row:
                 return json.loads(row["report_json"])
 

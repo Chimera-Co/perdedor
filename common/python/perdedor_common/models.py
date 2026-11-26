@@ -129,7 +129,11 @@ class PlatformReport:
             "catalog_version": self.catalog_version,
             "platform": self.platform.value if isinstance(self.platform, Platform) else str(self.platform),
             "hostname": self.hostname,
-            "generated_at": self.generated_at.isoformat() if isinstance(self.generated_at, datetime) else str(self.generated_at),
+            "generated_at": (
+                self.generated_at.isoformat()
+                if isinstance(self.generated_at, datetime)
+                else str(self.generated_at)
+            ),
             "agent_metadata": self.agent_metadata,
             "findings": [f.to_dict() if hasattr(f, "to_dict") else f for f in self.findings],
             "summary": score_report(self.findings),

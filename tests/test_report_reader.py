@@ -169,10 +169,13 @@ def test_minimal_report_with_plain_findings_is_scored():
     from perdedor_common.report_reader import read_report
 
     doc = read_report(
-        {"platform": "linux", "findings": [
-            {"id": "a", "technique": "cpu.hypervisor_bit", "status": "detected", "severity": "high"},
-            {"id": "b", "technique": "cpu.hypervisor_bit", "status": "clean"},
-        ]},
+        {
+            "platform": "linux",
+            "findings": [
+                {"id": "a", "technique": "cpu.hypervisor_bit", "status": "detected", "severity": "high"},
+                {"id": "b", "technique": "cpu.hypervisor_bit", "status": "clean"},
+            ],
+        },
         validate=False,
     )
     assert doc["summary"]["detected"] == 1 and doc["summary"]["clean"] == 1

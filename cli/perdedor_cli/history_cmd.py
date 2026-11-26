@@ -74,7 +74,9 @@ def register(subparsers) -> None:
     list_parser.add_argument(
         "--format", choices=("text", "json", "markdown", "md"), default="text", help="output format"
     )
-    list_parser.add_argument("--json", action="store_true", help="output as JSON (shortcut for --format json)")
+    list_parser.add_argument(
+        "--json", action="store_true", help="output as JSON (shortcut for --format json)"
+    )
     list_parser.add_argument(
         "--markdown", action="store_true", help="output as Markdown table (shortcut for --format markdown)"
     )

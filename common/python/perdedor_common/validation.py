@@ -9,8 +9,25 @@ isolation architecture), so the common package stays stdlib-only.
 
 from __future__ import annotations
 
-_REQUIRED_TOP = {"schema_version", "perdedor_version", "platform", "hostname", "generated_at", "findings", "summary"}
-_OPTIONAL_TOP = {"scan_id", "agent_version", "catalog_version", "seed", "host_facts", "environment", "selection", "agent_metadata"}
+_REQUIRED_TOP = {
+    "schema_version",
+    "perdedor_version",
+    "platform",
+    "hostname",
+    "generated_at",
+    "findings",
+    "summary",
+}
+_OPTIONAL_TOP = {
+    "scan_id",
+    "agent_version",
+    "catalog_version",
+    "seed",
+    "host_facts",
+    "environment",
+    "selection",
+    "agent_metadata",
+}
 _PLATFORMS = {"windows", "linux", "android", "macos", "ios"}
 _CATEGORIES = {"environment_artifact", "timing", "behavioural_interaction", "design_specific"}
 _STATUSES = {"clean", "detected", "error", "skipped"}

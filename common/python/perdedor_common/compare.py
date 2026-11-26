@@ -80,7 +80,9 @@ def compare_reports(
             meas_b = fb.get("measurement")
             conf_a = fa.get("confidence")
             conf_b = fb.get("confidence")
-            if meas_a != meas_b or (conf_a is not None and conf_b is not None and abs(conf_a - conf_b) >= 0.05):
+            if meas_a != meas_b or (
+                conf_a is not None and conf_b is not None and abs(conf_a - conf_b) >= 0.05
+            ):
                 item["measurement_a"] = meas_a
                 item["measurement_b"] = meas_b
                 item["confidence_a"] = conf_a

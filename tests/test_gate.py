@@ -91,12 +91,44 @@ def test_gate_logic_fails_on_new_detection():
 
 def test_gate_max_increase():
     f_a = [
-        {"id": "linux.env.1", "name": "1", "status": "clean", "severity": "low", "class": "cpu", "category": "environment_artifact", "technique": "cpu.hypervisor_bit"},
-        {"id": "linux.env.2", "name": "2", "status": "clean", "severity": "low", "class": "cpu", "category": "environment_artifact", "technique": "cpu.hypervisor_vendor_leaf"},
+        {
+            "id": "linux.env.1",
+            "name": "1",
+            "status": "clean",
+            "severity": "low",
+            "class": "cpu",
+            "category": "environment_artifact",
+            "technique": "cpu.hypervisor_bit",
+        },
+        {
+            "id": "linux.env.2",
+            "name": "2",
+            "status": "clean",
+            "severity": "low",
+            "class": "cpu",
+            "category": "environment_artifact",
+            "technique": "cpu.hypervisor_vendor_leaf",
+        },
     ]
     f_b = [
-        {"id": "linux.env.1", "name": "1", "status": "detected", "severity": "low", "class": "cpu", "category": "environment_artifact", "technique": "cpu.hypervisor_bit"},
-        {"id": "linux.env.2", "name": "2", "status": "clean", "severity": "low", "class": "cpu", "category": "environment_artifact", "technique": "cpu.hypervisor_vendor_leaf"},
+        {
+            "id": "linux.env.1",
+            "name": "1",
+            "status": "detected",
+            "severity": "low",
+            "class": "cpu",
+            "category": "environment_artifact",
+            "technique": "cpu.hypervisor_bit",
+        },
+        {
+            "id": "linux.env.2",
+            "name": "2",
+            "status": "clean",
+            "severity": "low",
+            "class": "cpu",
+            "category": "environment_artifact",
+            "technique": "cpu.hypervisor_vendor_leaf",
+        },
     ]
     rep_a = _report(f_a, "scan-a")
     rep_b = _report(f_b, "scan-b")
@@ -113,13 +145,45 @@ def test_gate_max_increase():
 
 def test_gate_fail_on_new_class():
     f_a = [
-        {"id": "linux.env.1", "name": "1", "status": "detected", "severity": "low", "class": "cpu", "category": "environment_artifact", "technique": "cpu.hypervisor_bit"},
-        {"id": "linux.timing.1", "name": "T1", "status": "clean", "severity": "low", "class": "timing", "category": "timing", "technique": "timing.cpuid_vmexit"},
+        {
+            "id": "linux.env.1",
+            "name": "1",
+            "status": "detected",
+            "severity": "low",
+            "class": "cpu",
+            "category": "environment_artifact",
+            "technique": "cpu.hypervisor_bit",
+        },
+        {
+            "id": "linux.timing.1",
+            "name": "T1",
+            "status": "clean",
+            "severity": "low",
+            "class": "timing",
+            "category": "timing",
+            "technique": "timing.cpuid_vmexit",
+        },
     ]
     f_b = [
-        {"id": "linux.env.1", "name": "1", "status": "detected", "severity": "low", "class": "cpu", "category": "environment_artifact", "technique": "cpu.hypervisor_bit"},
+        {
+            "id": "linux.env.1",
+            "name": "1",
+            "status": "detected",
+            "severity": "low",
+            "class": "cpu",
+            "category": "environment_artifact",
+            "technique": "cpu.hypervisor_bit",
+        },
         # New detection in timing class (which had 0 detections in baseline):
-        {"id": "linux.timing.1", "name": "T1", "status": "detected", "severity": "low", "class": "timing", "category": "timing", "technique": "timing.cpuid_vmexit"},
+        {
+            "id": "linux.timing.1",
+            "name": "T1",
+            "status": "detected",
+            "severity": "low",
+            "class": "timing",
+            "category": "timing",
+            "technique": "timing.cpuid_vmexit",
+        },
     ]
     rep_a = _report(f_a, "scan-a")
     rep_b = _report(f_b, "scan-b")
@@ -130,8 +194,28 @@ def test_gate_fail_on_new_class():
 
 
 def test_cli_gate(tmp_path: Path, capsys):
-    f_a = [{"id": "linux.env.1", "name": "1", "status": "clean", "severity": "low", "class": "cpu", "category": "environment_artifact", "technique": "cpu.hypervisor_bit"}]
-    f_b = [{"id": "linux.env.1", "name": "1", "status": "detected", "severity": "low", "class": "cpu", "category": "environment_artifact", "technique": "cpu.hypervisor_bit"}]
+    f_a = [
+        {
+            "id": "linux.env.1",
+            "name": "1",
+            "status": "clean",
+            "severity": "low",
+            "class": "cpu",
+            "category": "environment_artifact",
+            "technique": "cpu.hypervisor_bit",
+        }
+    ]
+    f_b = [
+        {
+            "id": "linux.env.1",
+            "name": "1",
+            "status": "detected",
+            "severity": "low",
+            "class": "cpu",
+            "category": "environment_artifact",
+            "technique": "cpu.hypervisor_bit",
+        }
+    ]
 
     path_a = tmp_path / "baseline.json"
     path_b = tmp_path / "target.json"
@@ -155,5 +239,7 @@ def test_cli_gate(tmp_path: Path, capsys):
     store = HistoryStore(db_file)
     store.add(_report(f_a, "scan-a", profile="standard"))
 
-    code = main(["gate", str(path_b), "--baseline", "standard", "--max-increase", "1", "--store", str(db_file)])
+    code = main(
+        ["gate", str(path_b), "--baseline", "standard", "--max-increase", "1", "--store", str(db_file)]
+    )
     assert code == 0

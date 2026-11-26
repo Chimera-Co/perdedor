@@ -11,7 +11,9 @@ from perdedor_common.history import (
 )
 
 
-def _sample_report(scan_id: str, platform: str = "linux", profile: str = "standard", detected: int = 1) -> dict:
+def _sample_report(
+    scan_id: str, platform: str = "linux", profile: str = "standard", detected: int = 1
+) -> dict:
     return {
         "schema_version": 3,
         "scan_id": scan_id,

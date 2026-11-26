@@ -114,7 +114,15 @@ def validate_selection(options: Mapping[str, Any]) -> dict:
     if not isinstance(network, bool):
         raise SelectionError("network must be true or false", "network")
     sel["network"] = network
-    for env_key in ("seed", "env_name", "env_image_id", "env_hypervisor", "env_monitor", "env_instrumentation", "env_labels"):
+    for env_key in (
+        "seed",
+        "env_name",
+        "env_image_id",
+        "env_hypervisor",
+        "env_monitor",
+        "env_instrumentation",
+        "env_labels",
+    ):
         if env_key in options:
             sel[env_key] = options[env_key]
     return sel
