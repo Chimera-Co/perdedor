@@ -507,6 +507,10 @@
         "checkpoint-evasions": [
           "evasions/hooks/check-incorrectly-hooked-functions",
           "evasions/hooks/check-whether-hooks-are-set-within-system-functions"
+        ],
+        "invizzzible": [
+          "cuckoo/FunctionHooks",
+          "generic/SleepDummyPatch"
         ]
       },
       "fix": {
@@ -951,7 +955,8 @@
       ],
       "equivalents": {
         "invizzzible": [
-          "vmware/HypervisorPort"
+          "vmware/HypervisorPort",
+          "vmware/HypervisorPortEnum"
         ],
         "checkpoint-evasions": [
           "evasions/cpu/detecting-environment-via-in-backdoor-port-vmware"
@@ -1135,7 +1140,8 @@
         ],
         "invizzzible": [
           "generic/PerformanceCounter",
-          "generic/DelaysAccumulation"
+          "generic/DelaysAccumulation",
+          "cuckoo/DelaysAccumulation"
         ],
         "checkpoint-evasions": [
           "evasions/timing/delayed-execution"
@@ -1729,6 +1735,2584 @@
         "effort": 5,
         "how": "Minimise split-view pages and their access traps.",
         "chimera": "DRAKVUF altp2m execute-only shadow pages trap reads; the residual timing cannot be hidden."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.policy_antidisassm_jmp_same_target",
+      "technique": "cpu.undefined_instruction_behaviour",
+      "status": "not_feasible",
+      "reason": "Out of scope by policy: Anti-disassembly jump sequences are compiler or obfuscation artefacts rather than environment checks.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser AntiDisassmAsmJmpSameTarget: Conditional and unconditional jumps targeting identical addresses to confuse linear sweep disassemblers.",
+      "severity": "low",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "AntiDisassmAsmJmpSameTarget"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 1,
+        "how": "Use recursive traversal disassembly engines.",
+        "chimera": "DRAKVUF dynamic tracing is unaffected by static disassembly tricks."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.policy_antidisassm_constant_condition",
+      "technique": "cpu.undefined_instruction_behaviour",
+      "status": "not_feasible",
+      "reason": "Out of scope by policy: Constant condition branch tricks test static disassemblers rather than the execution environment.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser AntiDisassmConstantCondition: Opaque predicate conditional jumps where condition is always true or false.",
+      "severity": "low",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "AntiDisassmConstantCondition"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 1,
+        "how": "Use dynamic symbolic execution or control flow graph flattening normalizers.",
+        "chimera": "DRAKVUF executes guest instructions natively regardless of branch predicates."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.policy_antidisassm_function_pointer",
+      "technique": "cpu.undefined_instruction_behaviour",
+      "status": "not_feasible",
+      "reason": "Out of scope by policy: Function pointer obfuscation tricks disassembler control flow rather than testing the environment.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser AntiDisassmFunctionPointer: Indirect function calls through runtime pointer tables to thwart static call graph extraction.",
+      "severity": "low",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "AntiDisassmFunctionPointer"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 1,
+        "how": "Trace indirect call targets dynamically at runtime.",
+        "chimera": "DRAKVUF intercepts dynamic call targets directly via VMI traps."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.policy_antidisassm_impossible_disassm",
+      "technique": "cpu.undefined_instruction_behaviour",
+      "status": "not_feasible",
+      "reason": "Out of scope by policy: Byte-level overlapping instruction sequences hinder static analysis rather than inspecting sandbox state.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser AntiDisassmImpossibleDiasassm: Multibyte instructions jumping into their own immediate data bytes to derail disassemblers.",
+      "severity": "low",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "AntiDisassmImpossibleDiasassm"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 1,
+        "how": "Disassemble from observed dynamic execution instruction pointers.",
+        "chimera": "Hardware CPU execution decodes the true executed byte sequence."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.policy_antidisassm_return_pointer_abuse",
+      "technique": "cpu.undefined_instruction_behaviour",
+      "status": "not_feasible",
+      "reason": "Out of scope by policy: Return pointer manipulation modifies the call stack to confuse disassemblers rather than probing the host.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser AntiDisassmReturnPointerAbuse: Overwriting the stack return address before RET to implement non-returning control flow.",
+      "severity": "low",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "AntiDisassmReturnPointerAbuse"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 1,
+        "how": "Follow control transfers on RET instructions during dynamic analysis.",
+        "chimera": "Hardware branch tracing monitors actual target instruction pointers."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.policy_antidisassm_seh_misuse",
+      "technique": "debugger.exception_tricks",
+      "status": "not_feasible",
+      "reason": "Out of scope by policy: Structured exception handler abuse hides execution flow from disassemblers instead of testing environment properties.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser AntiDisassmSEHMisuse: Deliberate division-by-zero or memory faults to transfer control through SEH handlers.",
+      "severity": "low",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "AntiDisassmSEHMisuse"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 1,
+        "how": "Instrument exception dispatch routines to log handler transitions.",
+        "chimera": "DRAKVUF captures KiUserExceptionDispatcher without interfering with SEH."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.policy_injection_createremotethread",
+      "technique": "instrumentation.injected_libraries",
+      "status": "not_feasible",
+      "reason": "Out of scope by policy: Injecting threads into external processes with CreateRemoteThread is active malware attack behaviour.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser CreateRemoteThread_Injection: Attempts cross-process code execution by creating a remote thread in explorer.exe or svchost.exe.",
+      "severity": "low",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "CreateRemoteThread_Injection"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Enable process mitigation policies blocking cross-process thread injection.",
+        "chimera": "Malware behaviour; CHIMERA records remote thread creation via DRAKVUF."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.policy_injection_ntcreatethreadex",
+      "technique": "instrumentation.injected_libraries",
+      "status": "not_feasible",
+      "reason": "Out of scope by policy: Cross-process thread creation via NtCreateThreadEx is malware injection functionality rather than an environment check.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser NtCreateThreadEx_Injection: Calls low-level native NtCreateThreadEx to spawn unmonitored threads in target processes.",
+      "severity": "low",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "NtCreateThreadEx_Injection"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Monitor NtCreateThreadEx system calls from the hypervisor layer.",
+        "chimera": "DRAKVUF traps NtCreateThreadEx invocations via VMI sysret breakpoints."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.policy_injection_queueuserapc",
+      "technique": "instrumentation.injected_libraries",
+      "status": "not_feasible",
+      "reason": "Out of scope by policy: QueueUserAPC injection into remote threads is active code execution rather than a read-only environment test.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser QueueUserAPC_Injection: Queues asynchronous procedure calls (APC) to threads in target processes to execute injected payloads.",
+      "severity": "low",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "QueueUserAPC_Injection"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Trap NtQueueApcThread system calls to trace asynchronous execution.",
+        "chimera": "CHIMERA observes APC queuing without executing malicious injections."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.policy_injection_rtlcreateuserthread",
+      "technique": "instrumentation.injected_libraries",
+      "status": "not_feasible",
+      "reason": "Out of scope by policy: Creating remote threads using RtlCreateUserThread constitutes invasive process injection.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser RtlCreateUserThread_Injection: Uses ntdll!RtlCreateUserThread to bypass user32 subsystem restrictions during process injection.",
+      "severity": "low",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "RtlCreateUserThread_Injection"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Block unauthorized cross-session process handles using kernel object callbacks.",
+        "chimera": "Malware behaviour; CHIMERA records thread creation without executing it."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.policy_injection_setwindowshooksex",
+      "technique": "instrumentation.injected_libraries",
+      "status": "not_feasible",
+      "reason": "Out of scope by policy: Installing global message hooks with SetWindowsHooksEx to inject modules into other processes is active malware functionality.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser SetWindowsHooksEx_Injection: Installs WH_GETMESSAGE or WH_KEYBOARD hooks to force DLL loading across all GUI desktop applications.",
+      "severity": "low",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "SetWindowsHooksEx_Injection"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Restrict standard user accounts from installing global desktop message hooks.",
+        "chimera": "Invasive modification; not a self-test of the environment."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.policy_injection_getsetthreadcontext",
+      "technique": "instrumentation.injected_libraries",
+      "status": "not_feasible",
+      "reason": "Out of scope by policy: Manipulating external thread execution contexts via GetThreadContext and SetThreadContext is process hijacking behaviour.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser GetSetThreadContext_Injection: Modifies RIP/EIP of suspended remote threads to redirect control flow to injected shellcode.",
+      "severity": "low",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "GetSetThreadContext_Injection"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Trap SetThreadContext modifications to trace execution hijacking.",
+        "chimera": "DRAKVUF intercepts thread register manipulation via VMI."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.policy_antidump_erase_pe_header",
+      "technique": "instrumentation.module_integrity",
+      "status": "not_feasible",
+      "reason": "Out of scope by policy: Erasing the in-memory PE header is an anti-dump evasion trick that alters module memory.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser ErasePEHeaderFromMemory: Overwrites the MZ/PE header bytes in memory with zeros to corrupt memory acquisition tools.",
+      "severity": "low",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "ErasePEHeaderFromMemory"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Reconstruct PE headers from VAD structures during memory analysis.",
+        "chimera": "Memory reconstruction is handled by static memory carvers in CHIMERA."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.policy_antidump_sizeofimage",
+      "technique": "instrumentation.module_integrity",
+      "status": "not_feasible",
+      "reason": "Out of scope by policy: Artificially expanding PE SizeOfImage in the PEB to confuse memory dumpers is self-altering malware behaviour.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser SizeOfImage: Inflates the SizeOfImage field in the module PEB entry so dumping tools allocate excessive buffers or abort.",
+      "severity": "low",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "SizeOfImage"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Validate SizeOfImage against actual allocated VAD region lengths.",
+        "chimera": "DRAKVUF memory dumps inspect kernel VAD allocations rather than PEB fields."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.policy_cuckoo_dead_analyzer",
+      "technique": "analysis_tools.processes",
+      "status": "not_feasible",
+      "reason": "Out of scope by policy: Killing the analyzer process to evade behavioural tracking is active malware tampering.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "InviZzzible cuckoo/DeadAnalyzer: Attempts to terminate analyzer.py or monitor processes to evade sandbox telemetry.",
+      "severity": "low",
+      "references": [
+        "https://github.com/CheckPointSW/InviZzzible"
+      ],
+      "equivalents": {
+        "invizzzible": [
+          "cuckoo/DeadAnalyzer"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 4,
+        "how": "Run monitoring outside the guest with hypervisor VMI so it cannot be killed.",
+        "chimera": "DRAKVUF runs entirely in dom0; the guest has no analyzer process to kill."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.policy_suspend_thread_evasion",
+      "technique": "debugger.tracer",
+      "status": "not_feasible",
+      "reason": "Out of scope by policy: Enumerating and suspending threads in other processes is active malware interference rather than an environment check.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Check Point anti-debug/interactive/suspendthread: Enumerates window handles and calls SuspendThread on external processes to freeze debuggers.",
+      "severity": "low",
+      "references": [
+        "https://evasions.checkpoint.com/"
+      ],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "anti-debug/interactive/suspendthread"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Isolate debugger and analysis tools outside the guest operating system.",
+        "chimera": "DRAKVUF has no guest-side threads that could be suspended."
+      },
+      "params": []
+    },
+    {
+      "id": "win.env.dbvm_backdoor",
+      "technique": "artifacts.hypervisor_interfaces",
+      "status": "not_feasible",
+      "reason": "Not feasible on Xen: DBVM hypercalls and invalid hypercall sequences trigger unhandled VM exits and fault storms that wedge Xen HVM guests.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "VMAware DBVM: Probes for Dark Byte Virtual Machine (Cheat Engine hypervisor) backdoor hypercalls.",
+      "severity": "low",
+      "references": [
+        "https://github.com/NotRequiem/VMAware"
+      ],
+      "equivalents": {
+        "vmaware": [
+          "DBVM"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 5,
+        "how": "Do not execute unhandled hypercalls. Ensure Xen rejects invalid vendor hypercall codes cleanly.",
+        "chimera": "Unvalidated on Xen; executing DBVM hypercalls causes guest panics."
+      },
+      "params": []
+    },
+    {
+      "id": "win.env.raw_msr_access",
+      "technique": "cpu.emulation_quirks",
+      "status": "not_feasible",
+      "reason": "Not feasible on Xen: Direct RDMSR execution from user mode faults with #GP and privileged MSR probing can destabilize Xen guest state.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "VMAware MSR: Executes direct RDMSR instructions to read model-specific registers.",
+      "severity": "low",
+      "references": [
+        "https://github.com/NotRequiem/VMAware"
+      ],
+      "equivalents": {
+        "vmaware": [
+          "MSR"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 5,
+        "how": "Enforce strict user-mode #GP delivery on unprivileged MSR instructions.",
+        "chimera": "RDMSR from ring 3 faults with #GP; kernel-level access risks guest crash."
+      },
+      "params": []
+    },
+    {
+      "id": "win.env.svm_exceptions",
+      "technique": "cpu.undefined_instruction_behaviour",
+      "status": "not_feasible",
+      "reason": "Not feasible on Xen: Executing AMD SVM-specific instructions on Intel VT-x hosts triggers #UD faults and invalid instruction handling.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "VMAware SVM_EXCEPTIONS: Tests AMD SVM-specific exception intercept behavior.",
+      "severity": "low",
+      "references": [
+        "https://github.com/NotRequiem/VMAware"
+      ],
+      "equivalents": {
+        "vmaware": [
+          "SVM_EXCEPTIONS"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 5,
+        "how": "Do not execute vendor-incompatible virtualization instructions on bare metal hosts.",
+        "chimera": "CHIMERA runs bare-metal Intel VT-x hosts; AMD SVM instructions cannot be tested."
+      },
+      "params": []
+    },
+    {
+      "id": "win.env.ud_exception_storm",
+      "technique": "cpu.undefined_instruction_behaviour",
+      "status": "not_feasible",
+      "reason": "Not feasible on Xen: High-frequency deliberate #UD instruction storms flood hypervisor trap handlers and can wedge the DRAKVUF VMI monitor.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "VMAware UD: Emits tight loops of deliberate invalid opcodes (#UD) to measure hypervisor trap dispatch overhead.",
+      "severity": "low",
+      "references": [
+        "https://github.com/NotRequiem/VMAware"
+      ],
+      "equivalents": {
+        "vmaware": [
+          "UD"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 5,
+        "how": "Optimize hypervisor exception reflection and avoid running destabilizing exception storms.",
+        "chimera": "Severe trap floods degrade altp2m breakpoint servicing in DRAKVUF."
+      },
+      "params": []
+    },
+    {
+      "id": "win.env.azure_cloud",
+      "technique": "network.cloud_metadata",
+      "status": "planned",
+      "reason": "Requires probing Azure IMDS metadata endpoints and Azure DMI identifiers; planned for cloud detection profile.",
+      "cost": "fast",
+      "network": true,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "VMAware AZURE: Detects Microsoft Azure VM hosting by querying Azure Instance Metadata Service (IMDS) at 169.254.169.254 and checking Azure hypervisor DMI/SMBIOS strings. Detected when IMDS answers with Azure instance metadata or Azure hypervisor vendor strings are present.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/NotRequiem/VMAware"
+      ],
+      "equivalents": {
+        "vmaware": [
+          "AZURE"
+        ]
+      },
+      "fix": {
+        "layer": "network",
+        "effort": 2,
+        "how": "Block access to link-local cloud metadata IP 169.254.169.254 in the containment firewall.",
+        "chimera": "CHIMERA containment firewall drops link-local metadata addresses."
+      },
+      "params": []
+    },
+    {
+      "id": "win.timing.clock_jitter_vmaware",
+      "technique": "timing.clock_source",
+      "status": "planned",
+      "reason": "Requires multi-interval RTC vs performance counter drift sampling; planned for timing suite.",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "VMAware CLOCK: Detects hypervisor virtual clock rate anomalies and virtualization timing discrepancies between the hardware RTC and high-resolution performance counters. Detected when observed clock frequency deviates significantly from physical hardware clock expectations.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/NotRequiem/VMAware"
+      ],
+      "equivalents": {
+        "vmaware": [
+          "CLOCK"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Synchronize virtual RTC and TSC frequency scalers to match physical clock rates.",
+        "chimera": "Configure Xen tsc_mode=native to ensure guest TSC tracks host clock."
+      },
+      "params": []
+    },
+    {
+      "id": "win.env.gamarue_volume_serial",
+      "technique": "hardware.disk_identity",
+      "status": "planned",
+      "reason": "Requires volume serial enumeration against Gamarue and CAPE sandbox signature lists; planned for disk identity checks.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "VMAware GAMARUE: Checks system volume serial number and drive geometry against known hardcoded values used by Gamarue/Andromeda malware to identify sandboxes. Detected when the system drive serial matches known sandbox defaults or abnormal virtual disk signatures.",
+      "severity": "high",
+      "references": [
+        "https://github.com/NotRequiem/VMAware"
+      ],
+      "equivalents": {
+        "vmaware": [
+          "GAMARUE"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antisandbox_volumeserial"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Randomize volume serial numbers during golden image creation.",
+        "chimera": "Randomize system drive volume serial in the Windows golden image."
+      },
+      "params": []
+    },
+    {
+      "id": "win.env.tpm_measured_boot",
+      "technique": "firmware.boot_mode",
+      "status": "planned",
+      "reason": "Requires parsing TCG event logs via Tbsi_Get_TCG_Log; planned for firmware integrity checks.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "VMAware MEASURED_BOOT: Queries TPM 2.0 TCG event logs via Windows TBS API to verify whether measured boot and platform firmware PCR measurements are present and authentic. Detected when measured boot logs are absent, uninitialized, or exhibit synthetic hypervisor PCR state.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/NotRequiem/VMAware"
+      ],
+      "equivalents": {
+        "vmaware": [
+          "MEASURED_BOOT"
+        ]
+      },
+      "fix": {
+        "layer": "firmware",
+        "effort": 4,
+        "how": "Provide virtual TPM 2.0 device with plausible PCR measurements and TCG event logs.",
+        "chimera": "Enable vTPM emulation with persistent measurement logs in Xen."
+      },
+      "params": []
+    },
+    {
+      "id": "win.env.uefi_nvram_variables",
+      "technique": "firmware.bios_metadata",
+      "status": "planned",
+      "reason": "Requires enumerating UEFI firmware environment variables via GetFirmwareEnvironmentVariableW; planned for firmware checks.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "VMAware NVRAM: Enumerates UEFI firmware environment variables using GetFirmwareEnvironmentVariableW to detect virtual machine firmware signatures. Detected when UEFI NVRAM contains hypervisor-specific vendor GUIDs or lacks standard physical hardware variables.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/NotRequiem/VMAware"
+      ],
+      "equivalents": {
+        "vmaware": [
+          "NVRAM"
+        ]
+      },
+      "fix": {
+        "layer": "firmware",
+        "effort": 3,
+        "how": "Sanitize OVMF / UEFI NVRAM variable storage to remove hypervisor traces.",
+        "chimera": "Override OVMF variable store with vendor-neutral NVRAM template."
+      },
+      "params": []
+    },
+    {
+      "id": "win.env.thread_mismatch",
+      "technique": "cpu.topology_consistency",
+      "status": "planned",
+      "reason": "Requires comparing GetLogicalProcessorInformation with CPUID APIC IDs; planned for CPU topology suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "VMAware THREAD_MISMATCH: Compares processor thread counts reported by OS APIs with CPUID APIC and topology leaf counts to detect virtual CPU mismatch. Detected when OS-reported logical thread topology conflicts with raw CPUID hardware topology.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/NotRequiem/VMAware"
+      ],
+      "equivalents": {
+        "vmaware": [
+          "THREAD_MISMATCH"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 2,
+        "how": "Configure vCPU topology in VM config to match CPUID leaf 0x0B/0x1F topology leaves.",
+        "chimera": "Configure Xen vcpu topology to match vCPUs, cores, and threads coherently."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.nt_query_object_type_information",
+      "technique": "debugger.debug_objects",
+      "status": "planned",
+      "reason": "Requires handle enumeration and NtQueryObject ObjectTypeInformation queries; planned for debug object suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser NtQueryObject_ObjectTypeInformation: Queries ObjectTypeInformation on system handles to detect open DebugObject instances. Detected when a handle of type DebugObject exists in the process.",
+      "severity": "high",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "NtQueryObject_ObjectTypeInformation"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Do not attach debuggers with open debug object handles to monitored processes.",
+        "chimera": "DRAKVUF attaches agentlessly via VMI without Windows DebugObjects."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.nt_yield_execution",
+      "technique": "debugger.api_flags",
+      "status": "planned",
+      "reason": "Requires looped NtYieldExecution / SwitchToThread status validation; planned for anti-debug API suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser NtYieldExecutionAPI: Calls NtYieldExecution in a loop; under a debugger or emulator the return value indicates that execution was not yielded. Detected when NtYieldExecution returns STATUS_NO_YIELD_PERFORMED unexpectedly.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "NtYieldExecutionAPI"
+        ],
+        "checkpoint-evasions": [
+          "anti-debug/misc/switchtothread"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Avoid active debugger single-stepping during thread yield system calls.",
+        "chimera": "DRAKVUF does not freeze guest thread scheduling during analysis."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.page_exception_breakpoint",
+      "technique": "debugger.hardware_breakpoints",
+      "status": "planned",
+      "reason": "Requires installing VEH filter and testing PAGE_GUARD fault propagation; planned for exception trick suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser PageExceptionBreakpointCheck: Sets PAGE_GUARD on code pages to verify whether an attached debugger intercepts guard page exceptions before the program handler. Detected when the STATUS_GUARD_PAGE_VIOLATION exception is swallowed or stolen by a debugger.",
+      "severity": "high",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "PageExceptionBreakpointCheck"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Ensure user-mode debuggers do not steal PAGE_GUARD exceptions from target processes.",
+        "chimera": "DRAKVUF altp2m hidden breakpoints do not use PAGE_GUARD exceptions."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.process_job_object",
+      "technique": "debugger.api_flags",
+      "status": "planned",
+      "reason": "Requires checking process job assignment via IsProcessInJob; planned for process containment suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser ProcessJob: Calls IsProcessInJob to determine if the analysis environment has placed the agent process inside a management job object. Detected when the current process is assigned to a job object.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "ProcessJob"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-debugging/debugger-detection/check-process-job-object"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Launch analysis samples without enclosing them in a Windows Job object.",
+        "chimera": "CHIMERA process launcher executes processes without Job object containers."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.scan_dotnet_module_structures",
+      "technique": "analysis_tools.loaded_modules",
+      "status": "planned",
+      "reason": "Requires scanning address space for .NET CLR metadata headers; planned for memory scan suite.",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser ScanForModules_DotNetModuleStructures: Walks the process address space for .NET CLR module metadata headers to detect managed analysis tools. Detected when .NET runtime structures are found in an unmanaged native process.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "ScanForModules_DotNetModuleStructures"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Do not inject managed .NET profiling tools into guest analysis processes.",
+        "chimera": "CHIMERA injects no DLLs or managed runtimes into detonated processes."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.scan_modules_enumprocessmodulesex_32",
+      "technique": "analysis_tools.loaded_modules",
+      "status": "planned",
+      "reason": "Requires invoking EnumProcessModulesEx with LIST_MODULES_32BIT; planned for WOW64 module inspection.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser ScanForModules_EnumProcessModulesEx_32bit: Calls EnumProcessModulesEx with LIST_MODULES_32BIT to inspect 32-bit module loads in WOW64 processes. Detected when suspicious or hooking 32-bit modules are present.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "ScanForModules_EnumProcessModulesEx_32bit"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Ensure no unexpected 32-bit monitoring modules reside in SysWOW64.",
+        "chimera": "Golden image contains clean 32-bit and 64-bit system DLLs."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.scan_modules_enumprocessmodulesex_64",
+      "technique": "analysis_tools.loaded_modules",
+      "status": "planned",
+      "reason": "Requires invoking EnumProcessModulesEx with LIST_MODULES_64BIT; planned for 64-bit module inspection.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser ScanForModules_EnumProcessModulesEx_64bit: Calls EnumProcessModulesEx with LIST_MODULES_64BIT to enumerate native 64-bit DLLs. Detected when unauthorized 64-bit monitoring or injection modules are loaded.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "ScanForModules_EnumProcessModulesEx_64bit"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Ensure no unexpected 64-bit monitoring modules reside in System32.",
+        "chimera": "Golden image contains clean 64-bit system DLLs without third-party monitoring hooks."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.scan_modules_ldr_direct",
+      "technique": "analysis_tools.loaded_modules",
+      "status": "planned",
+      "reason": "Requires traversing PEB loader lists directly; planned for stealth module check.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser ScanForModules_LDR_Direct: Directly traverses the PEB InMemoryOrderModuleList and InLoadOrderModuleList to find hidden modules bypassing Win32 APIs. Detected when DLLs in the direct LDR linked list match known analysis or hooking tools.",
+      "severity": "high",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "ScanForModules_LDR_Direct"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Do not inject user-mode monitoring DLLs into guest process address spaces.",
+        "chimera": "DRAKVUF operates out-of-band via hypervisor memory introspection."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.scan_modules_ldr_enumerate",
+      "technique": "analysis_tools.loaded_modules",
+      "status": "planned",
+      "reason": "Requires invoking ntdll!LdrEnumerateLoadedModules callback; planned for loader verification suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser ScanForModules_LdrEnumerateLoadedModules: Invokes the native ntdll!LdrEnumerateLoadedModules callback routine to enumerate all registered process modules. Detected when monitoring modules are discovered via native loader enumeration.",
+      "severity": "high",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "ScanForModules_LdrEnumerateLoadedModules"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Avoid in-guest DLL injection; monitor process execution from dom0.",
+        "chimera": "CHIMERA injects no DLLs into guest processes."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.scan_modules_memory_walk_gmi",
+      "technique": "analysis_tools.loaded_modules",
+      "status": "planned",
+      "reason": "Requires walking memory with VirtualQuery and GetModuleInformation; planned for module memory scanner.",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser ScanForModules_MemoryWalk_GMI: Scans the virtual memory address space with VirtualQueryEx and calls GetModuleInformation to find unlinked or spoofed executable modules. Detected when memory regions host executable modules not declared in the loader.",
+      "severity": "high",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "ScanForModules_MemoryWalk_GMI"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Avoid in-memory manual DLL mapping; use hypervisor memory introspection.",
+        "chimera": "DRAKVUF uses Xen altp2m without modifying in-guest address spaces."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.scan_modules_memory_walk_hidden",
+      "technique": "analysis_tools.loaded_modules",
+      "status": "planned",
+      "reason": "Requires scanning executable memory pages for unlinked PE signatures; planned for stealth injection detection.",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser ScanForModules_MemoryWalk_Hidden: Scans process memory pages for unlinked PE image headers (MZ/PE signatures) that lack backing DLL entries. Detected when an unlinked PE image is found resident in private or mapped executable memory.",
+      "severity": "high",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "ScanForModules_MemoryWalk_Hidden"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Do not reflectively inject monitoring binaries into target processes.",
+        "chimera": "CHIMERA uses agentless VMI; no injected in-memory DLLs exist."
+      },
+      "params": []
+    },
+    {
+      "id": "win.network.hosting_provider_check",
+      "technique": "network.public_ip_reputation",
+      "status": "planned",
+      "reason": "Requires external IP lookup and ASN verification against cloud datacenter ranges; planned for network profile.",
+      "cost": "fast",
+      "network": true,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser hosting_check: Queries public IP information or reverse DNS lookups to check if the outgoing IP belongs to cloud/hosting data centers. Detected when the external IP address is registered to a data center, hosting provider, or cloud infrastructure.",
+      "severity": "high",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "hosting_check"
+        ],
+        "checkpoint-evasions": [
+          "evasions/network/check-if-network-belongs-to-security-perimeter"
+        ]
+      },
+      "fix": {
+        "layer": "network",
+        "effort": 4,
+        "how": "Route outbound guest traffic through residential proxy networks or clean ISP connections.",
+        "chimera": "INetSim local traffic sink prevents public IP disclosure during offline runs."
+      },
+      "params": []
+    },
+    {
+      "id": "win.timing.create_timer_queue_timer",
+      "technique": "timing.sleep_acceleration",
+      "status": "planned",
+      "reason": "Requires measuring timer queue callback latency with CreateTimerQueueTimer; planned for timing suite.",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser timing_CreateTimerQueueTimer: Delays execution using a thread-pool timer via CreateTimerQueueTimer and verifies elapsed tick count. Detected when the timer callback fires prematurely due to sleep-skipping mechanisms.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "timing_CreateTimerQueueTimer"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Do not artificially accelerate Windows thread-pool timer callbacks.",
+        "chimera": "DRAKVUF delaymon adjusts sleep intervals coherently with hardware clocks."
+      },
+      "params": []
+    },
+    {
+      "id": "win.timing.create_waitable_timer",
+      "technique": "timing.sleep_acceleration",
+      "status": "planned",
+      "reason": "Requires measuring kernel waitable timer delay with CreateWaitableTimer; planned for timing suite.",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser timing_CreateWaitableTimer: Creates a kernel waitable timer object via CreateWaitableTimer and waits on it to detect accelerated time. Detected when WaitForSingleObject on the waitable timer returns before the requested interval expires.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "timing_CreateWaitableTimer"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Ensure waitable timer kernel objects honor unaccelerated intervals.",
+        "chimera": "CHIMERA runs standard unaccelerated timers by default."
+      },
+      "params": []
+    },
+    {
+      "id": "win.timing.icmp_send_echo_delay",
+      "technique": "timing.sleep_acceleration",
+      "status": "planned",
+      "reason": "Requires measuring IcmpSendEcho timeout accuracy; planned for timing suite.",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser timing_IcmpSendEcho: Sends an ICMP echo request to a loopback or dead IP with a specified timeout as an evasion delay mechanism. Detected when IcmpSendEcho completes significantly faster than the configured timeout.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "timing_IcmpSendEcho"
+        ]
+      },
+      "fix": {
+        "layer": "network",
+        "effort": 2,
+        "how": "Configure virtual network router to enforce accurate ICMP request timeout periods.",
+        "chimera": "INetSim network namespace handles ICMP timeouts correctly."
+      },
+      "params": []
+    },
+    {
+      "id": "win.timing.user32_set_timer",
+      "technique": "timing.sleep_acceleration",
+      "status": "planned",
+      "reason": "Requires message pump timer dispatch measurement with SetTimer; planned for timing suite.",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser timing_SetTimer: Installs a Win32 GUI timer via SetTimer and dispatches messages to detect accelerated timer dispatching. Detected when the WM_TIMER message arrives faster than the specified interval.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "timing_SetTimer"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Preserve standard message pump dispatch timing for Win32 timers.",
+        "chimera": "Standard Windows desktop snapshot dispatches WM_TIMER at normal rate."
+      },
+      "params": []
+    },
+    {
+      "id": "win.timing.wait_for_multiple_objects",
+      "technique": "timing.sleep_acceleration",
+      "status": "planned",
+      "reason": "Requires measuring timeout on unsignaled multiple object handles; planned for timing suite.",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser timing_WaitForMultipleObjects: Waits on multiple unsignaled event handles using WaitForMultipleObjects with a timeout. Detected when the wait returns WAIT_TIMEOUT prematurely.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "timing_WaitForMultipleObjects"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Maintain accurate timeouts on multi-object synchronization waits.",
+        "chimera": "DRAKVUF unaccelerated runs maintain genuine wall-clock timeouts."
+      },
+      "params": []
+    },
+    {
+      "id": "win.timing.sleep_loop",
+      "technique": "timing.sleep_acceleration",
+      "status": "planned",
+      "reason": "Requires cumulative loop sleep timing measurements; planned for timing suite.",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser timing_sleep_loop: Performs repeated short Sleep() calls in a loop and compares total elapsed clock time against expected cumulative time. Detected when total loop execution time is significantly shorter than the sum of sleep increments.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "timing_sleep_loop"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Ensure sleep loops accumulate accurate monotonic intervals.",
+        "chimera": "Default CHIMERA analyses do not accelerate looped Sleep calls."
+      },
+      "params": []
+    },
+    {
+      "id": "win.timing.timesetevent_delay",
+      "technique": "timing.sleep_acceleration",
+      "status": "planned",
+      "reason": "Requires multimedia timer callback latency sampling with timeSetEvent; planned for timing suite.",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "al-khaser timing_timeSetEvent: Uses the multimedia timer API timeSetEvent to schedule a delayed callback and checks elapsed time. Detected when the multimedia timer callback triggers before the real-time delay has passed.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/ayoubfaouzi/al-khaser"
+      ],
+      "equivalents": {
+        "al-khaser": [
+          "timing_timeSetEvent"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Avoid accelerating multimedia timer interrupts in virtual machine time models.",
+        "chimera": "Xen virtual platform timer delivers winmm callbacks at genuine clock rate."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.cuckoo_tls_hooks",
+      "technique": "instrumentation.inline_hooks",
+      "status": "planned",
+      "reason": "Requires probing thread TLS slots for Cuckoomon hook metadata; planned for hooking suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Pafish cuckoo_check_tls: Inspects Thread Local Storage (TLS) array slots for Cuckoomon hook state structures. Detected when Cuckoo hooking framework data structures are found in thread TLS slots.",
+      "severity": "high",
+      "references": [
+        "https://github.com/a0rtega/pafish"
+      ],
+      "equivalents": {
+        "pafish": [
+          "cuckoo_check_tls"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Avoid in-process user-mode hooking frameworks that consume guest thread TLS slots.",
+        "chimera": "DRAKVUF uses Xen VMI without consuming guest process TLS slots."
+      },
+      "params": []
+    },
+    {
+      "id": "win.behavioural.rtt_confirm_dialog",
+      "technique": "human.foreground_activity",
+      "status": "planned",
+      "reason": "Requires interactive dialog confirmation prompt; planned for interactive profile.",
+      "cost": "slow",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Pafish rtt_confirm_dialog: Displays a confirmation dialog window and waits for human interaction, measuring whether input is automated or absent. Detected when the dialog is dismissed programmatically without genuine user interaction.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/a0rtega/pafish"
+      ],
+      "equivalents": {
+        "pafish": [
+          "rtt_confirm_dialog"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Simulate human mouse and keyboard input with realistic trajectories and delay curves.",
+        "chimera": "CHIMERA hidsim simulates human mouse movements and button clicks."
+      },
+      "params": []
+    },
+    {
+      "id": "win.timing.cuckoo_delay_interval",
+      "technique": "timing.sleep_acceleration",
+      "status": "planned",
+      "reason": "Requires inspecting in-out memory buffer of NtDelayExecution; planned for timing suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "InviZzzible cuckoo/DelayInterval: Calls NtDelayExecution and verifies whether the DelayInterval memory buffer was modified in-place by a hook. Detected when the delay parameter value is altered by an in-guest monitor hook.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/CheckPointSW/InviZzzible"
+      ],
+      "equivalents": {
+        "invizzzible": [
+          "cuckoo/DelayInterval"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Do not mutate caller argument buffers when intercepting system calls.",
+        "chimera": "DRAKVUF does not modify guest memory parameters during observation."
+      },
+      "params": []
+    },
+    {
+      "id": "win.timing.cuckoo_infinite_delay",
+      "technique": "timing.sleep_acceleration",
+      "status": "planned",
+      "reason": "Requires timing INFINITE timeout wait behavior; planned for timing suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "InviZzzible cuckoo/InfiniteDelay: Requests an INFINITE sleep delay and tests whether a sleep-skipping sandbox terminates the wait early. Detected when an infinite wait returns before a timeout occurs.",
+      "severity": "high",
+      "references": [
+        "https://github.com/CheckPointSW/InviZzzible"
+      ],
+      "equivalents": {
+        "invizzzible": [
+          "cuckoo/InfiniteDelay"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Do not skip or truncate INFINITE waits prematurely in sleep-skipping heuristics.",
+        "chimera": "CHIMERA unaccelerated profile honors genuine wait intervals."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.cuckoo_invalid_hook_esp",
+      "technique": "instrumentation.inline_hooks",
+      "status": "planned",
+      "reason": "Requires testing stack alignment across NtLoadKeyEx; planned for hooking suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "InviZzzible cuckoo/InvalidHook: Calls NtLoadKeyEx and checks if the ESP stack pointer remains valid, detecting corrupt hook trampolines. Detected when ESP stack corruption occurs across an hooked system service call.",
+      "severity": "high",
+      "references": [
+        "https://github.com/CheckPointSW/InviZzzible"
+      ],
+      "equivalents": {
+        "invizzzible": [
+          "cuckoo/InvalidHook"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Maintain correct stack balance and calling convention in hook trampolines.",
+        "chimera": "DRAKVUF inserts no user-mode trampolines into guest ntdll."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.cuckoo_argument_checks",
+      "technique": "instrumentation.inline_hooks",
+      "status": "planned",
+      "reason": "Requires calling hooked functions with invalid pointers to test error handling; planned for hooking suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "InviZzzible cuckoo/LackOfArgumentChecks: Passes invalid pointers to hooked system functions (e.g. NtDelayExecution) and checks if the hook crashes or returns incorrect error status. Detected when a hook returns unexpected success or wrong status code for invalid parameters.",
+      "severity": "high",
+      "references": [
+        "https://github.com/CheckPointSW/InviZzzible"
+      ],
+      "equivalents": {
+        "invizzzible": [
+          "cuckoo/LackOfArgumentChecks"
+        ],
+        "checkpoint-evasions": [
+          "evasions/timing/call-hooked-function-with-invalid-arguments"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Ensure API interceptors validate user pointers with ProbeForRead before use.",
+        "chimera": "DRAKVUF does not intercept calls via in-process wrappers."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.cuckoo_pid_reuse",
+      "technique": "analysis_tools.processes",
+      "status": "planned",
+      "reason": "Requires PID recycling process creation cycles; planned for process lifecycle suite.",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "InviZzzible cuckoo/PidReuse: Rapidly creates and terminates processes to test if reused process IDs cause monitoring loss in the sandbox. Detected when newly spawned processes with recycled PIDs escape sandbox tracking.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/CheckPointSW/InviZzzible"
+      ],
+      "equivalents": {
+        "invizzzible": [
+          "cuckoo/PidReuse"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Key process tracking state on (PID, CreateTime) pairs rather than raw PIDs.",
+        "chimera": "DRAKVUF keys process tracking on EPROCESS address and unique timestamp."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.cuckoo_raised_exceptions",
+      "technique": "debugger.exception_tricks",
+      "status": "planned",
+      "reason": "Requires measuring exception handler loop stability; planned for exception trick suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "InviZzzible cuckoo/RaisedExceptions: Raises a series of exceptions to check whether monitor hooks crash or force process exit. Detected when an in-guest monitor terminates the process prematurely on repetitive exceptions.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/CheckPointSW/InviZzzible"
+      ],
+      "equivalents": {
+        "invizzzible": [
+          "cuckoo/RaisedExceptions"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Do not abort process execution upon encountering handled exceptions.",
+        "chimera": "CHIMERA observes guest exceptions transparently without terminating execution."
+      },
+      "params": []
+    },
+    {
+      "id": "win.timing.cuckoo_socket_timeout",
+      "technique": "timing.sleep_acceleration",
+      "status": "planned",
+      "reason": "Requires comparing socket timeouts with sleep delays; planned for timing suite.",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "InviZzzible cuckoo/SocketTimeout: Compares blocking socket timeout duration against sleep delays to detect selective sleep acceleration. Detected when sleep calls are accelerated while socket timeouts run at wall-clock speed.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/CheckPointSW/InviZzzible"
+      ],
+      "equivalents": {
+        "invizzzible": [
+          "cuckoo/SocketTimeout"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Synchronize socket select/poll timeouts with the global time acceleration model.",
+        "chimera": "Unaccelerated CHIMERA analyses maintain consistent socket and sleep timing."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.cuckoo_suspended_thread",
+      "technique": "instrumentation.tracing_facilities",
+      "status": "planned",
+      "reason": "Requires spawning suspended thread and testing hook coverage; planned for thread tracking suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "InviZzzible cuckoo/SuspendedThread: Creates a secondary thread in a suspended state to test if sandbox injection hooks fail to attach to unresumed threads. Detected when suspended threads run unmonitored once resumed.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/CheckPointSW/InviZzzible"
+      ],
+      "equivalents": {
+        "invizzzible": [
+          "cuckoo/SuspendedThread"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Attach thread monitoring hooks at thread creation time before resumption.",
+        "chimera": "DRAKVUF intercepts thread creation at the hypervisor level on NtCreateThread."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.cuckoo_taskscheduler_process",
+      "technique": "instrumentation.tracing_facilities",
+      "status": "planned",
+      "reason": "Requires launching test worker via Task Scheduler COM interface; planned for execution vector suite.",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "InviZzzible cuckoo/TaskSchedulerProcess: Spawns processes via Windows Task Scheduler to evade child-process tracking by user-mode hooks. Detected when scheduled tasks execute outside the sandbox process tree.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/CheckPointSW/InviZzzible"
+      ],
+      "equivalents": {
+        "invizzzible": [
+          "cuckoo/TaskSchedulerProcess"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Trace system-wide process creations rather than relying strictly on process hierarchy.",
+        "chimera": "DRAKVUF captures all system process creations across the VM."
+      },
+      "params": []
+    },
+    {
+      "id": "win.timing.kuser_tickcount_drift",
+      "technique": "timing.uptime",
+      "status": "planned",
+      "reason": "Requires comparing API tick count with raw KUSER_SHARED_DATA; planned for timing suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "InviZzzible cuckoo/TickCount: Compares GetTickCount API return values with KUSER_SHARED_DATA TickCount to detect hooked tick APIs. Detected when API tick counts diverge from the shared user data page.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/CheckPointSW/InviZzzible"
+      ],
+      "equivalents": {
+        "invizzzible": [
+          "cuckoo/TickCount"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Update KUSER_SHARED_DATA coherently if user-mode tick APIs are hooked.",
+        "chimera": "CHIMERA leaves KUSER_SHARED_DATA unhooked."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.cuckoo_unbalanced_stack",
+      "technique": "instrumentation.inline_hooks",
+      "status": "planned",
+      "reason": "Requires checking stack canary integrity across hooked calls; planned for hook verification suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "InviZzzible cuckoo/UnbalancedStack: Verifies whether stack canaries at the top of the stack are corrupted after calling hooked functions. Detected when inline hook trampolines misalign the caller stack frame.",
+      "severity": "high",
+      "references": [
+        "https://github.com/CheckPointSW/InviZzzible"
+      ],
+      "equivalents": {
+        "invizzzible": [
+          "cuckoo/UnbalancedStack"
+        ],
+        "checkpoint-evasions": [
+          "evasions/os-features/using-unbalanced-stack"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Ensure hook trampolines preserve stack alignment and canary bytes.",
+        "chimera": "DRAKVUF executes guest code without user-mode trampoline insertion."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.cuckoo_wmi_process",
+      "technique": "instrumentation.tracing_facilities",
+      "status": "planned",
+      "reason": "Requires spawning process via WMI Win32_Process; planned for process tracking suite.",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "InviZzzible cuckoo/WMIProcess: Launches child processes via WMI Win32_Process.Create to test if the sandbox fails to monitor WMI-spawned trees. Detected when processes spawned through WMI escape monitor instrumentation.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/CheckPointSW/InviZzzible"
+      ],
+      "equivalents": {
+        "invizzzible": [
+          "cuckoo/WMIProcess"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Track all new processes globally across the operating system.",
+        "chimera": "DRAKVUF traps PspInsertProcess globally regardless of parent process."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.cuckoo_whitelisted_process",
+      "technique": "instrumentation.tracing_facilities",
+      "status": "planned",
+      "reason": "Requires testing monitoring presence under whitelisted system process names; planned for tracking suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "InviZzzible cuckoo/WhitelistedProcess: Renames or disguises process as standard Windows binaries (e.g. explorer.exe) to test if sandbox whitelists exclude them. Detected when whitelisted process names are excluded from monitoring.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/CheckPointSW/InviZzzible"
+      ],
+      "equivalents": {
+        "invizzzible": [
+          "cuckoo/WhitelistedProcess"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Avoid excluding processes based solely on executable image filename.",
+        "chimera": "DRAKVUF tracks entire process trees spawned from the initial injection."
+      },
+      "params": []
+    },
+    {
+      "id": "win.env.big_ram_alloc",
+      "technique": "resources.memory_size",
+      "status": "planned",
+      "reason": "Requires testing allocation of multi-gigabyte memory blocks; planned for resource sizing suite.",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "InviZzzible generic/BigRamAlloc: Attempts large physical memory allocations (1-2 GB) to detect low-memory sandbox constraints. Detected when large valid memory allocation requests fail.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/CheckPointSW/InviZzzible"
+      ],
+      "equivalents": {
+        "invizzzible": [
+          "generic/BigRamAlloc"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 2,
+        "how": "Allocate at least 4 GiB RAM to analysis guest VMs.",
+        "chimera": "CHIMERA Windows guest is provisioned with 5 GiB RAM."
+      },
+      "params": []
+    },
+    {
+      "id": "win.timing.external_time_tampering",
+      "technique": "timing.time_plausibility",
+      "status": "planned",
+      "reason": "Requires comparing guest time against HTTP Date headers and NTP time servers; planned for time plausibility suite.",
+      "cost": "fast",
+      "network": true,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "InviZzzible generic/TimeTampering: Fetches HTTP Date headers from external web servers and compares them with the guest system clock to detect time tampering. Detected when external web time disagrees with internal guest time beyond network latency tolerance.",
+      "severity": "high",
+      "references": [
+        "https://github.com/CheckPointSW/InviZzzible"
+      ],
+      "equivalents": {
+        "invizzzible": [
+          "generic/TimeTampering"
+        ],
+        "checkpoint-evasions": [
+          "evasions/timing/get-time-ntp"
+        ]
+      },
+      "fix": {
+        "layer": "network",
+        "effort": 2,
+        "how": "Keep guest system time synchronized to realistic current wall-clock time.",
+        "chimera": "CHIMERA synchronizes VM clock to real host time on detonation startup."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.instruction_counting",
+      "technique": "debugger.tracer",
+      "status": "planned",
+      "reason": "Requires hardware performance counter or trap single-stepping instruction counting; planned for tracer suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Check Point anti-debug/assembly/instruction-counting: Counts retired instructions between checkpoints using hardware performance counters or single-stepping to detect debugger intervention. Detected when instruction count exceeds execution baseline due to debugger tracing.",
+      "severity": "medium",
+      "references": [
+        "https://evasions.checkpoint.com/"
+      ],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "anti-debug/assembly/instruction-counting"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Avoid user-mode single-stepping tracers during target execution.",
+        "chimera": "DRAKVUF executes natively on hardware VT-x without instruction counting skew."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.instruction_prefixes",
+      "technique": "cpu.undefined_instruction_behaviour",
+      "status": "planned",
+      "reason": "Requires emitting crafted prefix instruction sequences under exception guards; planned for instruction suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Check Point anti-debug/assembly/instruction_prefixes: Emits repetitive instruction prefixes (F3/F2/66/67) to test for emulator disassembler bugs and instruction decoding flaws. Detected when instruction prefix sequences fail or fault differently than on physical CPU hardware.",
+      "severity": "low",
+      "references": [
+        "https://evasions.checkpoint.com/"
+      ],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "anti-debug/assembly/instruction_prefixes"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Ensure instruction emulation decoders support repetitive instruction prefixes.",
+        "chimera": "Xen executes CPU instructions directly on bare-metal Intel VT-x."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.popf_and_cpuid",
+      "technique": "debugger.exception_tricks",
+      "status": "planned",
+      "reason": "Requires setting trap flag before CPUID and verifying trap delivery; planned for exception trick suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Check Point anti-debug/assembly/popf_and_cpuid: Sets the trap flag via POPF immediately before CPUID to detect if a debugger or hypervisor swallows the single-step exception. Detected when the expected single-step trap is suppressed.",
+      "severity": "medium",
+      "references": [
+        "https://evasions.checkpoint.com/"
+      ],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "anti-debug/assembly/popf_and_cpuid"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 4,
+        "how": "Ensure single-step trap exceptions are reflected back to guest handlers after CPUID VM-exit.",
+        "chimera": "Xen altp2m patch correctly propagates trap flags across VM-exits."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.ss_register_trap",
+      "technique": "debugger.exception_tricks",
+      "status": "planned",
+      "reason": "Requires testing single-step suppression after MOV SS; planned for exception trick suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Check Point anti-debug/assembly/ss_register: Executes instructions following a MOV/POP SS instruction, which suppresses hardware single-step interrupts on native x86 CPUs. Detected when an attached debugger breaks on the instruction immediately after MOV SS.",
+      "severity": "medium",
+      "references": [
+        "https://evasions.checkpoint.com/"
+      ],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "anti-debug/assembly/ss_register"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Honor hardware interruptibility shadow semantics in user-mode debuggers.",
+        "chimera": "Hardware VT-x handles the interruptibility state after MOV SS natively."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.raise_exception_inspection",
+      "technique": "debugger.exception_tricks",
+      "status": "planned",
+      "reason": "Requires raising software exceptions with custom filters; planned for exception trick suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Check Point anti-debug/exceptions/raiseexception: Raises software exceptions via RaiseException with structured handlers to detect whether an attached debugger handles or suppresses them. Detected when registered exception filters do not execute or receive modified exception records.",
+      "severity": "medium",
+      "references": [
+        "https://evasions.checkpoint.com/"
+      ],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "anti-debug/exceptions/raiseexception"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Pass unhandled software exceptions to the guest application handler.",
+        "chimera": "DRAKVUF does not intercept or suppress guest RaiseException calls."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.generate_console_ctrl_event",
+      "technique": "debugger.tracer",
+      "status": "planned",
+      "reason": "Requires testing console control handler dispatch; planned for debugger detection suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Check Point anti-debug/interactive/generateconsolectrlevent: Invokes GenerateConsoleCtrlEvent to send CTRL_C signals to test if an attached console debugger catches the event. Detected when control handler execution is intercepted by an external debugger.",
+      "severity": "low",
+      "references": [
+        "https://evasions.checkpoint.com/"
+      ],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "anti-debug/interactive/generateconsolectrlevent"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Forward console control events to the target application handler.",
+        "chimera": "No console debugger is attached to guest processes in CHIMERA."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.process_suspension_detection",
+      "technique": "debugger.tracer",
+      "status": "planned",
+      "reason": "Requires background timer thread counter comparison; planned for debugger detection suite.",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Check Point anti-debug/interactive/processsuspensiondetection: Uses an asynchronous timer thread to detect when the primary process threads are suspended during interactive debugging. Detected when timer thread ticks accumulate while the main thread is suspended.",
+      "severity": "medium",
+      "references": [
+        "https://evasions.checkpoint.com/"
+      ],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "anti-debug/interactive/processsuspensiondetection"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Avoid freezing individual application threads during automated analysis.",
+        "chimera": "DRAKVUF inspects memory without pausing target thread execution."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.self_debugging_attach",
+      "technique": "debugger.api_flags",
+      "status": "planned",
+      "reason": "Requires calling DebugActiveProcess against child process; planned for anti-debug suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Check Point anti-debug/interactive/self-debugging: Attempts to debug the current process or its child using DebugActiveProcess to check if another debugger is already attached. Detected when DebugActiveProcess fails with ERROR_ACCESS_DENIED or STATUS_PORT_ALREADY_SET.",
+      "severity": "high",
+      "references": [
+        "https://evasions.checkpoint.com/"
+      ],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "anti-debug/interactive/self-debugging"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antidebug_debugactiveprocess"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Do not attach debuggers using Win32 DebugActiveProcess.",
+        "chimera": "DRAKVUF attaches agentlessly through Xen VMI without Win32 debugging ports."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.dbgprint_exception",
+      "technique": "debugger.api_flags",
+      "status": "planned",
+      "reason": "Requires sending DbgPrint string and verifying exception status; planned for debugger API suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Check Point anti-debug/misc/dbgprint: Calls DbgPrint or OutputDebugString with crafted formatting and tests if DBG_PRINTEXCEPTION_C is handled by an active debugger. Detected when the exception is consumed by a debugger instead of falling through to the local handler.",
+      "severity": "medium",
+      "references": [
+        "https://evasions.checkpoint.com/"
+      ],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "anti-debug/misc/dbgprint"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Do not trap OutputDebugString exceptions into a user-mode debugger.",
+        "chimera": "CHIMERA captures debug output via ETW or kernel VMI without attaching a debugger."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.dbg_set_debug_filter_state",
+      "technique": "debugger.kernel_debugger",
+      "status": "planned",
+      "reason": "Requires calling DbgSetDebugFilterState to test kernel debugger response; planned for kernel debugger suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Check Point anti-debug/misc/dbgsetdebugfilterstate: Calls DbgSetDebugFilterState to detect whether a kernel debugger is present and responsive. Detected when DbgSetDebugFilterState returns success (STATUS_SUCCESS) indicating kernel debugger presence.",
+      "severity": "high",
+      "references": [
+        "https://evasions.checkpoint.com/"
+      ],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "anti-debug/misc/dbgsetdebugfilterstate"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Disable Windows kernel debugging (bcdedit /set debug off) in the guest image.",
+        "chimera": "Windows golden image has kernel debugging disabled in BCD."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.selector_register_values",
+      "technique": "cpu.descriptor_tables",
+      "status": "planned",
+      "reason": "Requires reading segment selector registers (FS, GS, CS, SS, DS, ES); planned for CPU descriptor suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Check Point anti-debug/misc/selectors: Reads segment registers (FS, GS, CS, SS, DS, ES) to detect non-standard selector values altered by emulators or hypervisors. Detected when selector register values deviate from standard Windows user-mode descriptor table entries.",
+      "severity": "medium",
+      "references": [
+        "https://evasions.checkpoint.com/"
+      ],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "anti-debug/misc/selectors"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 3,
+        "how": "Ensure segment registers match Windows architectural defaults.",
+        "chimera": "Hardware VT-x initializes segment registers to standard Windows values."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.exclusive_create_file",
+      "technique": "debugger.debug_objects",
+      "status": "planned",
+      "reason": "Requires opening executable exclusively with dwShareMode=0; planned for handle locking suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Check Point anti-debug/object-handles/createfile: Opens the executable file exclusively with CreateFile (dwShareMode=0) to detect monitoring agents holding open file handles. Detected when exclusive file access is denied (ERROR_SHARING_VIOLATION).",
+      "severity": "medium",
+      "references": [
+        "https://evasions.checkpoint.com/"
+      ],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "anti-debug/object-handles/createfile"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Do not keep open file handles to the analyzed executable during execution.",
+        "chimera": "CHIMERA detonate launcher closes file handles before resuming target process."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.exclusive_load_library",
+      "technique": "debugger.debug_objects",
+      "status": "planned",
+      "reason": "Requires exclusive file open across LoadLibrary; planned for handle locking suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Check Point anti-debug/object-handles/loadlibrary: Opens loaded DLL module files exclusively to test if monitoring instrumentation maintains conflicting locks. Detected when DLL file handles cannot be opened with sharing violations.",
+      "severity": "medium",
+      "references": [
+        "https://evasions.checkpoint.com/"
+      ],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "anti-debug/object-handles/loadlibrary"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 2,
+        "how": "Do not lock DLL module files loaded by analysis processes.",
+        "chimera": "DRAKVUF does not open file handles inside the guest filesystem."
+      },
+      "params": []
+    },
+    {
+      "id": "win.timing.get_local_time_delay",
+      "technique": "timing.sleep_acceleration",
+      "status": "planned",
+      "reason": "Requires measuring delay using GetLocalTime; planned for timing suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Check Point anti-debug/timing/getlocaltime: Measures time intervals across delays using GetLocalTime to detect accelerated clock rates. Detected when elapsed local time does not match expected delay durations.",
+      "severity": "medium",
+      "references": [
+        "https://evasions.checkpoint.com/"
+      ],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "anti-debug/timing/getlocaltime"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Synchronize system local time increments with hardware clock progression.",
+        "chimera": "CHIMERA unaccelerated timing profile maintains standard local time progression."
+      },
+      "params": []
+    },
+    {
+      "id": "win.timing.get_system_time_delay",
+      "technique": "timing.sleep_acceleration",
+      "status": "planned",
+      "reason": "Requires measuring delay using GetSystemTime; planned for timing suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Check Point anti-debug/timing/getsystemtime: Measures delays using GetSystemTime to detect discrepancies against hardware clock timers. Detected when system time increments indicate artificial time warping.",
+      "severity": "medium",
+      "references": [
+        "https://evasions.checkpoint.com/"
+      ],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "anti-debug/timing/getsystemtime"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Ensure system time and performance counters advance coherently.",
+        "chimera": "CHIMERA unaccelerated runs maintain standard system time progression."
+      },
+      "params": []
+    },
+    {
+      "id": "win.timing.get_tick_count_delay",
+      "technique": "timing.sleep_acceleration",
+      "status": "planned",
+      "reason": "Requires measuring delay using GetTickCount; planned for timing suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Check Point anti-debug/timing/gettickcount: Measures time elapsed across sleep and computation loops using GetTickCount to detect accelerated time. Detected when GetTickCount ticks elapse faster or slower than actual elapsed wall-clock time.",
+      "severity": "medium",
+      "references": [
+        "https://evasions.checkpoint.com/"
+      ],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "anti-debug/timing/gettickcount"
+        ],
+        "capa": [
+          "capa/anti-analysis/anti-debugging/debugger-detection/check-for-time-delay-via-gettickcount"
+        ],
+        "cape": [
+          "cape/modules/signatures/windows/antidebug_gettickcount"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Ensure GetTickCount advances consistently with real time.",
+        "chimera": "Default CHIMERA scan configuration preserves real-time tick count progression."
+      },
+      "params": []
+    },
+    {
+      "id": "win.timing.kernel_kuser_tick_timing",
+      "technique": "timing.clock_source",
+      "status": "planned",
+      "reason": "Requires reading KiGetTickCount and KUSER_SHARED_DATA; planned for clock source suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Check Point anti-debug/timing/kernel-timing: Reads kernel timing data directly via KiGetTickCount / KUSER_SHARED_DATA to bypass user-mode API timing hooks. Detected when kernel tick measurements diverge from user-mode timing APIs.",
+      "severity": "medium",
+      "references": [
+        "https://evasions.checkpoint.com/"
+      ],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "anti-debug/timing/kernel-timing"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Do not hook user-mode tick APIs without synchronizing KUSER_SHARED_DATA.",
+        "chimera": "CHIMERA operates without in-guest user-mode timing hooks."
+      },
+      "params": []
+    },
+    {
+      "id": "win.timing.time_get_time_delay",
+      "technique": "timing.sleep_acceleration",
+      "status": "planned",
+      "reason": "Requires measuring execution delays with winmm!timeGetTime; planned for timing suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Check Point anti-debug/timing/timegettime: Measures execution delays with winmm!timeGetTime to detect virtualization sleep skipping. Detected when timeGetTime intervals fail to reflect requested sleep intervals.",
+      "severity": "medium",
+      "references": [
+        "https://evasions.checkpoint.com/"
+      ],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "anti-debug/timing/timegettime"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Synchronize multimedia timer timeGetTime with guest wait functions.",
+        "chimera": "CHIMERA unaccelerated profile maintains genuine wall-clock timeGetTime deltas."
+      },
+      "params": []
+    },
+    {
+      "id": "win.network.net_validate_name_emulation",
+      "technique": "network.connectivity",
+      "status": "planned",
+      "reason": "Requires calling NetValidateName with invalid domain names; planned for network emulation suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Check Point evasions/network/netvalidatename-result-based-anti-emulation-technique: Calls NetValidateName with fictitious domain names to detect emulation frameworks that return bogus success. Detected when NetValidateName returns non-standard or simulated results.",
+      "severity": "medium",
+      "references": [
+        "https://evasions.checkpoint.com/"
+      ],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "evasions/network/netvalidatename-result-based-anti-emulation-technique"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Ensure NetValidateName behaves identically to real Windows workgroup/domain environments.",
+        "chimera": "Windows guest joins workgroup and returns standard NetValidateName errors."
+      },
+      "params": []
+    },
+    {
+      "id": "win.timing.network_adapter_reset_time",
+      "technique": "timing.uptime",
+      "status": "planned",
+      "reason": "Requires querying Win32_NetworkAdapter TimeOfLastReset via WMI; planned for uptime suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "Check Point evasions/wmi/check-network-adapter-reset-time: Queries WMI Win32_NetworkAdapter TimeOfLastReset to detect newly spawned sandbox VMs with recent adapter resets. Detected when network adapter reset timestamp is less than minimum typical operating system uptime.",
+      "severity": "medium",
+      "references": [
+        "https://evasions.checkpoint.com/"
+      ],
+      "equivalents": {
+        "checkpoint-evasions": [
+          "evasions/wmi/check-network-adapter-reset-time"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 3,
+        "how": "Set realistic TimeOfLastReset timestamp on virtual network adapter instances.",
+        "chimera": "Golden image aging script populates network adapter reset timestamps."
+      },
+      "params": []
+    },
+    {
+      "id": "win.timing.dotnet_time_delay",
+      "technique": "timing.sleep_acceleration",
+      "status": "planned",
+      "reason": "Requires measuring .NET Thread.Sleep and Stopwatch timing; planned for managed runtime suite.",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "capa check-for-time-delay-in-dotnet: Detects execution time delay loops implemented in .NET managed code using Thread.Sleep or Stopwatch. Detected when .NET time delay loops finish prematurely.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/mandiant/capa-rules"
+      ],
+      "equivalents": {
+        "capa": [
+          "capa/anti-analysis/anti-debugging/check-for-time-delay-in-dotnet"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Ensure .NET runtime delay functions execute without artificial acceleration.",
+        "chimera": "CHIMERA delaymon leaves .NET managed thread timing unskewed unless configured."
+      },
+      "params": []
+    },
+    {
+      "id": "win.timing.qpc_time_delay_loop",
+      "technique": "timing.sleep_acceleration",
+      "status": "planned",
+      "reason": "Requires measuring QueryPerformanceCounter timing loop accuracy; planned for timing suite.",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "capa check-for-time-delay-via-queryperformancecounter: Detects time delay loops that measure elapsed time using QueryPerformanceCounter and QueryPerformanceFrequency. Detected when QPC timing loops execute in accelerated virtual time.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/mandiant/capa-rules"
+      ],
+      "equivalents": {
+        "capa": [
+          "capa/anti-analysis/anti-debugging/debugger-detection/check-for-time-delay-via-queryperformancecounter"
+        ]
+      },
+      "fix": {
+        "layer": "analysis-engine",
+        "effort": 3,
+        "how": "Ensure QueryPerformanceCounter increments match hardware TSC cycles accurately.",
+        "chimera": "Xen native TSC clocking provides consistent QPC performance counts."
+      },
+      "params": []
+    },
+    {
+      "id": "win.env.office_emulation_artifacts",
+      "technique": "container.app_sandbox",
+      "status": "planned",
+      "reason": "Requires detecting Microsoft Office VBA sandbox and emulation environment markers; planned for office sandbox suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "capa check-for-microsoft-office-emulation: Detects Microsoft Office VBA sandbox and security evaluation emulation environments. Detected when Office emulation artifacts, dummy document paths, or VBA sandbox flags are present.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/mandiant/capa-rules"
+      ],
+      "equivalents": {
+        "capa": [
+          "capa/anti-analysis/anti-vm/vm-detection/check-for-microsoft-office-emulation"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Install genuine Microsoft Office suites with normal user history and document templates.",
+        "chimera": "Install genuine Office desktop apps on Windows analysis images."
+      },
+      "params": []
+    },
+    {
+      "id": "win.env.windows_sandbox_vsgpu",
+      "technique": "container.app_sandbox",
+      "status": "planned",
+      "reason": "Requires opening \\\\.\\vsgpu device handle; planned for container sandbox suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "capa check-for-windows-sandbox-via-device: Checks for the virtual GPU device (\\\\.\\vsgpu) characteristic of Windows Sandbox containers. Detected when the \\\\.\\vsgpu device interface can be opened.",
+      "severity": "high",
+      "references": [
+        "https://github.com/mandiant/capa-rules"
+      ],
+      "equivalents": {
+        "capa": [
+          "capa/anti-analysis/anti-vm/vm-detection/check-for-windows-sandbox-via-device"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Ensure Windows Sandbox vsgpu container devices are not present in standard VMs.",
+        "chimera": "Xen Windows HVM guest uses standard emulated QEMU/cirrus display adapter."
+      },
+      "params": []
+    },
+    {
+      "id": "win.env.windows_sandbox_dns_suffix",
+      "technique": "container.app_sandbox",
+      "status": "planned",
+      "reason": "Requires checking adapter DNS suffix for container defaults; planned for container sandbox suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "capa check-for-windows-sandbox-via-dns-suffix: Checks if the primary network connection DNS suffix matches Windows Sandbox defaults (e.g. mshome.net). Detected when adapter DNS suffix equals Windows Sandbox container default names.",
+      "severity": "medium",
+      "references": [
+        "https://github.com/mandiant/capa-rules"
+      ],
+      "equivalents": {
+        "capa": [
+          "capa/anti-analysis/anti-vm/vm-detection/check-for-windows-sandbox-via-dns-suffix"
+        ]
+      },
+      "fix": {
+        "layer": "network",
+        "effort": 2,
+        "how": "Configure local DNS domain suffix via DHCP to match realistic enterprise or ISP names.",
+        "chimera": "CHIMERA DHCP server issues standard local domain search suffix."
+      },
+      "params": []
+    },
+    {
+      "id": "win.design.debugger_device_objects",
+      "technique": "debugger.debug_objects",
+      "status": "planned",
+      "reason": "Requires probing device handles for debugger drivers; planned for debugger detection suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "CAPE antidebug_devices: Attempts to open named device handles associated with debuggers and kernel hooks (e.g. \\\\.\\ScyllaHide, \\\\.\\NTICE). Detected when debugger device handles are successfully opened.",
+      "severity": "high",
+      "references": [
+        "https://github.com/kevoreilly/CAPEv2"
+      ],
+      "equivalents": {
+        "cape": [
+          "cape/modules/signatures/windows/antidebug_devices"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Ensure no debugger helper drivers (ScyllaHide, SoftICE) are installed in the golden image.",
+        "chimera": "CHIMERA golden image contains no installed user or kernel debugging utilities."
+      },
+      "params": []
+    },
+    {
+      "id": "win.env.windefend_emulator_artifacts",
+      "technique": "cpu.emulation_quirks",
+      "status": "planned",
+      "reason": "Requires detecting Windows Defender MpEngine emulator signatures; planned for emulation suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "CAPE antiemu_windefend: Checks for Microsoft Defender MpEngine emulation environment artifacts including computer name HAL9TH, username JohnDoe, and virtual disk signatures. Detected when Defender emulation identifiers are discovered.",
+      "severity": "high",
+      "references": [
+        "https://github.com/kevoreilly/CAPEv2"
+      ],
+      "equivalents": {
+        "cape": [
+          "cape/modules/signatures/windows/antiemu_windefend"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Configure unique realistic computer names and usernames in the guest snapshot.",
+        "chimera": "Windows arm H3 uses randomized hostname and realistic user profiles."
+      },
+      "params": []
+    },
+    {
+      "id": "win.behavioural.system_parameters_info",
+      "technique": "wear_and_tear.usage_traces",
+      "status": "planned",
+      "reason": "Requires querying SystemParametersInfoW for wallpaper and screensaver properties; planned for wear-and-tear suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "CAPE antisandbox_systemparams: Calls SystemParametersInfoW for desktop wallpaper and screensaver timeout to detect default uncustomized sandbox profiles. Detected when desktop and screensaver parameters reflect vanilla non-interactive default values.",
+      "severity": "low",
+      "references": [
+        "https://github.com/kevoreilly/CAPEv2"
+      ],
+      "equivalents": {
+        "cape": [
+          "cape/modules/signatures/windows/antisandbox_systemparams"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Configure custom user wallpaper and active screen-saver settings in the guest snapshot.",
+        "chimera": "Arm H3 populates personalized wallpaper and desktop settings."
+      },
+      "params": []
+    },
+    {
+      "id": "win.env.vmware_mutexes",
+      "technique": "artifacts.named_objects",
+      "status": "planned",
+      "reason": "Requires opening VMware Tools named mutexes and events; planned for VM artifacts suite.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "CAPE antivm_vmware_mutexes: Checks for mutexes and events created by VMware Tools (e.g. __VMware_Tools__, VMwareGuestInitEvent). Detected when VMware named mutex or event objects exist.",
+      "severity": "high",
+      "references": [
+        "https://github.com/kevoreilly/CAPEv2"
+      ],
+      "equivalents": {
+        "cape": [
+          "cape/modules/signatures/windows/antivm_vmware_mutexes"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Do not install VMware Tools or leave VMware mutexes in the guest image.",
+        "chimera": "CHIMERA runs under Xen with no VMware drivers or services."
       },
       "params": []
     }

@@ -934,6 +934,34 @@
         "https://github.com/NotRequiem/VMAware"
       ],
       "params": []
+    },
+    {
+      "id": "linux.env.amd_sev_msr",
+      "technique": "cpu.emulation_quirks",
+      "status": "not_feasible",
+      "reason": "Not feasible on Xen: Direct MSR reads require kernel driver privileges or fault and can destabilize Xen vCPU emulation.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "native-helper"
+      ],
+      "description": "VMAware AMD_SEV_MSR: Probes AMD SEV MSRs (0xC0010131) to detect hardware encrypted virtualization.",
+      "severity": "low",
+      "references": [
+        "https://github.com/NotRequiem/VMAware"
+      ],
+      "equivalents": {
+        "vmaware": [
+          "AMD_SEV_MSR"
+        ]
+      },
+      "fix": {
+        "layer": "hypervisor",
+        "effort": 5,
+        "how": "Do not execute unhandled MSR reads from user mode. Configure hypervisor MSR interception policies.",
+        "chimera": "Unsafe on Xen: MSR reads fault and destabilize guest vCPU emulation."
+      },
+      "params": []
     }
   ]
 }
