@@ -87,6 +87,7 @@ def redact(text: str) -> str:
     clean = text.split("?", 1)[0]
     clean = re.sub(r"(?i)bearer\s+[a-zA-Z0-9_\-]+", "Bearer [REDACTED]", clean)
     clean = re.sub(r"(?i)(?:ghp|gho|ghu|ghs|ghr)_[a-zA-Z0-9]+", "[REDACTED]", clean)
+    clean = re.sub(r"github_pat_[A-Za-z0-9_]+", "[REDACTED]", clean)
     token = os.environ.get("GITHUB_TOKEN")
     if token and len(token) >= 4 and token in clean:
         clean = clean.replace(token, "[REDACTED]")

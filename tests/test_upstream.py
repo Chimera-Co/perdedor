@@ -720,3 +720,10 @@ def test_latest_revision_checkpoint_fallback():
     assert rev["version"] == "d6fa72cb4d51"
     assert rev["commit"] == "d6fa72cb4d51d4ab51c5d4c76b63e7bf9179bdbe"
     assert rev["date"] == "2026-11-20"
+
+
+def test_redact_masks_fine_grained_tokens():
+    from perdedor_cli.upstream import redact
+
+    text = redact("GET https://api.github.com/x failed: github_pat_11ABCDEFG0123456789_abcdefXYZ")
+    assert "github_pat_" not in text and "[REDACTED]" in text
