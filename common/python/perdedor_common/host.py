@@ -114,6 +114,9 @@ def validate_selection(options: Mapping[str, Any]) -> dict:
     if not isinstance(network, bool):
         raise SelectionError("network must be true or false", "network")
     sel["network"] = network
+    for env_key in ("seed", "env_name", "env_image_id", "env_hypervisor", "env_monitor", "env_instrumentation", "env_labels"):
+        if env_key in options:
+            sel[env_key] = options[env_key]
     return sel
 
 
@@ -128,6 +131,21 @@ def agent_args(selection: Mapping[str, Any], output: str) -> list[str]:
         args += ["--param", *[f"{k}={v}" for k, v in selection["params"].items()]]
     if not selection.get("network", True):
         args.append("--no-network")
+    if selection.get("seed") is not None:
+        args += ["--seed", str(selection["seed"])]
+    if selection.get("env_name"):
+        args += ["--env-name", str(selection["env_name"])]
+    if selection.get("env_image_id"):
+        args += ["--env-image-id", str(selection["env_image_id"])]
+    if selection.get("env_hypervisor"):
+        args += ["--env-hypervisor", str(selection["env_hypervisor"])]
+    if selection.get("env_monitor"):
+        args += ["--env-monitor", str(selection["env_monitor"])]
+    if selection.get("env_instrumentation"):
+        args += ["--env-instrumentation", str(selection["env_instrumentation"])]
+    if selection.get("env_labels"):
+        for k, v in selection["env_labels"].items():
+            args += ["--env-label", f"{k}={v}"]
     return args
 
 

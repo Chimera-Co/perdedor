@@ -82,3 +82,9 @@ native/build/
 # Catalog copy bundled into distributions by scripts/build_dist.sh
 common/python/perdedor_common/_catalog/
 dist/
+
+# Local history database
+.perdedor/
+*.sqlite
+*.sqlite3
+

@@ -8,6 +8,9 @@ scored and compared the same way.
 - [Components](#components)
 - [Data model](#data-model)
 - [How a scan runs](#how-a-scan-runs)
+- [Report lifecycle: scan, history, compare and gate](#report-lifecycle-scan-history-compare-and-gate)
+- [Benchmark sets](#benchmark-sets)
+- [Reproducibility and timing](#reproducibility-and-timing)
 - [Running inside CHIMERA](#running-inside-chimera)
 - [Design decisions](#design-decisions)
 
@@ -24,6 +27,7 @@ flowchart TB
     end
     subgraph catalog["catalog/ (mean)"]
         CH["checks/*.json<br/>1,034 entries"]
+        BM["benchmarks/*.json<br/>pinned selections"]
         TE["techniques.json<br/>131 techniques"]
         CL["classes.json<br/>19 classes, 4 categories,<br/>fix layers, effort scale"]
         TH["threats.json<br/>91 families, tools, actors"]
@@ -32,9 +36,11 @@ flowchart TB
     subgraph assess["common/python/perdedor_common (judge)"]
         EX["exposure.py<br/>score, interval, pillars, plan"]
         VA["validation.py<br/>schema + catalog checks"]
+        HI["history.py<br/>SQLite store"]
+        CO["compare.py, gate.py<br/>deltas & regression gating"]
         RE["report.py, text_format.py<br/>HTML and text"]
     end
-    CLI["cli/perdedor_cli<br/>test, score, plan, report,<br/>coverage, upstream"]
+    CLI["cli/perdedor_cli<br/>test, score, plan, report,<br/>history, compare, gate, coverage"]
     agents --> |"report JSON"| VA --> EX
     catalog --> EX
     CLI --> agents
@@ -53,8 +59,9 @@ flowchart TB
 | `agents/macos/`, `agents/ios/` | Host-side drivers over ssh, locally (macOS) or against the Simulator (iOS) |
 | `agents/windows/`, `agents/linux/` | The v1 PowerShell and Python agents, kept as a fallback (`--engine legacy`), no new checks |
 | `catalog/` | Everything that gives a finding meaning; see the data model below |
-| `common/python/perdedor_common/` | Models, catalog loader, registry for the Python agents, validation, exposure model, renderers |
-| `cli/perdedor_cli/` | The `perdedor` command |
+| `catalog/benchmarks/` | Named, versioned check selections pinned to specific catalog versions |
+| `common/python/perdedor_common/` | Models, catalog loader, validation, exposure model, history store, compare and gate logic, renderers |
+| `cli/perdedor_cli/` | The `perdedor` command (`test`, `score`, `plan`, `report`, `history`, `compare`, `gate`, etc.) |
 | `schema/perdedor-report.schema.json` | The report format every agent emits |
 | `research/` | The scoring lab, prevalence data and proposed new techniques |
 
@@ -134,6 +141,36 @@ sequenceDiagram
 
 Unknown is never clean. A probe that could not look (access denied, API missing, timeout) reports
 `error` or `skipped` with the reason, and the model leaves it out instead of counting it as a pass.
+
+## Report lifecycle: scan, history, compare and gate
+
+```mermaid
+flowchart LR
+    S["Scan<br/>native / mobile agent"] -->|"schema v3 JSON"| R["Report<br/>scan_id, seed, env"]
+    R -->|"perdedor history add"| H[("History Store<br/>SQLite")]
+    R -->|"perdedor compare"| C["Compare<br/>findings & score deltas"]
+    H -->|"perdedor compare"| C
+    R -->|"perdedor gate"| G{"Gate<br/>pass / fail"}
+    H -->|"--baseline"| G
+```
+
+Perdedor reports progress through an integrated lifecycle:
+1. **Scan**: An agent executes the selected checks with a random or user-specified `--seed`, capturing stable identification (`scan_id`), host hardware facts (CPU model, core count, OS build), and environment details (hypervisor, monitor, instrumentation).
+2. **Report**: Findings are serialized to JSON adhering to schema version 3, containing check-level measurements, status, confidence, and evidence.
+3. **History**: Reports can be indexed in a local standard-library SQLite store (`perdedor history add`), queryable by profile or platform (`perdedor history list`) in text, JSON, or Markdown formats.
+4. **Compare**: `perdedor compare <A> <B>` analyzes two reports (from files or history), displaying checks that newly fire, checks that stopped firing, changed measurements, and score deltas per category and class.
+5. **Gate**: `perdedor gate <report> --baseline <baseline>` evaluates regressions against a baseline report or historical profile. It exits non-zero if newly firing checks appear or score degradation exceeds configured thresholds. It is read-only and never modifies historical records.
+
+## Benchmark sets
+
+Benchmark sets (`catalog/benchmarks/<name>.json`) define named, standardized selections of checks pinned to a specific catalog version:
+- Each benchmark references a catalog version (e.g. `catalog_version: "2.0.1"`) and a fixed list of check IDs.
+- Benchmarks allow consistent regression testing across releases, ensuring score comparisons reflect environment differences rather than suite expansion.
+
+## Reproducibility and timing
+
+- **Deterministic check ordering**: Providing `--seed N` (or using the seed recorded in a report) deterministically shuffles the selected checks via `std::mt19937_64`. Re-running the agent with the same seed and selection executes checks in the exact same sequence.
+- **Timing variance and confidence**: Hardware execution jitter, CPU frequency scaling, and hypervisor scheduling cause instruction-level timing checks (such as `RDTSC` and `CPUID` VM-exit cycles) to vary naturally between runs. Rather than producing unstable binary verdicts, timing probes measure empirical distributions, compute threshold margins, and assign a confidence value in $[0, 1]$.
 
 ## Running inside CHIMERA
 

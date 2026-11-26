@@ -8,8 +8,10 @@ JSON by hand (see agents/windows/README.md) since it cannot import Python.
 
 from __future__ import annotations
 
+import os
 import platform as _platform
 import socket
+import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
@@ -105,25 +107,44 @@ class PlatformReport:
     findings: tuple[Finding, ...]
     hostname: str = field(default_factory=socket.gethostname)
     perdedor_version: str = "2.0.1"
+    agent_version: str = "2.0.1"
+    catalog_version: str = "2.0.1"
     generated_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     agent_metadata: dict[str, str] = field(default_factory=dict)
-    # v2: what the operator asked for (profile, only/skip patterns, params), so a
-    # partial run is never mistaken for a full one when coverage is computed.
+    schema_version: int = 3
+    scan_id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    seed: int | None = None
+    host_facts: dict | None = None
+    environment: dict | None = None
     selection: dict | None = None
 
     def to_dict(self) -> dict:
         from .scoring import score_report  # local import avoids a cycle
 
         doc = {
-            "schema_version": 2,
+            "schema_version": self.schema_version,
+            "scan_id": self.scan_id,
             "perdedor_version": self.perdedor_version,
-            "platform": self.platform.value,
+            "agent_version": self.agent_version,
+            "catalog_version": self.catalog_version,
+            "platform": self.platform.value if isinstance(self.platform, Platform) else str(self.platform),
             "hostname": self.hostname,
-            "generated_at": self.generated_at.isoformat(),
+            "generated_at": self.generated_at.isoformat() if isinstance(self.generated_at, datetime) else str(self.generated_at),
             "agent_metadata": self.agent_metadata,
-            "findings": [f.to_dict() for f in self.findings],
+            "findings": [f.to_dict() if hasattr(f, "to_dict") else f for f in self.findings],
             "summary": score_report(self.findings),
         }
+        if self.seed is not None:
+            doc["seed"] = self.seed
+        if self.host_facts is not None:
+            doc["host_facts"] = self.host_facts
+        else:
+            doc["host_facts"] = self.default_host_facts()
+        if self.environment is not None:
+            doc["environment"] = self.environment
+        else:
+            plat = self.platform.value if isinstance(self.platform, Platform) else str(self.platform)
+            doc["environment"] = self.default_environment(plat)
         if self.selection is not None:
             doc["selection"] = self.selection
         return doc
@@ -134,4 +155,24 @@ class PlatformReport:
             "os": _platform.system(),
             "os_release": _platform.release(),
             "machine": _platform.machine(),
+        }
+
+    @staticmethod
+    def default_host_facts() -> dict:
+        return {
+            "os_build": _platform.release(),
+            "cpu_model": _platform.processor() or _platform.machine(),
+            "core_count": os.cpu_count() or 1,
+        }
+
+    @staticmethod
+    def default_environment(platform_name: str = "") -> dict:
+        return {
+            "name": "",
+            "os": platform_name,
+            "image_id": "",
+            "hypervisor": "",
+            "monitor": "none",
+            "instrumentation": "none",
+            "labels": {},
         }

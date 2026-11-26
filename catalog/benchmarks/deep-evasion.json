@@ -1,0 +1,19 @@
+{
+  "name": "deep-evasion",
+  "version": "1.0.0",
+  "catalog_version": "2.0.1",
+  "description": "Deep evaluation benchmark set covering timing, instruction, and behavioral probes.",
+  "selection": {
+    "profile": "deep",
+    "network": false
+  },
+  "checks": [
+    "win.env.cpuid_hypervisor_bit",
+    "win.env.cpuid_hypervisor_vendor",
+    "win.timing.rdtsc_cpuid_vmexit",
+    "linux.env.cpuid_hypervisor_bit",
+    "linux.env.cpuid_hypervisor_vendor",
+    "linux.timing.rdtsc_cpuid_vmexit",
+    "linux.timing.clock_source"
+  ]
+}

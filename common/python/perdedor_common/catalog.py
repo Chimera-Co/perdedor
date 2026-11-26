@@ -55,9 +55,13 @@ class Catalog:
     checks: dict[str, dict]
     threats: list[dict] = field(default_factory=list)
     upstreams: list[dict] = field(default_factory=list)
+    benchmarks: dict[str, dict] = field(default_factory=dict)
 
     def check(self, check_id: str) -> dict | None:
         return self.checks.get(check_id)
+
+    def benchmark(self, name: str) -> dict | None:
+        return self.benchmarks.get(name)
 
     def technique(self, key: str) -> dict | None:
         return self.techniques.get(key)
@@ -148,6 +152,13 @@ def _load(root: Path) -> Catalog:
             if key not in techniques:
                 raise CatalogError(f"threat {threat.get('name')}: unknown technique {key}")
     upstreams = _read(root / "upstreams.json")["upstreams"] if (root / "upstreams.json").exists() else []
+    benchmarks: dict[str, dict] = {}
+    benchmarks_dir = root / "benchmarks"
+    if benchmarks_dir.is_dir():
+        for bpath in sorted(benchmarks_dir.glob("*.json")):
+            bdoc = _read(bpath)
+            bname = bdoc.get("name", bpath.stem)
+            benchmarks[bname] = bdoc
     return Catalog(
         root=root,
         classes=classes,
@@ -157,6 +168,7 @@ def _load(root: Path) -> Catalog:
         checks=checks,
         threats=threats,
         upstreams=upstreams,
+        benchmarks=benchmarks,
     )
 
 

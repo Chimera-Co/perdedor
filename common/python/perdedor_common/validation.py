@@ -9,11 +9,13 @@ isolation architecture), so the common package stays stdlib-only.
 
 from __future__ import annotations
 
-_REQUIRED_TOP = {"perdedor_version", "platform", "hostname", "generated_at", "findings", "summary"}
+_REQUIRED_TOP = {"schema_version", "perdedor_version", "platform", "hostname", "generated_at", "findings", "summary"}
+_OPTIONAL_TOP = {"scan_id", "agent_version", "catalog_version", "seed", "host_facts", "environment", "selection", "agent_metadata"}
 _PLATFORMS = {"windows", "linux", "android", "macos", "ios"}
 _CATEGORIES = {"environment_artifact", "timing", "behavioural_interaction", "design_specific"}
 _STATUSES = {"clean", "detected", "error", "skipped"}
 _SEVERITIES = {"info", "low", "medium", "high", "critical"}
+_MONITORS = {"none", "out-of-guest", "in-guest"}
 _REQUIRED_FINDING = {"id", "category", "platform", "name", "description", "status", "severity"}
 _REQUIRED_SUMMARY = {"total", "clean", "detected", "errored", "skipped", "raw_score", "weighted_score"}
 
@@ -22,17 +24,43 @@ class ValidationError(ValueError):
     pass
 
 
-def validate_report(report: dict, *, source: str = "<report>") -> None:
+def validate_report(report: dict, *, source: str = "<report>", allow_v1: bool = True) -> None:
     """Raise ValidationError with a precise message on the first problem found."""
     if not isinstance(report, dict):
         raise ValidationError(f"{source}: top-level report must be an object")
 
-    missing = _REQUIRED_TOP - report.keys()
+    required = _REQUIRED_TOP if not allow_v1 else (_REQUIRED_TOP - {"schema_version"})
+    missing = required - report.keys()
     if missing:
         raise ValidationError(f"{source}: missing required top-level field(s): {sorted(missing)}")
 
+    if "schema_version" in report:
+        ver = report["schema_version"]
+        if ver not in (1, 2, 3):
+            raise ValidationError(f"{source}: schema_version '{ver}' not in [1, 2, 3]")
+
     if report["platform"] not in _PLATFORMS:
         raise ValidationError(f"{source}: platform '{report['platform']}' not in {_PLATFORMS}")
+
+    if "seed" in report and not isinstance(report["seed"], int):
+        raise ValidationError(f"{source}: seed must be an integer")
+
+    if "host_facts" in report:
+        if not isinstance(report["host_facts"], dict):
+            raise ValidationError(f"{source}: host_facts must be an object")
+        core_count = report["host_facts"].get("core_count")
+        if core_count is not None and (not isinstance(core_count, int) or core_count < 1):
+            raise ValidationError(f"{source}: host_facts.core_count must be an integer >= 1")
+
+    if "environment" in report:
+        if not isinstance(report["environment"], dict):
+            raise ValidationError(f"{source}: environment must be an object")
+        monitor = report["environment"].get("monitor")
+        if monitor is not None and monitor not in _MONITORS:
+            raise ValidationError(f"{source}: environment.monitor '{monitor}' not in {_MONITORS}")
+        labels = report["environment"].get("labels")
+        if labels is not None and not isinstance(labels, dict):
+            raise ValidationError(f"{source}: environment.labels must be an object")
 
     findings = report["findings"]
     if not isinstance(findings, list):

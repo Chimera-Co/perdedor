@@ -65,14 +65,32 @@ def _run_native_agent(platform: str, agent: Path, args: argparse.Namespace) -> d
         print(f"error: native agent not found: {agent}", file=sys.stderr)
         return None
     try:
-        selection = validate_selection(
-            {
-                "profile": args.profile,
-                "only": args.only or [],
-                "skip": args.skip or [],
-                "network": not args.no_network,
-            }
-        )
+        sel_dict = {
+            "profile": args.profile,
+            "only": args.only or [],
+            "skip": args.skip or [],
+            "network": not args.no_network,
+        }
+        if getattr(args, "seed", None) is not None:
+            sel_dict["seed"] = args.seed
+        if getattr(args, "env_name", None):
+            sel_dict["env_name"] = args.env_name
+        if getattr(args, "env_image_id", None):
+            sel_dict["env_image_id"] = args.env_image_id
+        if getattr(args, "env_hypervisor", None):
+            sel_dict["env_hypervisor"] = args.env_hypervisor
+        if getattr(args, "env_monitor", None):
+            sel_dict["env_monitor"] = args.env_monitor
+        if getattr(args, "env_instrumentation", None):
+            sel_dict["env_instrumentation"] = args.env_instrumentation
+        if getattr(args, "env_label", None):
+            labels = {}
+            for item in args.env_label:
+                if "=" in item:
+                    k, v = item.split("=", 1)
+                    labels[k] = v
+            sel_dict["env_labels"] = labels
+        selection = validate_selection(sel_dict)
     except ValueError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return None
@@ -276,6 +294,18 @@ def build_parser() -> argparse.ArgumentParser:
     )
     test.add_argument("--skip", nargs="+", metavar="PATTERN", help="selectors to leave out")
     test.add_argument("--no-network", action="store_true", help="skip checks that use the network")
+    test.add_argument("--seed", type=int, default=None, help="random seed for check ordering")
+    test.add_argument("--env-name", default=None, help="environment name")
+    test.add_argument("--env-image-id", default=None, help="environment image id")
+    test.add_argument("--env-hypervisor", default=None, help="environment hypervisor")
+    test.add_argument(
+        "--env-monitor",
+        choices=("none", "out-of-guest", "in-guest"),
+        default=None,
+        help="environment monitoring mode",
+    )
+    test.add_argument("--env-instrumentation", default=None, help="active instrumentation")
+    test.add_argument("--env-label", action="append", default=[], help="environment label KEY=VALUE")
     test.set_defaults(func=_cmd_test)
 
     report = subparsers.add_parser(
@@ -295,6 +325,18 @@ def build_parser() -> argparse.ArgumentParser:
     from perdedor_cli import assess_cmd
 
     assess_cmd.register(subparsers)
+
+    from perdedor_cli import history_cmd
+
+    history_cmd.register(subparsers)
+
+    from perdedor_cli import compare_cmd
+
+    compare_cmd.register(subparsers)
+
+    from perdedor_cli import gate_cmd
+
+    gate_cmd.register(subparsers)
 
     from perdedor_cli import upstream
 
