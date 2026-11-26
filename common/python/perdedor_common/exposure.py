@@ -50,6 +50,7 @@ import math
 import random
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
 
 from .catalog import Catalog, load_catalog
@@ -261,9 +262,12 @@ def assess(
     runs: Sequence[Iterable[Any]] | None = None,
     draws: int = 400,
     seed: int = 20261108,
+    baseline: Any = None,
+    baseline_store: str | Path | None = None,
 ) -> dict:
     """Score one run. ``runs`` (optional) are repeated runs of the same environment, including this
-    one, used only for the dependability pillar."""
+    one, used only for the dependability pillar. ``baseline`` (optional) is a bare-metal baseline profile
+    or file used to compute net exposure."""
     catalog = catalog or load_catalog()
     findings = [_as_dict(f) for f in findings]
     obs = observe(findings, catalog)
@@ -272,6 +276,10 @@ def assess(
             "model": MODEL_ID,
             "platform": platform,
             "score": None,
+            "raw_score": None,
+            "net_score": "no baseline",
+            "net": "no baseline",
+            "baseline": None,
             "reason": "no applicable findings: nothing was measured, so nothing can be scored",
         }
     sp = _space(obs, catalog, platform)
@@ -314,10 +322,54 @@ def assess(
         if o.hit > 0
     ]
     untested = sorted(sp.rate, key=lambda k: -sp.p[k] * sp.q[k] * sp.rate[k])
+
+    # Net exposure calculation if baseline is supplied
+    baseline_doc = None
+    net_score: float | str = "no baseline"
+    net_data: dict | str = "no baseline"
+
+    if baseline is not None:
+        from .baseline import apply_baseline_to_findings, resolve_baseline
+
+        baseline_doc = resolve_baseline(baseline, store_dir=baseline_store)
+        base_plat = (baseline_doc.get("platform") or baseline_doc.get("os") or "").lower()
+        if base_plat and platform:
+            norm_target = platform.lower()
+            norm_base = base_plat
+            if norm_target not in norm_base and norm_base not in norm_target:
+                raise ValueError(
+                    f"baseline platform '{base_plat}' does not match report platform '{platform}'"
+                )
+
+        net_findings = apply_baseline_to_findings(findings, baseline_doc)
+        net_assess = assess(
+            net_findings,
+            platform,
+            catalog,
+            runs=runs,
+            draws=draws,
+            seed=seed,
+            baseline=None,
+        )
+        net_score = net_assess.get("score")
+        net_data = {
+            "score": net_score,
+            "verdict": net_assess.get("verdict"),
+            "observed": net_assess.get("observed"),
+            "interval": net_assess.get("interval"),
+            "coverage": net_assess.get("coverage"),
+            "techniques": net_assess.get("techniques"),
+            "classes": net_assess.get("classes"),
+            "categories": net_assess.get("categories"),
+            "detected": net_assess.get("detected"),
+        }
+
     return {
         "model": MODEL_ID,
         "platform": platform,
         "score": round(score, 2),
+        "raw_score": round(score, 2),
+        "net_score": round(net_score, 2) if isinstance(net_score, (int, float)) else net_score,
         "verdict": _verdict(score),
         "meaning": MEANING,
         "observed": round(observed, 2),
@@ -348,6 +400,17 @@ def assess(
         "families": _family_view(sp, obs, catalog) if sp.sourced else [],
         "pillars": pillars(obs, sp, findings, runs, catalog, platform),
         "thresholds": {"pass": PASS_THRESHOLD, "warn": WARN_THRESHOLD},
+        "net": net_data,
+        "baseline": (
+            {
+                "profile": baseline_doc.get("profile", "custom"),
+                "scan_id": baseline_doc.get("scan_id", "-"),
+                "os": baseline_doc.get("os", platform),
+                "date": baseline_doc.get("date", "-"),
+            }
+            if baseline_doc
+            else None
+        ),
     }
 
 
@@ -535,12 +598,22 @@ def _technique_fix(key: str, obs: TechniqueObs | None, catalog: Catalog) -> dict
 
 
 def plan(
-    findings: Iterable[Any], platform: str, catalog: Catalog | None = None, *, max_steps: int = 25
+    findings: Iterable[Any],
+    platform: str,
+    catalog: Catalog | None = None,
+    *,
+    max_steps: int = 25,
+    baseline: Any = None,
+    baseline_store: str | Path | None = None,
 ) -> dict:
     """Order the detected techniques into a hardening roadmap: at every step pick the fix with the
     largest score gain per unit of effort (greedy on the exposure model, untested techniques held at
     their current estimate), and report the score after each step."""
     catalog = catalog or load_catalog()
+    if baseline is not None:
+        from .baseline import apply_baseline_to_findings, resolve_baseline
+
+        findings = apply_baseline_to_findings(findings, resolve_baseline(baseline, store_dir=baseline_store))
     findings = [_as_dict(f) for f in findings]
     obs = observe(findings, catalog)
     if not obs:
@@ -600,35 +673,46 @@ def plan(
     }
 
 
-def headline(report: Mapping) -> dict | None:
+def headline(report: Mapping, baseline: Any = None) -> dict | None:
     """Exposure headline of one agent report: score, verdict, interval and overall trust grade.
 
     None when the report cannot be scored (unknown platform, no catalog, nothing tested). Agents and
     renderers use this for their one-line summary; ``perdedor score`` gives the full breakdown.
     """
     try:
-        a = assess(report["findings"], report["platform"], load_catalog())
+        a = assess(report["findings"], report["platform"], load_catalog(), baseline=baseline)
     except Exception:  # noqa: BLE001 - a summary line must never break a scan or a render
         return None
     if a.get("score") is None:
         return None
+    net_s = a.get("net_score")
     return {
         "score": round(a["score"], 1),
+        "raw_score": round(a["raw_score"], 1),
+        "net_score": round(net_s, 1) if isinstance(net_s, (int, float)) else net_s,
         "verdict": a["verdict"],
         "interval": [round(x, 1) for x in a["interval"]],
         "trust": a["pillars"]["overall"],
+        "baseline": a.get("baseline"),
     }
 
 
-def headline_text(report: Mapping) -> str:
+def headline_text(report: Mapping, baseline: Any = None) -> str:
     """One line for terminals: counts, then the exposure score or how to get it."""
     s = report["summary"]
     counts = (
         f"{s['raw_score']} clean, {s['detected']} detected ({s['errored']} errored, {s['skipped']} skipped)"
     )
-    h = headline(report)
+    h = headline(report, baseline=baseline)
     if h is None:
         return f"{counts}. Exposure score: perdedor score <report.json>"
+    if h.get("net_score") not in (None, "no baseline"):
+        base = h.get("baseline") or {}
+        b_str = f", baseline: {base.get('profile', 'custom')} ({base.get('os', '')}, {str(base.get('date', ''))[:10]})"
+        return (
+            f"{counts}. Exposure raw {h['score']:.1f}/100 [{h['verdict'].upper()}], "
+            f"net {h['net_score']:.1f}/100{b_str}, trust {h['trust']}"
+        )
     return (
         f"{counts}. Exposure {h['score']:.1f}/100 [{h['verdict'].upper()}], "
         f"90 % interval {h['interval'][0]:.1f}-{h['interval'][1]:.1f}, trust {h['trust']}"

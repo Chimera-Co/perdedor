@@ -34,6 +34,7 @@ def evaluate_gate(
     max_increase: int | float | None = None,
     fail_on_new_class: bool = False,
     store: HistoryStore | None = None,
+    baseline_store: str | None = None,
 ) -> GateResult:
     """Evaluate target report against baseline and return GateResult."""
     # Resolve target report
@@ -51,25 +52,87 @@ def evaluate_gate(
     if not target_doc:
         return GateResult(False, f"could not load target report: {target_report}")
 
-    # Resolve baseline report
+    # Resolve baseline report or bare-metal baseline profile
     baseline_doc = None
-    if isinstance(baseline_input, dict):
-        baseline_doc = baseline_input
-    else:
-        base_str = str(baseline_input)
-        try:
-            baseline_doc = read_report(base_str, validate=False)
-        except Exception:
-            pass
+    bare_metal_baseline = None
+    from .baseline import resolve_baseline
 
-        if not baseline_doc and store:
-            baseline_doc = store.get(base_str)
+    try:
+        candidate = resolve_baseline(baseline_input, store_dir=baseline_store)
+        if isinstance(candidate, dict) and "checks" in candidate:
+            bare_metal_baseline = candidate
+    except Exception:
+        pass
+
+    if bare_metal_baseline is not None:
+        # Construct synthetic baseline report from bare-metal baseline
+        bm_checks = bare_metal_baseline.get("checks", {})
+        plat = bare_metal_baseline.get("platform") or target_doc.get("platform", "unknown")
+        findings = []
+        for f in target_doc.get("findings", []):
+            cid = f.get("id", "")
+            if cid in bm_checks:
+                bm_info = bm_checks[cid]
+                findings.append(
+                    {
+                        "id": cid,
+                        "name": f.get("name", cid),
+                        "status": "detected",
+                        "severity": bm_info.get("severity") or f.get("severity", "medium"),
+                        "technique": bm_info.get("technique") or f.get("technique"),
+                        "class": f.get("class", "unknown"),
+                        "category": f.get("category", "unknown"),
+                        "measurement": bm_info.get("measurement"),
+                        "confidence": bm_info.get("confidence"),
+                    }
+                )
+            else:
+                findings.append(
+                    {
+                        "id": cid,
+                        "name": f.get("name", cid),
+                        "status": "clean",
+                        "severity": f.get("severity", "medium"),
+                        "technique": f.get("technique"),
+                        "class": f.get("class", "unknown"),
+                        "category": f.get("category", "unknown"),
+                    }
+                )
+        baseline_doc = {
+            "schema_version": 3,
+            "scan_id": bare_metal_baseline.get("scan_id", "baseline"),
+            "platform": plat,
+            "hostname": "bare-metal",
+            "generated_at": bare_metal_baseline.get("date", ""),
+            "selection": {"profile": bare_metal_baseline.get("profile", "baseline")},
+            "findings": findings,
+            "summary": {
+                "total": len(findings),
+                "clean": len(findings) - len(bm_checks),
+                "detected": len(bm_checks),
+                "errored": 0,
+                "skipped": 0,
+            },
+        }
+
+    if not baseline_doc:
+        if isinstance(baseline_input, dict):
+            baseline_doc = baseline_input
+        else:
+            base_str = str(baseline_input)
+            try:
+                baseline_doc = read_report(base_str, validate=False)
+            except Exception:
+                pass
+
+            if not baseline_doc and store:
+                baseline_doc = store.get(base_str)
 
     if not baseline_doc:
         return GateResult(False, f"could not load baseline report for: {baseline_input}")
 
     # Compare
-    diff = compare_reports(baseline_doc, target_doc)
+    diff = compare_reports(baseline_doc, target_doc, baseline=bare_metal_baseline)
     newly_firing = diff["newly_firing"]
     classes = diff["classes"]
     ov = diff["overall"]
@@ -119,6 +182,15 @@ def evaluate_gate(
     # All checks passed
     sa_str = f"{score_a:.1f}" if score_a is not None else "n/a"
     sb_str = f"{score_b:.1f}" if score_b is not None else "n/a"
+    if ov.get("baseline"):
+        b = ov["baseline"]
+        base_desc = f" '{b['profile']}' ({b['os']}, {b['date']})"
+        net_str = f", net {ov['net_score_b']:.1f}" if ov.get("net_score_b") is not None else ""
+        return GateResult(
+            True,
+            f"passed: no regressions relative to baseline{base_desc} (score: {sa_str} -> {sb_str}{net_str})",
+            details=diff,
+        )
     return GateResult(
         True,
         f"passed: no regressions relative to baseline (score: {sa_str} -> {sb_str})",

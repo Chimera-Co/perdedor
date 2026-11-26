@@ -14,11 +14,7 @@ import json
 import sys
 from pathlib import Path
 
-from perdedor_common.history import (
-    HistoryStore,
-    render_history_markdown,
-    render_history_text,
-)
+from perdedor_common.history import HistoryStore, render_history_markdown, render_history_text
 
 
 def _cmd_history_add(args: argparse.Namespace) -> int:

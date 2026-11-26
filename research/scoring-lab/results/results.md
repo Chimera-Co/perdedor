@@ -4,17 +4,17 @@ Synthetic trials per axiom: 120. Threat model: sourced families.
 
 ## Synthetic axioms
 
-| Model | A1 never up | A1 strictly down | A2 mean gain from padding | A3 one strong < five weak | A3 one strong < 90 | A8 mean rise with 40 % fewer techniques | A10 score at 10 % / 33 % hits |
-|---|---|---|---|---|---|---|---|
-| M0 severity penalty | 100% | 100% | +0.91 | **no** (99.4 vs 99.1) | **no** | -0.00 | 96.8 / 89.2 |
-| M1 weighted pass rate | 100% | 100% | +2.45 | **no** (98.3 vs 97.6) | **no** | -0.12 | 91.2 / 71.4 |
-| M2 points (VMAware-style) | 100% | 2% | +0.00 | **no** (36.7 vs 0.0) | yes | +2.61 | 0.0 / 0.0 |
-| M3 noisy-OR exposure | 100% | 100% | +0.00 | yes (71.5 vs 97.0) | yes | +14.28 | 37.7 / 5.0 |
-| M4 family survival | 100% | 52% | +0.00 | yes (94.9 vs 100.0) | **no** | +11.10 | 78.6 / 44.3 |
-| M5 hybrid (point) | 100% | 52% | +0.00 | yes (94.9 vs 100.0) | **no** | +11.10 | 78.6 / 44.3 |
-| M5 hybrid (coverage-imputed) | 100% | 100% | +0.00 | yes (94.8 vs 100.0) | **no** | +0.03 | 76.8 / 44.1 |
-| M6 weakest class | 100% | 3% | +0.00 | yes (70.6 vs 98.3) | yes | -8.47 | 52.5 / 26.8 |
-| PEM-2 production (perdedor_common.exposure) | 100% | 100% | +0.00 | yes (71.5 vs 97.0) | yes | -0.25 | 36.9 / 5.3 |
+| Model | A1 never up | A1 strictly down | A2 mean gain from padding | A3 one strong < five weak | A3 one strong < 90 | A8 mean rise with 40 % fewer techniques | A10 score at 10 % / 33 % hits | A12 net >= raw |
+|---|---|---|---|---|---|---|---|---|
+| M0 severity penalty | 100% | 100% | +0.91 | **no** (99.4 vs 99.1) | **no** | -0.00 | 96.8 / 89.2 | 100% |
+| M1 weighted pass rate | 100% | 100% | +2.45 | **no** (98.3 vs 97.6) | **no** | -0.12 | 91.2 / 71.4 | 100% |
+| M2 points (VMAware-style) | 100% | 2% | +0.00 | **no** (36.7 vs 0.0) | yes | +2.61 | 0.0 / 0.0 | 100% |
+| M3 noisy-OR exposure | 100% | 100% | +0.00 | yes (71.5 vs 97.0) | yes | +14.28 | 37.7 / 5.0 | 100% |
+| M4 family survival | 100% | 52% | +0.00 | yes (94.9 vs 100.0) | **no** | +11.10 | 78.6 / 44.3 | 100% |
+| M5 hybrid (point) | 100% | 52% | +0.00 | yes (94.9 vs 100.0) | **no** | +11.10 | 78.6 / 44.3 | 100% |
+| M5 hybrid (coverage-imputed) | 100% | 100% | +0.00 | yes (94.8 vs 100.0) | **no** | +0.03 | 76.8 / 44.1 | 100% |
+| M6 weakest class | 100% | 3% | +0.00 | yes (70.6 vs 98.3) | yes | -8.47 | 52.5 / 26.8 | 100% |
+| PEM-2 production (perdedor_common.exposure) | 100% | 100% | +0.00 | yes (71.5 vs 97.0) | yes | -0.25 | 36.9 / 5.3 | 100% |
 
 ## Qualitative properties
 
