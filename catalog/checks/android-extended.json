@@ -5303,7 +5303,7 @@
       "equivalents": {
         "freerasp": [
           "onUnsecureWifi",
-          "unsecureWiFi"
+          "unsecureWifi"
         ]
       },
       "fix": {
@@ -5397,6 +5397,120 @@
         "effort": 3,
         "how": "Enforce standard Android filesystem permissions and SELinux policies so unprivileged processes cannot read root paths.",
         "chimera": "Android-x86 SELinux enforcing mode blocks unprivileged DAC/MAC access to root paths."
+      },
+      "params": []
+    },
+    {
+      "id": "android.env.emulator_packages",
+      "technique": "emulator.android_vendor_emulators",
+      "status": "planned",
+      "reason": "Requires querying PackageManager for known emulator and virtual device package identifiers; planned for Android agent.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "description": "anti-emulator hasEmulatorPackages: Queries PackageManager for presence of known Android emulator package identifiers (e.g. Genymotion, BlueStacks, Nox, Andy). Detected when installed emulator packages are found on the device.",
+      "severity": "high",
+      "references": [
+        "https://github.com/strazzere/anti-emulator"
+      ],
+      "equivalents": {
+        "anti-emulator": [
+          "hasEmulatorPackages"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 2,
+        "how": "Remove commercial emulator and container integration packages from the Android system image.",
+        "chimera": "Golden Android test image contains only clean stock system packages."
+      },
+      "params": []
+    },
+    {
+      "id": "android.env.other_emulator_files",
+      "technique": "emulator.android_files",
+      "status": "planned",
+      "reason": "Requires checking filesystem paths for secondary emulator and virtualization container markers; planned for Android agent.",
+      "cost": "medium",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "description": "anti-emulator hasOtherEmulatorFiles: Checks filesystem for presence of miscellaneous emulator, Genymotion, and virtual device files. Detected when non-QEMU emulator files or sockets are present on the device.",
+      "severity": "high",
+      "references": [
+        "https://github.com/strazzere/anti-emulator"
+      ],
+      "equivalents": {
+        "anti-emulator": [
+          "hasOtherEmulatorFiles"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 4,
+        "how": "Remove secondary emulator files, dev nodes, and daemon sockets from the guest image.",
+        "chimera": "CHIMERA Android image omits non-standard emulator daemons and sockets."
+      },
+      "params": []
+    },
+    {
+      "id": "android.design.policy_freerasp_lifecycle_callbacks",
+      "technique": "instrumentation.tracing_facilities",
+      "status": "not_feasible",
+      "reason": "SDK lifecycle callbacks, not detections.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "description": "freeRASP ThreatListener callbacks (onCriticalChecksFinished, onFastChecksFinished, onPostponedChecksFinished): SDK lifecycle callbacks, not detections.",
+      "severity": "info",
+      "references": [
+        "https://docs.talsec.app/freerasp/wiki/threat-detection"
+      ],
+      "equivalents": {
+        "freerasp": [
+          "onCriticalChecksFinished",
+          "onFastChecksFinished",
+          "onPostponedChecksFinished"
+        ]
+      },
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Not applicable: SDK lifecycle callbacks are not environment indicators.",
+        "chimera": "SDK lifecycle callbacks do not require guest hardening."
+      },
+      "params": []
+    },
+    {
+      "id": "android.env.ongoing_call_detection",
+      "technique": "mobile_device.telephony",
+      "status": "planned",
+      "reason": "Requires listening for active phone call state via TelecomManager or TelephonyManager; planned for Android agent.",
+      "cost": "fast",
+      "network": false,
+      "requires": [
+        "adb"
+      ],
+      "description": "freeRASP onOngoingCall: Detects whether a phone call is currently active on the device. Detected when an ongoing voice call is reported by TelephonyManager.",
+      "severity": "low",
+      "references": [
+        "https://docs.talsec.app/freerasp/wiki/threat-detection"
+      ],
+      "equivalents": {
+        "freerasp": [
+          "onOngoingCall"
+        ]
+      },
+      "fix": {
+        "layer": "vm-config",
+        "effort": 2,
+        "how": "Ensure telephony state reflects no active call or simulates realistic call events as needed.",
+        "chimera": "CHIMERA isolated environment does not simulate active voice calls."
       },
       "params": []
     }

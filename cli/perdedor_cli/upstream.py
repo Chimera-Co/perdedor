@@ -19,16 +19,20 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import email.utils
 import hashlib
+import io
 import json
 import os
 import re
 import socket
 import sys
+import tarfile
 import time
 import urllib.error
 import urllib.parse
 import urllib.request
+import zipfile
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable, Mapping
@@ -79,8 +83,15 @@ class RateLimited(HttpError):
 
 
 def redact(text: str) -> str:
-    """Drop query strings (they may carry parameters) from a URL shown in a message."""
-    return text.split("?", 1)[0]
+    """Drop query strings and mask any auth tokens from text shown in a message."""
+    clean = text.split("?", 1)[0]
+    clean = re.sub(r"(?i)bearer\s+[a-zA-Z0-9_\-]+", "Bearer [REDACTED]", clean)
+    clean = re.sub(r"(?i)(?:ghp|gho|ghu|ghs|ghr)_[a-zA-Z0-9]+", "[REDACTED]", clean)
+    clean = re.sub(r"github_pat_[A-Za-z0-9_]+", "[REDACTED]", clean)
+    token = os.environ.get("GITHUB_TOKEN")
+    if token and len(token) >= 4 and token in clean:
+        clean = clean.replace(token, "[REDACTED]")
+    return clean
 
 
 # --------------------------------------------------------------------------------------------- HTTP layer
@@ -125,6 +136,8 @@ class Http:
         now: Callable[[], float] = time.time,
         opener: urllib.request.OpenerDirector | None = None,
     ):
+        if token is None:
+            token = os.environ.get("GITHUB_TOKEN") or None
         self._token = token
         self.timeout = timeout
         self.retries = retries
@@ -215,6 +228,7 @@ class GitHub:
     def __init__(self, http: Http, cache: dict | None = None):
         self.http = http
         self.cache = cache if cache is not None else {}
+        self._fallback_cache: dict[tuple[str, str | None], dict] = {}
 
     def api(self, path: str) -> Any:
         url = f"{API}/{path}"
@@ -248,17 +262,176 @@ class GitHub:
             query["sha"] = ref
         if path:
             query["path"] = path.rstrip("/")
-        rows = self.api(f"repos/{repo}/commits?{urllib.parse.urlencode(query)}")
-        return rows[0] if rows else None
+        try:
+            rows = self.api(f"repos/{repo}/commits?{urllib.parse.urlencode(query)}")
+            return rows[0] if rows else None
+        except HttpError as exc:
+            if exc.status in (403, 429):
+                return self.commit_fallback(repo, ref)
+            raise
 
     def resolve(self, repo: str, ref: str) -> dict:
-        return self.api(f"repos/{repo}/commits/{urllib.parse.quote(ref, safe='')}")
+        try:
+            return self.api(f"repos/{repo}/commits/{urllib.parse.quote(ref, safe='')}")
+        except HttpError as exc:
+            if exc.status in (403, 429):
+                return self.commit_fallback(repo, ref)
+            raise
 
     def tree(self, repo: str, ref: str) -> list[str]:
-        doc = self.api(f"repos/{repo}/git/trees/{urllib.parse.quote(ref, safe='')}?recursive=1")
-        if doc.get("truncated"):
-            raise UpstreamError(f"file listing of {repo}@{ref} is truncated by GitHub")
-        return [e["path"] for e in doc.get("tree", []) if e.get("type") == "blob"]
+        try:
+            doc = self.api(f"repos/{repo}/git/trees/{urllib.parse.quote(ref, safe='')}?recursive=1")
+            if doc.get("truncated"):
+                raise UpstreamError(f"file listing of {repo}@{ref} is truncated by GitHub")
+            return [e["path"] for e in doc.get("tree", []) if e.get("type") == "blob"]
+        except HttpError as exc:
+            if exc.status in (403, 429):
+                return self.tree_fallback(repo, ref)
+            raise
+
+    def _parse_codeload(self, resp: Response, repo: str) -> dict | None:
+        sha = None
+        date_str = None
+
+        cd = resp.headers.get("content-disposition", "")
+        if cd:
+            m = re.search(r"([0-9a-fA-F]{40})", cd)
+            if m:
+                sha = m.group(1).lower()
+
+        if not sha and resp.body:
+            try:
+                with tarfile.open(fileobj=io.BytesIO(resp.body), mode="r:*") as tar:
+                    first = tar.next()
+                    if first:
+                        m = re.search(r"([0-9a-fA-F]{40})", first.name)
+                        if m:
+                            sha = m.group(1).lower()
+                            if first.mtime:
+                                date_str = dt.datetime.fromtimestamp(first.mtime, dt.timezone.utc).strftime(
+                                    "%Y-%m-%dT%H:%M:%SZ"
+                                )
+            except Exception:
+                pass
+
+        if not sha and resp.body:
+            try:
+                with zipfile.ZipFile(io.BytesIO(resp.body)) as zf:
+                    names = zf.namelist()
+                    if names:
+                        m = re.search(r"([0-9a-fA-F]{40})", names[0])
+                        if m:
+                            sha = m.group(1).lower()
+            except Exception:
+                pass
+
+        if not sha:
+            etag = resp.headers.get("etag", "")
+            m = re.search(r"\"?([0-9a-fA-F]{40})\"?", etag)
+            if m:
+                sha = m.group(1).lower()
+
+        if not sha:
+            return None
+
+        if not date_str:
+            lm = resp.headers.get("last-modified")
+            if lm:
+                try:
+                    parsed = email.utils.parsedate_to_datetime(lm)
+                    date_str = parsed.strftime("%Y-%m-%dT%H:%M:%SZ")
+                except Exception:
+                    pass
+        if not date_str:
+            date_str = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+        return {
+            "sha": sha,
+            "commit": {
+                "committer": {
+                    "date": date_str,
+                },
+                "message": "",
+            },
+            "html_url": f"https://github.com/{repo}/commit/{sha}",
+        }
+
+    def _parse_atom(self, text: str, repo: str) -> dict | None:
+        entry_match = re.search(r"<entry>(.*?)</entry>", text, re.S)
+        scope = entry_match.group(1) if entry_match else text
+
+        sha_match = re.search(r"(?:/commit/|Commit/)([0-9a-fA-F]{40})", scope)
+        if not sha_match:
+            sha_match = re.search(r"\b([0-9a-fA-F]{40})\b", scope)
+        if not sha_match:
+            return None
+
+        sha = sha_match.group(1).lower()
+        date_match = re.search(r"<updated>([^<]+)</updated>", scope)
+        date_str = (
+            date_match.group(1).strip()
+            if date_match
+            else dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        )
+        title_match = re.search(r"<title>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</title>", scope, re.S)
+        title = title_match.group(1).strip() if title_match else ""
+
+        return {
+            "sha": sha,
+            "commit": {
+                "committer": {
+                    "date": date_str,
+                },
+                "message": title,
+            },
+            "html_url": f"https://github.com/{repo}/commit/{sha}",
+        }
+
+    def commit_fallback(self, repo: str, branch: str | None = None) -> dict:
+        key = (repo, branch)
+        if key in self._fallback_cache:
+            return self._fallback_cache[key]
+        branches = [branch] if branch else ["master", "main", "HEAD"]
+
+        for b in branches:
+            codeload_url = f"https://codeload.github.com/{repo}/tar.gz/{b}"
+            try:
+                resp = self.http.get(codeload_url)
+                if resp.status == 200:
+                    parsed = self._parse_codeload(resp, repo)
+                    if parsed:
+                        self._fallback_cache[key] = parsed
+                        return parsed
+            except Exception:
+                pass
+
+            atom_url = f"https://github.com/{repo}/commits/{b}.atom"
+            try:
+                resp = self.http.get(atom_url)
+                if resp.status == 200:
+                    parsed = self._parse_atom(resp.text, repo)
+                    if parsed:
+                        self._fallback_cache[key] = parsed
+                        return parsed
+            except Exception:
+                pass
+
+        raise UpstreamError(f"{repo}: failed to learn latest commit via API and fallback (codeload/atom)")
+
+    def tree_fallback(self, repo: str, ref: str) -> list[str]:
+        url = f"https://codeload.github.com/{repo}/tar.gz/{ref}"
+        resp = self.http.get(url)
+        paths = []
+        try:
+            with tarfile.open(fileobj=io.BytesIO(resp.body), mode="r:*") as tar:
+                for member in tar.getmembers():
+                    if member.isfile():
+                        parts = member.name.split("/", 1)
+                        if len(parts) > 1:
+                            paths.append(parts[1])
+            return sorted(paths)
+        except Exception as exc:
+            raise UpstreamError(f"{repo}: failed to get file tree from API or archive fallback") from exc
 
     @staticmethod
     def raw_url(repo: str, ref: str, path: str) -> str:
@@ -600,10 +773,16 @@ def latest_revision(src: Mapping, gh: GitHub, today: str) -> dict:
     # github-commits: the newest commit that touched any tracked path
     paths = [p for p in src.get("paths", []) if p][:COMMIT_PATH_LIMIT] or [None]
     best = None
-    for path in paths:
-        c = gh.commit(repo, src.get("branch"), path)
-        if c and (best is None or c["commit"]["committer"]["date"] > best["commit"]["committer"]["date"]):
-            best = c
+    try:
+        for path in paths:
+            c = gh.commit(repo, src.get("branch"), path)
+            if c and (best is None or c["commit"]["committer"]["date"] > best["commit"]["committer"]["date"]):
+                best = c
+    except HttpError as exc:
+        if exc.status in (403, 429):
+            best = gh.commit_fallback(repo, src.get("branch"))
+        else:
+            raise
     if best is None:
         raise UpstreamError(f"{repo}: no commits found")
     return {
@@ -878,15 +1057,16 @@ def exit_code(res: dict) -> int:
 
 
 def _token(args: argparse.Namespace) -> str | None:
-    if not args.token_env:
-        return None
-    value = os.environ.get(args.token_env)
-    if not value:
-        print(
-            f"warning: ${args.token_env} is empty or unset; querying GitHub unauthenticated", file=sys.stderr
-        )
-        return None
-    return value
+    token_env = getattr(args, "token_env", None)
+    if token_env:
+        value = os.environ.get(token_env)
+        if not value:
+            print(
+                f"warning: ${token_env} is empty or unset; querying GitHub unauthenticated", file=sys.stderr
+            )
+            return None
+        return value
+    return os.environ.get("GITHUB_TOKEN") or None
 
 
 def _make_http(args: argparse.Namespace) -> Http:

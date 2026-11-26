@@ -27,7 +27,7 @@ percentages: a check counts once per technique however many upstream items it co
 
 ## Generated coverage
 
-Generated 2026-11-26 from the inventories in `catalog/inventory/` and the `equivalents` of 1009 implemented checks (1138 catalogued). A technique is covered when an implemented check lists it; not feasible techniques are documented as such; everything else is missing. *Feasible* excludes the not feasible ones.
+Generated 2026-11-26 from the inventories in `catalog/inventory/` and the `equivalents` of 1009 implemented checks (1142 catalogued). A technique is covered when an implemented check lists it; not feasible techniques are documented as such; everything else is missing. *Feasible* excludes the not feasible ones.
 
 | Source | Revision | Techniques | Covered | Planned | Not feasible | Missing | Covered | Of feasible |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
