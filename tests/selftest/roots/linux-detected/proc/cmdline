@@ -1,0 +1,1 @@
+BOOT_IMAGE=/vmlinuz console=ttyS0 root=/dev/vda1

@@ -9,6 +9,10 @@ may add checks and fields, major releases change the format or the score's meani
   model, guest OS, user profile, monitor, network) and where its recipe goes; `--markdown` writes a reviewable
   change list and `--previous` reports what improved or regressed since an earlier report. Perdedor never
   applies a fix.
+- Self-test (#5 section 5): `perdedor selftest` runs the native Linux agent against two fake filesystem roots
+  (25 file-based checks in a known detected and a known clean state) and scores three recorded reports that
+  must land in the pass, warn and fail bands; `tests/selftest/expected.json` holds every expected result and
+  any deviation fails. CI runs it after the native build. No malware, no network.
 
 ## v2.1.0 (2026-11-27)
 
