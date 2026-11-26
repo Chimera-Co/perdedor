@@ -102,80 +102,69 @@ HttpResponse http_request(const std::wstring &host, INTERNET_PORT port, const st
 }
 
 // 1. win.env.hypervisor_exception_quirks
-void probe_single_step(void *) {
+// After POPF sets TF, the single-step trap fires after the instruction that FOLLOWS the POPF, so the instruction
+// under test is placed directly after it; anything it needs is set up before the POPF. Every probe ends by
+// clearing TF, which only executes if no trap fired, so a lost trap can never leave single-stepping on.
 #if defined(__x86_64__)
-    asm volatile(
-        "pushfq\n"
-        "orq $0x100, (%%rsp)\n"
-        "popfq\n"
-        "nop\n"
-        :
-        :
-        : "memory");
+#define PERDEDOR_TF_ON "pushfq\n orq $0x100, (%%rsp)\n popfq\n"
+#define PERDEDOR_TF_OFF "pushfq\n andq $~0x100, (%%rsp)\n popfq\n"
 #elif defined(__i386__)
-    asm volatile(
-        "pushfl\n"
-        "orl $0x100, (%%esp)\n"
-        "popfl\n"
-        "nop\n"
-        :
-        :
-        : "memory");
+#define PERDEDOR_TF_ON "pushfl\n orl $0x100, (%%esp)\n popfl\n"
+#define PERDEDOR_TF_OFF "pushfl\n andl $~0x100, (%%esp)\n popfl\n"
+#endif
+
+void probe_single_step(void *) {
+#if defined(__x86_64__) || defined(__i386__)
+    asm volatile(PERDEDOR_TF_ON "nop\n" PERDEDOR_TF_OFF : : : "cc", "memory");
 #endif
 }
 
 void probe_shadow(void *p) {
     auto *stage = static_cast<int *>(p);
 #if defined(__x86_64__)
+    // MOV SS opens an interrupt shadow: the trap is held past the next instruction, so bare metal traps after
+    // "movl $1" (stage 1). A hypervisor that loses the shadow traps right after MOV SS (stage 0).
     asm volatile(
-        "pushfq\n"
-        "orq $0x100, (%%rsp)\n"
-        "popfq\n"
-        ".byte 0x66, 0x8c, 0xd0\n"
-        ".byte 0x8e, 0xd0\n"
+        "movw %%ss, %%ax\n" PERDEDOR_TF_ON
+        "movw %%ax, %%ss\n"
         "movl $1, %0\n"
-        "movl $2, %0\n"
+        "movl $2, %0\n" PERDEDOR_TF_OFF
         : "=m"(*stage)
         :
-        : "rax", "memory");
+        : "rax", "cc", "memory");
 #elif defined(__i386__)
     asm volatile(
-        "pushfl\n"
-        "orl $0x100, (%%esp)\n"
-        "popfl\n"
-        ".byte 0x66, 0x8c, 0xd0\n"
-        ".byte 0x8e, 0xd0\n"
+        "movw %%ss, %%ax\n" PERDEDOR_TF_ON
+        "movw %%ax, %%ss\n"
         "movl $1, %0\n"
-        "movl $2, %0\n"
+        "movl $2, %0\n" PERDEDOR_TF_OFF
         : "=m"(*stage)
         :
-        : "eax", "memory");
+        : "eax", "cc", "memory");
+#else
+    (void)stage;
 #endif
 }
 
 void probe_cpuid_step(void *) {
 #if defined(__x86_64__)
     asm volatile(
-        "pushfq\n"
-        "orq $0x100, (%%rsp)\n"
-        "popfq\n"
         "xor %%eax, %%eax\n"
-        "cpuid\n"
+        "xor %%ecx, %%ecx\n" PERDEDOR_TF_ON
+        "cpuid\n" PERDEDOR_TF_OFF
         :
         :
-        : "rax", "rbx", "rcx", "rdx", "memory");
+        : "rax", "rbx", "rcx", "rdx", "cc", "memory");
 #elif defined(__i386__)
     asm volatile(
-        "pushfl\n"
-        "orl $0x100, (%%esp)\n"
-        "popfl\n"
-        "xor %%eax, %%eax\n"
         "push %%ebx\n"
-        "cpuid\n"
+        "xor %%eax, %%eax\n"
+        "xor %%ecx, %%ecx\n" PERDEDOR_TF_ON
+        "cpuid\n" PERDEDOR_TF_OFF
         "pop %%ebx\n"
         :
         :
-        : "eax", "ecx", "edx", "memory");
+        : "eax", "ecx", "edx", "cc", "memory");
 #endif
 }
 
@@ -190,7 +179,7 @@ std::vector<Finding> hypervisor_exception_quirks(Context &) {
 
     constexpr uint32_t kSingleStepCode = 0x80000004u;
     const bool step_ok = (r1.faulted && r1.code == kSingleStepCode);
-    const bool shadow_ok = (r2.faulted && shadow_stage >= 1);
+    const bool shadow_ok = (r2.faulted && shadow_stage == 1);
     const bool cpuid_step_ok = (r3.faulted && r3.code == kSingleStepCode);
     const bool detected = (!step_ok || !shadow_ok || !cpuid_step_ok);
 
@@ -391,12 +380,9 @@ std::vector<Finding> gamarue_volume_serial(Context &) {
 // 5. win.env.tpm_measured_boot
 std::vector<Finding> tpm_measured_boot(Context &) {
     LibraryHandle tbs(LoadLibraryW(L"tbs.dll"));
-    if (!tbs) {
-        Ev ev;
-        ev.set("tbs_dll", "absent");
-        return {result("env.tpm_measured_boot", "TPM 2.0 measured boot", true, ev, Severity::Medium, 0.8,
-                       "Enable vTPM 2.0 emulation with persistent measurement logs.")};
-    }
+    if (!tbs)
+        return {skipped("env.tpm_measured_boot", "TPM 2.0 measured boot", "TPM TCG event log via TBS.",
+                        Severity::Medium, "tbs.dll unavailable (Windows 7 or older)")};
 
     struct TbsContextParams {
         uint32_t version;
@@ -410,12 +396,9 @@ std::vector<Finding> tpm_measured_boot(Context &) {
     auto fnGetLog = symbol<TbsiGetLogFn>(tbs.get(), "Tbsi_Get_TCG_Log");
     auto fnClose = symbol<TbsiCloseFn>(tbs.get(), "Tbsip_Context_Close");
 
-    if (!fnCreate || !fnGetLog || !fnClose) {
-        Ev ev;
-        ev.set("tbs_symbols", "incomplete");
-        return {result("env.tpm_measured_boot", "TPM 2.0 measured boot", true, ev, Severity::Medium, 0.7,
-                       "Enable vTPM 2.0 emulation with persistent measurement logs.")};
-    }
+    if (!fnCreate || !fnGetLog || !fnClose)
+        return {skipped("env.tpm_measured_boot", "TPM 2.0 measured boot", "TPM TCG event log via TBS.",
+                        Severity::Medium, "TBS log API unavailable on this Windows version")};
 
     PVOID hContext = nullptr;
     DWORD status = fnCreate(&params, &hContext);
@@ -425,44 +408,89 @@ std::vector<Finding> tpm_measured_boot(Context &) {
         fnClose(hContext);
     }
 
-    const bool detected = (status != 0 || log_size == 0);
+    constexpr DWORD kTpmNotFound = 0x8028400Fu;  // TBS_E_TPM_NOT_FOUND
     Ev ev;
     ev.set("tbs_create_status", static_cast<unsigned long long>(status));
     ev.set("tcg_log_bytes", static_cast<unsigned long long>(log_size));
+    if (status == kTpmNotFound) {
+        // No TPM at all: common in VMs, but older and budget physical machines lack one too, so a weak signal.
+        ev.set("tpm_present", false);
+        return {result("env.tpm_measured_boot", "TPM 2.0 measured boot", true, ev, Severity::Low, 0.3,
+                       "Give the guest a vTPM 2.0 (swtpm) with a persistent state.")};
+    }
+    if (status != 0)
+        return {skipped("env.tpm_measured_boot", "TPM 2.0 measured boot", "TPM TCG event log via TBS.",
+                        Severity::Medium, "TBS context failed with status " + hex(status))};
+    // A TPM is present but the firmware recorded no measured-boot log: typical of a bare emulated vTPM.
+    const bool detected = log_size == 0;
+    ev.set("tpm_present", true);
     ev.set("measured_boot_active", !detected);
-
-    return {result("env.tpm_measured_boot", "TPM 2.0 measured boot", detected, ev, Severity::Medium, 0.85,
+    return {result("env.tpm_measured_boot", "TPM 2.0 measured boot", detected, ev, Severity::Medium, 0.7,
                    "Enable vTPM 2.0 emulation with persistent measurement logs.")};
 }
 
 // 6. win.env.uefi_nvram_variables
+// Enables a privilege on the process token for the lifetime of the object and restores the previous state.
+class ScopedPrivilege {
+  public:
+    explicit ScopedPrivilege(const wchar_t *name) {
+        if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &token_)) return;
+        TOKEN_PRIVILEGES tp{};
+        tp.PrivilegeCount = 1;
+        tp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+        if (!LookupPrivilegeValueW(nullptr, name, &tp.Privileges[0].Luid)) return;
+        DWORD len = sizeof(previous_);
+        if (AdjustTokenPrivileges(token_, FALSE, &tp, sizeof(tp), &previous_, &len) && GetLastError() == ERROR_SUCCESS)
+            enabled_ = true;
+    }
+    ~ScopedPrivilege() {
+        if (enabled_) AdjustTokenPrivileges(token_, FALSE, &previous_, 0, nullptr, nullptr);
+        if (token_) CloseHandle(token_);
+    }
+    bool enabled() const { return enabled_; }
+
+  private:
+    HANDLE token_ = nullptr;
+    TOKEN_PRIVILEGES previous_{};
+    bool enabled_ = false;
+};
+
 std::vector<Finding> uefi_nvram_variables(Context &) {
+    const char *id = "env.uefi_nvram_variables";
+    const char *name = "UEFI NVRAM environment variables";
+    // Reading firmware variables needs SeSystemEnvironmentPrivilege (administrators hold it, disabled).
+    ScopedPrivilege privilege(L"SeSystemEnvironmentPrivilege");
+    if (!privilege.enabled())
+        return {skipped(id, name, "UEFI variable store contents.", Severity::Medium,
+                        "SeSystemEnvironmentPrivilege not held (run as administrator)")};
+
     DWORD dummy = 0;
     SetLastError(0);
     GetFirmwareEnvironmentVariableW(L"", L"{00000000-0000-0000-0000-000000000000}", &dummy, sizeof(dummy));
-    DWORD err = GetLastError();
-
-    const bool legacy_bios = (err == ERROR_INVALID_FUNCTION || err == ERROR_NOT_SUPPORTED);
+    const DWORD err = GetLastError();
+    // A legacy-BIOS boot has no UEFI variables. Plenty of physical machines boot that way: not a VM signal.
+    if (err == ERROR_INVALID_FUNCTION || err == ERROR_NOT_SUPPORTED)
+        return {skipped(id, name, "UEFI variable store contents.", Severity::Medium, "legacy BIOS boot (no UEFI variables)")};
 
     std::vector<unsigned char> buf(512);
-    DWORD boot_order_len =
-        GetFirmwareEnvironmentVariableW(L"BootOrder", L"{8BE4DF61-93CA-11D2-AA0D-00E098032B8C}", buf.data(), static_cast<DWORD>(buf.size()));
-    const bool boot_order_present = (boot_order_len > 0);
+    const DWORD boot_order_len = GetFirmwareEnvironmentVariableW(
+        L"BootOrder", L"{8BE4DF61-93CA-11D2-AA0D-00E098032B8C}", buf.data(), static_cast<DWORD>(buf.size()));
+    const DWORD boot_order_err = boot_order_len ? 0 : GetLastError();
+    const bool boot_order_present = boot_order_len > 0;
+    // OVMF's QEMU-specific variable namespace (OvmfPkg QemuDirectory GUID)
+    const DWORD qemu_dir = GetFirmwareEnvironmentVariableW(
+        L"QemuDirectory", L"{77FA9ABD-0359-4D32-BD60-28F4E78F784B}", buf.data(), static_cast<DWORD>(buf.size()));
+    const bool qemu_nvram_found = qemu_dir > 0;
+    if (!boot_order_present && boot_order_err == ERROR_PRIVILEGE_NOT_HELD)
+        return {skipped(id, name, "UEFI variable store contents.", Severity::Medium, "firmware variable access denied")};
 
-    DWORD qemu_dir =
-        GetFirmwareEnvironmentVariableW(L"QemuDirectory", L"{77FA9ABD-0359-4D32-BD60-28F4E78F784B}", buf.data(), static_cast<DWORD>(buf.size()));
-    const bool qemu_nvram_found = (qemu_dir > 0);
-
-    const bool detected = (legacy_bios || qemu_nvram_found || !boot_order_present);
-
+    const bool detected = qemu_nvram_found || !boot_order_present;
     Ev ev;
-    ev.set("legacy_bios", legacy_bios);
     ev.set("boot_order_present", boot_order_present);
     ev.set("qemu_nvram_found", qemu_nvram_found);
-    ev.set("error_code", static_cast<unsigned long long>(err));
-
-    return {result("env.uefi_nvram_variables", "UEFI NVRAM environment variables", detected, ev, Severity::Medium,
-                   0.85, "Override OVMF variable store with vendor-neutral NVRAM template.")};
+    ev.set("boot_order_error", static_cast<unsigned long long>(boot_order_err));
+    return {result(id, name, detected, ev, Severity::Medium, 0.7,
+                   "Ship a vendor UEFI variable store (BootOrder and Boot#### entries, no OVMF/QEMU namespaces).")};
 }
 
 // 7. win.env.thread_mismatch
@@ -470,15 +498,20 @@ std::vector<Finding> thread_mismatch(Context &) {
     if (!x86::available())
         return {unavailable("env.thread_mismatch", "Processor thread topology mismatch", "CPUID unavailable")};
 
-    SYSTEM_INFO si{};
-    GetSystemInfo(&si);
-    const DWORD os_threads = si.dwNumberOfProcessors;
+    // All processor groups: GetSystemInfo only reports the current group (at most 64 logical CPUs).
+    DWORD os_threads = GetActiveProcessorCount(ALL_PROCESSOR_GROUPS);
+    if (!os_threads) {
+        SYSTEM_INFO si{};
+        GetSystemInfo(&si);
+        os_threads = si.dwNumberOfProcessors;
+    }
 
     const x86::Regs r1 = x86::cpuid(1);
     const uint32_t leaf1_max_logical = (r1.ebx >> 16) & 0xff;
 
-    const x86::Regs rB = x86::cpuid(0x0B, 1);
-    const uint32_t leaf0b_threads = rB.ebx & 0xffff;
+    // Leaf 0Bh only when the CPU enumerates it.
+    const uint32_t max_basic = x86::cpuid(0).eax;
+    const uint32_t leaf0b_threads = max_basic >= 0x0B ? (x86::cpuid(0x0B, 1).ebx & 0xffff) : 0;
 
     const bool detected = (os_threads == 1 && leaf1_max_logical > 1) ||
                           (leaf0b_threads > 0 && os_threads < leaf0b_threads);
@@ -554,8 +587,6 @@ std::vector<Finding> office_emulation_artifacts(Context &) {
 
     if (win::reg_key_exists(HKEY_CURRENT_USER, L"Software\\Microsoft\\Office\\Common\\Dummy"))
         hits.push_back("reg:HKCU\\Software\\Microsoft\\Office\\Common\\Dummy");
-    if (win::reg_key_exists(HKEY_CURRENT_USER, L"Software\\Microsoft\\VBA"))
-        hits.push_back("reg:HKCU\\Software\\Microsoft\\VBA");
 
     static const wchar_t *kTempFiles[] = {
         L"C:\\Users\\Default\\AppData\\Local\\Temp\\Word8.0",
@@ -786,7 +817,9 @@ std::vector<Finding> cuckoo_agent_artifacts(Context &) {
 
 // 15. win.env.cuckoo_agent_listener
 std::vector<Finding> cuckoo_agent_listener(Context &) {
-    bool port_listening = false;
+    // Cuckoo/CAPE's in-guest agent is agent.py(w) listening on TCP 8000 under a Python interpreter. A listener on
+    // 8000 alone is common (development servers), so only a Python-owned listener counts.
+    std::vector<DWORD> listener_pids;
     ULONG size = 0;
     DWORD res = GetExtendedTcpTable(nullptr, &size, FALSE, AF_INET, TCP_TABLE_OWNER_PID_ALL, 0);
     if (res == ERROR_INSUFFICIENT_BUFFER) {
@@ -794,40 +827,33 @@ std::vector<Finding> cuckoo_agent_listener(Context &) {
         res = GetExtendedTcpTable(buffer.data(), &size, FALSE, AF_INET, TCP_TABLE_OWNER_PID_ALL, 0);
         if (res == NO_ERROR) {
             auto *table = reinterpret_cast<MIB_TCPTABLE_OWNER_PID *>(buffer.data());
-            for (DWORD i = 0; i < table->dwNumEntries; ++i) {
+            for (DWORD i = 0; i < table->dwNumEntries; ++i)
                 if (ntohs(static_cast<u_short>(table->table[i].dwLocalPort)) == 8000 &&
-                    table->table[i].dwState == MIB_TCP_STATE_LISTEN) {
-                    port_listening = true;
-                    break;
-                }
+                    table->table[i].dwState == MIB_TCP_STATE_LISTEN)
+                    listener_pids.push_back(table->table[i].dwOwningPid);
+        }
+    }
+    std::string owner;
+    bool python_listener = false;
+    if (!listener_pids.empty()) {
+        Handle snap(CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0));
+        if (snap.valid()) {
+            PROCESSENTRY32W pe{};
+            pe.dwSize = sizeof(pe);
+            if (Process32FirstW(snap.get(), &pe)) {
+                do {
+                    if (std::find(listener_pids.begin(), listener_pids.end(), pe.th32ProcessID) == listener_pids.end())
+                        continue;
+                    owner = winlogic::lower(win::narrow(pe.szExeFile));
+                    if (owner.rfind("python", 0) == 0) python_listener = true;
+                } while (!python_listener && Process32NextW(snap.get(), &pe));
             }
         }
     }
-
-    std::vector<std::string> procs;
-    Handle snap(CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0));
-    if (snap.valid()) {
-        PROCESSENTRY32W pe{};
-        pe.dwSize = sizeof(pe);
-        if (Process32FirstW(snap.get(), &pe)) {
-            do {
-                std::string name = winlogic::lower(win::narrow(pe.szExeFile));
-                if (name == "agent.py" || name == "agent.exe" || name == "cuckoo.exe") {
-                    procs.push_back(name);
-                }
-            } while (Process32NextW(snap.get(), &pe));
-        }
-    }
-
-    const bool detected = port_listening || !procs.empty();
     Ev ev;
-    ev.set("port_8000_listening", port_listening);
-    Json p = Json::array();
-    for (const auto &name : procs)
-        p.push(name);
-    ev.set("matched_processes", p);
-
-    return {result("env.cuckoo_agent_listener", "Cuckoo agent listener", detected, ev, Severity::High, 0.9,
+    ev.set("port_8000_listening", !listener_pids.empty());
+    ev.set("port_8000_owner", owner);
+    return {result("env.cuckoo_agent_listener", "Cuckoo agent listener", python_listener, ev, Severity::High, 0.85,
                    "DRAKVUF introspection needs no guest-side listening socket.")};
 }
 
@@ -874,14 +900,20 @@ std::vector<Finding> hosting_provider_check(Context &ctx) {
         return {skipped("network.hosting_provider_check", "Hosting provider IP check",
                         "Public IP reputation check.", Severity::High, "Network checks disabled")};
 
-    auto resp = http_request(L"ip-api.com", INTERNET_DEFAULT_HTTP_PORT,
-                             L"/json/?fields=status,message,country,isp,org,as,hosting", L"", 3000);
+    // Never a default third-party service: the operator names an ip-api-compatible endpoint (JSON with
+    // "hosting", "isp", "org", "as") that they run or may contact.
+    const std::string host = ctx.param("network.ip_info_host", "");
+    if (host.empty())
+        return {skipped("network.hosting_provider_check", "Hosting provider IP check", "Public IP reputation check.",
+                        Severity::High, "no IP information endpoint given (--param network.ip_info_host=HOST)")};
+    const std::string path = ctx.param("network.ip_info_path", "/json/?fields=status,country,isp,org,as,hosting");
+    const long long port = ctx.param_int("network.ip_info_port", INTERNET_DEFAULT_HTTP_PORT);
+    // One request, 3 s timeout: stays inside the fast probe budget.
+    auto resp = http_request(win::widen(host), static_cast<INTERNET_PORT>(port), win::widen(path), L"", 3000);
     if (!resp.ok || resp.status != 200) {
-        Ev ev;
-        ev.set("http_status", static_cast<unsigned long long>(resp.status));
-        ev.set("response_ok", resp.ok);
-        return {result("network.hosting_provider_check", "Hosting provider IP check", false, ev, Severity::High,
-                       0.5, "INetSim local traffic sink prevents public IP disclosure during offline runs.")};
+        return {skipped("network.hosting_provider_check", "Hosting provider IP check", "Public IP reputation check.",
+                        Severity::High, "the IP information endpoint did not answer (HTTP " +
+                                            std::to_string(resp.status) + ")")};
     }
 
     std::string body_lower = winlogic::lower(resp.body);
@@ -905,7 +937,11 @@ std::vector<Finding> hosting_provider_check(Context &ctx) {
 }
 
 // 18. win.network.net_validate_name_emulation
-std::vector<Finding> net_validate_name_emulation(Context &) {
+std::vector<Finding> net_validate_name_emulation(Context &ctx) {
+    // NetValidateName can resolve the name (NetBIOS/DNS, domain controller lookup): a network probe.
+    if (!ctx.network)
+        return {skipped("network.net_validate_name_emulation", "NetValidateName anti-emulation",
+                        "NetValidateName on a fictitious name.", Severity::Medium, "Network checks disabled")};
     LibraryHandle netapi(LoadLibraryW(L"netapi32.dll"));
     if (!netapi) {
         return {skipped("network.net_validate_name_emulation", "NetValidateName anti-emulation",
@@ -971,7 +1007,7 @@ PERDEDOR_REGISTER(cuckoo_cuckoomon_config, "artifacts.files", "fast", false,
                   "env.cuckoo_cuckoomon_config");
 PERDEDOR_REGISTER(hosting_provider_check, "network.public_ip_reputation", "fast", true,
                   "network.hosting_provider_check");
-PERDEDOR_REGISTER(net_validate_name_emulation, "network.connectivity", "fast", false,
+PERDEDOR_REGISTER(net_validate_name_emulation, "network.connectivity", "medium", true,
                   "network.net_validate_name_emulation");
 
 }  // namespace perdedor
