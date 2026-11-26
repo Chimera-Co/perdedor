@@ -95,7 +95,7 @@
         "freerasp": [
           "onDeviceBinding",
           "deviceBinding",
-          "deviceId"
+          "deviceID"
         ]
       },
       "fix": {

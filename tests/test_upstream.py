@@ -3,9 +3,11 @@ fake GitHub (no network) and the coverage inventories."""
 
 from __future__ import annotations
 
+import argparse
 import io
 import json
 import shutil
+import tarfile
 import urllib.error
 from pathlib import Path
 
@@ -585,3 +587,136 @@ def test_cli_offline_check_and_coverage(capsys):
     assert main(["coverage", "--markdown"]) == 0
     assert "| VMAware" in capsys.readouterr().out
     assert main(["coverage", "--tool", "nonexistent"]) == U.EXIT_ERROR
+
+
+# ------------------------------------------------------------------------- token and 403 fallbacks
+
+
+def test_http_uses_github_token_from_env(monkeypatch):
+    monkeypatch.setenv("GITHUB_TOKEN", "ghp_envtoken123456789")
+    opener = FakeOpener([FakeResp(b"ok"), FakeResp(b"ok")])
+    http = U.Http(opener=opener, sleep=lambda s: None)
+    http.get("https://api.github.com/test")
+    http.get("https://codeload.github.com/test")
+    api_req, codeload_req = opener.requests
+    assert api_req.unredirected_hdrs["Authorization"] == "Bearer ghp_envtoken123456789"
+    assert (
+        "Authorization" not in codeload_req.unredirected_hdrs and "Authorization" not in codeload_req.headers
+    )
+
+
+def test_token_cli_helper(monkeypatch):
+    monkeypatch.delenv("GITHUB_TOKEN", raising=False)
+    args = argparse.Namespace(token_env=None)
+    assert U._token(args) is None
+
+    monkeypatch.setenv("GITHUB_TOKEN", "ghp_secrettoken")
+    assert U._token(args) == "ghp_secrettoken"
+
+    args_custom = argparse.Namespace(token_env="CUSTOM_VAR")
+    monkeypatch.setenv("CUSTOM_VAR", "ghp_customtoken")
+    assert U._token(args_custom) == "ghp_customtoken"
+
+
+def test_token_redaction(monkeypatch):
+    token = "ghp_verysecrettoken12345"
+    monkeypatch.setenv("GITHUB_TOKEN", token)
+    assert U.redact(f"https://api.github.com/data?token={token}") == "https://api.github.com/data"
+    assert "verysecret" not in U.redact(f"Authorization: Bearer {token}")
+    assert U.redact(f"Authorization: Bearer {token}") == "Authorization: Bearer [REDACTED]"
+    assert U.redact(f"Failed token {token} in log") == "Failed token [REDACTED] in log"
+
+
+def test_checkpoint_403_fallback_to_atom_feed():
+    repo = "CheckPointSW/InviZzzible"
+    atom_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/d6fa72cb4d51d4ab51c5d4c76b63e7bf9179bdbe</id>
+    <link type="text/html" rel="alternate" href="https://github.com/CheckPointSW/InviZzzible/commit/d6fa72cb4d51d4ab51c5d4c76b63e7bf9179bdbe"/>
+    <title>Updated configurations</title>
+    <updated>2026-11-20T14:30:00Z</updated>
+  </entry>
+</feed>"""
+    routes = {
+        api("repos/CheckPointSW/InviZzzible/commits?per_page=1&sha=master&path=config"): U.HttpError(
+            403, "api", "Forbidden"
+        ),
+        "https://github.com/CheckPointSW/InviZzzible/commits/master.atom": atom_xml,
+    }
+    gh = U.GitHub(FakeHttp(routes))
+    commit = gh.commit(repo, "master", "config")
+    assert commit is not None
+    assert commit["sha"] == "d6fa72cb4d51d4ab51c5d4c76b63e7bf9179bdbe"
+    assert commit["commit"]["committer"]["date"] == "2026-11-20T14:30:00Z"
+    assert commit["html_url"] == f"https://github.com/{repo}/commit/d6fa72cb4d51d4ab51c5d4c76b63e7bf9179bdbe"
+
+
+def test_checkpoint_403_fallback_to_codeload_archive_header():
+    repo = "CheckPointSW/Evasions"
+    sha = "4cda4b058641cbf0dc14fe465368cd31fa196c91"
+    headers = {
+        "content-disposition": f'attachment; filename="Evasions-{sha}.tar.gz"',
+        "last-modified": "Wed, 21 Oct 2026 07:28:00 GMT",
+    }
+    routes = {
+        api(
+            "repos/CheckPointSW/Evasions/commits?per_page=1&sha=master&path=_src%2FEvasions%2Ftechniques"
+        ): U.HttpError(403, "api", "Forbidden"),
+        "https://codeload.github.com/CheckPointSW/Evasions/tar.gz/master": (b"", headers),
+    }
+    gh = U.GitHub(FakeHttp(routes))
+    commit = gh.commit(repo, "master", "_src/Evasions/techniques")
+    assert commit is not None
+    assert commit["sha"] == sha
+    assert commit["commit"]["committer"]["date"].startswith("2026-10-21")
+
+
+def test_checkpoint_403_fallback_to_codeload_tarball_body():
+    repo = "CheckPointSW/Evasions"
+    sha = "4cda4b058641cbf0dc14fe465368cd31fa196c91"
+    buf = io.BytesIO()
+    with tarfile.open(fileobj=buf, mode="w:gz") as tar:
+        ti = tarfile.TarInfo(name=f"Evasions-{sha}/README.md")
+        ti.size = 0
+        ti.mtime = 1732000000
+        tar.addfile(ti)
+    routes = {
+        api(
+            "repos/CheckPointSW/Evasions/commits?per_page=1&sha=master&path=_src%2FEvasions%2Ftechniques"
+        ): U.HttpError(403, "api", "Forbidden"),
+        "https://codeload.github.com/CheckPointSW/Evasions/tar.gz/master": (buf.getvalue(), {}),
+    }
+    gh = U.GitHub(FakeHttp(routes))
+    commit = gh.commit(repo, "master", "_src/Evasions/techniques")
+    assert commit is not None
+    assert commit["sha"] == sha
+
+
+def test_latest_revision_checkpoint_fallback():
+    src = {
+        "id": "invizzzible",
+        "kind": "github-commits",
+        "repo": "CheckPointSW/InviZzzible",
+        "branch": "master",
+        "paths": ["config/"],
+    }
+    atom_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <entry>
+    <id>tag:github.com,2008:Grit::Commit/d6fa72cb4d51d4ab51c5d4c76b63e7bf9179bdbe</id>
+    <title>Updated</title>
+    <updated>2026-11-20T14:30:00Z</updated>
+  </entry>
+</feed>"""
+    routes = {
+        api("repos/CheckPointSW/InviZzzible/commits?per_page=1&sha=master&path=config"): U.HttpError(
+            403, "api", "Forbidden"
+        ),
+        "https://github.com/CheckPointSW/InviZzzible/commits/master.atom": atom_xml,
+    }
+    gh = U.GitHub(FakeHttp(routes))
+    rev = U.latest_revision(src, gh, "2026-11-26")
+    assert rev["version"] == "d6fa72cb4d51"
+    assert rev["commit"] == "d6fa72cb4d51d4ab51c5d4c76b63e7bf9179bdbe"
+    assert rev["date"] == "2026-11-20"

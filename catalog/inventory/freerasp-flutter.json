@@ -68,7 +68,7 @@
       "score": null
     },
     {
-      "name": "deviceId",
+      "name": "deviceID",
       "detail": "Threat enum",
       "platforms": [
         "android",
@@ -194,7 +194,7 @@
       "score": null
     },
     {
-      "name": "unsecureWiFi",
+      "name": "unsecureWifi",
       "detail": "Threat enum",
       "platforms": [
         "android",
