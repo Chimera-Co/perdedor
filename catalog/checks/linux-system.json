@@ -2920,6 +2920,50 @@
       ]
     },
     {
+      "id": "linux.behavioural.desktop_session",
+      "technique": "human.foreground_activity",
+      "status": "implemented",
+      "reason": null,
+      "title": "Desktop session running",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Boot the image into a logged-in desktop session (autologin) before detonating.",
+        "chimera": "Keep the Linux golden image booting into an autologin XFCE session for the desktop user; re-check after every snapshot commit."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ]
+    },
+    {
+      "id": "linux.behavioural.active_sessions",
+      "technique": "human.idle_time",
+      "status": "implemented",
+      "reason": null,
+      "title": "Logged-in users (utmp)",
+      "severity": "low",
+      "cost": "fast",
+      "network": false,
+      "requires": [],
+      "equivalents": {},
+      "fix": {
+        "layer": "guest-image",
+        "effort": 1,
+        "how": "Log a user in to the desktop (autologin writes a utmp record).",
+        "chimera": "Keep the Linux golden image booting into an autologin XFCE session for the desktop user; re-check after every snapshot commit."
+      },
+      "references": [
+        "https://evasions.checkpoint.com/",
+        "https://attack.mitre.org/techniques/T1497/002/"
+      ]
+    },
+    {
       "id": "linux.behavioural.ssh_known_hosts",
       "technique": "wear_and_tear.network_history",
       "status": "implemented",

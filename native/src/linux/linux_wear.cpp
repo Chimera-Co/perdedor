@@ -177,6 +177,53 @@ std::vector<Finding> process_count(Context& ctx) {
                      0.4)};
 }
 
+std::vector<Finding> desktop_session(Context& ctx) {
+    const char* id = "behavioural.desktop_session";
+    const char* name = "Desktop session running";
+    const char* desc = "A graphical session process (X server, Wayland compositor or XFCE/GNOME/KDE/Cinnamon/MATE/LXQt "
+                       "session manager): a headless guest means nobody is at the keyboard.";
+    // comm is cut to 15 characters (proc(5)), so gnome-session-binary shows as gnome-session-b: match prefixes.
+    static const std::vector<std::string> sessions = {"xorg", "xwayland", "xfce4-session", "gnome-session",
+        "gnome-shell", "plasmashell", "ksmserver", "kwin_wayland", "cinnamon-sessio", "cinnamon-session",
+        "mate-session", "lxsession", "lxqt-session", "sway", "weston", "budgie-wm"};
+    Root root(ctx);
+    auto p = processes(root, true);
+    if (!p.ok) return {unreadable(id, name, desc, Severity::Low, p.err, "/proc")};
+    long long n = 0;
+    for (const auto& proc : p.procs) {
+        const std::string c = lower(proc.comm), a = lower(proc.argv0);
+        for (const auto& s : sessions)
+            if (c.rfind(s, 0) == 0 || a == s) {
+                ++n;
+                break;
+            }
+    }
+    return {measured(id, name, desc, static_cast<double>(n), 1, n < 1, "session processes",
+                     "Boot the image into a logged-in desktop session (autologin) before detonating.", Severity::Low,
+                     0.5)};
+}
+
+std::vector<Finding> active_sessions(Context& ctx) {
+    const char* id = "behavioural.active_sessions";
+    const char* name = "Logged-in users (utmp)";
+    const char* desc = "USER_PROCESS records in /run/utmp, what who(1) lists: none means no one is logged in.";
+    Root root(ctx);
+    const char* path = root.exists("/run/utmp") ? "/run/utmp" : "/var/run/utmp";
+    auto r = root.read(path, 256 * kUtmpRecordBytes);
+    if (!r.ok) {
+        if (!root.exists(path)) return {skipped(id, name, desc, Severity::Low, "no utmp file (systemd-logind only)")};
+        return {unreadable(id, name, desc, Severity::Low, r.err, path)};
+    }
+    // struct utmp (utmp(5)) begins with short ut_type; USER_PROCESS is 7. Little-endian on x86 and aarch64.
+    long long n = 0;
+    for (size_t off = 0; off + kUtmpRecordBytes <= r.value.size(); off += kUtmpRecordBytes) {
+        const auto lo = static_cast<unsigned char>(r.value[off]), hi = static_cast<unsigned char>(r.value[off + 1]);
+        if ((lo | (hi << 8)) == 7) ++n;
+    }
+    return {measured(id, name, desc, static_cast<double>(n), 1, n < 1, "sessions",
+                     "Log a user in to the desktop (autologin writes a utmp record).", Severity::Low, 0.45)};
+}
+
 std::vector<Finding> recently_used(Context& ctx) {
     const char* id = "behavioural.recently_used_xbel";
     const char* name = "Recently used files list";
@@ -500,6 +547,8 @@ PERDEDOR_REGISTER(aged_files, "wear_and_tear.user_files", "fast", false, "behavi
 PERDEDOR_REGISTER(installed_packages, "wear_and_tear.installed_software", "fast", false, "behavioural.installed_packages");
 PERDEDOR_REGISTER(font_count, "wear_and_tear.fonts", "fast", false, "behavioural.font_count");
 PERDEDOR_REGISTER(process_count, "wear_and_tear.process_count", "fast", false, "behavioural.running_process_count");
+PERDEDOR_REGISTER(desktop_session, "human.foreground_activity", "fast", false, "behavioural.desktop_session");
+PERDEDOR_REGISTER(active_sessions, "human.idle_time", "fast", false, "behavioural.active_sessions");
 PERDEDOR_REGISTER(recently_used, "wear_and_tear.recent_files", "fast", false, "behavioural.recently_used_xbel");
 PERDEDOR_REGISTER(browser_profiles, "wear_and_tear.browser_history", "fast", false, "behavioural.browser_profiles");
 PERDEDOR_REGISTER(browser_history_size, "wear_and_tear.browser_history", "fast", false, "behavioural.browser_history_size");

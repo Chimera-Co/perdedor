@@ -3,6 +3,15 @@
 Releases follow [docs/RELEASING.md](docs/RELEASING.md): patch releases keep the report format, minor releases
 may add checks and fields, major releases change the format or the score's meaning.
 
+## Unreleased
+
+- Linux: `linux.behavioural.desktop_session` (an X/Wayland/desktop session process is running) and
+  `linux.behavioural.active_sessions` (USER_PROCESS records in utmp, what `who` lists). Together with
+  `linux.timing.rdtsc_cpuid_vmexit`, which already records the raw RDTSC/CPUID statistics, PERDEDOR now covers
+  every check of CHIMERA's separate Linux VM check and CPUID timing harness, so CHIMERA can retire both.
+- `design.analysis_tools_running` and `design.analysis_tool_cmdline` also name `drakshell`, `chimera-agent` and
+  `sandbox-agent`.
+
 ## v2.0.1 (2026-11-09)
 
 - Every agent, `perdedor test`, `perdedor report` and the HTML report now headline the exposure score
