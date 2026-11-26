@@ -4,6 +4,7 @@
 // Sources: VMAware v2.8.2 (DEVICES pci_devices table, QEMU_USB, HWMON,
 // TEMPERATURE, DISK serial patterns, THREAD_COUNT), Pafish/al-khaser device
 // and resource checks (Windows equivalents), QEMU hw/display/edid-generate.c.
+#include <cstdio>
 #include <sys/statvfs.h>
 #include <unistd.h>
 
@@ -643,6 +644,54 @@ std::vector<Finding> cores(Context& ctx) {
                      "Give the guest at least 4 vCPUs (xl.cfg vcpus=).", Severity::Low, 0.5)};
 }
 
+// CRC-32C (Castagnoli, reflected polynomial 0x82F63B78), bitwise: portable, no SSE4.2 needed.
+uint32_t crc32c(const std::string& data) {
+    uint32_t crc = 0xFFFFFFFFu;
+    for (unsigned char byte : data) {
+        crc ^= byte;
+        for (int k = 0; k < 8; ++k) crc = (crc >> 1) ^ (0x82F63B78u & (0u - (crc & 1u)));
+    }
+    return crc ^ 0xFFFFFFFFu;
+}
+
+std::vector<Finding> boot_logo(Context& ctx) {
+    const char* id = "env.acpi_boot_logo";
+    const char* name = "ACPI BGRT boot logo";
+    const char* desc = "CRC-32C of the firmware boot logo (/sys/firmware/acpi/bgrt/image) against the logos virtual "
+                       "firmware ships: TianoCore EDK2 / OVMF (QEMU, Xen with OVMF) and Hyper-V (VMAware BOOT_LOGO).";
+    // Reference digests from VMAware src/vmaware.hpp boot_logo() (MIT), the same CRC-32C over the whole image.
+    static const std::vector<std::pair<uint32_t, const char*>> known = {
+        {0x110350C5u, "TianoCore EDK2 (OVMF)"},
+        {0x87C39681u, "Hyper-V"},
+    };
+    Root root(ctx);
+    const char* path = "/sys/firmware/acpi/bgrt/image";
+    if (!root.exists("/sys/firmware/acpi/bgrt"))
+        return {skipped(id, name, desc, Severity::Medium, "no ACPI BGRT table (legacy BIOS boot or no boot logo)")};
+    auto r = root.read(path, 64u * 1024 * 1024);
+    if (!r.ok) {
+        if (r.err == EACCES || r.err == EPERM)
+            return {skipped(id, name, desc, Severity::Medium, "the BGRT image is readable by root only")};
+        return {unreadable(id, name, desc, Severity::Medium, r.err, path)};
+    }
+    if (r.truncated || r.value.empty())
+        return {error(id, name, desc, Severity::Medium, "BGRT image empty or larger than 64 MiB")};
+    const uint32_t crc = crc32c(r.value);
+    const char* match = nullptr;
+    for (const auto& k : known)
+        if (k.first == crc) match = k.second;
+    char hex[11];
+    std::snprintf(hex, sizeof hex, "0x%08X", crc);
+    Json ev = Json::object();
+    ev.set("crc32c", std::string(hex));
+    ev.set("bytes", static_cast<double>(r.value.size()));
+    ev.set("matched", match ? std::string(match) : std::string());
+    ev.set("reference", "VMAware boot_logo(): 0x110350C5 TianoCore EDK2, 0x87C39681 Hyper-V");
+    return {bool_check(id, name, desc, Severity::Medium, match != nullptr, ev,
+                       "Ship a vendor boot logo in the firmware (OVMF: replace MdeModulePkg/Logo/Logo.bmp at build), or "
+                       "boot without a BGRT logo.")};
+}
+
 std::vector<Finding> ram(Context& ctx) {
     const char* id = "env.low_ram";
     const char* name = "Total RAM";
@@ -762,6 +811,7 @@ PERDEDOR_REGISTER(cpuinfo_model, "cpu.brand_string", "fast", false, "env.cpuinfo
 PERDEDOR_REGISTER(cpuinfo_flag, "cpu.hypervisor_bit", "fast", false, "env.cpuinfo_hypervisor_flag");
 PERDEDOR_REGISTER(cores, "resources.cpu_count", "fast", false, "env.low_core_count");
 PERDEDOR_REGISTER(ram, "resources.memory_size", "fast", false, "env.low_ram");
+PERDEDOR_REGISTER(boot_logo, "firmware.acpi_tables", "fast", false, "env.acpi_boot_logo");
 PERDEDOR_REGISTER(disk, "resources.disk_size", "fast", false, "env.small_disk");
 PERDEDOR_REGISTER(screen, "resources.screen", "fast", false, "env.screen_resolution");
 

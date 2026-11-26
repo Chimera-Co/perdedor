@@ -3097,8 +3097,8 @@
     {
       "id": "linux.env.acpi_boot_logo",
       "technique": "firmware.acpi_tables",
-      "status": "planned",
-      "reason": "Needs a vetted set of reference digests for the boot logos virtual firmware ships (OVMF/TianoCore, VirtualBox, Hyper-V); /sys/firmware/acpi/bgrt/image is also root-only on most distributions.",
+      "status": "implemented",
+      "reason": null,
       "title": "ACPI BGRT boot logo",
       "severity": "medium",
       "cost": "fast",

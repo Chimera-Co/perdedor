@@ -5,6 +5,9 @@ may add checks and fields, major releases change the format or the score's meani
 
 ## Unreleased
 
+- `linux.env.acpi_boot_logo` implemented: CRC-32C of the ACPI BGRT boot logo against the TianoCore EDK2 and
+  Hyper-V digests VMAware publishes; skipped without a BGRT table or without root.
+
 - Native Linux agents for i686 and aarch64 (#6 section 1), static like x86_64. On ARM the x86 instruction probes
   (descriptor tables, VMware backdoor, VirtualPC opcode, hypercalls, emulation quirks) report `skipped` instead
   of running; CPUID-based probes already skipped through `x86::available()`. CI builds both, runs a quick scan
