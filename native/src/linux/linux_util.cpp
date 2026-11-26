@@ -353,7 +353,8 @@ const std::vector<std::string>& tool_names() {
         "tcpdump", "mitmproxy", "mitmdump", "mitmweb", "burpsuite", "zaproxy", "fakenet", "inetsim",
         "volatility", "vol.py", "vol3", "ida64", "ida", "ghidra", "radare2", "r2", "x64dbg", "binwalk",
         "sysdig", "bpftrace", "frida-server", "frida-helper", "falco", "auditd", "osqueryd", "cuckoo",
-        "cape", "drakvuf", "drakrun", "drakvuf-injector", "gdbserver", "rr"};
+        "cape", "drakvuf", "drakrun", "drakvuf-injector", "gdbserver", "rr", "drakshell", "chimera-agent",
+        "sandbox-agent"};
     return s;
 }
 void Evidence::add(const std::string& hit) {

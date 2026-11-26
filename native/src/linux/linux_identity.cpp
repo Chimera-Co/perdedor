@@ -332,7 +332,7 @@ std::vector<Finding> tool_cmdline(Context& ctx) {
                        "(Cuckoo/CAPE agent), analyzer.py, inetsim, fakenet, mitmdump, vol.py, karton.";
     static const std::vector<std::string> names = {"agent.py", "agent.pyw", "analyzer.py", "inetsim", "fakenet",
         "fakenet.py", "mitmdump", "mitmproxy", "mitmweb", "vol.py", "vol", "volatility", "volatility3", "karton-system",
-        "drakrun", "frida", "frida-trace", "tracee", "sysdig", "falco"};
+        "drakrun", "frida", "frida-trace", "tracee", "sysdig", "falco", "chimera-agent.py", "chimera-agent"};
     Root root(ctx);
     auto procs = processes(root, true);
     if (!procs.ok) return {unreadable(id, name, desc, Severity::Medium, procs.err, "/proc")};
