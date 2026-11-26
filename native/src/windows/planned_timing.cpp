@@ -80,28 +80,39 @@ struct ClockJitterSamples {
     LARGE_INTEGER freq{};
 };
 
+using PreciseTimeFn = VOID(WINAPI*)(LPFILETIME);
+// GetSystemTimePreciseAsFileTime (Windows 8+). The coarse GetSystemTimeAsFileTime ticks every 15.6 ms, which
+// makes short-window ratios swing on bare metal, so without the precise clock this check is skipped.
+PreciseTimeFn precise_time() {
+    static PreciseTimeFn fn = reinterpret_cast<PreciseTimeFn>(
+        reinterpret_cast<void*>(GetProcAddress(GetModuleHandleW(L"kernel32.dll"), "GetSystemTimePreciseAsFileTime")));
+    return fn;
+}
+
 void run_clock_jitter(void* p) {
     auto& s = *static_cast<ClockJitterSamples*>(p);
     if (!QueryPerformanceFrequency(&s.freq) || s.freq.QuadPart <= 0) return;
+    const PreciseTimeFn now = precise_time();
+    if (!now) return;
 
     for (unsigned i = 0; i < 5; ++i) {
         LARGE_INTEGER q1{}, q2{};
         FILETIME ft1{}, ft2{};
         QueryPerformanceCounter(&q1);
-        GetSystemTimeAsFileTime(&ft1);
+        now(&ft1);
 
-        // Bounded short sleep window of ~20 ms
-        bounded_sleep(20);
+        // 200 ms windows: long enough that scheduling noise stays well under the tolerance
+        bounded_sleep(200);
 
         QueryPerformanceCounter(&q2);
-        GetSystemTimeAsFileTime(&ft2);
+        now(&ft2);
 
         double qpc_sec = static_cast<double>(q2.QuadPart - q1.QuadPart) / static_cast<double>(s.freq.QuadPart);
         uint64_t t1 = (uint64_t(ft1.dwHighDateTime) << 32) | ft1.dwLowDateTime;
         uint64_t t2 = (uint64_t(ft2.dwHighDateTime) << 32) | ft2.dwLowDateTime;
         double rtc_sec = static_cast<double>(t2 >= t1 ? (t2 - t1) : 0) / 10000000.0;
 
-        if (rtc_sec > 0.005) {
+        if (rtc_sec > 0.05) {
             s.ratios[s.count++] = qpc_sec / rtc_sec;
         }
     }
@@ -113,6 +124,9 @@ std::vector<Finding> clock_jitter_vmaware(Context& ctx) {
     constexpr double kDefaultTolerance = 0.25;
     const double tolerance = bounded_double(ctx, "timing.vmaware_clock_tolerance", kDefaultTolerance, 0.05, 0.80);
 
+    if (!precise_time())
+        return {skipped(id, name, "VMAware CLOCK: QPC rate against the precise system clock.", Severity::Medium,
+                        "GetSystemTimePreciseAsFileTime unavailable (Windows 7)")};
     ClockJitterSamples samples;
     const auto r = guard::run(run_clock_jitter, &samples);
     if (r.faulted) return {fault_skip(id, name, Severity::Medium, r)};
@@ -265,16 +279,23 @@ std::vector<Finding> icmp_send_echo_delay(Context& ctx) {
     std::vector<double> trials;
     char send_buf[] = "PERDEDOR";
     char reply_buf[sizeof(ICMP_ECHO_REPLY) + 32]{};
-    // Non-responsive loopback address (127.0.0.2)
-    const IPAddr ip = inet_addr("127.0.0.2");
+    // RFC 5737 TEST-NET-1: never routed, so a real stack waits out the timeout. (All of 127/8 is loopback on
+    // Windows and answers at once, which is why loopback cannot be used.) Only attempts that end with
+    // IP_REQ_TIMED_OUT are measured: an early "timed out" is the skipped wait this check looks for.
+    const IPAddr ip = inet_addr("192.0.2.1");
 
     for (unsigned attempt = 0; attempt < 3; ++attempt) {
         const double start = monotonic_ns();
-        IcmpSendEcho(hIcmp, ip, send_buf, sizeof(send_buf), nullptr, reply_buf, sizeof(reply_buf), timeout_ms);
+        const DWORD replies =
+            IcmpSendEcho(hIcmp, ip, send_buf, sizeof(send_buf), nullptr, reply_buf, sizeof(reply_buf), timeout_ms);
+        const DWORD err = GetLastError();
         const double elapsed_ms = (monotonic_ns() - start) / 1e6;
-        trials.push_back(elapsed_ms);
+        if (replies == 0 && err == IP_REQ_TIMED_OUT) trials.push_back(elapsed_ms);
     }
     IcmpCloseHandle(hIcmp);
+    if (trials.size() < 2)
+        return {skipped(id, name, "IcmpSendEcho timeout to a non-routable address.", Severity::Medium,
+                        "the request did not time out (no route, filtered, or answered), so the wait cannot be measured")};
 
     const auto stats = statistics(trials);
     const double threshold = timeout_ms * (1.0 - tolerance);
@@ -587,9 +608,13 @@ std::vector<Finding> cuckoo_infinite_delay(Context&) {
         return {unavailable(id, name, "Failed to create test synchronization event")};
     }
 
-    InfiniteWaitParams data{hWakeup.get(), false, 0, 0};
-    Handle hThread(CreateThread(nullptr, 0, infinite_wait_thread, &data, 0, nullptr));
+    // Heap-held and intentionally leaked if the worker outlives its 500 ms join: it must never write to a dead
+    // stack frame.
+    auto* heap = new InfiniteWaitParams{hWakeup.get(), false, 0, 0};
+    InfiniteWaitParams& data = *heap;
+    Handle hThread(CreateThread(nullptr, 0, infinite_wait_thread, heap, 0, nullptr));
     if (!hThread.valid()) {
+        delete heap;
         return {unavailable(id, name, "Failed to spawn worker thread")};
     }
 
@@ -599,13 +624,17 @@ std::vector<Finding> cuckoo_infinite_delay(Context&) {
 
     // Clean up worker thread: signal wakeup and wait for exit
     SetEvent(hWakeup.get());
-    WaitForSingleObject(hThread.get(), 500);
+    const bool joined = WaitForSingleObject(hThread.get(), 500) == WAIT_OBJECT_0;
+    if (!joined) hWakeup.release();  // the worker may still wait on it; leak the event with the context
+    const double worker_elapsed_ms = data.elapsed_ms;
+    const DWORD worker_wait_result = data.wait_result;
+    if (joined) delete heap;
 
     Json m = numbers({
         {"bounded_probe_ms", 60.0},
         {"worker_completed_early", prematurely_returned ? 1.0 : 0.0},
-        {"worker_elapsed_ms", data.elapsed_ms},
-        {"worker_wait_result", static_cast<double>(data.wait_result)}
+        {"worker_elapsed_ms", worker_elapsed_ms},
+        {"worker_wait_result", static_cast<double>(worker_wait_result)}
     });
 
     Json ev = Json::object();
@@ -742,7 +771,11 @@ std::vector<Finding> external_time_tampering(Context& ctx) {
         return {unavailable(id, name, "Network checks disabled by configuration")};
     }
 
-    const std::string host_str = ctx.param("timing.time_server", "www.microsoft.com");
+    // Never a default third-party server: the operator names a host they control (or may contact).
+    const std::string host_str = ctx.param("timing.time_server", "");
+    if (host_str.empty())
+        return {skipped(id, name, "HTTP Date header against the guest clock.", Severity::High,
+                        "no time server given (--param timing.time_server=HOST)")};
     const std::wstring host = win::widen(host_str);
 
     HINTERNET hSession = WinHttpOpen(L"Perdedor/2", WINHTTP_ACCESS_TYPE_NO_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
@@ -767,6 +800,11 @@ std::vector<Finding> external_time_tampering(Context& ctx) {
 
     DWORD disabled = WINHTTP_DISABLE_REDIRECTS | WINHTTP_DISABLE_AUTHENTICATION | WINHTTP_DISABLE_COOKIES;
     WinHttpSetOption(hRequest, WINHTTP_OPTION_DISABLE_FEATURE, &disabled, sizeof(disabled));
+    // Only the Date header is read. A guest whose clock is far off fails certificate validity checks, which is
+    // exactly the case this check measures, so certificate errors are ignored for this one HEAD request.
+    DWORD ignore = SECURITY_FLAG_IGNORE_CERT_DATE_INVALID | SECURITY_FLAG_IGNORE_UNKNOWN_CA |
+                   SECURITY_FLAG_IGNORE_CERT_CN_INVALID | SECURITY_FLAG_IGNORE_CERT_WRONG_USAGE;
+    WinHttpSetOption(hRequest, WINHTTP_OPTION_SECURITY_FLAGS, &ignore, sizeof(ignore));
 
     if (!WinHttpSendRequest(hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0, WINHTTP_NO_REQUEST_DATA, 0, 0, 0) ||
         !WinHttpReceiveResponse(hRequest, nullptr)) {
@@ -795,8 +833,8 @@ std::vector<Finding> external_time_tampering(Context& ctx) {
     GetSystemTime(&guest_st);
 
     FILETIME server_ft{}, guest_ft{};
-    SystemTimeToFileTime(&server_st, &server_ft);
-    SystemTimeToFileTime(&guest_st, &guest_ft);
+    if (!SystemTimeToFileTime(&server_st, &server_ft) || !SystemTimeToFileTime(&guest_st, &guest_ft))
+        return {unavailable(id, name, "could not convert the Date header or the guest time")};
 
     uint64_t t_srv = (uint64_t(server_ft.dwHighDateTime) << 32) | server_ft.dwLowDateTime;
     uint64_t t_gst = (uint64_t(guest_ft.dwHighDateTime) << 32) | guest_ft.dwLowDateTime;
@@ -959,7 +997,7 @@ std::vector<Finding> kernel_kuser_tick_timing(Context&) {
     std::vector<double> deltas;
     for (unsigned i = 0; i < 5; ++i) {
         const auto kuser = read_kuser_tick();
-        const DWORD api = GetTickCount();
+        const ULONGLONG api = GetTickCount64();  // the 32-bit GetTickCount wraps after 49.7 days of uptime
         if (kuser.valid) {
             deltas.push_back(std::abs(static_cast<double>(api) - static_cast<double>(kuser.tick_ms)));
         }
@@ -1074,6 +1112,11 @@ std::vector<Finding> network_adapter_reset_time(Context& ctx) {
             winlogic::integer(val.substr(10, 2), mm) &&
             winlogic::integer(val.substr(12, 2), ss)) {
             int64_t reset_unix = days * 86400 + hh * 3600 + mm * 60 + ss;
+            // CIM datetime: yyyymmddHHMMSS.ffffff followed by the offset from UTC in minutes (+UUU / -UUU),
+            // so the value is local time. Convert to UTC before comparing with the clock.
+            uint64_t offset_min = 0;
+            if (val.size() >= 25 && (val[21] == '+' || val[21] == '-') && winlogic::integer(val.substr(22, 3), offset_min))
+                reset_unix -= (val[21] == '+' ? 1 : -1) * static_cast<int64_t>(offset_min) * 60;
             double age = now_sec - static_cast<double>(reset_unix);
             if (age >= 0) {
                 min_age_sec = std::min(min_age_sec, age);
@@ -1134,7 +1177,14 @@ std::vector<Finding> dotnet_time_delay(Context& ctx) {
 
     PROCESS_INFORMATION pi{};
     // Command line executes Stopwatch and Thread.Sleep(150) in managed .NET runtime
-    std::wstring cmd = L"powershell.exe -NoProfile -NonInteractive -Command "
+    // Absolute System32 path: never resolve powershell.exe through the search path.
+    wchar_t sysdir[MAX_PATH]{};
+    if (!GetSystemDirectoryW(sysdir, MAX_PATH)) {
+        CloseHandle(hRead);
+        CloseHandle(hWrite);
+        return {unavailable(id, name, "GetSystemDirectory failed")};
+    }
+    std::wstring cmd = L"\"" + std::wstring(sysdir) + L"\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoProfile -NonInteractive -Command "
                        L"\"$s=[System.Diagnostics.Stopwatch]::StartNew(); "
                        L"[System.Threading.Thread]::Sleep(150); "
                        L"$s.Stop(); "
@@ -1223,19 +1273,20 @@ std::vector<Finding> qpc_time_delay_loop(Context& ctx) {
 
     std::vector<double> trials;
     for (unsigned attempt = 0; attempt < 3; ++attempt) {
+        // Reference: GetTickCount64 (the interrupt tick), independent of QPC; its 15.6 ms granularity is well
+        // inside the 30 % tolerance on a 100 ms loop. monotonic_ns() is QPC itself and cannot be the reference.
         LARGE_INTEGER start{}, now{};
         QueryPerformanceCounter(&start);
-        const double mono_start = monotonic_ns();
-        const double deadline = monotonic_ns() + (delay_ms * 3 + 150) * 1e6;
+        const ULONGLONG tick_start = GetTickCount64();
+        const ULONGLONG tick_deadline = tick_start + delay_ms * 3 + 150;
 
         do {
-            if (monotonic_ns() >= deadline) break;
+            if (GetTickCount64() >= tick_deadline) break;
             YieldProcessor();
             QueryPerformanceCounter(&now);
         } while ((now.QuadPart - start.QuadPart) < target_ticks);
 
-        const double mono_elapsed_ms = (monotonic_ns() - mono_start) / 1e6;
-        trials.push_back(mono_elapsed_ms);
+        trials.push_back(static_cast<double>(GetTickCount64() - tick_start));
     }
 
     const auto stats = statistics(trials);
@@ -1250,7 +1301,7 @@ std::vector<Finding> qpc_time_delay_loop(Context& ctx) {
     m.set("qpc_frequency", static_cast<double>(freq.QuadPart));
 
     Json ev = Json::object();
-    ev.set("median_monotonic_ms", stats.median);
+    ev.set("median_tick_ms", stats.median);
     ev.set("requested_ms", delay_ms);
 
     return {measured(id, name,
@@ -1265,7 +1316,7 @@ std::vector<Finding> qpc_time_delay_loop(Context& ctx) {
 PERDEDOR_REGISTER(clock_jitter_vmaware, "timing.clock_source", "medium", false, "timing.clock_jitter_vmaware");
 PERDEDOR_REGISTER(create_timer_queue_timer, "timing.sleep_acceleration", "medium", false, "timing.create_timer_queue_timer");
 PERDEDOR_REGISTER(create_waitable_timer, "timing.sleep_acceleration", "medium", false, "timing.create_waitable_timer");
-PERDEDOR_REGISTER(icmp_send_echo_delay, "timing.sleep_acceleration", "medium", false, "timing.icmp_send_echo_delay");
+PERDEDOR_REGISTER(icmp_send_echo_delay, "timing.sleep_acceleration", "medium", true, "timing.icmp_send_echo_delay");
 PERDEDOR_REGISTER(user32_set_timer, "timing.sleep_acceleration", "medium", false, "timing.user32_set_timer");
 PERDEDOR_REGISTER(wait_for_multiple_objects, "timing.sleep_acceleration", "medium", false, "timing.wait_for_multiple_objects");
 PERDEDOR_REGISTER(sleep_loop, "timing.sleep_acceleration", "medium", false, "timing.sleep_loop");
